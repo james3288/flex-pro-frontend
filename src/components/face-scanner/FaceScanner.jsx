@@ -14,6 +14,7 @@ const FaceScanner = ({
   const [modelsLoaded, setModelsLoaded] = React.useState(false);
   const [captureVideo, setCaptureVideo] = React.useState(false);
   const [flexProUser, setFlexProUser] = React.useState([]);
+
   let count = 0;
   const videoRef = React.useRef(null);
   const canvasRef = React.useRef(null);
@@ -21,6 +22,7 @@ const FaceScanner = ({
   const videoWidth = 640;
 
   React.useEffect(() => {
+    // flexProUser
     axios.get(`http://127.0.0.1:8000/api/user_images/`).then((res) => {
       const users = res.data;
 

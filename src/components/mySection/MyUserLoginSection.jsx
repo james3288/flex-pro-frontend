@@ -24,11 +24,24 @@ const MyUserLoginSection = () => {
     console.log(play);
   }, [play, stop, userId]);
 
+  const fetchUserStatus = async () => {
+    try {
+      const response = await axios.get(
+        "http://127.0.0.1:8000/api/user_status/"
+      );
+
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      return null; // or handle the error appropriately based on your application's needs
+    }
+  };
+
   return (
     <>
       <div className="container content-margin">
         <div className="row">
-          {/* scan face */}
+          {/* scan face section */}
           <div className="col-lg-6 col-xs-12">
             {userId === 0 ? (
               <div className="dashboard-col">
@@ -77,9 +90,9 @@ const MyUserLoginSection = () => {
               ""
             )}
           </div>
-          {/* end scan face */}
+          {/* end scan face section */}
 
-          {/* scan result */}
+          {/* scan result section */}
 
           {userId > 0 ? (
             <div className="col-lg-12 col-xs-12">
@@ -130,7 +143,7 @@ const MyUserLoginSection = () => {
             </div>
           )}
 
-          {/* end scan result */}
+          {/* end scan result section */}
         </div>
       </div>
     </>
