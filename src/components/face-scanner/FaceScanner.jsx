@@ -127,6 +127,7 @@ const FaceScanner = ({
     axios
       .post("http://127.0.0.1:8000/api/save_time_record/", timeRecordData)
       .then(function (response) {
+        console.log(response.data);
         console.log("successfully saved..");
       })
       .catch(function (error) {
@@ -232,7 +233,7 @@ const FaceScanner = ({
                 if (userStatus.status === "on-going") {
                   // insert to time record table
                   timeRecordData = {
-                    id: userStatus.usersubscription.subscription.id,
+                    id: userStatus.usersubscription.id,
                     time_in: new Date(),
                     time_out: new Date(1990, 0, 1, 0, 0),
                   };
