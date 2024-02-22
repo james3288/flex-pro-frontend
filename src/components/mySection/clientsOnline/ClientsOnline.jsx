@@ -92,7 +92,14 @@ function ClientsOnline({
                 {yearValidation === 1990 ? "--:--" : timeOutString}
               </strong>
             </p>
-            <p style={{ fontSize: "20px", fontWeight: "bold", color: "gold" }}>
+            <p
+              style={{
+                fontSize: "20px",
+                fontWeight: "bold",
+                color: "gold",
+                lineHeight: "20px",
+              }}
+            >
               {gym_rate_desc} - {rate} / {per}
             </p>
 

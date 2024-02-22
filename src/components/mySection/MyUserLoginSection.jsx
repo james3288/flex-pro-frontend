@@ -9,6 +9,7 @@ const MyUserLoginSection = () => {
   const [userId, setUserId] = useState(0);
   const [sample, setSample] = useState(null);
   const [userFound, setUserFound] = useState();
+  const [isOnGoing, setIsOnGoing] = useState();
 
   const handlePlayClick = () => {
     setPlay(() => !play);
@@ -23,19 +24,6 @@ const MyUserLoginSection = () => {
   useEffect(() => {
     console.log(play);
   }, [play, stop, userId]);
-
-  const fetchUserStatus = async () => {
-    try {
-      const response = await axios.get(
-        "http://127.0.0.1:8000/api/user_status/"
-      );
-
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      return null; // or handle the error appropriately based on your application's needs
-    }
-  };
 
   return (
     <>
@@ -57,6 +45,8 @@ const MyUserLoginSection = () => {
                       setPlay={setPlay}
                       setUserId={setUserId}
                       setUserFound={setUserFound}
+                      setIsOnGoing={setIsOnGoing}
+                      isOnGoing={isOnGoing}
                     />
                   )}
                   {/* <svg
@@ -94,7 +84,7 @@ const MyUserLoginSection = () => {
 
           {/* scan result section */}
 
-          {userId > 0 ? (
+          {userId > 0 && isOnGoing === "on-going" ? (
             <div className="col-lg-12 col-xs-12">
               <>
                 <div className="dashboard-col">
@@ -126,6 +116,25 @@ const MyUserLoginSection = () => {
                 </div>
                 <button className="btn btn-danger">Back to Dashboard</button>
               </>
+            </div>
+          ) : isOnGoing === "expired" ? (
+            <div className="col-lg-12 col-xs-12">
+              <div className="dashboard-col">
+                <span>
+                  <strong>LOGIN</strong> STATUS
+                </span>
+                <div className="scan-profile-wrapper">
+                  <img src={Pic3} alt="" className="scan-profile" />
+                  <div className="scan-profile-name">
+                    <h5>Oops, either you are expired or not registered yet!</h5>
+                    <h3>{userFound}</h3>
+
+                    <h6>
+                      you may contact to the administrator for more info...
+                    </h6>
+                  </div>
+                </div>
+              </div>
             </div>
           ) : (
             <div className="col-lg-6 col-xs-12">

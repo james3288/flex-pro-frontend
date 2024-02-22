@@ -10,6 +10,8 @@ const FaceScanner = ({
   setUserId,
   labels,
   setUserFound,
+  setIsOnGoing,
+  isOnGoing,
 }) => {
   const [modelsLoaded, setModelsLoaded] = React.useState(false);
   const [captureVideo, setCaptureVideo] = React.useState(false);
@@ -108,6 +110,19 @@ const FaceScanner = ({
     }
   };
 
+  const fetchUserStatus = async (id) => {
+    try {
+      const response = await axios.get(
+        `http://127.0.0.1:8000/api/user_status/${id}`
+      );
+
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      return null; // or handle the error appropriately based on your application's needs
+    }
+  };
+
   async function getLabeledFaceDescriptions() {
     const labeledFaceDescriptors = await Promise.all(
       flexProUser.map(async (label) => {
@@ -183,16 +198,33 @@ const FaceScanner = ({
 
         //  COUNT UPTO 60 TO FIND OUT THAT YOU
         results.forEach((result, i) => {
-          flexProUser.forEach((label) => {
+          flexProUser.forEach(async (label) => {
             if (result.label === label.flex_pro_user.name) {
               count = count + 1;
             }
 
+            // user has been found successfully
             if (count >= 60) {
               setUserId(label.flex_pro_user.id);
               setUserFound(label.flex_pro_user.name);
+              await closeWebcam();
               count = 0;
-              closeWebcam();
+
+              // check if user have subscription
+              const get_userStatus = await fetchUserStatus(
+                label.flex_pro_user.id
+              );
+
+              get_userStatus.map((userStatus) => {
+                if (userStatus.status === "on-going") {
+                  setIsOnGoing("on-going");
+                  return;
+                }
+              });
+
+              get_userStatus.length === 0 && setIsOnGoing("expired");
+              // setIsOnGoing("expired");
+              return;
             }
           });
 
