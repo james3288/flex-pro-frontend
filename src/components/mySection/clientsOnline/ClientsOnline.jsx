@@ -2,6 +2,7 @@ import React from "react";
 import ReactTimeAgo from "react-time-ago";
 
 function ClientsOnline({
+  client_id,
   clientName,
   timeIn,
   timeOut,
@@ -86,12 +87,16 @@ function ClientsOnline({
           <div className="clients-flex">
             <h5>{clientName}</h5>
             <p>{weights} lbs</p>
-            <p>
-              IN: <strong>{timeInString}</strong>- OUT:
-              <strong>
-                {yearValidation === 1990 ? "--:--" : timeOutString}
-              </strong>
-            </p>
+            <div className="timein_timeout">
+              <p>
+                IN: <strong>{timeInString}</strong>- OUT:
+                <strong>
+                  {yearValidation === 1990 ? "--:--" : timeOutString}
+                </strong>
+              </p>
+              <button className="btn btn-warning">Logout</button>
+            </div>
+
             <p
               style={{
                 fontSize: "20px",

@@ -217,7 +217,7 @@ const FaceScanner = ({
             }
 
             // user has been found successfully
-            if (count >= 60) {
+            if (count >= 60 && result.label === label.flex_pro_user.name) {
               setUserId(label.flex_pro_user.id);
               setUserFound(label.flex_pro_user.name);
               await closeWebcam();
@@ -230,6 +230,8 @@ const FaceScanner = ({
 
               let timeRecordData = {};
               get_userStatus.map((userStatus) => {
+                const user_id = userStatus.usersubscription.flexprouser;
+
                 if (userStatus.status === "on-going") {
                   // insert to time record table
                   timeRecordData = {

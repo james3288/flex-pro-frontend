@@ -38,8 +38,31 @@ const MyDashboardSection = () => {
 
       <div className="container-fluid content-margin">
         <div className="row">
+          {/* REGISTERED USER */}
+          <div className="col-lg-3 col-xs-12">
+            <div className="dashboard-col">
+              <span>REGISTERED USER</span>
+              <h1>
+                150/<strong>USERS</strong>
+              </h1>
+              {flexProUsers.map((user) => (
+                <RegisteredUser
+                  key={user.id}
+                  pix={Pic2}
+                  registeredName={user.name}
+                  weights={user.weights}
+                  age={32}
+                />
+              ))}
+            </div>
+            <a href="" className="btn btn-danger">
+              View More
+            </a>
+          </div>
+          {/* END REGISTERED USER */}
+
           {/* CLIENTS ON WORKOUT */}
-          <div className="col-lg-4 col-xs-12">
+          <div className="col-lg-6 col-xs-12">
             <div className="dashboard-col">
               <span>CLIENTS ON WORKOUT</span>
               <h1>
@@ -53,6 +76,7 @@ const MyDashboardSection = () => {
                   key={user.id}
                   clientName={user.usersubscription.flexprouser.name}
                   // clientName={"KJ"}
+                  client_id={user.id}
                   timeIn={user.time_in}
                   timeOut={user.time_out}
                   status="true"
@@ -101,31 +125,8 @@ const MyDashboardSection = () => {
           </div>
           {/* END CLIENTS ON WORKOUT */}
 
-          {/* REGISTERED USER */}
-          <div className="col-lg-4 col-xs-12">
-            <div className="dashboard-col">
-              <span>REGISTERED USER</span>
-              <h1>
-                150/<strong>USERS</strong>
-              </h1>
-              {flexProUsers.map((user) => (
-                <RegisteredUser
-                  key={user.id}
-                  pix={Pic2}
-                  registeredName={user.name}
-                  weights={user.weights}
-                  age={32}
-                />
-              ))}
-            </div>
-            <a href="" className="btn btn-danger">
-              View More
-            </a>
-          </div>
-          {/* END REGISTERED USER */}
-
           {/* TRAINERS AVAILABLE */}
-          <div className="col-lg-4 col-xs-12">
+          <div className="col-lg-3 col-xs-12">
             <div className="dashboard-col">
               <span>TRAINERS AVAILABLE</span>
               <h1>
