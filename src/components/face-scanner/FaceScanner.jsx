@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import * as faceapi from "face-api.js";
 // import CountFileInsideFolder from "./CountFileInsideFolder";
 import axios from "axios";
+import instance from "../../others/axiosInstance";
 
 const FaceScanner = ({
   playNow,
@@ -26,7 +27,7 @@ const FaceScanner = ({
 
   React.useEffect(() => {
     // flexProUser
-    axios.get(`http://127.0.0.1:8000/api/user_images/`).then((res) => {
+    instance.get(`/api/user_images/`).then((res) => {
       const users = res.data;
 
       setFlexProUser(users);
@@ -100,8 +101,8 @@ const FaceScanner = ({
   const fetchImage = async (label) => {
     console.log(label);
     try {
-      const response = await axios.get(
-        `http://127.0.0.1:8000/media/images/${label}/${label}.png`,
+      const response = await instance.get(
+        `/media/images/${label}/${label}.png`,
         { responseType: "blob" }
       );
 
@@ -113,9 +114,7 @@ const FaceScanner = ({
 
   const fetchUserStatus = async (id) => {
     try {
-      const response = await axios.get(
-        `http://127.0.0.1:8000/api/user_status/${id}`
-      );
+      const response = await instance.get(`/api/user_status/${id}`);
 
       return response.data;
     } catch (error) {
@@ -126,8 +125,8 @@ const FaceScanner = ({
 
   const checkIfAlreadyIn = async (user_id) => {
     try {
-      const response = await axios.get(
-        `http://127.0.0.1:8000/api/user_time_record_get/${user_id}`
+      const response = await instance.get(
+        `/api/user_time_record_get/${user_id}`
       );
 
       return response.data;
@@ -138,8 +137,8 @@ const FaceScanner = ({
   };
 
   const handleSaveTimeRecords = async (timeRecordData) => {
-    axios
-      .post("http://127.0.0.1:8000/api/save_time_record/", timeRecordData)
+    instance
+      .post("/api/save_time_record/", timeRecordData)
       .then(function (response) {
         console.log(response.data);
         console.log("successfully saved..");
@@ -249,6 +248,8 @@ const FaceScanner = ({
 
               if (isAlreadyLogin.length > 0) {
                 setIsLogin = true;
+                setIsOnGoing("already-login");
+                return;
                 //to be continue here sa balay hehehe
               }
 

@@ -12,6 +12,7 @@ import ClientsOnline from "./clientsOnline/ClientsOnline";
 import RegisteredUser from "./registeredUser/RegisteredUser";
 import Trainers from "./trainers/Trainers";
 import axios from "axios";
+import instance from "../../others/axiosInstance";
 
 const MyDashboardSection = () => {
   const [flexProUsers, setFlexProUsers] = useState([]);
@@ -22,7 +23,7 @@ const MyDashboardSection = () => {
     // setFlexProUsers(data);
     // console.log(data);
 
-    axios.get(`http://127.0.0.1:8000/api/user_online/`).then((res) => {
+    instance.get(`/api/user_online/`).then((res) => {
       const users = res.data;
       setFlexProUsers(users);
     });

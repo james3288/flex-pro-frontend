@@ -1,9 +1,10 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import ReactTimeAgo from "react-time-ago";
 import instance from "../../../others/axiosInstance";
 import axios from "axios";
 import YearValidation from "../../../others/YearValidation";
+import formatTime from "../../../others/ReadableFormatTime";
 
 function ClientsOnline({
   user_online_id,
@@ -22,20 +23,20 @@ function ClientsOnline({
 }) {
   // initialize here
   // Convert milliseconds to readable format
-  const formatTime = (milliseconds, option) => {
-    const seconds = Math.floor((milliseconds / 1000) % 60);
-    const minutes = Math.floor((milliseconds / (1000 * 60)) % 60);
-    const hours = Math.floor((milliseconds / (1000 * 60 * 60)) % 24);
-    const days = Math.floor(milliseconds / (1000 * 60 * 60 * 24));
+  // const formatTime = (milliseconds, option) => {
+  //   const seconds = Math.floor((milliseconds / 1000) % 60);
+  //   const minutes = Math.floor((milliseconds / (1000 * 60)) % 60);
+  //   const hours = Math.floor((milliseconds / (1000 * 60 * 60)) % 24);
+  //   const days = Math.floor(milliseconds / (1000 * 60 * 60 * 24));
 
-    if (option === "days") {
-      return `${days} days`;
-    } else if (option === "hours") {
-      return `${hours} hours`;
-    } else if (option === "all") {
-      return `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
-    }
-  };
+  //   if (option === "days") {
+  //     return `${days} days`;
+  //   } else if (option === "hours") {
+  //     return `${hours} hours`;
+  //   } else if (option === "all") {
+  //     return `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
+  //   }
+  // };
 
   // Parse the timestamp
   const timeInObj = new Date(timeIn);
@@ -119,13 +120,13 @@ function ClientsOnline({
                   {yearValidation === 1990 ? "--:--" : timeOutString}
                 </strong>
               </p>
-              <Link
+              <NavLink
                 className="btn btn-warning logout"
                 onClick={() => handleLogout(timeIn)}
                 to={"/"}
               >
                 Logout
-              </Link>
+              </NavLink>
             </div>
 
             <p
@@ -146,7 +147,8 @@ function ClientsOnline({
             <hr />
             <p>Remaining days:</p>
             <p style={{ color: "orange" }}>
-              {formatTime(remainingDays, "days")}
+              {formatTime(remainingDays, "days")}{" "}
+              {formatTime(remainingDays, "hours")}
             </p>
           </div>
         </div>

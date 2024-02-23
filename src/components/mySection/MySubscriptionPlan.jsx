@@ -1,6 +1,19 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import instance from "../../others/axiosInstance";
+import ListOfSubscriptions from "./Subscriptions/ListOfSubscriptions";
 
 const MySubscriptionPlan = () => {
+  const [plans, setPlan] = useState([]);
+  const get_subscription = async () => {
+    const response = await instance.get(`/api/subscription/`);
+    // console.log(response.data);
+    setPlan(response.data);
+  };
+
+  useEffect(() => {
+    get_subscription();
+  }, []);
+
   return (
     <>
       {/* <!-- Pricing Section Begin --> */}
@@ -15,7 +28,7 @@ const MySubscriptionPlan = () => {
           </div>
         </div>
         <div className="row justify-content-center">
-          <div className="col-lg-4 col-md-8">
+          {/* <div className="col-lg-4 col-md-8">
             <div className="ps-item">
               <h3>Day Pass</h3>
               <div className="pi-price">
@@ -105,7 +118,11 @@ const MySubscriptionPlan = () => {
                 Enroll now
               </a>
             </div>
-          </div>
+          </div> */}
+
+          {plans.map((plan) => (
+            <ListOfSubscriptions plan={plan} key={plan.id} />
+          ))}
         </div>
       </div>
 

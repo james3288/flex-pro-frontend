@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import FaceScanner from "../face-scanner/FaceScanner";
 import Pic3 from "../../assets/img/team/team-3.jpg";
 import instance from "../../others/axiosInstance";
+import { NavLink } from "react-router-dom";
 
 const MyUserLoginSection = () => {
   const [play, setPlay] = useState(false);
@@ -117,7 +118,9 @@ const MyUserLoginSection = () => {
                     <h3>10 DAYS</h3>
                   </div>
                 </div>
-                <button className="btn btn-danger">Back to Dashboard</button>
+                <NavLink className="btn btn-danger" to={"/"}>
+                  Back to Dashboard
+                </NavLink>
               </>
             </div>
           ) : isOnGoing === "expired" ? (
@@ -135,6 +138,26 @@ const MyUserLoginSection = () => {
                     <h6>
                       you may contact to the administrator for more info...
                     </h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : isOnGoing === "already-login" ? (
+            <div className="col-lg-12 col-xs-12">
+              <div className="dashboard-col">
+                <span>
+                  <strong>LOGIN</strong> STATUS
+                </span>
+
+                <div className="scan-profile-wrapper">
+                  <div className="scan-profile-name">
+                    <h5>
+                      <strong style={{ color: "orange" }}>{userFound}</strong>{" "}
+                      has already login!
+                    </h5>
+                    <NavLink className="btn btn-danger" to={"/"}>
+                      Back to Dashboard
+                    </NavLink>
                   </div>
                 </div>
               </div>
