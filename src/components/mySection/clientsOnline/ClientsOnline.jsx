@@ -1,8 +1,11 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import ReactTimeAgo from "react-time-ago";
+import instance from "../../../others/axiosInstance";
+import axios from "axios";
 
 function ClientsOnline({
-  client_id,
+  user_online_id,
   clientName,
   timeIn,
   timeOut,
@@ -14,6 +17,7 @@ function ClientsOnline({
   rate,
   per,
   date_log,
+  setTriggerLogout,
 }) {
   // initialize here
   // Convert milliseconds to readable format
@@ -68,6 +72,25 @@ function ClientsOnline({
 
   const yearValidation = timeOutObj.getFullYear();
 
+  const handleLogout = (timeIn) => {
+    console.log(user_online_id);
+    const logout_date = new Date();
+
+    instance
+      .put(`/api/user_time_record_update/${user_online_id}`, {
+        time_in: timeIn,
+        time_out: logout_date,
+      })
+      .then((response) => {
+        console.log("Update successful:", response.data);
+        setTriggerLogout((prev) => !prev);
+        // Optionally, you can update your state or perform additional actions
+      })
+      .catch((error) => {
+        console.error("Error updating data:", error);
+      });
+  };
+
   return (
     <div className="clients-online">
       <div className="row row2">
@@ -94,7 +117,13 @@ function ClientsOnline({
                   {yearValidation === 1990 ? "--:--" : timeOutString}
                 </strong>
               </p>
-              <button className="btn btn-warning">Logout</button>
+              <Link
+                className="btn btn-warning logout"
+                onClick={() => handleLogout(timeIn)}
+                to={"/"}
+              >
+                Logout
+              </Link>
             </div>
 
             <p

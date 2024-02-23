@@ -15,7 +15,7 @@ import axios from "axios";
 
 const MyDashboardSection = () => {
   const [flexProUsers, setFlexProUsers] = useState([]);
-
+  const [triggerLogout, setTriggerLogout] = useState(false);
   let getUsers = async () => {
     // let response = await fetch("http://127.0.0.1:8000/api/users/");
     // let data = await response.json();
@@ -30,7 +30,7 @@ const MyDashboardSection = () => {
 
   useEffect(() => {
     getUsers();
-  }, []);
+  }, [triggerLogout]);
 
   return (
     <>
@@ -76,7 +76,7 @@ const MyDashboardSection = () => {
                   key={user.id}
                   clientName={user.usersubscription.flexprouser.name}
                   // clientName={"KJ"}
-                  client_id={user.id}
+                  user_online_id={user.id}
                   timeIn={user.time_in}
                   timeOut={user.time_out}
                   status="true"
@@ -92,6 +92,7 @@ const MyDashboardSection = () => {
                   rate={user.usersubscription.subscription.rate}
                   per={user.usersubscription.subscription.per.per}
                   date_log={user.usersubscription.date_subscribed}
+                  setTriggerLogout={setTriggerLogout}
                 />
               ))}
               {/* <ClientsOnline
