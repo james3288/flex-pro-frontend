@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import FaceScanner from "../face-scanner/FaceScanner";
 import Pic3 from "../../assets/img/team/team-3.jpg";
+import instance from "../../others/axiosInstance";
 
 const MyUserLoginSection = () => {
   const [play, setPlay] = useState(false);
@@ -10,6 +11,7 @@ const MyUserLoginSection = () => {
   const [sample, setSample] = useState(null);
   const [userFound, setUserFound] = useState();
   const [isOnGoing, setIsOnGoing] = useState();
+  const [isLogin, setIsLogin] = useState(false);
 
   const handlePlayClick = () => {
     setPlay(() => !play);
@@ -47,6 +49,7 @@ const MyUserLoginSection = () => {
                       setUserFound={setUserFound}
                       setIsOnGoing={setIsOnGoing}
                       isOnGoing={isOnGoing}
+                      setIsLogin={setIsLogin}
                     />
                   )}
                   {/* <svg

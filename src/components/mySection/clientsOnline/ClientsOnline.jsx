@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import ReactTimeAgo from "react-time-ago";
 import instance from "../../../others/axiosInstance";
 import axios from "axios";
+import YearValidation from "../../../others/YearValidation";
 
 function ClientsOnline({
   user_online_id,
@@ -70,8 +71,8 @@ function ClientsOnline({
     minute: "2-digit",
   });
 
-  const yearValidation = timeOutObj.getFullYear();
-
+  // const yearValidation = timeOutObj.getFullYear();
+  const yearValidation = YearValidation(timeOutObj);
   const handleLogout = (timeIn) => {
     console.log(user_online_id);
     const logout_date = new Date();
@@ -91,10 +92,11 @@ function ClientsOnline({
       });
   };
 
-  return (
+  return yearValidation == "1990" ? (
     <div className="clients-online">
       <div className="row row2">
         <div className="col-3">
+          <div className="small-circle"></div>
           {status === "true" ? (
             <img src={pix} alt="" className="circle" />
           ) : (
@@ -150,6 +152,8 @@ function ClientsOnline({
         </div>
       </div>
     </div>
+  ) : (
+    ""
   );
 }
 

@@ -12,6 +12,7 @@ const FaceScanner = ({
   setUserFound,
   setIsOnGoing,
   isOnGoing,
+  setIsLogin,
 }) => {
   const [modelsLoaded, setModelsLoaded] = React.useState(false);
   const [captureVideo, setCaptureVideo] = React.useState(false);
@@ -114,6 +115,19 @@ const FaceScanner = ({
     try {
       const response = await axios.get(
         `http://127.0.0.1:8000/api/user_status/${id}`
+      );
+
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      return null; // or handle the error appropriately based on your application's needs
+    }
+  };
+
+  const checkIfAlreadyIn = async (user_id) => {
+    try {
+      const response = await axios.get(
+        `http://127.0.0.1:8000/api/user_time_record_get/${user_id}`
       );
 
       return response.data;
@@ -227,6 +241,16 @@ const FaceScanner = ({
               const get_userStatus = await fetchUserStatus(
                 label.flex_pro_user.id
               );
+
+              // check if user have already login
+              const isAlreadyLogin = await checkIfAlreadyIn(
+                label.flex_pro_user.id
+              );
+
+              if (isAlreadyLogin.length > 0) {
+                setIsLogin = true;
+                //to be continue here sa balay hehehe
+              }
 
               let timeRecordData = {};
               get_userStatus.map((userStatus) => {
