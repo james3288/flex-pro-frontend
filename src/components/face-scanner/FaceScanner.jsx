@@ -140,7 +140,7 @@ const FaceScanner = ({
     instance
       .post("/api/save_time_record/", timeRecordData)
       .then(function (response) {
-        console.log(response.data);
+
         console.log("successfully saved..");
       })
       .catch(function (error) {

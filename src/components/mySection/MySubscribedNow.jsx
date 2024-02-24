@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import ListOfSubscriptions from "./Subscriptions/ListOfSubscriptions";
 import { NavLink, useLocation } from "react-router-dom";
 import instance from "../../others/axiosInstance";
@@ -9,6 +9,12 @@ const MySubscribedNow = () => {
   const [searchField, setSearchField] = useState("");
   const [flexProUsers, setFlexProUsers] = useState([]);
   const [searchOutput, setSearchOutput] = useState([]);
+  const [subscriptionData, setSubscriptionData] = useState({
+    flexpro_id: 0,
+    subscription_id: 0,
+    date_subscribed: new Date(),
+  });
+  const userRef = useRef(null);
 
   // Access the query parameters from the location object
   const queryParams = new URLSearchParams(location.search);
@@ -23,15 +29,33 @@ const MySubscribedNow = () => {
 
   //   get users here
   let getUsers = async () => {
-    // let response = await fetch("http://127.0.0.1:8000/api/users/");
-    // let data = await response.json();
-    // setFlexProUsers(data);
-    // console.log(data);
-
     await instance.get(`/api/users/`).then((res) => {
       const users = res.data;
       setFlexProUsers(users);
     });
+  };
+
+  const handleSelectUser = (flexpro_id, name) => {
+    userRef.current.innerText = name;
+    setSearchField("");
+
+    setSubscriptionData((prev) => ({
+      ...prev,
+      flexpro_id: flexpro_id,
+      subscription_id: parseInt(id),
+    }));
+  };
+
+  const handleSaveSubscription = async () => {
+    instance
+      .post("/api/save_subscriptions/", subscriptionData)
+      .then(function (response) {
+        console.log(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+        return;
+      });
   };
 
   //   load all users here
@@ -68,7 +92,8 @@ const MySubscribedNow = () => {
               <div className="col-lg-12">
                 <div className="section-title">
                   <span>SELECTED USER</span>
-                  <h2>KING JAMES</h2>
+                  <h2 ref={userRef}>KING JAMES</h2>
+                  {/* <h3>You are successfully registered..</h3> */}
                 </div>
               </div>
             </div>
@@ -83,9 +108,15 @@ const MySubscribedNow = () => {
                   {searchField != "" ? (
                     <ul className="list-group">
                       {searchOutput.map((user) => (
-                        <li className="list-group-item d-flex justify-content-between align-items-center">
+                        <li
+                          className="list-group-item d-flex justify-content-between align-items-center"
+                          key={user.id}
+                        >
                           {user.name}
-                          <span className="badge badge-primary badge-pill dreg">
+                          <span
+                            className="badge badge-primary badge-pill dreg"
+                            onClick={() => handleSelectUser(user.id, user.name)}
+                          >
                             Select
                           </span>
                         </li>
@@ -101,7 +132,10 @@ const MySubscribedNow = () => {
               <ListOfSubscriptions plan={planNow} key={planNow.id} />
             </div>
             <div className="row justify-content-center">
-              <NavLink className="primary-btn pricing-btn save-subscriptions">
+              <NavLink
+                className="primary-btn pricing-btn save-subscriptions"
+                onClick={handleSaveSubscription}
+              >
                 Save Subscription
               </NavLink>
             </div>
