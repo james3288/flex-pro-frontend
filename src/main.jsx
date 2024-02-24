@@ -7,6 +7,8 @@ import UserRegistrationPage from "./pages/UserRegistrationPage.jsx";
 import UserImageRegistrationPage from "./pages/UserImageRegistrationPage.jsx";
 import UserLoginPage from "./pages/UserLoginPage.jsx";
 import UserSubscription from "./pages/UserSubscription.jsx";
+import SubscribedNow from "./pages/SubscribedNow.jsx";
+
 import TimeAgo from "javascript-time-ago";
 
 import en from "javascript-time-ago/locale/en.json";
@@ -36,6 +38,10 @@ const router = createBrowserRouter([
   {
     path: "/user-subscription",
     element: <UserSubscription />,
+  },
+  {
+    path: "/subscribed-now",
+    element: <SubscribedNow />,
   },
 ]);
 

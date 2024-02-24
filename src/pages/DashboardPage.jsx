@@ -6,6 +6,7 @@ import MyUserLoginSection from "../components/mySection/MyUserLoginSection";
 import MySubscriptionPlan from "../components/mySection/MySubscriptionPlan";
 import { useState } from "react";
 import { Link as ScrollLink, animateScroll as scroll } from "react-scroll";
+import MySubscribedNow from "../components/mySection/MySubscribedNow";
 
 const DashboardPage = ({
   dashboardBg,
@@ -103,11 +104,17 @@ const DashboardPage = ({
       />
     );
   }
+
   if (page === "userLogin") {
     content = <MyUserLoginSection />;
   }
+
   if (page === "subcriptionPlan") {
     content = <MySubscriptionPlan />;
+  }
+
+  if (page === "subscribeNow") {
+    content = <MySubscribedNow />;
   }
 
   return (

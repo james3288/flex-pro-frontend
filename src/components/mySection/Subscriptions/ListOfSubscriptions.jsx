@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { NavLink } from "react-router-dom";
 
-const ListOfSubscriptions = ({ plan }) => {
+const ListOfSubscriptions = ({ plan, option }) => {
   return (
     <>
       <div className="col-lg-4 col-md-8">
         <div className="ps-item">
           <h3>{plan.gym_rate_desc}</h3>
           <div className="pi-price">
-            <h2>{plan.rate}</h2>
+            <h2>{plan.rate.toLocaleString()}</h2>
             <span>GYM Rates</span>
           </div>
           <ul>
@@ -15,9 +16,14 @@ const ListOfSubscriptions = ({ plan }) => {
               <li key={p.id}>{p.packages_details}</li>
             ))}
           </ul>
-          <a href="#" className="primary-btn pricing-btn">
-            Enroll now
-          </a>
+          {option && (
+            <NavLink
+              className="primary-btn pricing-btn"
+              to={`/subscribed-now/?q=${plan.id}`}
+            >
+              Subscribed Now
+            </NavLink>
+          )}
         </div>
       </div>
     </>
