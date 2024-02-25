@@ -17,16 +17,77 @@ import instance from "../../others/axiosInstance";
 const MyDashboardSection = () => {
   const [flexProUsers, setFlexProUsers] = useState([]);
   const [triggerLogout, setTriggerLogout] = useState(false);
-  let getUsers = async () => {
-    // let response = await fetch("http://127.0.0.1:8000/api/users/");
-    // let data = await response.json();
-    // setFlexProUsers(data);
-    // console.log(data);
 
-    instance.get(`/api/user_online/`).then((res) => {
-      const users = res.data;
-      setFlexProUsers(users);
-    });
+  const getImagePath = async (id) => {
+    try {
+      const response = await instance.get(`/api/get_image_path/${id}`);
+      const imagepath = response.data;
+      return imagepath;
+    } catch (error) {
+      console.error("Error fetching image path:", error);
+      return null;
+    }
+  };
+
+  const loadImageData = async (path) => {
+    try {
+      const response = await instance.get(path, { responseType: "blob" });
+      const reader = new FileReader();
+      return new Promise((resolve, reject) => {
+        reader.onloadend = () => {
+          resolve(reader.result);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(response.data);
+      });
+    } catch (error) {
+      console.error("Error fetching image:", error);
+      return null;
+    }
+  };
+
+  // let getUsers = async () => {
+  //   instance.get(`/api/user_online/`).then((res) => {
+  //     const users = res.data;
+
+  //     const newUser = users.map((user) => {
+  //       // let imgpath = getImagePath(user.usersubscription.flexprouser.id);
+  //       let imgpath = getImagePath(29);
+  //       console.log(imgpath);
+  //       return { ...user, image: "/media/image/default.jpg" };
+  //     });
+
+  //     console.log(newUser);
+  //     setFlexProUsers(newUser);
+  //   });
+  // };
+
+  let getUsers = async () => {
+    try {
+      const response = await instance.get(`/api/user_online/`);
+      const users = response.data;
+
+      const newUser = await Promise.all(
+        users.map(async (user) => {
+          // Call getImagePath asynchronously for each user
+          const imgpath = await getImagePath(
+            user.usersubscription.flexprouser.id
+          );
+
+          const imageDataUrl = await loadImageData(imgpath.image1);
+
+          return {
+            ...user,
+            image: imageDataUrl || "/media/image/default.jpg",
+          }; // If imgpath is null, use default image
+        })
+      );
+
+      // console.log(newUser);
+      setFlexProUsers(newUser);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
   };
 
   useEffect(() => {
@@ -82,6 +143,7 @@ const MyDashboardSection = () => {
                   timeOut={user.time_out}
                   status="true"
                   pix={Pic3}
+                  blobPix={user.image}
                   timeAgo={user.time_in}
                   weights={
                     user.usersubscription.flexprouser.weights

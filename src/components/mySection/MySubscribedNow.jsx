@@ -41,6 +41,7 @@ const MySubscribedNow = () => {
   };
 
   const handleSelectUser = (flexpro_id, name, path) => {
+    console.log(path);
     getImage(path);
     userRef.current.innerText = name;
     setSearchField("");

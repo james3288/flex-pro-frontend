@@ -20,6 +20,7 @@ function ClientsOnline({
   per,
   date_log,
   setTriggerLogout,
+  blobPix,
 }) {
   // initialize here
   // Convert milliseconds to readable format
@@ -99,10 +100,10 @@ function ClientsOnline({
         <div className="col-3">
           <div className="small-circle"></div>
           {status === "true" ? (
-            <img src={pix} alt="" className="circle" />
+            <img src={blobPix} alt="" className="circle" />
           ) : (
             <img
-              src={pix}
+              src={blobPix}
               alt=""
               className="circle"
               style={{ border: "2px solid red" }}

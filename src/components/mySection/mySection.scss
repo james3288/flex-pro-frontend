@@ -436,13 +436,13 @@
     align-items: center;
     justify-content: center;
     flex-direction: row;
-    gap: 5px;
+    gap: 10px;
     img {
       border-radius: 50%;
       width: 40px;
       height: 40px;
       object-fit: cover;
-      border: 2px solid red;
+      border: 2px solid black;
     }
   }
 
