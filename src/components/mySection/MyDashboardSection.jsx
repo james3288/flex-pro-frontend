@@ -16,7 +16,10 @@ import instance from "../../others/axiosInstance";
 
 const MyDashboardSection = () => {
   const [flexProUsers, setFlexProUsers] = useState([]);
+  const [registeredUsers, setRegisteredUsers] = useState([]);
   const [triggerLogout, setTriggerLogout] = useState(false);
+  const [counter, setCounter] = useState(0);
+  const [noOnlineUser, setNoOnlineUser] = useState(0);
 
   const getImagePath = async (id) => {
     try {
@@ -46,23 +49,7 @@ const MyDashboardSection = () => {
     }
   };
 
-  // let getUsers = async () => {
-  //   instance.get(`/api/user_online/`).then((res) => {
-  //     const users = res.data;
-
-  //     const newUser = users.map((user) => {
-  //       // let imgpath = getImagePath(user.usersubscription.flexprouser.id);
-  //       let imgpath = getImagePath(29);
-  //       console.log(imgpath);
-  //       return { ...user, image: "/media/image/default.jpg" };
-  //     });
-
-  //     console.log(newUser);
-  //     setFlexProUsers(newUser);
-  //   });
-  // };
-
-  let getUsers = async () => {
+  let getUsersOnline = async () => {
     try {
       const response = await instance.get(`/api/user_online/`);
       const users = response.data;
@@ -90,9 +77,52 @@ const MyDashboardSection = () => {
     }
   };
 
+  let getRegisteredUsers = async () => {
+    try {
+      const response = await instance.get(`/api/users/`);
+      const users = response.data;
+
+      const newUser = await Promise.all(
+        users.map(async (user) => {
+          // Call getImagePath asynchronously for each user
+
+          const imageDataUrl = await loadImageData(user.image1);
+
+          return {
+            ...user,
+            image: imageDataUrl || "/media/image/default.jpg",
+          }; // If imgpath is null, use default image
+        })
+      );
+
+      // console.log(newUser);
+      setRegisteredUsers(newUser);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
+  let getNoOnlineUser = async () => {
+    try {
+      const response = await instance.get(`/api/no_user_online/`);
+      const users = response.data;
+      setNoOnlineUser(users.length);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
   useEffect(() => {
-    getUsers();
+    getUsersOnline();
   }, [triggerLogout]);
+
+  useEffect(() => {
+    getNoOnlineUser();
+  }, []);
+
+  useEffect(() => {
+    getRegisteredUsers();
+  }, []);
 
   return (
     <>
@@ -107,13 +137,13 @@ const MyDashboardSection = () => {
               <h1>
                 150/<strong>USERS</strong>
               </h1>
-              {flexProUsers.map((user) => (
-                <RegisteredUser
+              {registeredUsers.map((user) => (
+                <Trainers
                   key={user.id}
-                  pix={Pic2}
-                  registeredName={user.name}
-                  weights={user.weights}
-                  age={32}
+                  pix={Pic3}
+                  blobPix={user.image}
+                  registeredName={user.flex_pro_user.name}
+                  weights={user.flex_pro_user.weights}
                 />
               ))}
             </div>
@@ -128,7 +158,7 @@ const MyDashboardSection = () => {
             <div className="dashboard-col">
               <span>CLIENTS ON WORKOUT</span>
               <h1>
-                3/<strong>60</strong> USERS
+                <strong> {noOnlineUser}</strong> USERS
               </h1>
 
               {flexProUsers.map((user) => (
@@ -156,6 +186,7 @@ const MyDashboardSection = () => {
                   per={user.usersubscription.subscription.per.per}
                   date_log={user.usersubscription.date_subscribed}
                   setTriggerLogout={setTriggerLogout}
+                  setNoOnlineUser={setNoOnlineUser}
                 />
               ))}
               {/* <ClientsOnline

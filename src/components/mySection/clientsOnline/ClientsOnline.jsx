@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import ReactTimeAgo from "react-time-ago";
 import instance from "../../../others/axiosInstance";
@@ -21,6 +21,7 @@ function ClientsOnline({
   date_log,
   setTriggerLogout,
   blobPix,
+  setNoOnlineUser,
 }) {
   // initialize here
   // Convert milliseconds to readable format
@@ -75,6 +76,7 @@ function ClientsOnline({
 
   // const yearValidation = timeOutObj.getFullYear();
   const yearValidation = YearValidation(timeOutObj);
+
   const handleLogout = (timeIn) => {
     console.log(user_online_id);
     const logout_date = new Date();
@@ -87,14 +89,15 @@ function ClientsOnline({
       .then((response) => {
         console.log("Update successful:", response.data);
         setTriggerLogout((prev) => !prev);
+        setNoOnlineUser((prev) => prev - 1);
+
         // Optionally, you can update your state or perform additional actions
       })
       .catch((error) => {
         console.error("Error updating data:", error);
       });
   };
-
-  return yearValidation == "1990" ? (
+  const clients = (
     <div className="clients-online">
       <div className="row row2">
         <div className="col-3">
@@ -155,9 +158,75 @@ function ClientsOnline({
         </div>
       </div>
     </div>
-  ) : (
-    ""
   );
+
+  if (yearValidation == "1990") {
+    return clients;
+  }
+  // return yearValidation == "1990" ? (
+  //   <div className="clients-online">
+  //     <div className="row row2">
+  //       <div className="col-3">
+  //         <div className="small-circle"></div>
+  //         {status === "true" ? (
+  //           <img src={blobPix} alt="" className="circle" />
+  //         ) : (
+  //           <img
+  //             src={blobPix}
+  //             alt=""
+  //             className="circle"
+  //             style={{ border: "2px solid red" }}
+  //           />
+  //         )}
+  //       </div>
+  //       <div className="col-7">
+  //         <div className="clients-flex">
+  //           <h5>{clientName}</h5>
+  //           <p>{weights} lbs</p>
+  //           <div className="timein_timeout">
+  //             <p>
+  //               IN: <strong>{timeInString}</strong>- OUT:
+  //               <strong>
+  //                 {yearValidation === 1990 ? "--:--" : timeOutString}
+  //               </strong>
+  //             </p>
+  //             <NavLink
+  //               className="btn btn-warning logout"
+  //               onClick={() => handleLogout(timeIn)}
+  //               to={"/"}
+  //             >
+  //               Logout
+  //             </NavLink>
+  //           </div>
+
+  //           <p
+  //             style={{
+  //               fontSize: "20px",
+  //               fontWeight: "bold",
+  //               color: "gold",
+  //               lineHeight: "20px",
+  //             }}
+  //           >
+  //             {gym_rate_desc} - {rate} / {per}
+  //           </p>
+
+  //           <p>
+  //             <ReactTimeAgo date={timeAgo} locale="en-US" timeStyle="twitter" />{" "}
+  //             ago
+  //           </p>
+  //           <hr />
+  //           <p>Remaining days:</p>
+  //           <p style={{ color: "orange" }}>
+  //             {formatTime(remainingDays, "days")}{" "}
+  //             {formatTime(remainingDays, "hours")}
+  //           </p>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   </div>
+  // ) : (
+  //   ""
+  // );
 }
 
 export default ClientsOnline;

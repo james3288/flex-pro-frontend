@@ -67,6 +67,8 @@ const MySubscribedNow = () => {
     }
   };
 
+  // const checkIfAlreadySubscribed = () => {};
+
   const handleSaveSubscription = async () => {
     instance
       .post("/api/save_subscriptions/", subscriptionData)
