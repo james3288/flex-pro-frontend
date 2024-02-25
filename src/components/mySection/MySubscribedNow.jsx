@@ -14,7 +14,11 @@ const MySubscribedNow = () => {
     subscription_id: 0,
     date_subscribed: new Date(),
   });
+  const [registered, setRegistered] = useState(false);
+  const [myImage, setMyImage] = useState(null);
+
   const userRef = useRef(null);
+  const imageRef = useRef(null);
 
   // Access the query parameters from the location object
   const queryParams = new URLSearchParams(location.search);
@@ -31,11 +35,13 @@ const MySubscribedNow = () => {
   let getUsers = async () => {
     await instance.get(`/api/users/`).then((res) => {
       const users = res.data;
+
       setFlexProUsers(users);
     });
   };
 
-  const handleSelectUser = (flexpro_id, name) => {
+  const handleSelectUser = (flexpro_id, name, path) => {
+    getImage(path);
     userRef.current.innerText = name;
     setSearchField("");
 
@@ -46,11 +52,26 @@ const MySubscribedNow = () => {
     }));
   };
 
+  // path = "/media/images/26/26.png"
+  const getImage = async (path) => {
+    try {
+      const response = await instance.get(path, { responseType: "blob" });
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setMyImage(reader.result);
+      };
+      reader.readAsDataURL(response.data);
+    } catch (error) {
+      console.error("Error fetching image:", error);
+    }
+  };
+
   const handleSaveSubscription = async () => {
     instance
       .post("/api/save_subscriptions/", subscriptionData)
       .then(function (response) {
         console.log(response.data);
+        setRegistered(true);
       })
       .catch(function (error) {
         console.log(error);
@@ -58,6 +79,7 @@ const MySubscribedNow = () => {
       });
   };
 
+  // ### USE EFFECT FUNCTION HERE ####
   //   load all users here
   useEffect(() => {
     console.log("load user here");
@@ -76,10 +98,21 @@ const MySubscribedNow = () => {
 
   useEffect(() => {
     const filteredUsers = flexProUsers.filter((user) =>
-      user.name.toLowerCase().includes(searchField.toLowerCase())
+      user.flex_pro_user.name.toLowerCase().includes(searchField.toLowerCase())
     );
+
     setSearchOutput(filteredUsers);
   }, [searchField]);
+
+  useEffect(() => {
+    console.log(registered);
+  }, [registered]);
+
+  useEffect(() => {
+    if (myImage != null && myImage.current) {
+      imageRef.current.src = myImage;
+    }
+  }, [myImage]);
 
   return (
     <>
@@ -92,8 +125,19 @@ const MySubscribedNow = () => {
               <div className="col-lg-12">
                 <div className="section-title">
                   <span>SELECTED USER</span>
-                  <h2 ref={userRef}>KING JAMES</h2>
-                  {/* <h3>You are successfully registered..</h3> */}
+                  <div className="selected-user">
+                    {myImage != null && (
+                      <img ref={imageRef} src={myImage} alt="" />
+                    )}
+
+                    <h2 ref={userRef}></h2>
+                  </div>
+
+                  {registered && (
+                    <h3 style={{ color: "red" }}>
+                      You are successfully registered..
+                    </h3>
+                  )}
                 </div>
               </div>
             </div>
@@ -110,12 +154,18 @@ const MySubscribedNow = () => {
                       {searchOutput.map((user) => (
                         <li
                           className="list-group-item d-flex justify-content-between align-items-center"
-                          key={user.id}
+                          key={user.flex_pro_user.id}
                         >
-                          {user.name}
+                          {user.flex_pro_user.name}
                           <span
                             className="badge badge-primary badge-pill dreg"
-                            onClick={() => handleSelectUser(user.id, user.name)}
+                            onClick={() =>
+                              handleSelectUser(
+                                user.flex_pro_user.id,
+                                user.flex_pro_user.name,
+                                user.image1
+                              )
+                            }
                           >
                             Select
                           </span>
@@ -132,12 +182,21 @@ const MySubscribedNow = () => {
               <ListOfSubscriptions plan={planNow} key={planNow.id} />
             </div>
             <div className="row justify-content-center">
-              <NavLink
-                className="primary-btn pricing-btn save-subscriptions"
-                onClick={handleSaveSubscription}
-              >
-                Save Subscription
-              </NavLink>
+              {registered === true ? (
+                <NavLink
+                  className="primary-btn pricing-btn save-subscriptions-successfully"
+                  to={"/"}
+                >
+                  Back to Dashboard
+                </NavLink>
+              ) : (
+                <NavLink
+                  className="primary-btn pricing-btn save-subscriptions"
+                  onClick={handleSaveSubscription}
+                >
+                  Save Subscription
+                </NavLink>
+              )}
             </div>
           </>
         )}

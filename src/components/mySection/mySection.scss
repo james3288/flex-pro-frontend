@@ -110,7 +110,7 @@
 }
 
 .userRegistration {
-  background-image: url("./../../assets/img/hero/hero-2.jpg");
+  background-image: url("./../../assets/img/hero/hero-4.jpg");
   height: 100vh;
   box-sizing: border-box;
   font-family: "Muli", Arial;
@@ -151,6 +151,7 @@
 
       p {
         font-size: 15px;
+        color: white;
       }
 
       .checkbox-wrapper {
@@ -174,7 +175,7 @@
 }
 
 .userImageRegistration {
-  background-image: url("./../../assets/img/hero/hero-4.jpg");
+  background-image: url("./../../assets/img/hero/hero-6.jpeg");
   height: 100vh;
   box-sizing: border-box;
   font-family: "Muli", Arial;
@@ -430,6 +431,21 @@
   font-family: "Muli", Arial;
   padding-top: 11em;
 
+  .selected-user {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    gap: 5px;
+    img {
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      border: 2px solid red;
+    }
+  }
+
   .search-users {
     display: flex;
     justify-content: center;
@@ -476,6 +492,15 @@
   }
 
   .save-subscriptions:hover {
+    color: white;
+    background-color: orange;
+  }
+
+  .save-subscriptions-successfully {
+    text-decoration: none;
+    background-color: green;
+  }
+  .save-subscriptions-successfully:hover {
     color: white;
     background-color: orange;
   }
