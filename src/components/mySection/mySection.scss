@@ -27,7 +27,7 @@
     }
 
     h1 {
-      font-size: 50px;
+      font-size: 30px;
       color: white;
       //   border: 1px solid #dc151c;
       padding: 10px;
@@ -79,20 +79,22 @@
           padding: 5px;
           float: left;
           text-transform: capitalize;
+          font-size: 18px;
         }
 
         .clients-flex {
           display: flex;
           flex-direction: column;
           p {
-            line-height: 10px;
+            line-height: 6px;
             margin-left: -25px;
-            font-size: 18px;
+            font-size: 14px;
 
             strong {
               color: orange;
             }
           }
+
           .timein_timeout {
             position: relative;
             .logout {

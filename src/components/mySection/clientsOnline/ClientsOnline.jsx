@@ -47,8 +47,9 @@ function ClientsOnline({
   // parse the datelog
   const dateLogObj = new Date(date_log); // kanus.a na days nag subscribe
 
-  const dateLogObj1 = new Date(date_log);
+  const dateLogObj1 = new Date(date_log); //day started
 
+  // set kanus.a ma expiration date
   if (per === "month") {
     dateLogObj1.setMonth(dateLogObj1.getMonth() + 1); // Add 1 month
   } else if (per === "day") {
@@ -116,7 +117,7 @@ function ClientsOnline({
         <div className="col-7">
           <div className="clients-flex">
             <h5>{clientName}</h5>
-            <p>{weights} lbs</p>
+            <p>ID: {user_online_id}</p>
             <div className="timein_timeout">
               <p>
                 IN: <strong>{timeInString}</strong>- OUT:
@@ -148,9 +149,9 @@ function ClientsOnline({
               <ReactTimeAgo date={timeAgo} locale="en-US" timeStyle="twitter" />{" "}
               ago
             </p>
-            <hr />
-            <p>Remaining days:</p>
-            <p style={{ color: "orange" }}>
+
+            <h5>Remaining days:</h5>
+            <p style={{ color: "orange", fontSize: "20px" }}>
               {formatTime(remainingDays, "days")}{" "}
               {formatTime(remainingDays, "hours")}
             </p>

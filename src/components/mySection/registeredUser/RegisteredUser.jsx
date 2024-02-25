@@ -1,12 +1,12 @@
 import React from "react";
 
-const RegisteredUser = ({ pix, registeredName, weights, age }) => {
+const RegisteredUser = ({ registeredName, pix, weights, blobPix, user_id }) => {
   return (
     <div className="clients-online">
       <div className="row row2">
         <div className="col-3">
           <img
-            src={pix}
+            src={blobPix}
             alt=""
             className="circle"
             style={{ border: "2px solid red" }}
@@ -15,8 +15,7 @@ const RegisteredUser = ({ pix, registeredName, weights, age }) => {
         <div className="col-7">
           <div className="clients-flex">
             <h5>{registeredName}</h5>
-            <p>{age} years old</p>
-            <p>{weights} lbs</p>
+            <p>ID: {user_id}</p>
           </div>
         </div>
       </div>

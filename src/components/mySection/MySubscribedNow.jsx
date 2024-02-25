@@ -15,6 +15,7 @@ const MySubscribedNow = () => {
     date_subscribed: new Date(),
   });
   const [registered, setRegistered] = useState(false);
+  const [alreadySubscribed, setAlreadySubscribed] = useState(false);
   const [myImage, setMyImage] = useState(null);
 
   const userRef = useRef(null);
@@ -41,10 +42,10 @@ const MySubscribedNow = () => {
   };
 
   const handleSelectUser = (flexpro_id, name, path) => {
-    console.log(path);
     getImage(path);
     userRef.current.innerText = name;
     setSearchField("");
+    setAlreadySubscribed(false);
 
     setSubscriptionData((prev) => ({
       ...prev,
@@ -67,19 +68,34 @@ const MySubscribedNow = () => {
     }
   };
 
-  // const checkIfAlreadySubscribed = () => {};
+  const checkIfAlreadySubscribed = async (id) => {
+    try {
+      const response = await instance.get(`/api/user_status/${id}`);
+      const users = response.data;
+
+      return users;
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
 
   const handleSaveSubscription = async () => {
-    instance
-      .post("/api/save_subscriptions/", subscriptionData)
-      .then(function (response) {
-        console.log(response.data);
-        setRegistered(true);
-      })
-      .catch(function (error) {
-        console.log(error);
-        return;
-      });
+    let cc = await checkIfAlreadySubscribed(subscriptionData.flexpro_id);
+
+    if (cc.length > 0) {
+      setAlreadySubscribed(true);
+    } else {
+      instance
+        .post("/api/save_subscriptions/", subscriptionData)
+        .then(function (response) {
+          console.log(response.data);
+          setRegistered(true);
+        })
+        .catch(function (error) {
+          console.log(error);
+          return;
+        });
+    }
   };
 
   // ### USE EFFECT FUNCTION HERE ####
@@ -109,7 +125,7 @@ const MySubscribedNow = () => {
 
   useEffect(() => {
     console.log(registered);
-  }, [registered]);
+  }, [registered, alreadySubscribed]);
 
   useEffect(() => {
     if (myImage != null && myImage.current) {
@@ -135,6 +151,11 @@ const MySubscribedNow = () => {
 
                     <h2 ref={userRef}></h2>
                   </div>
+                  {alreadySubscribed && (
+                    <h3 style={{ color: "yellow" }}>
+                      You're subscription has not been expired yet..
+                    </h3>
+                  )}
 
                   {registered && (
                     <h3 style={{ color: "red" }}>

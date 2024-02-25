@@ -13,10 +13,12 @@ import RegisteredUser from "./registeredUser/RegisteredUser";
 import Trainers from "./trainers/Trainers";
 import axios from "axios";
 import instance from "../../others/axiosInstance";
+import ForRenewal from "./forRenewal/ForRenewal";
 
 const MyDashboardSection = () => {
   const [flexProUsers, setFlexProUsers] = useState([]);
   const [registeredUsers, setRegisteredUsers] = useState([]);
+  const [forRenewalUsers, setForRenewalUsers] = useState([]);
   const [triggerLogout, setTriggerLogout] = useState(false);
   const [counter, setCounter] = useState(0);
   const [noOnlineUser, setNoOnlineUser] = useState(0);
@@ -49,7 +51,7 @@ const MyDashboardSection = () => {
     }
   };
 
-  let getUsersOnline = async () => {
+  const getUsersOnline = async () => {
     try {
       const response = await instance.get(`/api/user_online/`);
       const users = response.data;
@@ -77,7 +79,7 @@ const MyDashboardSection = () => {
     }
   };
 
-  let getRegisteredUsers = async () => {
+  const getRegisteredUsers = async () => {
     try {
       const response = await instance.get(`/api/users/`);
       const users = response.data;
@@ -102,7 +104,35 @@ const MyDashboardSection = () => {
     }
   };
 
-  let getNoOnlineUser = async () => {
+  const getForRenewalUsers = async () => {
+    try {
+      const response = await instance.get(`/api/user_all_status/`);
+      const users = response.data;
+
+      const newUser = await Promise.all(
+        users.map(async (user) => {
+          // Call getImagePath asynchronously for each user
+          const imgpath = await getImagePath(
+            user.usersubscription.flexprouser.id
+          );
+
+          const imageDataUrl = await loadImageData(imgpath.image1);
+
+          return {
+            ...user,
+            image: imageDataUrl || "/media/image/default.jpg",
+          }; // If imgpath is null, use default image
+        })
+      );
+
+      console.log("forRenewal", newUser);
+      setForRenewalUsers(newUser);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
+  const getNoOnlineUser = async () => {
     try {
       const response = await instance.get(`/api/no_user_online/`);
       const users = response.data;
@@ -112,6 +142,7 @@ const MyDashboardSection = () => {
     }
   };
 
+  // for online users
   useEffect(() => {
     getUsersOnline();
   }, [triggerLogout]);
@@ -120,8 +151,14 @@ const MyDashboardSection = () => {
     getNoOnlineUser();
   }, []);
 
+  // for registered users
   useEffect(() => {
     getRegisteredUsers();
+  }, []);
+
+  // for renewal users
+  useEffect(() => {
+    getForRenewalUsers();
   }, []);
 
   return (
@@ -138,9 +175,10 @@ const MyDashboardSection = () => {
                 150/<strong>USERS</strong>
               </h1>
               {registeredUsers.map((user) => (
-                <Trainers
+                <RegisteredUser
                   key={user.id}
                   pix={Pic3}
+                  user_id={user.id}
                   blobPix={user.image}
                   registeredName={user.flex_pro_user.name}
                   weights={user.flex_pro_user.weights}
@@ -158,7 +196,8 @@ const MyDashboardSection = () => {
             <div className="dashboard-col">
               <span>CLIENTS ON WORKOUT</span>
               <h1>
-                <strong> {noOnlineUser}</strong> USERS
+                <strong> {noOnlineUser}</strong>{" "}
+                {noOnlineUser > 1 ? "USERS" : "USER"}
               </h1>
 
               {flexProUsers.map((user) => (
@@ -220,40 +259,40 @@ const MyDashboardSection = () => {
           </div>
           {/* END CLIENTS ON WORKOUT */}
 
-          {/* TRAINERS AVAILABLE */}
+          {/* RENEWAL  */}
           <div className="col-lg-3 col-xs-12">
             <div className="dashboard-col">
-              <span>TRAINERS AVAILABLE</span>
+              <span>FOR RENEWAL</span>
               <h1>
-                20/<strong>TRAINERS</strong>
+                20/<strong>USERS</strong>
               </h1>
+              {forRenewalUsers.map((user) => (
+                <ForRenewal
+                  key={user.id}
+                  pix={user.image}
+                  user_id={user.usersubscription.flexprouser.id}
+                  registeredName={user.usersubscription.flexprouser.name}
+                  remaining={"0"}
+                  subscription={
+                    user.usersubscription.subscription.gym_rate_desc
+                  }
+                  date_log={user.usersubscription.date_subscribed}
+                  per={user.usersubscription.subscription.per.per}
+                />
+              ))}
 
-              <Trainers
+              {/* <Trainers
                 pix={Pic3}
-                registeredName={"King James Uayan"}
-                position="Lorem ipsum dolor sit amet"
-              />
-              <Trainers
-                pix={Pic3}
-                registeredName={"Carlo Agacy"}
-                position="Lorem ipsum dolor sit amet"
-              />
-              <Trainers
-                pix={Pic3}
-                registeredName={"John Loyd"}
-                position="Lorem ipsum dolor sit amet"
-              />
-              <Trainers
-                pix={Pic3}
-                registeredName={"Daniel Padilla"}
-                position="Lorem ipsum dolor sit amet"
-              />
+                blobPix={Pic3}
+                registeredName={"John Mayer"}
+                weights={"60"}
+              /> */}
             </div>
             <a href="" className="btn btn-danger">
               View More
             </a>
           </div>
-          {/* END TRAINERS AVAILABLE */}
+          {/* END RENEWAL */}
         </div>
       </div>
 

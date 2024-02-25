@@ -11,6 +11,8 @@ const formatTime = (milliseconds, option) => {
     return `${hours} hours`;
   } else if (option === "all") {
     return `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
+  } else if (option === "days-left") {
+    return days;
   }
 };
 
