@@ -142,6 +142,8 @@ const MyDashboardSection = () => {
     }
   };
 
+  const checkIfUsersAlreadyExpired = async () => {};
+
   // for online users
   useEffect(() => {
     getUsersOnline();
@@ -271,6 +273,7 @@ const MyDashboardSection = () => {
                   key={user.id}
                   pix={user.image}
                   user_id={user.usersubscription.flexprouser.id}
+                  id={user.id}
                   registeredName={user.usersubscription.flexprouser.name}
                   remaining={"0"}
                   subscription={

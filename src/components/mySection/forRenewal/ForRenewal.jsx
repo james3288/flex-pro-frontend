@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import formatTime from "../../../others/ReadableFormatTime";
+import instance from "../../../others/axiosInstance";
+import FormatDate from "../../../others/FormatDate";
 
 const ForRenewal = ({
   pix,
   registeredName,
   remaining,
   user_id,
+  id,
   subscription,
   date_log,
   per,
@@ -27,6 +30,25 @@ const ForRenewal = ({
   const subDays = dateLogObj1.getTime() - dateLogObj.getTime();
   var remainingDays = subDays - daysConsume;
 
+  useEffect(() => {
+    const daysleft = formatTime(remainingDays, "days-left");
+    const hoursleft = formatTime(remainingDays, "hours-left");
+    if (daysleft <= 0 && hoursleft <= 0) {
+      console.log(registeredName + ` ${id} has been expired`);
+
+      instance
+        .put(`/api/user_status_update/${id}`, {
+          status: "expired",
+        })
+        .then((response) => {
+          console.log("Update successful:", response.data);
+        })
+        .catch((error) => {
+          console.error("Error updating data:", error);
+        });
+    }
+  }, []);
+
   return (
     <>
       {formatTime(remainingDays, "days-left") <= 2 && (
@@ -44,6 +66,9 @@ const ForRenewal = ({
               <div className="clients-flex">
                 <h5>{registeredName}</h5>
                 <p>ID:{user_id}</p>
+                <p>
+                  Date Registered: <strong>{FormatDate(date_log)}</strong>
+                </p>
                 <p style={{ color: "yellow" }}>{subscription}</p>
                 <p>
                   Remaining:{" "}
