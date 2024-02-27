@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import formatTime from "../../../others/ReadableFormatTime";
 import instance from "../../../others/axiosInstance";
 import FormatDate from "../../../others/FormatDate";
@@ -12,10 +12,11 @@ const ForRenewal = ({
   subscription,
   date_log,
   per,
+  setRefresher,
 }) => {
   const dateLogObj = new Date(date_log);
   const dateLogObj1 = new Date(date_log);
-
+  const [remainingDays1, setRemainingDays1] = useState();
   const now = new Date();
 
   if (per === "month") {
@@ -33,21 +34,34 @@ const ForRenewal = ({
   useEffect(() => {
     const daysleft = formatTime(remainingDays, "days-left");
     const hoursleft = formatTime(remainingDays, "hours-left");
-    if (daysleft <= 0 && hoursleft <= 0) {
-      console.log(registeredName + ` ${id} has been expired`);
+    const minutesleft = formatTime(remainingDays, "minutes-left");
 
-      instance
-        .put(`/api/user_status_update/${id}`, {
-          status: "expired",
-        })
-        .then((response) => {
-          console.log("Update successful:", response.data);
-        })
-        .catch((error) => {
-          console.error("Error updating data:", error);
-        });
-    }
-  }, []);
+    const intervalId = setInterval(() => {
+      if (daysleft <= 0 && hoursleft <= 0 && minutesleft <= 0) {
+        console.log(registeredName + ` ${id} has been expired`);
+
+        instance
+          .put(`/api/user_status_update/${id}`, {
+            status: "expired",
+          })
+          .then((response) => {
+            console.log("Update successful:", response.data);
+          })
+          .catch((error) => {
+            console.error("Error updating data:", error);
+          });
+
+        // refresh once
+        setRefresher(true);
+        
+      } else {
+        setRemainingDays1(remainingDays);
+      }
+    }, 1000);
+
+    // Clean up the interval when the component unmounts
+    return () => clearInterval(intervalId);
+  }, [remainingDays1]);
 
   return (
     <>
@@ -66,17 +80,22 @@ const ForRenewal = ({
               <div className="clients-flex">
                 <h5>{registeredName}</h5>
                 <p>ID:{user_id}</p>
+                <p>Date Registered:</p>
                 <p>
-                  Date Registered: <strong>{FormatDate(date_log)}</strong>
+                  <strong>{FormatDate(date_log)}</strong>
                 </p>
-                <p style={{ color: "yellow" }}>{subscription}</p>
-                <p>
-                  Remaining:{" "}
-                  <strong>
-                    {formatTime(remainingDays, "days")}{" "}
-                    {formatTime(remainingDays, "hours")}{" "}
-                  </strong>
-                  left
+                <p style={{ color: "yellow", fontSize: "18px" }}>
+                  {subscription}
+                </p>
+                <p>Remaining: </p>
+                {/* <p style={{ lineHeight: "10px !important;" }}>
+                  {" "}
+                  {formatTime(remainingDays1, "days")}{" "}
+                  {formatTime(remainingDays1, "hours")}{" "}
+                </p>
+                <p>{formatTime(remainingDays1, "seconds")} left</p> */}
+                <p style={{ lineHeight: "16px" }}>
+                  <strong> {formatTime(remainingDays1, "all")}</strong> left
                 </p>
               </div>
             </div>

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import ReactTimeAgo from "react-time-ago";
 import instance from "../../../others/axiosInstance";
@@ -22,6 +22,7 @@ function ClientsOnline({
   setTriggerLogout,
   blobPix,
   setNoOnlineUser,
+  setRefresher2,
 }) {
   // initialize here
   // Convert milliseconds to readable format
@@ -43,6 +44,7 @@ function ClientsOnline({
   // Parse the timestamp
   const timeInObj = new Date(timeIn);
   const timeOutObj = new Date(timeOut);
+  const [remainingDays2, setRemainingDays2] = useState();
 
   // parse the datelog
   const dateLogObj = new Date(date_log); // kanus.a na days nag subscribe
@@ -98,6 +100,25 @@ function ClientsOnline({
         console.error("Error updating data:", error);
       });
   };
+
+  useEffect(() => {
+    const daysleft = formatTime(remainingDays, "days-left");
+    const hoursleft = formatTime(remainingDays, "hours-left");
+    const minutesleft = formatTime(remainingDays, "minutes-left");
+
+    const intervalId = setInterval(() => {
+      if (daysleft <= 0 && hoursleft <= 0 && minutesleft <= 0) {
+        // refresh once
+        setRefresher2(true);
+      } else {
+        setRemainingDays2(remainingDays);
+      }
+    }, 1000);
+
+    // Clean up the interval when the component unmounts
+    return () => clearInterval(intervalId);
+  }, [remainingDays2]);
+
   const clients = (
     <div className="clients-online">
       <div className="row row2">
@@ -151,10 +172,28 @@ function ClientsOnline({
             </p>
 
             <h5>Remaining days:</h5>
-            <p style={{ color: "orange", fontSize: "20px" }}>
-              {formatTime(remainingDays, "days")}{" "}
-              {formatTime(remainingDays, "hours")}
-            </p>
+
+            {remainingDays2 >= 0 ? (
+              <p
+                style={{
+                  color: "orange",
+                  fontSize: "18px",
+                  lineHeight: "20px",
+                }}
+              >
+                <strong> {formatTime(remainingDays2, "all")}</strong>
+              </p>
+            ) : (
+              <p
+                style={{
+                  color: "orange",
+                  fontSize: "18px",
+                  lineHeight: "20px",
+                }}
+              >
+                <strong>Expired</strong>
+              </p>
+            )}
           </div>
         </div>
       </div>

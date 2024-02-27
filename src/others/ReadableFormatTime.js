@@ -9,12 +9,16 @@ const formatTime = (milliseconds, option) => {
     return `${days} days`;
   } else if (option === "hours") {
     return `${hours} hours`;
+  } else if (option === "seconds") {
+    return `${seconds} ${seconds > 1 ? "seconds" : "second"}`;
   } else if (option === "all") {
     return `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
   } else if (option === "days-left") {
     return days;
   } else if (option === "hours-left") {
     return hours;
+  } else if (option === "minutes-left") {
+    return minutes;
   }
 };
 

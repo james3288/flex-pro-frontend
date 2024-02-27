@@ -22,6 +22,8 @@ const MyDashboardSection = () => {
   const [triggerLogout, setTriggerLogout] = useState(false);
   const [counter, setCounter] = useState(0);
   const [noOnlineUser, setNoOnlineUser] = useState(0);
+  const [refresher, setRefresher] = useState(false);
+  const [refresher2, setRefresher2] = useState(false);
 
   const getImagePath = async (id) => {
     try {
@@ -159,9 +161,22 @@ const MyDashboardSection = () => {
   }, []);
 
   // for renewal users
+  // useEffect(() => {
+  //   getForRenewalUsers();
+  // }, []);
+
+  // refresher
   useEffect(() => {
     getForRenewalUsers();
-  }, []);
+    setRefresher(false);
+  }, [refresher]);
+
+  // refresher2
+  useEffect(() => {
+    getUsersOnline();
+    console.log("refresher2");
+    setRefresher(false);
+  }, [refresher2]);
 
   return (
     <>
@@ -228,6 +243,7 @@ const MyDashboardSection = () => {
                   date_log={user.usersubscription.date_subscribed}
                   setTriggerLogout={setTriggerLogout}
                   setNoOnlineUser={setNoOnlineUser}
+                  setRefresher2={setRefresher2}
                 />
               ))}
               {/* <ClientsOnline
@@ -281,6 +297,7 @@ const MyDashboardSection = () => {
                   }
                   date_log={user.usersubscription.date_subscribed}
                   per={user.usersubscription.subscription.per.per}
+                  setRefresher={setRefresher}
                 />
               ))}
 
