@@ -1,6 +1,13 @@
 import React from "react";
 
-const RegisteredUser = ({ registeredName, pix, weights, blobPix, user_id }) => {
+const RegisteredUser = ({
+  registeredName,
+  pix,
+  weights,
+  blobPix,
+  user_id,
+  subscription,
+}) => {
   return (
     <div className="clients-online">
       <div className="row row2">
@@ -16,6 +23,7 @@ const RegisteredUser = ({ registeredName, pix, weights, blobPix, user_id }) => {
           <div className="clients-flex">
             <h5>{registeredName}</h5>
             <p>ID: {user_id}</p>
+            <p style={{ color: "yellow", fontSize: "18px" }}>{subscription}</p>
           </div>
         </div>
       </div>

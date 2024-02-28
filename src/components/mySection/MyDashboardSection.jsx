@@ -14,14 +14,18 @@ import Trainers from "./trainers/Trainers";
 import axios from "axios";
 import instance from "../../others/axiosInstance";
 import ForRenewal from "./forRenewal/ForRenewal";
+import remainingDays from "../../others/GetRemainingDays";
+import formatTime from "../../others/ReadableFormatTime";
 
 const MyDashboardSection = () => {
   const [flexProUsers, setFlexProUsers] = useState([]);
   const [registeredUsers, setRegisteredUsers] = useState([]);
   const [forRenewalUsers, setForRenewalUsers] = useState([]);
+  const [activeUsers, setActiveUsers] = useState([]);
   const [triggerLogout, setTriggerLogout] = useState(false);
   const [counter, setCounter] = useState(0);
   const [noOnlineUser, setNoOnlineUser] = useState(0);
+  const [noRenewalUser, setNoRenewalUser] = useState(0);
   const [refresher, setRefresher] = useState(false);
   const [refresher2, setRefresher2] = useState(false);
 
@@ -75,7 +79,9 @@ const MyDashboardSection = () => {
       );
 
       // console.log(newUser);
-      setFlexProUsers(newUser);
+
+      // newUser.filter(user=> ...)
+      setFlexProUsers(() => newUser.slice(0, 5));
     } catch (error) {
       console.error("Error fetching users:", error);
     }
@@ -106,7 +112,7 @@ const MyDashboardSection = () => {
     }
   };
 
-  const getForRenewalUsers = async () => {
+  const getActiveUsers = async () => {
     try {
       const response = await instance.get(`/api/user_all_status/`);
       const users = response.data;
@@ -127,7 +133,46 @@ const MyDashboardSection = () => {
         })
       );
 
+      console.log("activeUsers", newUser);
+      setActiveUsers(newUser);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
+  const getForRenewalUsers = async () => {
+    try {
+      const response = await instance.get(`/api/user_all_status/`);
+      const users = response.data;
+
+      const newUser = await Promise.all(
+        users.map(async (user) => {
+          // Call getImagePath asynchronously for each user
+          const imgpath = await getImagePath(
+            user.usersubscription.flexprouser.id
+          );
+
+          const imageDataUrl = await loadImageData(imgpath.image1);
+
+          // get the remaining days
+          const getRemainingDays = await remainingDays(
+            user.usersubscription.date_subscribed,
+            user.usersubscription.subscription.per.per
+          );
+          // end get the reamining days
+
+          return {
+            ...user,
+            image: imageDataUrl || "/media/image/default.jpg",
+            remainingDays: formatTime(getRemainingDays, "days-left"),
+          }; // If imgpath is null, use default image
+        })
+      );
+
       console.log("forRenewal", newUser);
+      setNoRenewalUser(
+        newUser.filter((user) => user.remainingDays <= 2).length
+      );
       setForRenewalUsers(newUser);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -160,6 +205,10 @@ const MyDashboardSection = () => {
     getRegisteredUsers();
   }, []);
 
+  useEffect(() => {
+    getActiveUsers();
+  }, []);
+
   // for renewal users
   // useEffect(() => {
   //   getForRenewalUsers();
@@ -187,20 +236,25 @@ const MyDashboardSection = () => {
           {/* REGISTERED USER */}
           <div className="col-lg-3 col-xs-12">
             <div className="dashboard-col">
-              <span>REGISTERED USER</span>
+              <span>ACTIVE USER</span>
               <h1>
-                150/<strong>USERS</strong>
+                {activeUsers.length} <strong>USERS</strong>
               </h1>
-              {registeredUsers.map((user) => (
-                <RegisteredUser
-                  key={user.id}
-                  pix={Pic3}
-                  user_id={user.id}
-                  blobPix={user.image}
-                  registeredName={user.flex_pro_user.name}
-                  weights={user.flex_pro_user.weights}
-                />
-              ))}
+              <div className="scrollable-list-of-user">
+                {activeUsers.map((user) => (
+                  <RegisteredUser
+                    key={user.id}
+                    pix={Pic3}
+                    user_id={user.id}
+                    blobPix={user.image}
+                    registeredName={user.usersubscription.flexprouser.name}
+                    weights={22}
+                    subscription={
+                      user.usersubscription.subscription.gym_rate_desc
+                    }
+                  />
+                ))}
+              </div>
             </div>
             <a href="" className="btn btn-danger">
               View More
@@ -217,35 +271,37 @@ const MyDashboardSection = () => {
                 {noOnlineUser > 1 ? "USERS" : "USER"}
               </h1>
 
-              {flexProUsers.map((user) => (
-                // Get the time portion
+              <div className="scrollable-list-of-user">
+                {flexProUsers.map((user) => (
+                  // Get the time portion
 
-                <ClientsOnline
-                  key={user.id}
-                  clientName={user.usersubscription.flexprouser.name}
-                  // clientName={"KJ"}
-                  user_online_id={user.id}
-                  timeIn={user.time_in}
-                  timeOut={user.time_out}
-                  status="true"
-                  pix={Pic3}
-                  blobPix={user.image}
-                  timeAgo={user.time_in}
-                  weights={
-                    user.usersubscription.flexprouser.weights
-                    // 22
-                  }
-                  gym_rate_desc={
-                    user.usersubscription.subscription.gym_rate_desc
-                  }
-                  rate={user.usersubscription.subscription.rate}
-                  per={user.usersubscription.subscription.per.per}
-                  date_log={user.usersubscription.date_subscribed}
-                  setTriggerLogout={setTriggerLogout}
-                  setNoOnlineUser={setNoOnlineUser}
-                  setRefresher2={setRefresher2}
-                />
-              ))}
+                  <ClientsOnline
+                    key={user.id}
+                    clientName={user.usersubscription.flexprouser.name}
+                    // clientName={"KJ"}
+                    user_online_id={user.id}
+                    timeIn={user.time_in}
+                    timeOut={user.time_out}
+                    status="true"
+                    pix={Pic3}
+                    blobPix={user.image}
+                    timeAgo={user.time_in}
+                    weights={
+                      user.usersubscription.flexprouser.weights
+                      // 22
+                    }
+                    gym_rate_desc={
+                      user.usersubscription.subscription.gym_rate_desc
+                    }
+                    rate={user.usersubscription.subscription.rate}
+                    per={user.usersubscription.subscription.per.per}
+                    date_log={user.usersubscription.date_subscribed}
+                    setTriggerLogout={setTriggerLogout}
+                    setNoOnlineUser={setNoOnlineUser}
+                    setRefresher2={setRefresher2}
+                  />
+                ))}
+              </div>
               {/* <ClientsOnline
                 clientName="Kelvin Dalauta"
                 timeIn="3:00 PM"
@@ -282,25 +338,27 @@ const MyDashboardSection = () => {
             <div className="dashboard-col">
               <span>FOR RENEWAL</span>
               <h1>
-                20/<strong>USERS</strong>
+                {noRenewalUser}/<strong>USERS</strong>
               </h1>
-              {forRenewalUsers.map((user) => (
-                <ForRenewal
-                  key={user.id}
-                  pix={user.image}
-                  user_id={user.usersubscription.flexprouser.id}
-                  id={user.id}
-                  registeredName={user.usersubscription.flexprouser.name}
-                  remaining={"0"}
-                  subscription={
-                    user.usersubscription.subscription.gym_rate_desc
-                  }
-                  date_log={user.usersubscription.date_subscribed}
-                  per={user.usersubscription.subscription.per.per}
-                  setRefresher={setRefresher}
-                />
-              ))}
-
+              <div className="scrollable-list-of-user">
+                {forRenewalUsers.map((user) => (
+                  <ForRenewal
+                    key={user.id}
+                    pix={user.image}
+                    user_id={user.usersubscription.flexprouser.id}
+                    id={user.id}
+                    registeredName={user.usersubscription.flexprouser.name}
+                    remaining={"0"}
+                    subscription={
+                      user.usersubscription.subscription.gym_rate_desc
+                    }
+                    date_log={user.usersubscription.date_subscribed}
+                    per={user.usersubscription.subscription.per.per}
+                    setRefresher={setRefresher}
+                    setNoRenewalUser={setNoRenewalUser}
+                  />
+                ))}
+              </div>
               {/* <Trainers
                 pix={Pic3}
                 blobPix={Pic3}

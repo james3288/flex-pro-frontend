@@ -13,6 +13,7 @@ const ForRenewal = ({
   date_log,
   per,
   setRefresher,
+  setNoRenewalUser,
 }) => {
   const dateLogObj = new Date(date_log);
   const dateLogObj1 = new Date(date_log);
@@ -53,13 +54,12 @@ const ForRenewal = ({
 
         // refresh once
         setRefresher(true);
-        
       } else {
         setRemainingDays1(remainingDays);
       }
     }, 1000);
 
-    // Clean up the interval when the component unmounts
+    // Clean up the interval when the component sunmounts
     return () => clearInterval(intervalId);
   }, [remainingDays1]);
 
