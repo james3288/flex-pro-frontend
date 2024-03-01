@@ -13,6 +13,10 @@ import TimeAgo from "javascript-time-ago";
 
 import en from "javascript-time-ago/locale/en.json";
 import ru from "javascript-time-ago/locale/ru.json";
+import ClientsOnWorkoutPage from "./pages/ClientsOnWorkoutPage.jsx";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 TimeAgo.addDefaultLocale(en);
 TimeAgo.addLocale(ru);
@@ -42,6 +46,10 @@ const router = createBrowserRouter([
   {
     path: "/subscribed-now",
     element: <SubscribedNow />,
+  },
+  {
+    path: "/clients-on-workout",
+    element: <ClientsOnWorkoutPage />,
   },
 ]);
 

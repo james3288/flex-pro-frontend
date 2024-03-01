@@ -68,7 +68,7 @@ function ClientsOnline({
   });
 
   // const yearValidation = timeOutObj.getFullYear();
-  const yearValidation = YearValidation(timeOutObj);
+  const yearValidation = YearValidation(timeOut);
 
   // LOGOUT FUNCTION
   const handleLogout = (timeIn) => {

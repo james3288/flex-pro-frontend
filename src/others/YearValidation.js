@@ -1,5 +1,6 @@
 const YearValidation = (myDate) => {
-  return myDate.getFullYear();
+  const mydate = new Date(myDate);
+  return mydate.getFullYear();
 };
 
 export default YearValidation;

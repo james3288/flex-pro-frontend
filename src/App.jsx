@@ -22,25 +22,6 @@ function App() {
       {/* page dashboard */}
       <DashboardPage dashboardBg="dashboard" page="dashboard" />
       {/* end page dashboard */}
-
-      {/* page user registration */}
-      {/* <DashboardPage dashboardBg="userRegistration" page="userRegistration" /> */}
-      {/* end user registration */}
-
-      {/* page user image registration */}
-      {/* <DashboardPage
-        dashboardBg="userImageRegistration"
-        page="userImageRegistration"
-      /> */}
-      {/* end user image registration */}
-
-      {/* page user image registration */}
-      {/* <DashboardPage dashboardBg="userLogin" page="userLogin" /> */}
-      {/* end user image registration */}
-
-      {/* page user image registration */}
-      {/* <DashboardPage dashboardBg="subcriptionPlan" page="subcriptionPlan" /> */}
-      {/* end user image registration */}
     </>
   );
 }

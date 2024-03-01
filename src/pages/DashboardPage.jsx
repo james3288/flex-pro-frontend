@@ -7,6 +7,10 @@ import MySubscriptionPlan from "../components/mySection/MySubscriptionPlan";
 import { useState } from "react";
 import { Link as ScrollLink, animateScroll as scroll } from "react-scroll";
 import MySubscribedNow from "../components/mySection/MySubscribedNow";
+import MyCLientsOnWorkout from "../components/mySection/MyCLientsOnWorkout";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 const DashboardPage = ({
   dashboardBg,
@@ -115,6 +119,14 @@ const DashboardPage = ({
 
   if (page === "subscribeNow") {
     content = <MySubscribedNow />;
+  }
+
+  if (page === "clientsOnWorkout") {
+    content = (
+      <QueryClientProvider client={queryClient}>
+        <MyCLientsOnWorkout />
+      </QueryClientProvider>
+    );
   }
 
   return (

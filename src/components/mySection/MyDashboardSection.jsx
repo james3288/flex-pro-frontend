@@ -16,6 +16,7 @@ import instance from "../../others/axiosInstance";
 import ForRenewal from "./forRenewal/ForRenewal";
 import remainingDays from "../../others/GetRemainingDays";
 import formatTime from "../../others/ReadableFormatTime";
+import { NavLink } from "react-router-dom";
 
 const MyDashboardSection = () => {
   const [flexProUsers, setFlexProUsers] = useState([]);
@@ -319,34 +320,11 @@ const MyDashboardSection = () => {
                   />
                 ))}
               </div>
-              {/* <ClientsOnline
-                clientName="Kelvin Dalauta"
-                timeIn="3:00 PM"
-                timeOut="8:00 PM"
-                status="false"
-                pix={Pic2}
-                date={"5 Hours"}
-              />
-              <ClientsOnline
-                clientName="Mc Johnson Manolo"
-                timeIn="3:00 PM"
-                timeOut="--:--"
-                status="true"
-                pix={Pic1}
-                date={"25 min ago"}
-              />
-              <ClientsOnline
-                clientName="Jophet Budlat"
-                timeIn="12:00 PM"
-                timeOut="5:00 PM"
-                status="false"
-                pix={Pic2}
-                date={"2 hours ago"}
-              /> */}
             </div>
-            <a href="" className="btn btn-danger">
+            {/* <NavLink className="btn btn-danger">           </Navlink> */}
+            <NavLink className="btn btn-danger" to="/clients-on-workout">
               View More
-            </a>
+            </NavLink>
           </div>
           {/* END CLIENTS ON WORKOUT */}
 
