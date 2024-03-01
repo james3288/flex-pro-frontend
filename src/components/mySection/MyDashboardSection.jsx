@@ -28,6 +28,7 @@ const MyDashboardSection = () => {
   const [noRenewalUser, setNoRenewalUser] = useState(0);
   const [refresher, setRefresher] = useState(false);
   const [refresher2, setRefresher2] = useState(false);
+  const [refresher3, setRefresher3] = useState(false);
 
   const getImagePath = async (id) => {
     try {
@@ -124,6 +125,13 @@ const MyDashboardSection = () => {
             user.usersubscription.flexprouser.id
           );
 
+          // get the remaining days
+          const getRemainingDays = await remainingDays(
+            user.usersubscription.date_subscribed,
+            user.usersubscription.subscription.per.per
+          );
+          // end get the reamining days
+
           const imageDataUrl = await loadImageData(imgpath.image1);
 
           return {
@@ -189,8 +197,6 @@ const MyDashboardSection = () => {
     }
   };
 
-  const checkIfUsersAlreadyExpired = async () => {};
-
   // for online users
   useEffect(() => {
     getUsersOnline();
@@ -227,6 +233,12 @@ const MyDashboardSection = () => {
     setRefresher(false);
   }, [refresher2]);
 
+  // refresher3
+  useEffect(() => {
+    getActiveUsers();
+    console.log("refresher3");
+    setRefresher(false);
+  }, [refresher3]);
   return (
     <>
       {/* <!-- Dashboard container--> */}
@@ -237,8 +249,10 @@ const MyDashboardSection = () => {
           <div className="col-lg-3 col-xs-12">
             <div className="dashboard-col">
               <span>ACTIVE USER</span>
+
               <h1>
-                {activeUsers.length} <strong>USERS</strong>
+                {activeUsers.length}{" "}
+                <strong> {activeUsers.length > 1 ? "USERS" : "USER"}</strong>
               </h1>
               <div className="scrollable-list-of-user">
                 {activeUsers.map((user) => (
@@ -252,6 +266,9 @@ const MyDashboardSection = () => {
                     subscription={
                       user.usersubscription.subscription.gym_rate_desc
                     }
+                    date_subscribed={user.usersubscription.date_subscribed}
+                    per={user.usersubscription.subscription.per.per}
+                    setRefresher={setRefresher3}
                   />
                 ))}
               </div>
@@ -337,8 +354,10 @@ const MyDashboardSection = () => {
           <div className="col-lg-3 col-xs-12">
             <div className="dashboard-col">
               <span>FOR RENEWAL</span>
+
               <h1>
-                {noRenewalUser}/<strong>USERS</strong>
+                {noRenewalUser}
+                <strong> {noRenewalUser > 1 ? "USERS" : "USER"}</strong>
               </h1>
               <div className="scrollable-list-of-user">
                 {forRenewalUsers.map((user) => (

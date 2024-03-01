@@ -5,6 +5,7 @@ import instance from "../../../others/axiosInstance";
 import axios from "axios";
 import YearValidation from "../../../others/YearValidation";
 import formatTime from "../../../others/ReadableFormatTime";
+import remainingDays from "../../../others/GetRemainingDays";
 
 function ClientsOnline({
   user_online_id,
@@ -24,47 +25,36 @@ function ClientsOnline({
   setNoOnlineUser,
   setRefresher2,
 }) {
-  // initialize here
-  // Convert milliseconds to readable format
-  // const formatTime = (milliseconds, option) => {
-  //   const seconds = Math.floor((milliseconds / 1000) % 60);
-  //   const minutes = Math.floor((milliseconds / (1000 * 60)) % 60);
-  //   const hours = Math.floor((milliseconds / (1000 * 60 * 60)) % 24);
-  //   const days = Math.floor(milliseconds / (1000 * 60 * 60 * 24));
-
-  //   if (option === "days") {
-  //     return `${days} days`;
-  //   } else if (option === "hours") {
-  //     return `${hours} hours`;
-  //   } else if (option === "all") {
-  //     return `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
-  //   }
-  // };
-
   // Parse the timestamp
   const timeInObj = new Date(timeIn);
   const timeOutObj = new Date(timeOut);
   const [remainingDays2, setRemainingDays2] = useState();
 
-  // parse the datelog
-  const dateLogObj = new Date(date_log); // kanus.a na days nag subscribe
+  const [remaining, setRemaining] = useState(0);
+  // get the remaining days
+  const getRemainingDays = async () => {
+    setRemaining(await remainingDays(date_log, per));
+  };
 
-  const dateLogObj1 = new Date(date_log); //day started
+  // // parse the datelog
+  // const dateLogObj = new Date(date_log); // kanus.a na days nag subscribe
 
-  // set kanus.a ma expiration date
-  if (per === "month") {
-    dateLogObj1.setMonth(dateLogObj1.getMonth() + 1); // Add 1 month
-  } else if (per === "day") {
-    dateLogObj1.setDate(dateLogObj1.getDate() + 1);
-  } else if (per === "year") {
-    dateLogObj1.setFullYear(dateLogObj1.getFullYear() + 1);
-  }
+  // const dateLogObj1 = new Date(date_log); //day started
 
-  const now = new Date();
+  // // set kanus.a ma expiration date
+  // if (per === "month") {
+  //   dateLogObj1.setMonth(dateLogObj1.getMonth() + 1); // Add 1 month
+  // } else if (per === "day") {
+  //   dateLogObj1.setDate(dateLogObj1.getDate() + 1);
+  // } else if (per === "year") {
+  //   dateLogObj1.setFullYear(dateLogObj1.getFullYear() + 1);
+  // }
 
-  const daysConsume = now.getTime() - dateLogObj.getTime();
-  const subDays = dateLogObj1.getTime() - dateLogObj.getTime();
-  var remainingDays = subDays - daysConsume;
+  // const now = new Date();
+
+  // const daysConsume = now.getTime() - dateLogObj.getTime();
+  // const subDays = dateLogObj1.getTime() - dateLogObj.getTime();
+  // var remainingDays = subDays - daysConsume;
 
   // Get the time portion
   const timeInString = timeInObj.toLocaleTimeString([], {
@@ -80,6 +70,7 @@ function ClientsOnline({
   // const yearValidation = timeOutObj.getFullYear();
   const yearValidation = YearValidation(timeOutObj);
 
+  // LOGOUT FUNCTION
   const handleLogout = (timeIn) => {
     console.log(user_online_id);
     const logout_date = new Date();
@@ -102,22 +93,38 @@ function ClientsOnline({
   };
 
   useEffect(() => {
-    const daysleft = formatTime(remainingDays, "days-left");
-    const hoursleft = formatTime(remainingDays, "hours-left");
-    const minutesleft = formatTime(remainingDays, "minutes-left");
-
     const intervalId = setInterval(() => {
-      if (daysleft <= 0 && hoursleft <= 0 && minutesleft <= 0) {
-        // refresh once
+      if (formatTime(remaining, "minutes-left") < 0) {
         setRefresher2(true);
+        console.log("ayonn2...");
+        clearInterval(intervalId);
       } else {
-        setRemainingDays2(remainingDays);
+        getRemainingDays();
       }
     }, 1000);
 
-    // Clean up the interval when the component unmounts
+    // Clean up the interval when the component sunmounts
     return () => clearInterval(intervalId);
-  }, [remainingDays2]);
+  }, [remaining]);
+
+  // useEffect(() => {
+  //   const daysleft = formatTime(remainingDays, "days-left");
+  //   const hoursleft = formatTime(remainingDays, "hours-left");
+  //   const minutesleft = formatTime(remainingDays, "minutes-left");
+
+  //   const intervalId = setInterval(() => {
+  //     if (daysleft <= 0 && hoursleft <= 0 && minutesleft <= 0) {
+  //       // refresh once
+  //       setRefresher2(true);
+  //       console.log("sa workout na side");
+  //     } else {
+  //       setRemainingDays2(remainingDays);
+  //     }
+  //   }, 1000);
+
+  //   // Clean up the interval when the component unmounts
+  //   return () => clearInterval(intervalId);
+  // }, [remainingDays2]);
 
   const clients = (
     <div className="clients-online">
@@ -173,7 +180,7 @@ function ClientsOnline({
 
             <h5>Remaining days:</h5>
 
-            {remainingDays2 >= 0 ? (
+            {remaining >= 0 ? (
               <p
                 style={{
                   color: "orange",
@@ -181,7 +188,7 @@ function ClientsOnline({
                   lineHeight: "20px",
                 }}
               >
-                <strong> {formatTime(remainingDays2, "all")}</strong>
+                <strong>{formatTime(remaining, "days-hours")}</strong>
               </p>
             ) : (
               <p

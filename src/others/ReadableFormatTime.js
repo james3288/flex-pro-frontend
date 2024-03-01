@@ -19,6 +19,8 @@ const formatTime = (milliseconds, option) => {
     return hours;
   } else if (option === "minutes-left") {
     return minutes;
+  } else if (option === "days-hours") {
+    return `${days} days, ${hours} hours`;
   }
 };
 

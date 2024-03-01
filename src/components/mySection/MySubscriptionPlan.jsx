@@ -30,7 +30,12 @@ const MySubscriptionPlan = () => {
         </div>
         <div className="row justify-content-center">
           {plans.map((plan) => (
-            <ListOfSubscriptions plan={plan} key={plan.id} option={true} />
+            <ListOfSubscriptions
+              plan={plan}
+              key={plan.id}
+              option={true}
+              per={plan.per.per}
+            />
           ))}
         </div>
       </div>

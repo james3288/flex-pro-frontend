@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 
-const ListOfSubscriptions = ({ plan, option }) => {
+const ListOfSubscriptions = ({ plan, option, per }) => {
   return (
     <>
       <div className="col-lg-4 col-md-8">
@@ -9,7 +9,7 @@ const ListOfSubscriptions = ({ plan, option }) => {
           <h3>{plan.gym_rate_desc}</h3>
           <div className="pi-price">
             <h2>{plan.rate.toLocaleString()}</h2>
-            <span>GYM Rates</span>
+            <span>per {per}</span>
           </div>
           <ul>
             {plan.packages_details.map((p) => (

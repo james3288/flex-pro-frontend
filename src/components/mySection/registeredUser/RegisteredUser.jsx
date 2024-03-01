@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import remainingDays from "../../../others/GetRemainingDays";
+import formatTime from "../../../others/ReadableFormatTime";
 
 const RegisteredUser = ({
   registeredName,
@@ -7,7 +9,29 @@ const RegisteredUser = ({
   blobPix,
   user_id,
   subscription,
+  date_subscribed,
+  per,
+  setRefresher,
 }) => {
+  const [remaining, setRemaining] = useState(0);
+  // get the remaining days
+  const getRemainingDays = async () => {
+    setRemaining(await remainingDays(date_subscribed, per));
+  };
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (formatTime(remaining, "minutes-left") < 0) {
+        setRefresher(true);
+        console.log("ayonn...");
+      } else {
+        getRemainingDays();
+      }
+    }, 1000);
+    // Clean up the interval when the component sunmounts
+    return () => clearInterval(intervalId);
+  }, [remaining]);
+  // end get the reamining days
   return (
     <div className="clients-online">
       <div className="row row2">
@@ -24,6 +48,9 @@ const RegisteredUser = ({
             <h5>{registeredName}</h5>
             <p>ID: {user_id}</p>
             <p style={{ color: "yellow", fontSize: "18px" }}>{subscription}</p>
+            <p style={{ lineHeight: "16px" }}>
+              <strong>{formatTime(remaining, "days-hours")}</strong>
+            </p>
           </div>
         </div>
       </div>
