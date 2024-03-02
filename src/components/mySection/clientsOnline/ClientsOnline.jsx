@@ -36,26 +36,6 @@ function ClientsOnline({
     setRemaining(await remainingDays(date_log, per));
   };
 
-  // // parse the datelog
-  // const dateLogObj = new Date(date_log); // kanus.a na days nag subscribe
-
-  // const dateLogObj1 = new Date(date_log); //day started
-
-  // // set kanus.a ma expiration date
-  // if (per === "month") {
-  //   dateLogObj1.setMonth(dateLogObj1.getMonth() + 1); // Add 1 month
-  // } else if (per === "day") {
-  //   dateLogObj1.setDate(dateLogObj1.getDate() + 1);
-  // } else if (per === "year") {
-  //   dateLogObj1.setFullYear(dateLogObj1.getFullYear() + 1);
-  // }
-
-  // const now = new Date();
-
-  // const daysConsume = now.getTime() - dateLogObj.getTime();
-  // const subDays = dateLogObj1.getTime() - dateLogObj.getTime();
-  // var remainingDays = subDays - daysConsume;
-
   // Get the time portion
   const timeInString = timeInObj.toLocaleTimeString([], {
     hour: "2-digit",
@@ -106,25 +86,6 @@ function ClientsOnline({
     // Clean up the interval when the component sunmounts
     return () => clearInterval(intervalId);
   }, [remaining]);
-
-  // useEffect(() => {
-  //   const daysleft = formatTime(remainingDays, "days-left");
-  //   const hoursleft = formatTime(remainingDays, "hours-left");
-  //   const minutesleft = formatTime(remainingDays, "minutes-left");
-
-  //   const intervalId = setInterval(() => {
-  //     if (daysleft <= 0 && hoursleft <= 0 && minutesleft <= 0) {
-  //       // refresh once
-  //       setRefresher2(true);
-  //       console.log("sa workout na side");
-  //     } else {
-  //       setRemainingDays2(remainingDays);
-  //     }
-  //   }, 1000);
-
-  //   // Clean up the interval when the component unmounts
-  //   return () => clearInterval(intervalId);
-  // }, [remainingDays2]);
 
   const clients = (
     <div className="clients-online">
