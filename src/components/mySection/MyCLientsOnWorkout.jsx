@@ -19,6 +19,7 @@ const MyCLientsOnWorkout = () => {
     // console.log(data);
 
     const data1 = data?.filter((user) => user.date_log.includes(value));
+    console.log(data1);
     setData2(data1);
   }, [value]);
 
@@ -50,6 +51,7 @@ const MyCLientsOnWorkout = () => {
                 }
                 timeIn={online.time_in}
                 timeOut={online.time_out}
+                date_subscribed={online.usersubscription.date_subscribed}
                 date_log={online.date_log}
                 blobPix={online.image}
                 per={online.usersubscription.subscription.per.per}

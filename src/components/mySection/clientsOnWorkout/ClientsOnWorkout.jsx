@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Pic1 from "../../../assets/img/team/team-1.jpg";
 import { useQuery } from "@tanstack/react-query";
 import instance from "../../../others/axiosInstance";
@@ -14,6 +14,7 @@ const ClientsOnWorkout = ({
   subscription,
   timeIn,
   timeOut,
+  date_subscribed,
   date_log,
   blobPix,
   per,
@@ -25,8 +26,9 @@ const ClientsOnWorkout = ({
   const [remaining, setRemaining] = useState(0);
   // get the remaining days
   const getRemainingDays = async () => {
-    setRemaining(await remainingDays(date_log, per));
+    setRemaining(await remainingDays(date_subscribed, per));
   };
+
   const formatDateOnly = (dateLog) => {
     const dateOnly = new Date(dateLog).toLocaleDateString("en-US", {
       year: "numeric",
@@ -40,7 +42,7 @@ const ClientsOnWorkout = ({
     const intervalId = setInterval(() => {
       if (formatTime(remaining, "minutes-left") < 0) {
         // setRefresher2(true);
-        console.log("ayonn2...");
+
         clearInterval(intervalId);
       } else {
         getRemainingDays();
