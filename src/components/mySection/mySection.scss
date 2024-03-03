@@ -527,7 +527,27 @@
   padding-top: 11em;
 
   .dateTimePicker {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    background: rgba(7, 7, 7, 0.7);
+    margin: 0;
+  }
+  .dateTimePicker input {
     width: 10%;
+    flex: 0.1;
+  }
+
+  .dateTimePicker h1 {
+    flex: 1;
+    text-align: center;
+    color: white;
+  }
+
+  .dateTimePicker span {
+    color: red;
   }
 
   .c-col-wrapper {
@@ -535,7 +555,7 @@
     flex-direction: row;
     width: 100%;
     flex-wrap: wrap;
-    height: calc(100vh - 15em);
+    height: calc(100vh - 16em);
     overflow-y: auto;
     overflow-x: hidden;
     scrollbar-width: thin;

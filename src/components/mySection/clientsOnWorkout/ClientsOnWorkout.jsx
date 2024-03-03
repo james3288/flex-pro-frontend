@@ -7,6 +7,7 @@ import YearValidation from "../../../others/YearValidation";
 import ReactTimeAgo from "react-time-ago";
 import remainingDays from "../../../others/GetRemainingDays";
 import formatTime from "../../../others/ReadableFormatTime";
+import UserLogout from "../clientsOnline/userLogout";
 
 const ClientsOnWorkout = ({
   id,
@@ -18,12 +19,14 @@ const ClientsOnWorkout = ({
   date_log,
   blobPix,
   per,
+  setTriggerLogout,
 }) => {
   const time_in = formatTimeToString(timeIn);
   const time_out = formatTimeToString(timeOut);
 
   const yearValidation = YearValidation(timeOut);
   const [remaining, setRemaining] = useState(0);
+
   // get the remaining days
   const getRemainingDays = async () => {
     setRemaining(await remainingDays(date_subscribed, per));
@@ -53,6 +56,11 @@ const ClientsOnWorkout = ({
     return () => clearInterval(intervalId);
   }, [remaining]);
 
+  const handleLogout = () => {
+    const result = UserLogout(timeIn, id, setTriggerLogout);
+    console.log(result);
+  };
+
   return (
     <>
       <div className="col-lg-3 col-xs-12">
@@ -78,12 +86,12 @@ const ClientsOnWorkout = ({
             </p>
             <h3>{subscription}</h3>
             <h5>Remaining Days:</h5>
-            <h5>
-              {remaining < 0 ? "Expired" : formatTime(remaining, "days-hours")}
-            </h5>
+            <h5>{remaining < 0 ? "Expired" : formatTime(remaining, "all")}</h5>
           </div>
           {yearValidation === 1990 && (
-            <button className="btn btn-warning">Logout</button>
+            <button className="btn btn-warning" onClick={handleLogout}>
+              Logout
+            </button>
           )}
         </div>
       </div>
