@@ -1,0 +1,81 @@
+.subscribeNow {
+  background-image: url("./../../assets/img/hero/hero-5.jpg");
+  height: 100vh;
+  box-sizing: border-box;
+  font-family: "Muli", Arial;
+  padding-top: 11em;
+
+  .selected-user {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    gap: 10px;
+    img {
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      border: 2px solid black;
+    }
+  }
+
+  .search-users {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    position: relative;
+
+    input {
+      width: 100%;
+      border-radius: 5px;
+      border: 2px solid black;
+      padding: 5px 10px;
+      margin-bottom: 40px;
+      background-color: rgb(20, 15, 15);
+      color: white;
+    }
+
+    .list-of-user {
+      position: absolute;
+      top: 36px;
+      background-color: gray;
+      width: 100%;
+      z-index: 999;
+      font-family: "muli";
+
+      ul li {
+        cursor: pointer;
+        text-transform: capitalize;
+      }
+      ul li:hover {
+        background-color: #7a3049;
+        color: white;
+      }
+
+      .dreg {
+        background-color: #a67585;
+        padding: 5px 10px;
+      }
+    }
+  }
+
+  .save-subscriptions {
+    text-decoration: none;
+  }
+
+  .save-subscriptions:hover {
+    color: white;
+    background-color: orange;
+  }
+
+  .save-subscriptions-successfully {
+    text-decoration: none;
+    background-color: green;
+  }
+  .save-subscriptions-successfully:hover {
+    color: white;
+    background-color: orange;
+  }
+}

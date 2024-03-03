@@ -363,9 +363,9 @@ const MyDashboardSection = () => {
                 weights={"60"}
               /> */}
             </div>
-            <a href="" className="btn btn-danger">
+            <NavLink className="btn btn-danger" to="/for-renewal-users">
               View More
-            </a>
+            </NavLink>
           </div>
           {/* END RENEWAL */}
         </div>

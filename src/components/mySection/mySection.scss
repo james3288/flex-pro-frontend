@@ -16,7 +16,8 @@
   background-image: url("./../../assets/img/hero/hero-1.jpg");
   height: 100vh;
   box-sizing: border-box;
-  font-family: "Muli", Arial;
+  font-family: "Muli", "Franklin Gothic Medium", "Arial Narrow", Arial,
+    sans-serif;
   padding-top: 11em;
 
   .dashboard-col {
@@ -122,527 +123,67 @@
   }
 }
 
-.userRegistration {
-  background-image: url("./../../assets/img/hero/hero-4.jpg");
-  height: 100vh;
-  box-sizing: border-box;
-  font-family: "Muli", Arial;
-  padding-top: 11em;
+// .userRegistration {
+//   background-image: url("./../../assets/img/hero/hero-4.jpg");
+//   height: 100vh;
+//   box-sizing: border-box;
+//   font-family: "Muli", Arial;
+//   padding-top: 11em;
 
-  .dashboard-col {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    background: rgba(7, 7, 7, 0.5);
-    margin: 10px 0;
-    border-radius: 5px;
+//   .dashboard-col {
+//     display: flex;
+//     flex-direction: column;
+//     align-items: center;
+//     justify-content: center;
+//     padding: 20px;
+//     background: rgba(7, 7, 7, 0.5);
+//     margin: 10px 0;
+//     border-radius: 5px;
 
-    span {
-      font-size: 20px;
-      font-weight: 500;
-      color: white;
-      width: 100%;
-    }
+//     span {
+//       font-size: 20px;
+//       font-weight: 500;
+//       color: white;
+//       width: 100%;
+//     }
 
-    h1 {
-      font-size: 50px;
-      color: white;
-      //   border: 1px solid #dc151c;
-      padding: 10px;
-      width: 100%;
-    }
-    strong {
-      color: #dc151c;
-    }
+//     h1 {
+//       font-size: 50px;
+//       color: white;
+//       //   border: 1px solid #dc151c;
+//       padding: 10px;
+//       width: 100%;
+//     }
+//     strong {
+//       color: #dc151c;
+//     }
 
-    .contract-wrapper {
-      .cbox:checked {
-        background-color: red; /* color when checked */
-      }
+//     .contract-wrapper {
+//       .cbox:checked {
+//         background-color: red; /* color when checked */
+//       }
 
-      p {
-        font-size: 15px;
-        color: white;
-      }
+//       p {
+//         font-size: 15px;
+//         color: white;
+//       }
 
-      .checkbox-wrapper {
-        display: flex;
-        align-items: center;
-        justify-content: left;
-        flex-direction: row;
-        background-color: green input;
-        gap: 10px;
-      }
+//       .checkbox-wrapper {
+//         display: flex;
+//         align-items: center;
+//         justify-content: left;
+//         flex-direction: row;
+//         background-color: green input;
+//         gap: 10px;
+//       }
 
-      .liability-wrapper {
-        h5 {
-          text-align: center;
-          color: white;
-          font-family: "muli";
-        }
-      }
-    }
-  }
-}
-
-.userImageRegistration {
-  background-image: url("./../../assets/img/hero/hero-6.jpeg");
-  height: 100vh;
-  box-sizing: border-box;
-  font-family: "Muli", Arial;
-  padding-top: 11em;
-
-  .dashboard-col {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    background: rgba(7, 7, 7, 0.5);
-    margin: 10px 0;
-    border-radius: 5px;
-
-    span {
-      font-size: 20px;
-      font-weight: 500;
-      color: white;
-      width: 100%;
-    }
-
-    h1 {
-      font-size: 50px;
-      color: white;
-      //   border: 1px solid #dc151c;
-      padding: 10px;
-      width: 100%;
-    }
-    strong {
-      color: #dc151c;
-    }
-
-    .camera-wrapper {
-      width: 100%;
-      height: 500px;
-      background-color: #060606;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 10px;
-      margin: 10px 0;
-      position: relative;
-
-      .camera-stream {
-        width: 100%;
-        height: 500px;
-        object-fit: cover;
-        border-radius: 5px;
-      }
-
-      .captured {
-        width: 100%;
-        height: 500px;
-        object-fit: cover;
-      }
-    }
-
-    .camera-btn {
-      display: flex;
-      gap: 10px;
-    }
-  }
-  .user-register {
-    display: flex;
-    width: 100%;
-    align-items: center;
-    justify-content: center;
-
-    button {
-      width: 30%;
-    }
-  }
-}
-
-.userLogin {
-  background-image: url("./../../assets/img/hero/hero-3.jpg");
-  height: 100vh;
-  box-sizing: border-box;
-  font-family: "Muli", Arial;
-  padding-top: 11em;
-
-  .dashboard-col {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    background: rgba(7, 7, 7, 0.9);
-    margin: 10px 0;
-    border-radius: 5px;
-
-    .personal-trainer {
-      width: 100%;
-      margin: 10px 0 10px 0;
-      h5 {
-        color: white;
-      }
-      h3 {
-        color: rgb(200, 200, 200);
-      }
-      h6 {
-        color: white;
-      }
-      p {
-        color: orange;
-        margin-left: 15px;
-      }
-    }
-    span {
-      font-size: 20px;
-      font-weight: 500;
-      color: white;
-      width: 100%;
-    }
-
-    h1 {
-      font-size: 50px;
-      color: white;
-      //   border: 1px solid #dc151c;
-      padding: 10px;
-      width: 100%;
-    }
-    strong {
-      color: #dc151c;
-    }
-    .scan-profile-wrapper {
-      display: flex;
-      align-items: center;
-      justify-content: left;
-      width: 100%;
-      padding: 5px;
-
-      .scan-profile {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        border: 2px solid yellowgreen;
-      }
-
-      .scan-profile-name {
-        margin: 0 10px;
-        h5 {
-          color: white;
-        }
-        h3 {
-          color: orange;
-        }
-        h6 {
-          color: gray;
-        }
-      }
-    }
-
-    .camera-wrapper {
-      width: 100%;
-      height: 500px;
-      background-color: #000000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 10px;
-      margin: 10px 0;
-      position: relative;
-
-      .camera-stream {
-        width: 100%;
-        height: 500px;
-        object-fit: cover;
-        border-radius: 5px;
-      }
-
-      .canvas-box {
-        position: absolute;
-      }
-
-      .captured {
-        width: 100%;
-        height: 500px;
-        object-fit: cover;
-      }
-    }
-
-    .camera-btn {
-      display: flex;
-      gap: 10px;
-    }
-  }
-
-  .camera-wrapper {
-    width: 100%;
-    height: 500px;
-    background-color: #060606;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-    margin: 10px 0;
-    position: relative;
-
-    .c-btn {
-      position: absolute;
-      right: 3px;
-      top: 3px;
-      z-index: 9999;
-    }
-
-    .camera-stream {
-      width: 50%;
-      height: 500px;
-      object-fit: cover;
-      border-radius: 5px;
-    }
-
-    .captured {
-      width: 100%;
-      height: 500px;
-      object-fit: cover;
-    }
-  }
-
-  .camera-btn {
-    display: flex;
-    gap: 10px;
-  }
-}
-
-.subcriptionPlan {
-  background-image: url("./../../assets/img/hero/hero-5.jpg");
-  height: 100vh;
-  box-sizing: border-box;
-  font-family: "Muli", Arial;
-  padding-top: 11em;
-
-  a {
-    text-decoration: none;
-  }
-  a:hover {
-    color: white;
-  }
-
-  .sub-wrapper {
-    strong {
-      color: orange;
-    }
-  }
-}
-
-.subscribeNow {
-  background-image: url("./../../assets/img/hero/hero-5.jpg");
-  height: 100vh;
-  box-sizing: border-box;
-  font-family: "Muli", Arial;
-  padding-top: 11em;
-
-  .selected-user {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: row;
-    gap: 10px;
-    img {
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      object-fit: cover;
-      border: 2px solid black;
-    }
-  }
-
-  .search-users {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    position: relative;
-
-    input {
-      width: 100%;
-      border-radius: 5px;
-      border: 2px solid black;
-      padding: 5px 10px;
-      margin-bottom: 40px;
-      background-color: rgb(20, 15, 15);
-      color: white;
-    }
-
-    .list-of-user {
-      position: absolute;
-      top: 36px;
-      background-color: gray;
-      width: 100%;
-      z-index: 999;
-      font-family: "muli";
-
-      ul li {
-        cursor: pointer;
-        text-transform: capitalize;
-      }
-      ul li:hover {
-        background-color: #7a3049;
-        color: white;
-      }
-
-      .dreg {
-        background-color: #a67585;
-        padding: 5px 10px;
-      }
-    }
-  }
-
-  .save-subscriptions {
-    text-decoration: none;
-  }
-
-  .save-subscriptions:hover {
-    color: white;
-    background-color: orange;
-  }
-
-  .save-subscriptions-successfully {
-    text-decoration: none;
-    background-color: green;
-  }
-  .save-subscriptions-successfully:hover {
-    color: white;
-    background-color: orange;
-  }
-}
-
-.clientsOnWorkout {
-  background-image: url("./../../assets/img/hero/hero-7.jpg");
-  height: 100vh;
-  box-sizing: border-box;
-  font-family: "Muli", Arial;
-  padding-top: 11em;
-
-  .dateTimePicker {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 10px;
-    background: rgba(7, 7, 7, 0.7);
-    margin: 0;
-  }
-  .dateTimePicker input {
-    width: 10%;
-    flex: 0.1;
-  }
-
-  .dateTimePicker h1 {
-    flex: 1;
-    text-align: center;
-    color: white;
-  }
-
-  .dateTimePicker span {
-    color: red;
-  }
-
-  .c-col-wrapper {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    flex-wrap: wrap;
-    height: calc(100vh - 16em);
-    overflow-y: auto;
-    overflow-x: hidden;
-    scrollbar-width: thin;
-    scrollbar-color: rgb(85, 3, 3) black;
-    border-radius: 20px;
-    .c-col {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      justify-content: center;
-      padding: 20px;
-      background: rgba(7, 7, 7, 0.7);
-      margin: 10px 0;
-      border-radius: 5px;
-      // border: 1px solid black;
-      position: relative;
-
-      .c-col-name {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 5px;
-        flex-direction: row;
-
-        img {
-          width: 60px;
-          height: 60px;
-          border-radius: 50%;
-          border: 2px solid green;
-          margin-right: 5px;
-          object-fit: cover;
-        }
-
-        .col-name {
-          align-items: center;
-          justify-content: center;
-
-          h4 {
-            font-size: 25px;
-            color: white;
-            text-transform: capitalize;
-          }
-          span {
-            color: green;
-          }
-        }
-      }
-      .c-col-time-in-out {
-        display: flex;
-        align-items: start;
-        justify-content: baseline;
-        padding: 5px;
-        flex-direction: row;
-        flex-direction: column;
-        h4 {
-          color: orange;
-          font-family: Arial, Helvetica, sans-serif;
-          font-size: 15px;
-        }
-        h3 {
-          color: red;
-          font-size: 20px;
-        }
-        h5 {
-          color: white;
-          font-size: 15px;
-        }
-      }
-      .online {
-        position: absolute;
-        width: 15px;
-        height: 15px;
-        border-radius: 50%;
-        background-color: rgb(48, 255, 48);
-        top: 65px;
-        left: 75px;
-      }
-
-      .offline {
-        position: absolute;
-        width: 15px;
-        height: 15px;
-        border-radius: 50%;
-        background: red;
-        top: 65px;
-        left: 75px;
-      }
-    }
-  }
-}
+//       .liability-wrapper {
+//         h5 {
+//           text-align: center;
+//           color: white;
+//           font-family: "muli";
+//         }
+//       }
+//     }
+//   }
+// }

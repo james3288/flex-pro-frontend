@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import DashboardPage from "./DashboardPage";
-import MyHeader from "../components/myHeader/MyHeader";
+import DashboardPage from "../DashboardPage";
+import MyHeader from "../../components/myHeader/MyHeader";
+import "./userRegistrationPage.scss";
 
 const UserRegistrationPage = () => {
   const [formDone, setFormDone] = useState(false);

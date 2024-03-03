@@ -1,0 +1,64 @@
+.userRegistration {
+  background-image: url("./../../assets/img/hero/hero-4.jpg");
+  height: 100vh;
+  box-sizing: border-box;
+  font-family: "Muli", Arial;
+  padding-top: 11em;
+
+  .dashboard-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(7, 7, 7, 0.5);
+    margin: 10px 0;
+    border-radius: 5px;
+
+    span {
+      font-size: 20px;
+      font-weight: 500;
+      color: white;
+      width: 100%;
+    }
+
+    h1 {
+      font-size: 50px;
+      color: white;
+      //   border: 1px solid #dc151c;
+      padding: 10px;
+      width: 100%;
+    }
+    strong {
+      color: #dc151c;
+    }
+
+    .contract-wrapper {
+      .cbox:checked {
+        background-color: red; /* color when checked */
+      }
+
+      p {
+        font-size: 15px;
+        color: white;
+      }
+
+      .checkbox-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: left;
+        flex-direction: row;
+        background-color: green input;
+        gap: 10px;
+      }
+
+      .liability-wrapper {
+        h5 {
+          text-align: center;
+          color: white;
+          font-family: "muli";
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,57 @@
+import React, { useMemo } from "react";
+import RenewalUsers from "./RenewalUsers";
+import getForRenewalUsers from "../../../getData/getForRenewalUsers";
+import { useQuery } from "@tanstack/react-query";
+
+const MyRenewalUser = () => {
+  let value = false;
+  const queryKey = useMemo(() => ["forRenewalData"], []);
+
+  const { isPending, error, data } = useQuery({
+    queryKey,
+    queryFn: () => getForRenewalUsers(),
+    // refetchInterval: 1000,
+  });
+
+  if (isPending) return "Loading...";
+
+  if (error) return "An error has occurred: " + error.message;
+
+  console.log(data);
+
+  return (
+    <>
+      <div className="container-fluid content-margin c-col-scrollbar">
+        <div className="row">
+          <div className="form-floating dateTimePicker">
+            <h1>
+              FOR <span>RENEWAL</span> USERS
+            </h1>
+          </div>
+        </div>
+        <div className="row">
+          <div className="c-col-wrapper">
+            {data.map(
+              (user) =>
+                user.remainingDays <= 2 && (
+                  <RenewalUsers
+                    key={user.id}
+                    blobPic={user.image}
+                    registeredName={user.usersubscription.flexprouser.name}
+                    date_subscribed={user.usersubscription.date_subscribed}
+                    subscription={
+                      user.usersubscription.subscription.gym_rate_desc
+                    }
+                    remainingDays={user.remainingDays}
+                    per={user.usersubscription.subscription.per.per}
+                  />
+                )
+            )}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default MyRenewalUser;

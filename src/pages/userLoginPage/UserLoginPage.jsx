@@ -1,6 +1,7 @@
 import React from "react";
-import DashboardPage from "./DashboardPage";
-import MyHeader from "../components/myHeader/MyHeader";
+import DashboardPage from "../DashboardPage";
+import MyHeader from "../../components/myHeader/MyHeader";
+import "./userLoginPage.scss";
 
 const UserLoginPage = () => {
   return (

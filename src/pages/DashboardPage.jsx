@@ -9,6 +9,7 @@ import { Link as ScrollLink, animateScroll as scroll } from "react-scroll";
 import MySubscribedNow from "../components/mySection/MySubscribedNow";
 import MyCLientsOnWorkout from "../components/mySection/MyCLientsOnWorkout";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import MyRenewalUser from "../components/mySection/forRenewal/MyRenewalUser";
 
 const queryClient = new QueryClient();
 
@@ -69,17 +70,6 @@ const DashboardPage = ({
     param === 1 && setInputError("");
 
     setFormDone(true);
-    // setInputError("");
-    // scrollToBottom();
-
-    // axios
-    //   .post("http://127.0.0.1:8000/api/save_users/", formData)
-    //   .then(function (response) {
-    //     console.log(response);
-    //   })
-    //   .catch(function (error) {
-    //     console.log(error);
-    //   });
   };
 
   if (page === "dashboard") {
@@ -125,6 +115,14 @@ const DashboardPage = ({
     content = (
       <QueryClientProvider client={queryClient}>
         <MyCLientsOnWorkout />
+      </QueryClientProvider>
+    );
+  }
+
+  if (page === "forRenewalUser") {
+    content = (
+      <QueryClientProvider client={queryClient}>
+        <MyRenewalUser />
       </QueryClientProvider>
     );
   }

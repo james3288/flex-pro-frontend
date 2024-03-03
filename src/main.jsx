@@ -3,18 +3,19 @@ import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ErrorPage from "./pages/ErrorPage.jsx";
-import UserRegistrationPage from "./pages/UserRegistrationPage.jsx";
-import UserImageRegistrationPage from "./pages/UserImageRegistrationPage.jsx";
-import UserLoginPage from "./pages/UserLoginPage.jsx";
-import UserSubscription from "./pages/UserSubscription.jsx";
-import SubscribedNow from "./pages/SubscribedNow.jsx";
+import UserRegistrationPage from "./pages/userRegistrationPage/UserRegistrationPage.jsx";
+import UserImageRegistrationPage from "./pages/userImageRegistrationPage/UserImageRegistrationPage.jsx";
+import UserLoginPage from "./pages/userLoginPage/UserLoginPage.jsx";
+import UserSubscription from "./pages/userSubscriptionPage/UserSubscription.jsx";
+import SubscribedNow from "./pages/subscribedNowPage/SubscribedNow.jsx";
 
 import TimeAgo from "javascript-time-ago";
 
 import en from "javascript-time-ago/locale/en.json";
 import ru from "javascript-time-ago/locale/ru.json";
-import ClientsOnWorkoutPage from "./pages/ClientsOnWorkoutPage.jsx";
+import ClientsOnWorkoutPage from "./pages/clientOnWorkOutPage/ClientsOnWorkoutPage.jsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import ForRenewalPage from "./pages/forRenewalPage/ForRenewalPage.jsx";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
   {
     path: "/clients-on-workout",
     element: <ClientsOnWorkoutPage />,
+  },
+  {
+    path: "/for-renewal-users",
+    element: <ForRenewalPage />,
   },
 ]);
 
