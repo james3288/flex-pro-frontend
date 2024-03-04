@@ -1,7 +1,7 @@
 import instance from "../../../others/axiosInstance";
 
 // LOGOUT FUNCTION
-const UserLogout = (timeIn, user_online_id, setTriggerLogout) => {
+const UserLogout = async (timeIn, user_online_id, setTriggerLogout) => {
   console.log(user_online_id);
   const logout_date = new Date();
 

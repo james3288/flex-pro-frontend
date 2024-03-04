@@ -24,9 +24,12 @@ const ClientsOnWorkout = ({
   const time_in = formatTimeToString(timeIn);
   const time_out = formatTimeToString(timeOut);
 
+  const [refresher, setRefresher] = useState(0);
+
   const yearValidation = YearValidation(timeOut);
   const [remaining, setRemaining] = useState(0);
-
+  const [counter, setCounter] = useState(0);
+  const [tempTimeOut, setTempTimeOut] = useState(Date());
   // get the remaining days
   const getRemainingDays = async () => {
     setRemaining(await remainingDays(date_subscribed, per));
@@ -56,8 +59,15 @@ const ClientsOnWorkout = ({
     return () => clearInterval(intervalId);
   }, [remaining]);
 
-  const handleLogout = () => {
-    const result = UserLogout(timeIn, id, setTriggerLogout);
+  useEffect(() => {
+    console.log("logout has been triggered", refresher);
+  }, [refresher]);
+
+  const handleLogout = async () => {
+    const result = await UserLogout(timeIn, id, setTriggerLogout);
+    setRefresher((prev) => prev + 1);
+    setTempTimeOut(formatTimeToString(Date()));
+
     console.log(result);
   };
 
@@ -65,9 +75,21 @@ const ClientsOnWorkout = ({
     <>
       <div className="col-lg-3 col-xs-12">
         <div className="c-col">
-          <div className={yearValidation === 1990 ? "online" : "offline"}></div>
+          <div
+            className={
+              yearValidation === 1990 && refresher === 0 ? "online" : "offline"
+            }
+          ></div>
           <div className="c-col-name">
-            <img src={blobPix} alt="" />
+            <img
+              src={blobPix}
+              alt=""
+              style={
+                yearValidation === 1990 && refresher === 0
+                  ? { color: "green" }
+                  : { border: "2px solid red" }
+              }
+            />
             <div className="col-name">
               <h4>
                 <span>ID:{id}</span> {name}
@@ -77,7 +99,11 @@ const ClientsOnWorkout = ({
           <div className="c-col-time-in-out">
             <h4>
               Time In: {time_in} <br /> Time Out:{" "}
-              {yearValidation === 1990 ? "--:--" : time_out}
+              {yearValidation === 1990
+                ? refresher > 0
+                  ? tempTimeOut
+                  : "--:--"
+                : time_out}
             </h4>
             <p>{formatDateOnly(date_log)}</p>
             <p>
@@ -86,13 +112,28 @@ const ClientsOnWorkout = ({
             </p>
             <h3>{subscription}</h3>
             <h5>Remaining Days:</h5>
-            <h5>{remaining < 0 ? "Expired" : formatTime(remaining, "all")}</h5>
+            <h5>
+              {remaining < 0 ? (
+                <span style={{ color: "pink" }}>
+                  Subscription has already expired!
+                </span>
+              ) : (
+                formatTime(remaining, "all")
+              )}
+            </h5>
           </div>
-          {yearValidation === 1990 && (
-            <button className="btn btn-warning" onClick={handleLogout}>
-              Logout
-            </button>
-          )}
+
+          {yearValidation === 1990 &&
+            (refresher > 0 ? (
+              ""
+            ) : (
+              <button
+                className={remaining < 0 ? "btn btn-danger" : "btn btn-warning"}
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            ))}
         </div>
       </div>
     </>

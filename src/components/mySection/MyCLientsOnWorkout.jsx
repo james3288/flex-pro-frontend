@@ -8,13 +8,13 @@ import YearValidation from "../../others/YearValidation";
 import FormatDate from "../../others/FormatDate";
 
 const MyCLientsOnWorkout = () => {
+
   let value = false;
   const queryKey = useMemo(() => ["onWorkoutData"], []);
-
   const { isPending, error, data } = useQuery({
     queryKey,
     queryFn: () => getUsersOnline(),
-    refetchInterval: 1000,
+    // refetchInterval: 1000,
   });
 
   const [date, setDate] = useState(getFormattedDate());

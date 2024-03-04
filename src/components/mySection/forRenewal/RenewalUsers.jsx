@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import FormatDate from "../../../others/FormatDate";
 import formatTime from "../../../others/ReadableFormatTime";
 import remainingDays from "../../../others/GetRemainingDays";
+import instance from "../../../others/axiosInstance";
 
 const RenewalUsers = ({
   blobPic,
@@ -9,17 +10,37 @@ const RenewalUsers = ({
   date_subscribed,
   subscription,
   per,
+  user_id,
+  id,
 }) => {
   const [remaining, setRemaining] = useState(0);
+  const [counter, setCounter] = useState(0);
   // get the remaining days
   const getRemainingDays = async () => {
-    setRemaining(await remainingDays(date_subscribed, per));
+    setRemaining(await remainingDays(date_subscribed, per, user_id));
+  };
+
+  const handleExpired = () => {
+    setCounter((prev) => prev + 1);
+    instance
+      .put(`/api/user_status_update/${id}`, {
+        status: "expired",
+      })
+      .then((response) => {
+        console.log("Update successful:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error updating data:", error);
+      });
   };
 
   useEffect(() => {
     const intervalId = setInterval(() => {
       if (formatTime(remaining, "minutes-left") < 0) {
         // setRefresher2(true);
+
+        counter == 0 && handleExpired();
+
         clearInterval(intervalId);
       } else {
         getRemainingDays();
@@ -29,6 +50,8 @@ const RenewalUsers = ({
     // Clean up the interval when the component sunmounts
     return () => clearInterval(intervalId);
   }, [remaining]);
+
+  useEffect(() => {}, []);
   return (
     <>
       <div className="col-lg-3 col-xs-12">
@@ -37,7 +60,7 @@ const RenewalUsers = ({
             <img src={blobPic} alt="" />
             <div className="col-name">
               <h4>
-                <span>ID:1</span> {registeredName}
+                <span>ID:{user_id}</span> {registeredName}
               </h4>
             </div>
           </div>
@@ -47,7 +70,7 @@ const RenewalUsers = ({
 
             <h3>{subscription}</h3>
             <h5>Remaining Days:</h5>
-            <h4>{formatTime(remaining, "all")}</h4>
+            <h4>{remaining < 0 ? "Expired" : formatTime(remaining, "all")}</h4>
           </div>
         </div>
       </div>
