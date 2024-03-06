@@ -3,12 +3,20 @@ import instance from "../../../others/axiosInstance";
 // LOGOUT FUNCTION
 const SaveTrainers = async (formData) => {
   try {
-    const response = await instance.post(`/api/save_trainers/`, formData, {
+    const config = {
       headers: {
-        "Content-Type": "multipart/form-data",
+        "content-type": "multipart/form-data",
       },
-    });
+    };
+
+    const response = await instance.post(
+      `/api/save_trainers/`,
+      formData,
+      config
+    );
     console.log(response.data);
+    // Refresh the page
+    window.location.reload();
   } catch (error) {
     console.error("Error updating data:", error);
   }

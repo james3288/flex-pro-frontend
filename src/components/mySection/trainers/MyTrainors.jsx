@@ -4,6 +4,7 @@ import Pic2 from "./../../../assets/img/hero/hero-1.jpg";
 import Pic3 from "./../../../assets/img/team/team-3.jpg";
 import Trainers from "./Trainers";
 import TrainersModal from "./trainersModal";
+
 const MyTrainors = () => {
   return (
     <>
@@ -27,6 +28,7 @@ const MyTrainors = () => {
               </div>
             </div>
           </div>
+
           <Trainers />
         </div>
 

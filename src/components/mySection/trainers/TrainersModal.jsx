@@ -2,29 +2,26 @@ import React, { useRef, useState } from "react";
 import SaveTrainers from "./saveTrainers";
 
 const TrainersModal = () => {
-  const [form, setForm] = useState({
-    trainersName: "",
-    position: "",
-    image: "",
-  });
-  const nameRef = useRef();
-  const positionRef = useRef();
-  const imageRef = useRef();
+  const [trainersName, setTrainersName] = useState("");
+  const [position, setPosition] = useState("");
+  const [image, setImage] = useState();
 
-  const handleOnSubmit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData();
-    formData.append("trainersName", nameRef.current.value);
-    formData.append("position", positionRef.current.value);
-    formData.append("image", imageRef.current.files[0]);
+  const handleSave = async () => {
+    const uploadData = new FormData();
+    uploadData.append("trainersName", trainersName);
+    uploadData.append("position", position);
+    uploadData.append("image", image);
 
-    // const formData = {
-    //   trainersName: nameRef.current.value,
-    //   position: positionRef.current.value,
-    //   image: imageRef.current.files[0],
-    // };
+    SaveTrainers(uploadData);
 
-    SaveTrainers(formData);
+    setTrainersName("");
+    setPosition("");
+    setImage(null);
+
+    // const formData = new FormData();
+    // formData.append("trainersName", nameRef.current.value);
+    // formData.append("position", positionRef.current.value);
+    // formData.append("image", imageRef.current.files[0]);
   };
 
   return (
@@ -51,47 +48,51 @@ const TrainersModal = () => {
             </button>
           </div>
           <div className="modal-body">
-            <form onSubmit={handleOnSubmit}>
-              <div className="form-group">
-                <label className="col-form-label">Name:</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="recipient-name"
-                  ref={nameRef}
-                />
-              </div>
-              <div className="form-group">
-                <label className="col-form-label">Position:</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="recipient-position"
-                  ref={positionRef}
-                />
-              </div>
-              <div className="mb-3">
-                <label className="form-label">Default file input example</label>
-                <input
-                  className="form-control"
-                  type="file"
-                  id="formFile"
-                  ref={imageRef}
-                />
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  data-dismiss="modal"
-                >
-                  Close
-                </button>
-                <button type="submit" className="btn btn-primary">
-                  Save
-                </button>
-              </div>
-            </form>
+            <div className="form-group">
+              <label className="col-form-label">Name:</label>
+              <input
+                type="text"
+                className="form-control"
+                id="recipient-name"
+                value={trainersName}
+                onChange={(e) => setTrainersName(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <label className="col-form-label">Position:</label>
+              <input
+                type="text"
+                className="form-control"
+                id="recipient-position"
+                onChange={(e) => setPosition(e.target.value)}
+                value={position}
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Default file input example</label>
+              <input
+                className="form-control"
+                type="file"
+                id="formFile"
+                onChange={(e) => setImage(e.target.files[0])}
+              />
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                data-dismiss="modal"
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleSave}
+              >
+                Save
+              </button>
+            </div>
           </div>
         </div>
       </div>
