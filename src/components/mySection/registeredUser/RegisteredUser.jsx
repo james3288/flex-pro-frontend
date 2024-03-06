@@ -51,6 +51,8 @@ const RegisteredUser = ({
             <p style={{ lineHeight: "16px" }}>
               <strong>{formatTime(remaining, "days-hours")}</strong>
             </p>
+            <h5>Personal Trainer</h5>
+            <p>Jeoseph Bejec - 250 days left</p>
           </div>
         </div>
       </div>

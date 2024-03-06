@@ -10,6 +10,7 @@ import MySubscribedNow from "../components/mySection/MySubscribedNow";
 import MyCLientsOnWorkout from "../components/mySection/MyCLientsOnWorkout";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import MyRenewalUser from "../components/mySection/forRenewal/MyRenewalUser";
+import MyTrainors from "../components/mySection/trainers/MyTrainors";
 
 const queryClient = new QueryClient();
 
@@ -125,6 +126,10 @@ const DashboardPage = ({
         <MyRenewalUser />
       </QueryClientProvider>
     );
+  }
+
+  if (page === "trainor") {
+    content = <MyTrainors />;
   }
 
   return (

@@ -16,6 +16,7 @@ import ru from "javascript-time-ago/locale/ru.json";
 import ClientsOnWorkoutPage from "./pages/clientOnWorkOutPage/ClientsOnWorkoutPage.jsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ForRenewalPage from "./pages/forRenewalPage/ForRenewalPage.jsx";
+import TrainorPage from "./pages/trainorPage/TrainorPage.jsx";
 
 const queryClient = new QueryClient();
 
@@ -55,6 +56,10 @@ const router = createBrowserRouter([
   {
     path: "/for-renewal-users",
     element: <ForRenewalPage />,
+  },
+  {
+    path: "/trainors",
+    element: <TrainorPage />,
   },
 ]);
 
