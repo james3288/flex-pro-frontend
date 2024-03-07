@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import SaveTrainers from "./saveTrainers";
 
+
 const TrainersModal = () => {
   const [trainersName, setTrainersName] = useState("");
   const [position, setPosition] = useState("");

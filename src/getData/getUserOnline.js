@@ -14,6 +14,8 @@ const getUsersOnline = async () => {
           user.usersubscription.flexprouser.id
         );
 
+        console.log(imgpath.image1);
+
         const imageDataUrl = await loadImageData(imgpath.image1);
 
         return {

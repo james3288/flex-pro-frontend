@@ -129,7 +129,11 @@ const DashboardPage = ({
   }
 
   if (page === "trainor") {
-    content = <MyTrainors />;
+    content = (
+      <QueryClientProvider client={queryClient}>
+        <MyTrainors />
+      </QueryClientProvider>
+    );
   }
 
   return (
