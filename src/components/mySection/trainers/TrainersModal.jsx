@@ -5,19 +5,21 @@ const TrainersModal = () => {
   const [trainersName, setTrainersName] = useState("");
   const [position, setPosition] = useState("");
   const [image, setImage] = useState();
+  const [contactNo, setContactNo] = useState("");
 
   const handleSave = async () => {
     const uploadData = new FormData();
     uploadData.append("trainersName", trainersName);
     uploadData.append("position", position);
     uploadData.append("image", image);
+    uploadData.append("contactNo", contactNo);
 
     SaveTrainers(uploadData);
 
     setTrainersName("");
     setPosition("");
     setImage(null);
-
+    setContactNo("");
     // const formData = new FormData();
     // formData.append("trainersName", nameRef.current.value);
     // formData.append("position", positionRef.current.value);
@@ -68,8 +70,18 @@ const TrainersModal = () => {
                 value={position}
               />
             </div>
+            <div className="form-group">
+              <label className="col-form-label">Contact Number:</label>
+              <input
+                type="text"
+                className="form-control"
+                id="recipient-position"
+                onChange={(e) => setContactNo(e.target.value)}
+                value={contactNo}
+              />
+            </div>
             <div className="mb-3">
-              <label className="form-label">Default file input example</label>
+              <label className="form-label">Uploage Image:</label>
               <input
                 className="form-control"
                 type="file"

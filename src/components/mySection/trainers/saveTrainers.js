@@ -1,6 +1,5 @@
 import instance from "../../../others/axiosInstance";
 
-// LOGOUT FUNCTION
 const SaveTrainers = async (formData) => {
   try {
     const config = {

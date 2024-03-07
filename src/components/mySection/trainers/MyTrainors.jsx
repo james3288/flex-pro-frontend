@@ -1,11 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Pic1 from "./../../../assets/img/team/team-2.jpg";
 import Pic2 from "./../../../assets/img/hero/hero-1.jpg";
 import Pic3 from "./../../../assets/img/team/team-3.jpg";
 import Trainers from "./Trainers";
 import TrainersModal from "./trainersModal";
+import getTrainors from "../../../getData/getTrainors";
 
 const MyTrainors = () => {
+  useEffect(() => {
+    const trainorData = async () => {
+      return await getTrainors();
+    };
+
+    console.log(trainorData());
+  }, []);
+
   return (
     <>
       <section className="team-section team-page">
