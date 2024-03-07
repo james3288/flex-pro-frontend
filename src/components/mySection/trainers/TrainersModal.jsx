@@ -1,31 +1,53 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useReducer, useRef, useState } from "react";
 import SaveTrainers from "./saveTrainers";
-
+import { INITIAL_STATE, formReducer } from "../../../reducers/trainorsReducer";
 
 const TrainersModal = () => {
-  const [trainersName, setTrainersName] = useState("");
-  const [position, setPosition] = useState("");
-  const [image, setImage] = useState();
-  const [contactNo, setContactNo] = useState("");
+  // const [trainersName, setTrainersName] = useState("");
+  // const [position, setPosition] = useState("");
+  // const [image, setImage] = useState();
+  // const [contactNo, setContactNo] = useState("");
+  // const [errors, setErrors] = useState(false);
+
+  const [state, dispatch] = useReducer(formReducer, INITIAL_STATE);
 
   const handleSave = async () => {
+    if (state.trainersName == "" || !isNaN(state.trainersName)) {
+      return;
+    } else if (state.position == "" || !isNaN(state.position)) {
+      return;
+    } else if (state.contactNo == "" || isNaN(state.contactNo)) {
+      return;
+    } else if (state.image === null || state.image === undefined) {
+      return;
+    }
+
     const uploadData = new FormData();
-    uploadData.append("trainersName", trainersName);
-    uploadData.append("position", position);
-    uploadData.append("image", image);
-    uploadData.append("contactNo", contactNo);
+    uploadData.append("trainersName", state.trainersName);
+    uploadData.append("position", state.position);
+    uploadData.append("image", state.image);
+    uploadData.append("contactNo", state.contactNo);
 
     SaveTrainers(uploadData);
 
-    setTrainersName("");
-    setPosition("");
-    setImage(null);
-    setContactNo("");
-    // const formData = new FormData();
-    // formData.append("trainersName", nameRef.current.value);
-    // formData.append("position", positionRef.current.value);
-    // formData.append("image", imageRef.current.files[0]);
+    dispatch({ type: "CLEAR" });
   };
+
+  const handleChange = (e) => {
+    dispatch({
+      type: "CHANGE_INPUT",
+      payload: { name: e.target.name, value: e.target.value },
+    });
+  };
+
+  const handleChangeImage = (e) => {
+    dispatch({
+      type: "CHANGE_IMAGE",
+      payload: { name: e.target.name, value: e.target.files[0] },
+    });
+  };
+
+  console.log(state);
 
   return (
     <div
@@ -57,9 +79,18 @@ const TrainersModal = () => {
                 type="text"
                 className="form-control"
                 id="recipient-name"
-                value={trainersName}
-                onChange={(e) => setTrainersName(e.target.value)}
+                // value={trainersName}
+                name="trainersName"
+                // onChange={(e) => setTrainersName(e.target.value)}
+                onChange={handleChange}
               />
+              {state.trainersName == "" ? (
+                <span style={{ color: "red" }}>Fill trainers name</span>
+              ) : (
+                !isNaN(state.trainersName) && (
+                  <span style={{ color: "red" }}>must not numeric</span>
+                )
+              )}
             </div>
             <div className="form-group">
               <label className="col-form-label">Position:</label>
@@ -67,9 +98,18 @@ const TrainersModal = () => {
                 type="text"
                 className="form-control"
                 id="recipient-position"
-                onChange={(e) => setPosition(e.target.value)}
-                value={position}
+                // onChange={(e) => setPosition(e.target.value)}
+                // value={position}
+                onChange={handleChange}
+                name="position"
               />
+              {state.position == "" ? (
+                <span style={{ color: "red" }}>Fill position</span>
+              ) : (
+                !isNaN(state.position) && (
+                  <span style={{ color: "red" }}>must not numeric</span>
+                )
+              )}
             </div>
             <div className="form-group">
               <label className="col-form-label">Contact Number:</label>
@@ -77,9 +117,19 @@ const TrainersModal = () => {
                 type="text"
                 className="form-control"
                 id="recipient-position"
-                onChange={(e) => setContactNo(e.target.value)}
-                value={contactNo}
+                // onChange={(e) => setContactNo(e.target.value)}
+                // value={contactNo}
+                onChange={handleChange}
+                name="contactNo"
+                placeholder="09+"
               />
+              {state.contactNo == "" ? (
+                <span style={{ color: "red" }}>Fill contact No</span>
+              ) : (
+                isNaN(state.contactNo) && (
+                  <span style={{ color: "red" }}>must be numeric</span>
+                )
+              )}
             </div>
             <div className="mb-3">
               <label className="form-label">Uploage Image:</label>
@@ -87,8 +137,13 @@ const TrainersModal = () => {
                 className="form-control"
                 type="file"
                 id="formFile"
-                onChange={(e) => setImage(e.target.files[0])}
+                name="image"
+                // onChange={(e) => setImage(e.target.files[0])}
+                onChange={handleChangeImage}
               />
+              {state.image === null || state.image === undefined ? (
+                <span style={{ color: "red" }}>Upload an image</span>
+              ) : null}
             </div>
             <div className="modal-footer">
               <button

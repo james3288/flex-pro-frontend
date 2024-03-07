@@ -23,7 +23,12 @@ const MyTrainors = () => {
     // refetchInterval: 1000,
   });
 
-  if (isPending) return "Loading...";
+  if (isPending)
+    return (
+      <div id="preloder">
+        <div class="loader"></div>
+      </div>
+    );
 
   if (error) return "An error has occurred: " + error.message;
 
@@ -31,7 +36,10 @@ const MyTrainors = () => {
 
   return (
     <>
-      <section className="team-section team-page">
+      <section
+        className="team-section team-page"
+        style={{ paddingTop: "20px" }}
+      >
         <div className="container-fluid">
           <div className="row">
             <div className="col-lg-12">
@@ -51,8 +59,19 @@ const MyTrainors = () => {
               </div>
             </div>
           </div>
-
-          <Trainers />
+          <div className="row">
+            {data?.map(
+              (trainor, index) => (
+                <Trainers
+                  key={index}
+                  name={trainor.name}
+                  position={trainor.position}
+                  image={trainor.image}
+                />
+              )
+              // console.log(trainor)
+            )}
+          </div>
         </div>
 
         <TrainersModal />

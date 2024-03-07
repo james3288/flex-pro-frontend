@@ -13,7 +13,12 @@ const MyRenewalUser = () => {
     // refetchInterval: 1000,
   });
 
-  if (isPending) return "Loading...";
+  if (isPending)
+    return (
+      <div id="preloder">
+        <div class="loader"></div>
+      </div>
+    );
 
   if (error) return "An error has occurred: " + error.message;
 

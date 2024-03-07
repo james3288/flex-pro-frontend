@@ -8,7 +8,6 @@ import YearValidation from "../../others/YearValidation";
 import FormatDate from "../../others/FormatDate";
 
 const MyCLientsOnWorkout = () => {
-
   let value = false;
   const queryKey = useMemo(() => ["onWorkoutData"], []);
   const { isPending, error, data } = useQuery({
@@ -31,7 +30,12 @@ const MyCLientsOnWorkout = () => {
     return `${year}-${month}-${day}`;
   }
 
-  if (isPending) return "Loading...";
+  if (isPending)
+    return (
+      <div id="preloder">
+        <div class="loader"></div>
+      </div>
+    );
 
   if (error) return "An error has occurred: " + error.message;
 
