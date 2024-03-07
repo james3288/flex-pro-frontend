@@ -12,6 +12,8 @@ const RegisteredUser = ({
   date_subscribed,
   per,
   setRefresher,
+  trainers,
+  trainersRemainingDays,
 }) => {
   const [remaining, setRemaining] = useState(0);
   // get the remaining days
@@ -52,7 +54,14 @@ const RegisteredUser = ({
               <strong>{formatTime(remaining, "days-hours")}</strong>
             </p>
             <h5>Personal Trainer</h5>
-            <p>Jeoseph Bejec - 250 days left</p>
+            {trainersRemainingDays < 0 ? (
+              <p>Expired</p>
+            ) : (
+              <p style={{ lineHeight: "14px" }}>
+                {trainers} - {formatTime(trainersRemainingDays, "days-hours")}{" "}
+                left
+              </p>
+            )}
           </div>
         </div>
       </div>

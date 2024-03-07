@@ -1,4 +1,4 @@
-const remainingDays = async (date_log, per) => {
+const remainingDays = async (date_log, per, personal_training_session = 1) => {
   const dateLogObj = new Date(date_log);
   const dateLogObj1 = new Date(date_log);
   const now = new Date();
@@ -9,6 +9,8 @@ const remainingDays = async (date_log, per) => {
     dateLogObj1.setDate(dateLogObj1.getDate() + 1); // add 1 day
   } else if (per === "year") {
     dateLogObj1.setFullYear(dateLogObj1.getFullYear() + 1); // add 1 year
+  } else if (per === "personal_training_day") {
+    dateLogObj1.setDate(dateLogObj1.getDate() + personal_training_session); //add  days
   }
 
   const daysConsume = now.getTime() - dateLogObj.getTime();

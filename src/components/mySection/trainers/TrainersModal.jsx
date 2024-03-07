@@ -3,12 +3,6 @@ import SaveTrainers from "./saveTrainers";
 import { INITIAL_STATE, formReducer } from "../../../reducers/trainorsReducer";
 
 const TrainersModal = () => {
-  // const [trainersName, setTrainersName] = useState("");
-  // const [position, setPosition] = useState("");
-  // const [image, setImage] = useState();
-  // const [contactNo, setContactNo] = useState("");
-  // const [errors, setErrors] = useState(false);
-
   const [state, dispatch] = useReducer(formReducer, INITIAL_STATE);
 
   const handleSave = async () => {
