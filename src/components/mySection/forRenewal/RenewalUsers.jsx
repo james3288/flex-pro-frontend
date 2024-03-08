@@ -75,8 +75,14 @@ const RenewalUsers = ({
             <h4>{remaining < 0 ? "Expired" : formatTime(remaining, "all")}</h4>
 
             <h5>Personal Trainers:</h5>
-            <h4>
-              {trainers} - {formatTime(trainerRemainingDays, "days-hours")} left
+
+            <h4 style={{ color: "pink" }}>
+              {trainers}{" "}
+              {trainerRemainingDays < 0
+                ? "- Expired"
+                : "(" +
+                  formatTime(trainerRemainingDays, "days-hours") +
+                  ") left"}
             </h4>
           </div>
         </div>

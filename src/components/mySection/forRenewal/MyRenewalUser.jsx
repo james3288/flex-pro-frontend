@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import RenewalUsers from "./RenewalUsers";
 import getForRenewalUsers from "../../../getData/getForRenewalUsers";
 import { useQuery } from "@tanstack/react-query";
+import formatTime from "../../../others/ReadableFormatTime";
 
 const MyRenewalUser = () => {
   let value = false;
@@ -38,7 +39,9 @@ const MyRenewalUser = () => {
           <div className="c-col-wrapper">
             {data.map(
               (user) =>
-                user.remainingDays <= 2 && (
+                // user.remainingDays <= 2 ||
+                (formatTime(user.trainerRemainingDays, "days-left") <= 2 ||
+                  user.remainingDays <= 2) && (
                   <RenewalUsers
                     key={user.id}
                     blobPic={user.image}

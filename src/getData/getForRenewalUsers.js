@@ -36,12 +36,13 @@ const getForRenewalUsers = async () => {
         return {
           ...user,
           trainerRemainingDays: getTrainersRemainingDays,
+
           image: imageDataUrl || "/media/image/default.jpg",
           remainingDays: formatTime(getRemainingDays, "days-left"),
         }; // If imgpath is null, use default image
       })
     );
-
+    console.log(newUser);
     return newUser;
   } catch (error) {
     console.error("Error fetching users:", error);

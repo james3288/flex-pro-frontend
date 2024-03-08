@@ -214,7 +214,7 @@ const MySubscribedNow = () => {
                   )}
 
                   {registered && (
-                    <h3 style={{ color: "red" }}>
+                    <h3 style={{ color: "green" }}>
                       You are successfully registered..
                     </h3>
                   )}

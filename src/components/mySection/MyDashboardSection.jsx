@@ -207,7 +207,12 @@ const MyDashboardSection = () => {
 
       console.log("forRenewal", newUser);
       setNoRenewalUser(
-        newUser.filter((user) => user.remainingDays <= 2).length
+        newUser.filter(
+          (user) =>
+            user.remainingDays <= 2 ||
+            (formatTime(user.trainersRemainingDays, "days-left") <= 2 &&
+              user.usersubscription.trainer != null)
+        ).length
       );
       setForRenewalUsers(newUser);
     } catch (error) {

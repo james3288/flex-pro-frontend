@@ -67,58 +67,71 @@ const ForRenewal = ({
 
   return (
     <>
-      {formatTime(remainingDays, "days-left") <= 2 && (
-        <div className="clients-online">
-          <div className="row row2">
-            <div className="col-3">
-              <img
-                src={pix}
-                alt=""
-                className="circle"
-                style={{ border: "2px solid red" }}
-              />
-            </div>
-            <div className="col-7">
-              <div className="clients-flex">
-                <h5>{registeredName}</h5>
-                {/* <p>ID:{user_id}</p> */}
-                <p>Date Registered:</p>
-                <p>
-                  <strong>{FormatDate(date_log)}</strong>
-                </p>
-                <p
-                  style={{
-                    color: "yellow",
-                    fontSize: "18px",
-                    lineHeight: "14px",
-                  }}
-                >
-                  {subscription}
-                </p>
-                <p>Remaining: </p>
-                {/* <p style={{ lineHeight: "10px !important;" }}>
+      {formatTime(remainingDays, "days-left") <= 2 ||
+        (formatTime(trainersRemainingDays, "days-left") <= 2 &&
+          trainers != undefined && (
+            <div className="clients-online">
+              <div className="row row2">
+                <div className="col-3">
+                  <img
+                    src={pix}
+                    alt=""
+                    className="circle"
+                    style={{ border: "2px solid red" }}
+                  />
+                </div>
+                <div className="col-7">
+                  <div className="clients-flex">
+                    <h5>{registeredName}</h5>
+                    <p
+                      style={{
+                        color: "yellow",
+                        fontSize: "18px",
+                        lineHeight: "14px",
+                      }}
+                    >
+                      {subscription} per {per}
+                    </p>
+                    {/* <p>ID:{user_id}</p> */}
+                    <p>Date Registered:</p>
+                    <p>
+                      <strong>{FormatDate(date_log)}</strong>
+                    </p>
+
+                    <p>Remaining: </p>
+                    {/* <p style={{ lineHeight: "10px !important;" }}>
                   {" "}
                   {formatTime(remainingDays1, "days")}{" "}
                   {formatTime(remainingDays1, "hours")}{" "}
                 </p>
                 <p>{formatTime(remainingDays1, "seconds")} left</p> */}
-                <p style={{ lineHeight: "16px" }}>
-                  <strong> {formatTime(remainingDays1, "all")}</strong> left
-                </p>
-                <p>Personal Trainer:</p>
-                <p style={{ lineHeight: "16px" }}>
-                  <strong>
-                    {" "}
-                    {trainers} -{" "}
-                    {formatTime(trainersRemainingDays, "days-hours")}
-                  </strong>{" "}
-                  left
-                </p>
+                    <p style={{ lineHeight: "16px" }}>
+                      <strong>
+                        {" "}
+                        {formatTime(remainingDays1, "days-hours")}
+                      </strong>{" "}
+                      left
+                    </p>
+                    <p>Personal Trainer:</p>
+
+                    <p style={{ lineHeight: "16px" }}>
+                      {trainersRemainingDays < 0 ? (
+                        <strong style={{ color: "pink" }}>
+                          {trainers} - Expired
+                        </strong>
+                      ) : (
+                        <strong style={{ color: "pink" }}>
+                          {trainers} ({" "}
+                          {formatTime(trainersRemainingDays, "days-hours")})
+                          left
+                        </strong>
+                      )}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      )}
+          ))}
     </>
   );
 };
