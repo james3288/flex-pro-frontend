@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import remainingDays from "../../../others/GetRemainingDays";
 import formatTime from "../../../others/ReadableFormatTime";
+import ExtendButton from "./ExtendButton";
 
 const RegisteredUser = ({
   registeredName,
@@ -55,7 +56,7 @@ const RegisteredUser = ({
             </p>
             <h5>Personal Trainer</h5>
             {trainersRemainingDays < 0 ? (
-              <p>Expired</p>
+              <ExtendButton />
             ) : (
               <p style={{ lineHeight: "14px" }}>
                 {trainers} - {formatTime(trainersRemainingDays, "days-hours")}{" "}

@@ -12,6 +12,8 @@ const RenewalUsers = ({
   per,
   user_id,
   id,
+  trainers,
+  trainerRemainingDays,
 }) => {
   const [remaining, setRemaining] = useState(0);
   const [counter, setCounter] = useState(0);
@@ -65,12 +67,17 @@ const RenewalUsers = ({
             </div>
           </div>
           <div className="c-col-time-in-out">
-            <p>DATE REGISTERED</p>
+            <h5>DATE REGISTERED</h5>
             <h4>{FormatDate(date_subscribed)}</h4>
 
             <h3>{subscription}</h3>
             <h5>Remaining Days:</h5>
             <h4>{remaining < 0 ? "Expired" : formatTime(remaining, "all")}</h4>
+
+            <h5>Personal Trainers:</h5>
+            <h4>
+              {trainers} - {formatTime(trainerRemainingDays, "days-hours")} left
+            </h4>
           </div>
         </div>
       </div>

@@ -1,10 +1,9 @@
 import remainingDays from "../others/GetRemainingDays";
-import formatTime from "../others/ReadableFormatTime";
 import instance from "../others/axiosInstance";
 import getImagePath from "./getImagePath";
 import loadImageData from "./loadImageData";
 
-const getForRenewalUsers = async () => {
+const getActiveUsers = async () => {
   try {
     const response = await instance.get(`/api/user_all_status/`);
     const users = response.data;
@@ -15,8 +14,6 @@ const getForRenewalUsers = async () => {
         const imgpath = await getImagePath(
           user.usersubscription.flexprouser.id
         );
-
-        const imageDataUrl = await loadImageData(imgpath.image1);
 
         // get the remaining days
         const getRemainingDays = await remainingDays(
@@ -33,19 +30,21 @@ const getForRenewalUsers = async () => {
         );
         //end get trainers remaining days
 
+        const imageDataUrl = await loadImageData(imgpath.image1);
+
         return {
           ...user,
-          trainerRemainingDays: getTrainersRemainingDays,
+          trainersRemainingDays: getTrainersRemainingDays,
           image: imageDataUrl || "/media/image/default.jpg",
-          remainingDays: formatTime(getRemainingDays, "days-left"),
         }; // If imgpath is null, use default image
       })
     );
 
+    console.log("activeUsers", newUser);
     return newUser;
   } catch (error) {
     console.error("Error fetching users:", error);
   }
 };
 
-export default getForRenewalUsers;
+export default getActiveUsers;

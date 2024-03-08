@@ -24,6 +24,8 @@ function ClientsOnline({
   blobPix,
   setNoOnlineUser,
   setRefresher2,
+  trainers,
+  trainersRemainingDays,
 }) {
   // Parse the timestamp
   const timeInObj = new Date(timeIn);
@@ -160,6 +162,16 @@ function ClientsOnline({
                 }}
               >
                 <strong>Expired</strong>
+              </p>
+            )}
+            <h5>Personal Trainers:</h5>
+            {trainersRemainingDays < 0 ? (
+              <>
+                <p>Expired</p>
+              </>
+            ) : (
+              <p>
+                {trainers} - {formatTime(trainersRemainingDays, "days-hours")}
               </p>
             )}
           </div>

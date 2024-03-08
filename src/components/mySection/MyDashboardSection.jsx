@@ -73,8 +73,17 @@ const MyDashboardSection = () => {
 
           const imageDataUrl = await loadImageData(imgpath.image1);
 
+          // get trainiers remaining days
+          const getTrainersRemainingDays = await remainingDays(
+            user.usersubscription.date_subscribed,
+            "personal_training_day",
+            user.usersubscription.subscription.personal_training_session
+          );
+          //end get trainers remaining days
+
           return {
             ...user,
+            trainersRemainingDays: getTrainersRemainingDays,
             image: imageDataUrl || "/media/image/default.jpg",
           }; // If imgpath is null, use default image
         })
@@ -179,10 +188,19 @@ const MyDashboardSection = () => {
           );
           // end get the reamining days
 
+          // get trainiers remaining days
+          const getTrainersRemainingDays = await remainingDays(
+            user.usersubscription.date_subscribed,
+            "personal_training_day",
+            user.usersubscription.subscription.personal_training_session
+          );
+          //end get trainers remaining days
+
           return {
             ...user,
             image: imageDataUrl || "/media/image/default.jpg",
             remainingDays: formatTime(getRemainingDays, "days-left"),
+            trainersRemainingDays: getTrainersRemainingDays,
           }; // If imgpath is null, use default image
         })
       );
@@ -223,6 +241,7 @@ const MyDashboardSection = () => {
 
   useEffect(() => {
     getActiveUsers();
+    // setActiveUsers(async () => await getActiveUsers());
   }, []);
 
   // for renewal users
@@ -246,6 +265,8 @@ const MyDashboardSection = () => {
   // refresher3
   useEffect(() => {
     getActiveUsers();
+    // setActiveUsers(async () => await getActiveUsers());
+
     console.log("refresher3");
     setRefresher(false);
   }, [refresher3]);
@@ -261,15 +282,15 @@ const MyDashboardSection = () => {
               <span>ACTIVE USER</span>
 
               <h1>
-                {activeUsers.length}{" "}
-                <strong> {activeUsers.length > 1 ? "USERS" : "USER"}</strong>
+                {activeUsers?.length}{" "}
+                <strong> {activeUsers?.length > 1 ? "USERS" : "USER"}</strong>
               </h1>
               <div className="scrollable-list-of-user">
-                {activeUsers.map((user) => (
+                {activeUsers?.map((user) => (
                   <RegisteredUser
                     key={user.id}
                     pix={Pic3}
-                    user_id={user.id}
+                    user_id={user.usersubscription.flexprouser.id}
                     blobPix={user.image}
                     registeredName={user.usersubscription.flexprouser.name}
                     weights={22}
@@ -328,6 +349,8 @@ const MyDashboardSection = () => {
                     setTriggerLogout={setTriggerLogout}
                     setNoOnlineUser={setNoOnlineUser}
                     setRefresher2={setRefresher2}
+                    trainers={user.usersubscription.trainer?.name}
+                    trainersRemainingDays={user.trainersRemainingDays}
                   />
                 ))}
               </div>
@@ -364,6 +387,8 @@ const MyDashboardSection = () => {
                     per={user.usersubscription.subscription.per.per}
                     setRefresher={setRefresher}
                     setNoRenewalUser={setNoRenewalUser}
+                    trainersRemainingDays={user.trainersRemainingDays}
+                    trainers={user.usersubscription.trainer?.name}
                   />
                 ))}
               </div>

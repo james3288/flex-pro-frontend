@@ -7,19 +7,26 @@ const MySubscribedNow = () => {
   const [planNow, setPlanNow] = useState([]);
   const location = useLocation();
   const [searchField, setSearchField] = useState("");
+  const [trainerField, setTrainerField] = useState("");
   const [flexProUsers, setFlexProUsers] = useState([]);
+  const [flexProTrainers, setFlexProTrainers] = useState([]);
   const [searchOutput, setSearchOutput] = useState([]);
+  const [trainerSearchOutput, setTrainerSearchOutput] = useState([]);
   const [subscriptionData, setSubscriptionData] = useState({
     flexpro_id: 0,
     subscription_id: 0,
     date_subscribed: new Date(),
+    trainer_id: 0,
   });
   const [registered, setRegistered] = useState(false);
   const [alreadySubscribed, setAlreadySubscribed] = useState(false);
   const [myImage, setMyImage] = useState(null);
+  const [myImage2, setMyImage2] = useState(null);
 
   const userRef = useRef(null);
+  const trainerRef = useRef(null);
   const imageRef = useRef(null);
+  const trainerImageRef = useRef(null);
 
   // Access the query parameters from the location object
   const queryParams = new URLSearchParams(location.search);
@@ -41,8 +48,16 @@ const MySubscribedNow = () => {
     });
   };
 
+  let getTrainers = async () => {
+    await instance.get(`/api/get_trainers/`).then((res) => {
+      const trainers = res.data;
+
+      setFlexProTrainers(trainers);
+    });
+  };
+
   const handleSelectUser = (flexpro_id, name, path) => {
-    getImage(path);
+    getImage(path, "user");
     userRef.current.innerText = name;
     setSearchField("");
     setAlreadySubscribed(false);
@@ -54,13 +69,28 @@ const MySubscribedNow = () => {
     }));
   };
 
+  const handleSelectTrainer = (trainer_id, name, path) => {
+    getImage(path, "trainer");
+    trainerRef.current.innerText = name;
+    setTrainerField("");
+
+    setSubscriptionData((prev) => ({
+      ...prev,
+      trainer_id: trainer_id,
+    }));
+  };
+
   // path = "/media/images/26/26.png"
-  const getImage = async (path) => {
+  const getImage = async (path, selected) => {
     try {
       const response = await instance.get(path, { responseType: "blob" });
       const reader = new FileReader();
       reader.onloadend = () => {
-        setMyImage(reader.result);
+        if (selected === "user") {
+          setMyImage(reader.result);
+        } else if (selected === "trainer") {
+          setMyImage2(reader.result);
+        }
       };
       reader.readAsDataURL(response.data);
     } catch (error) {
@@ -105,6 +135,12 @@ const MySubscribedNow = () => {
     getUsers();
   }, []);
 
+  //   load all trainers here
+  useEffect(() => {
+    console.log("load trainers here");
+    getTrainers();
+  }, []);
+
   useEffect(() => {
     setTimeout(() => {
       const fetchData = async () => {
@@ -115,6 +151,7 @@ const MySubscribedNow = () => {
     }, 50);
   }, [id]); // Include id as a dependency to fetch data when id changes
 
+  // filtering users while typing
   useEffect(() => {
     const filteredUsers = flexProUsers.filter((user) =>
       user.flex_pro_user.name.toLowerCase().includes(searchField.toLowerCase())
@@ -122,6 +159,15 @@ const MySubscribedNow = () => {
 
     setSearchOutput(filteredUsers);
   }, [searchField]);
+
+  // filtering trainers while typing
+  useEffect(() => {
+    const filteredTrainers = flexProTrainers.filter((trainers) =>
+      trainers.name.toLowerCase().includes(trainerField.toLowerCase())
+    );
+
+    setTrainerSearchOutput(filteredTrainers);
+  }, [trainerField]);
 
   useEffect(() => {
     console.log(registered);
@@ -151,6 +197,16 @@ const MySubscribedNow = () => {
 
                     <h2 ref={userRef}></h2>
                   </div>
+
+                  <span>SELECTED TRAINER</span>
+                  <div className="selected-user">
+                    {myImage2 != null && (
+                      <img ref={trainerImageRef} src={myImage2} alt="" />
+                    )}
+
+                    <h2 ref={trainerRef}></h2>
+                  </div>
+
                   {alreadySubscribed && (
                     <h3 style={{ color: "yellow" }}>
                       You're subscription has not been expired yet..
@@ -172,6 +228,12 @@ const MySubscribedNow = () => {
                   placeholder="Search User Here..."
                   onChange={(e) => setSearchField(e.target.value)}
                 />
+
+                <input
+                  type="text"
+                  placeholder="Search Trainor Here..."
+                  onChange={(e) => setTrainerField(e.target.value)}
+                />
                 <div className="list-of-user">
                   {searchField != "" ? (
                     <ul className="list-group">
@@ -188,6 +250,35 @@ const MySubscribedNow = () => {
                                 user.flex_pro_user.id,
                                 user.flex_pro_user.name,
                                 user.image1
+                              )
+                            }
+                          >
+                            Select
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    ""
+                  )}
+                </div>
+
+                <div className="list-of-trainers">
+                  {trainerField != "" ? (
+                    <ul className="list-group">
+                      {trainerSearchOutput.map((trainer) => (
+                        <li
+                          className="list-group-item d-flex justify-content-between align-items-center"
+                          key={trainer.id}
+                        >
+                          {trainer.name}
+                          <span
+                            className="badge badge-primary badge-pill dreg"
+                            onClick={() =>
+                              handleSelectTrainer(
+                                trainer.id,
+                                trainer.name,
+                                trainer.image
                               )
                             }
                           >

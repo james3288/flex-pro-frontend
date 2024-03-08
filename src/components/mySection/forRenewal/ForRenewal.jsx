@@ -14,6 +14,8 @@ const ForRenewal = ({
   per,
   setRefresher,
   setNoRenewalUser,
+  trainersRemainingDays,
+  trainers,
 }) => {
   const dateLogObj = new Date(date_log);
   const dateLogObj1 = new Date(date_log);
@@ -79,12 +81,18 @@ const ForRenewal = ({
             <div className="col-7">
               <div className="clients-flex">
                 <h5>{registeredName}</h5>
-                <p>ID:{user_id}</p>
+                {/* <p>ID:{user_id}</p> */}
                 <p>Date Registered:</p>
                 <p>
                   <strong>{FormatDate(date_log)}</strong>
                 </p>
-                <p style={{ color: "yellow", fontSize: "18px" }}>
+                <p
+                  style={{
+                    color: "yellow",
+                    fontSize: "18px",
+                    lineHeight: "14px",
+                  }}
+                >
                   {subscription}
                 </p>
                 <p>Remaining: </p>
@@ -96,6 +104,15 @@ const ForRenewal = ({
                 <p>{formatTime(remainingDays1, "seconds")} left</p> */}
                 <p style={{ lineHeight: "16px" }}>
                   <strong> {formatTime(remainingDays1, "all")}</strong> left
+                </p>
+                <p>Personal Trainer:</p>
+                <p style={{ lineHeight: "16px" }}>
+                  <strong>
+                    {" "}
+                    {trainers} -{" "}
+                    {formatTime(trainersRemainingDays, "days-hours")}
+                  </strong>{" "}
+                  left
                 </p>
               </div>
             </div>

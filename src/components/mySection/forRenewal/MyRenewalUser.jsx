@@ -51,6 +51,8 @@ const MyRenewalUser = () => {
                     per={user.usersubscription.subscription.per.per}
                     user_id={user.usersubscription.flexprouser.id}
                     id={user.id}
+                    trainers={user.usersubscription.trainer?.name}
+                    trainerRemainingDays={user?.trainerRemainingDays}
                   />
                 )
             )}
