@@ -1,0 +1,36 @@
+.right-menu {
+  position: absolute;
+  top: 110px;
+  right: 0;
+  z-index: 9999;
+  background-color: white;
+  box-sizing: border-box;
+  padding: 20px 40px;
+  z-index: 9999;
+  border-radius: 10px 0 0 10px;
+  .rm-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    .rm-list-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+
+      span {
+        font-size: 25px;
+        font-family: "Muli", "Franklin Gothic Medium", "Arial Narrow", Arial,
+          sans-serif;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      span:hover {
+        color: red;
+      }
+    }
+  }
+}

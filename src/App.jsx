@@ -9,12 +9,14 @@ import "./assets/css/bootstrap.min.css";
 import MyHeader from "./components/myHeader/MyHeader";
 import MySection from "./components/mySection/MyDashboardSection";
 import DashboardPage from "./pages/DashboardPage";
+import RightMenu from "./components/rightMenu/RightMenu";
 
 function App() {
   const [count, setCount] = useState(0);
 
   return (
     <>
+      <RightMenu />
       {/* Header */}
       <MyHeader />
       {/* End Header */}
