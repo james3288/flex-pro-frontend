@@ -3,13 +3,15 @@ import FaceScanner from "../face-scanner/FaceScanner";
 import Pic3 from "../../assets/img/team/team-3.jpg";
 import instance from "../../others/axiosInstance";
 import { NavLink } from "react-router-dom";
+import getImagePath from "../../getData/getImagePath";
+import loadImageData from "../../getData/loadImageData";
 
 const MyUserLoginSection = () => {
   const [play, setPlay] = useState(false);
   const [stop, setStop] = useState(false);
   const [disableBtn, setDisableBtn] = useState(false);
   const [userId, setUserId] = useState(0);
-  const [sample, setSample] = useState(null);
+  const [sample, setSample] = useState();
   const [userFound, setUserFound] = useState();
   const [isOnGoing, setIsOnGoing] = useState();
   const [isLogin, setIsLogin] = useState(false);
@@ -27,6 +29,29 @@ const MyUserLoginSection = () => {
   useEffect(() => {
     console.log(play);
   }, [play, stop, userId]);
+
+  useEffect(() => {
+    const img = async () => {
+      let imgData = await getImagePath(userId);
+
+      // let newImgData = await Promise.all(
+      //   imgData?.map(async (data) => {
+      //     const imageDataUrl = await loadImageData(data.image1);
+      //     return {
+      //       ...data,
+      //       imgSource: imageDataUrl,
+      //     };
+      //   })
+      // );
+      const imageDataUrl = await loadImageData(imgData.image1);
+      let newImgData = { ...imgData, image: imageDataUrl };
+
+      console.log(newImgData);
+      // return newImgData;
+      setSample(newImgData);
+    };
+    img();
+  }, [userId]);
 
   return (
     <>
@@ -96,16 +121,14 @@ const MyUserLoginSection = () => {
                     <strong>LOGIN</strong> STATUS
                   </span>
                   <div className="scan-profile-wrapper">
-                    <img src={Pic3} alt="" className="scan-profile" />
+                    <img src={sample.image} alt="" className="scan-profile" />
                     <div className="scan-profile-name">
                       <h5>You are login as:</h5>
-                      <h3>{userFound}</h3>
-
-                      <h6>Time In: 2 minutes ago</h6>
+                      <h3>{sample.flex_pro_user?.name}</h3>
                     </div>
                   </div>
                 </div>
-                <div className="dashboard-col">
+                {/* <div className="dashboard-col">
                   <div className="personal-trainer">
                     <h5>Personal Trainer</h5>
                     <h3>
@@ -117,7 +140,7 @@ const MyUserLoginSection = () => {
                     <h5>Subscription Remaining Days</h5>
                     <h3>10 DAYS</h3>
                   </div>
-                </div>
+                </div> */}
                 <NavLink className="btn btn-danger" to={"/"}>
                   Back to Dashboard
                 </NavLink>
@@ -130,7 +153,7 @@ const MyUserLoginSection = () => {
                   <strong>LOGIN</strong> STATUS
                 </span>
                 <div className="scan-profile-wrapper">
-                  <img src={Pic3} alt="" className="scan-profile" />
+                  <img src={sample.image} alt="" className="scan-profile" />
                   <div className="scan-profile-name">
                     <h5>Oops, either you are expired or not registered yet!</h5>
                     <h3>{userFound}</h3>
@@ -150,9 +173,12 @@ const MyUserLoginSection = () => {
                 </span>
 
                 <div className="scan-profile-wrapper">
+                  <img src={sample.image} alt="" className="scan-profile" />
                   <div className="scan-profile-name">
                     <h5>
-                      <strong style={{ color: "orange" }}>{userFound}</strong>{" "}
+                      <strong style={{ color: "orange" }}>
+                        {sample.flex_pro_user?.name}
+                      </strong>{" "}
                       has already login!
                     </h5>
                     <NavLink className="btn btn-danger" to={"/"}>

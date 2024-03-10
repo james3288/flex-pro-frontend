@@ -67,7 +67,7 @@ const RenewalUsers = ({
             </div>
           </div>
           <div className="c-col-time-in-out">
-            <h5>DATE REGISTERED</h5>
+            <h5>DATE SUBSCRIBED</h5>
             <h4>{FormatDate(date_subscribed)}</h4>
 
             <h3>{subscription}</h3>
@@ -79,11 +79,16 @@ const RenewalUsers = ({
             <h4 style={{ color: "pink" }}>
               {trainers}{" "}
               {trainerRemainingDays < 0
-                ? "- Expired"
+                ? trainers == null
+                  ? "N/A"
+                  : "- Expired"
                 : "(" +
                   formatTime(trainerRemainingDays, "days-hours") +
                   ") left"}
             </h4>
+            <button className="btn btn-primary" style={{ padding: "3px 10px" }}>
+              Extend
+            </button>
           </div>
         </div>
       </div>

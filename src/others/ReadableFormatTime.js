@@ -6,7 +6,7 @@ const formatTime = (milliseconds, option) => {
   const days = Math.floor(milliseconds / (1000 * 60 * 60 * 24));
 
   if (option === "days") {
-    return `${days} days`;
+    return `${days > 0 ? "days" : "day"}`;
   } else if (option === "hours") {
     return `${hours} hours`;
   } else if (option === "seconds") {
@@ -20,7 +20,7 @@ const formatTime = (milliseconds, option) => {
   } else if (option === "minutes-left") {
     return minutes;
   } else if (option === "days-hours") {
-    return `${days} days, ${hours} hours`;
+    return `${days} ${days > 1 ? "days" : "day"}, ${hours} hours`;
   }
 };
 

@@ -140,7 +140,6 @@ const FaceScanner = ({
     instance
       .post("/api/save_time_record/", timeRecordData)
       .then(function (response) {
-
         console.log("successfully saved..");
       })
       .catch(function (error) {
@@ -271,6 +270,7 @@ const FaceScanner = ({
                 }
               });
 
+              // if expired
               get_userStatus.length === 0
                 ? setIsOnGoing("expired")
                 : handleSaveTimeRecords(timeRecordData);
