@@ -311,9 +311,9 @@ const MyDashboardSection = () => {
                 ))}
               </div>
             </div>
-            <a href="" className="btn btn-danger">
+            <NavLink className="btn btn-danger" to="/active-users">
               View More
-            </a>
+            </NavLink>
           </div>
           {/* END REGISTERED USER */}
 

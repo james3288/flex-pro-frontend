@@ -53,7 +53,6 @@ const RenewalUsers = ({
     return () => clearInterval(intervalId);
   }, [remaining]);
 
-  useEffect(() => {}, []);
   return (
     <>
       <div className="col-lg-3 col-xs-12">
@@ -86,9 +85,21 @@ const RenewalUsers = ({
                   formatTime(trainerRemainingDays, "days-hours") +
                   ") left"}
             </h4>
-            <button className="btn btn-primary" style={{ padding: "3px 10px" }}>
-              Extend
-            </button>
+            {trainers == null ? (
+              <button
+                className="btn btn-primary"
+                style={{ padding: "3px 10px" }}
+              >
+                Add Personal Trainer
+              </button>
+            ) : (
+              <button
+                className="btn btn-primary"
+                style={{ padding: "3px 10px" }}
+              >
+                Extend
+              </button>
+            )}
           </div>
         </div>
       </div>

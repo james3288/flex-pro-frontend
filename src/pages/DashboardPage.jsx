@@ -11,6 +11,7 @@ import MyCLientsOnWorkout from "../components/mySection/MyCLientsOnWorkout";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import MyRenewalUser from "../components/mySection/forRenewal/MyRenewalUser";
 import MyTrainors from "../components/mySection/trainers/MyTrainors";
+import MyActiveUser from "../components/mySection/activeUser/MyActiveUser";
 
 const queryClient = new QueryClient();
 
@@ -132,6 +133,14 @@ const DashboardPage = ({
     content = (
       <QueryClientProvider client={queryClient}>
         <MyTrainors />
+      </QueryClientProvider>
+    );
+  }
+
+  if (page === "active-user") {
+    content = (
+      <QueryClientProvider client={queryClient}>
+        <MyActiveUser />
       </QueryClientProvider>
     );
   }

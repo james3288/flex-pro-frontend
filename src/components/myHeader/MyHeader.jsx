@@ -44,7 +44,14 @@ function MyHeader() {
                         </NavLink>
                       </li>
                       <li>
-                        <a href="">TRAINER PROFILE</a>
+                        <NavLink
+                          to={`/trainors`}
+                          className={({ isActive, isPending }) =>
+                            isActive ? "active" : isPending ? "pending" : ""
+                          }
+                        >
+                          TRAINERS
+                        </NavLink>
                       </li>
                       <li>
                         <NavLink
@@ -82,7 +89,7 @@ function MyHeader() {
                 <div className="to-search search-switch">
                   <i className="fa fa-search"></i>
                 </div>
-                <div className="to-social">
+                <div className="to-social right-nav">
                   <span style={{ color: "white" }}>
                     Welcome,<strong style={{ color: "#dc151c" }}> King</strong>
                   </span>

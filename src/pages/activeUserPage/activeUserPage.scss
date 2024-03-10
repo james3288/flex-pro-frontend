@@ -1,11 +1,11 @@
-.forRenewalUser {
-  background-image: url("./../../assets/img/hero/hero-8.jpg");
+.active-user {
+  background-image: url("./../../assets/img/hero/hero-10.jpg");
   height: 100vh;
   box-sizing: border-box;
   font-family: "Muli", Arial;
   padding-top: 11em;
 
-  .dateTimePicker {
+  .title {
     width: 100%;
     display: flex;
     align-items: center;
@@ -14,18 +14,13 @@
     background: rgba(7, 7, 7, 0.7);
     margin: 0;
   }
-  .dateTimePicker input {
-    width: 10%;
-    flex: 0.1;
-  }
 
-  .dateTimePicker h1 {
+  .title h1 {
     flex: 1;
     text-align: center;
     color: white;
   }
-
-  .dateTimePicker span {
+  .title span {
     color: red;
   }
 

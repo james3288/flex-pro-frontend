@@ -11,7 +11,7 @@ const MyUserLoginSection = () => {
   const [stop, setStop] = useState(false);
   const [disableBtn, setDisableBtn] = useState(false);
   const [userId, setUserId] = useState(0);
-  const [sample, setSample] = useState();
+  const [userFoundWithImage, setUserFoundWithImage] = useState();
   const [userFound, setUserFound] = useState();
   const [isOnGoing, setIsOnGoing] = useState();
   const [isLogin, setIsLogin] = useState(false);
@@ -31,26 +31,14 @@ const MyUserLoginSection = () => {
   }, [play, stop, userId]);
 
   useEffect(() => {
-    const img = async () => {
+    const userWithImg = async () => {
       let imgData = await getImagePath(userId);
 
-      // let newImgData = await Promise.all(
-      //   imgData?.map(async (data) => {
-      //     const imageDataUrl = await loadImageData(data.image1);
-      //     return {
-      //       ...data,
-      //       imgSource: imageDataUrl,
-      //     };
-      //   })
-      // );
       const imageDataUrl = await loadImageData(imgData.image1);
       let newImgData = { ...imgData, image: imageDataUrl };
-
-      console.log(newImgData);
-      // return newImgData;
-      setSample(newImgData);
+      setUserFoundWithImage(newImgData);
     };
-    img();
+    userWithImg();
   }, [userId]);
 
   return (
@@ -121,14 +109,14 @@ const MyUserLoginSection = () => {
                     <strong>LOGIN</strong> STATUS
                   </span>
                   <div className="scan-profile-wrapper">
-                    <img src={sample.image} alt="" className="scan-profile" />
+                    <img src={userFoundWithImage.image} alt="" className="scan-profile" />
                     <div className="scan-profile-name">
                       <h5>You are login as:</h5>
-                      <h3>{sample.flex_pro_user?.name}</h3>
+                      <h3>{userFoundWithImage.flex_pro_user?.name}</h3>
                     </div>
                   </div>
                 </div>
-                {/* <div className="dashboard-col">
+                <div className="dashboard-col">
                   <div className="personal-trainer">
                     <h5>Personal Trainer</h5>
                     <h3>
@@ -140,7 +128,7 @@ const MyUserLoginSection = () => {
                     <h5>Subscription Remaining Days</h5>
                     <h3>10 DAYS</h3>
                   </div>
-                </div> */}
+                </div>
                 <NavLink className="btn btn-danger" to={"/"}>
                   Back to Dashboard
                 </NavLink>
@@ -153,7 +141,7 @@ const MyUserLoginSection = () => {
                   <strong>LOGIN</strong> STATUS
                 </span>
                 <div className="scan-profile-wrapper">
-                  <img src={sample.image} alt="" className="scan-profile" />
+                  <img src={userFoundWithImage.image} alt="" className="scan-profile" />
                   <div className="scan-profile-name">
                     <h5>Oops, either you are expired or not registered yet!</h5>
                     <h3>{userFound}</h3>
@@ -173,11 +161,11 @@ const MyUserLoginSection = () => {
                 </span>
 
                 <div className="scan-profile-wrapper">
-                  <img src={sample.image} alt="" className="scan-profile" />
+                  <img src={userFoundWithImage.image} alt="" className="scan-profile" />
                   <div className="scan-profile-name">
                     <h5>
                       <strong style={{ color: "orange" }}>
-                        {sample.flex_pro_user?.name}
+                        {userFoundWithImage.flex_pro_user?.name}
                       </strong>{" "}
                       has already login!
                     </h5>
