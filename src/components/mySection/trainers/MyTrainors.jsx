@@ -67,15 +67,17 @@ const MyTrainors = () => {
                   name={trainor.name}
                   position={trainor.position}
                   image={trainor.image}
+                  trainer_id={trainor.id}
+                  trainor={trainor}
                 />
               )
               // console.log(trainor)
             )}
           </div>
         </div>
-
-        <TrainersModal />
       </section>
+      <TrainersModal id={"trainersModal"} option={"Save"} />
+      <TrainersModal id={"trainersModal2"} option={"Update"} />
     </>
   );
 };

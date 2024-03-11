@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import logoImage from "./../../assets/img/logo-2.png";
 import { NavLink } from "react-router-dom";
 import "./myHeader.scss";
+import RightMenu from "../rightMenu/RightMenu";
 
-function MyHeader() {
+function MyHeader({ setIsOpen }) {
+  const handleClick = () => {
+    setIsOpen((prev) => !prev);
+  };
   return (
     <>
       <header className="header-section">
@@ -93,7 +97,7 @@ function MyHeader() {
                   <span style={{ color: "white" }}>
                     Welcome,<strong style={{ color: "#dc151c" }}> King</strong>
                   </span>
-                  <a href="#">
+                  <a onClick={handleClick}>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"

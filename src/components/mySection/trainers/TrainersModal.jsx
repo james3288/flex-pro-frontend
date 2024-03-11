@@ -2,7 +2,7 @@ import React, { useEffect, useReducer, useRef, useState } from "react";
 import SaveTrainers from "./saveTrainers";
 import { INITIAL_STATE, formReducer } from "../../../reducers/trainorsReducer";
 
-const TrainersModal = () => {
+const TrainersModal = ({ id, option }) => {
   const [state, dispatch] = useReducer(formReducer, INITIAL_STATE);
 
   const handleSave = async () => {
@@ -27,6 +27,10 @@ const TrainersModal = () => {
     dispatch({ type: "CLEAR" });
   };
 
+  const handleUpdate = async () => {
+    console.log("hello world");
+  };
+
   const handleChange = (e) => {
     dispatch({
       type: "CHANGE_INPUT",
@@ -46,7 +50,7 @@ const TrainersModal = () => {
   return (
     <div
       className="modal fade"
-      id="trainersModal"
+      id={id}
       role="dialog"
       aria-labelledby="exampleModalLabel"
       aria-hidden="true"
@@ -147,13 +151,23 @@ const TrainersModal = () => {
               >
                 Close
               </button>
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={handleSave}
-              >
-                Save
-              </button>
+              {option === "Save" ? (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleSave}
+                >
+                  Save
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleUpdate}
+                >
+                  Update
+                </button>
+              )}
             </div>
           </div>
         </div>

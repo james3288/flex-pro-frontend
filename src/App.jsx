@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import "./assets/css/style.css";
 import "./assets/css/myStyle.css";
@@ -13,12 +13,14 @@ import RightMenu from "./components/rightMenu/RightMenu";
 
 function App() {
   const [count, setCount] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
-      <RightMenu />
+      {isOpen && <RightMenu isOpen={isOpen} />}
+
       {/* Header */}
-      <MyHeader />
+      <MyHeader setIsOpen={setIsOpen} />
       {/* End Header */}
 
       {/* page dashboard */}
