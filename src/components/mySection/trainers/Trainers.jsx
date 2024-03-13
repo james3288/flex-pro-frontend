@@ -1,8 +1,15 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 
-const Trainers = ({ name, position, image, trainer_id, trainor }) => {
+const Trainers = ({
+  name,
+  position,
+  image,
+  trainer_id,
+  trainor,
+  setSelectedTrainer,
+}) => {
   const handleEdit = () => {
-    console.log(trainor);
+    setSelectedTrainer(trainor);
   };
   return (
     <div className="col-lg-2 col-sm-3">
@@ -13,7 +20,7 @@ const Trainers = ({ name, position, image, trainer_id, trainor }) => {
           <span>{position}</span>
           <a
             className="btn btn-success ts-button"
-            // onClick={handleEdit}
+            onClick={handleEdit}
             data-toggle="modal"
             data-target="#trainersModal2"
             data-whatever="@mdo"

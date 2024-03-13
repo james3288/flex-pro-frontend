@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Pic1 from "./../../../assets/img/team/team-2.jpg";
 import Pic2 from "./../../../assets/img/hero/hero-1.jpg";
 import Pic3 from "./../../../assets/img/team/team-3.jpg";
@@ -15,6 +15,12 @@ const MyTrainors = () => {
 
   //   console.log(trainorData());
   // }, []);
+
+  const [selectedTrainer, setSelectedTrainer] = useState();
+  // useEffect(() => {
+  //   // console.log(selectedTrainer);
+  // }, [selectedTrainer]);
+
   const queryKey = useMemo(() => ["forTrainorsData"], []);
 
   const { isPending, error, data } = useQuery({
@@ -69,6 +75,7 @@ const MyTrainors = () => {
                   image={trainor.image}
                   trainer_id={trainor.id}
                   trainor={trainor}
+                  setSelectedTrainer={setSelectedTrainer}
                 />
               )
               // console.log(trainor)
@@ -76,8 +83,13 @@ const MyTrainors = () => {
           </div>
         </div>
       </section>
+
       <TrainersModal id={"trainersModal"} option={"Save"} />
-      <TrainersModal id={"trainersModal2"} option={"Update"} />
+      <TrainersModal
+        id={"trainersModal2"}
+        option={"Update"}
+        selectedTrainer={selectedTrainer}
+      />
     </>
   );
 };

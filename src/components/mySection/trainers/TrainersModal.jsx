@@ -2,8 +2,62 @@ import React, { useEffect, useReducer, useRef, useState } from "react";
 import SaveTrainers from "./saveTrainers";
 import { INITIAL_STATE, formReducer } from "../../../reducers/trainorsReducer";
 
-const TrainersModal = ({ id, option }) => {
+const TrainersModal = ({ id, option, selectedTrainer }) => {
   const [state, dispatch] = useReducer(formReducer, INITIAL_STATE);
+  const refName = useRef(null);
+  const refPosition = useRef(null);
+  const refContactNo = useRef(null);
+  const refImage = useRef(null);
+
+  useEffect(() => {
+    if (option === "Update") {
+      // convert image to base64 file
+      const filename = "1.jpg"; // You can set your desired filename here
+      const mimeType = "image/jpeg"; // Mime type of the image
+      const base64String = selectedTrainer?.image;
+      const file =
+        selectedTrainer?.image != undefined &&
+        base64toFile(base64String, filename, mimeType);
+
+      refName.current.value = selectedTrainer?.name;
+      refPosition.current.value = selectedTrainer?.position;
+      refContactNo.current.value = selectedTrainer?.contact_no;
+      // refImage.current.value = file;
+
+      // console.log(file);
+
+      // FILL ALL DATA TO STATE
+      dispatch({
+        type: "CHANGE_INPUT",
+        payload: {
+          name: refName.current.name,
+          value: refName.current.value,
+        },
+      });
+      dispatch({
+        type: "CHANGE_INPUT",
+        payload: {
+          name: refPosition.current.name,
+          value: refPosition.current.value,
+        },
+      });
+      dispatch({
+        type: "CHANGE_INPUT",
+        payload: {
+          name: refContactNo.current.name,
+          value: refContactNo.current.value,
+        },
+      });
+      dispatch({
+        type: "CHANGE_IMAGE",
+        payload: {
+          name: refImage.current.name,
+          value: file,
+        },
+      });
+      // END FILL ALL DATA TO STATE
+    }
+  }, [selectedTrainer]);
 
   const handleSave = async () => {
     if (state.trainersName == "" || !isNaN(state.trainersName)) {
@@ -28,7 +82,7 @@ const TrainersModal = ({ id, option }) => {
   };
 
   const handleUpdate = async () => {
-    console.log("hello world");
+    console.log(state);
   };
 
   const handleChange = (e) => {
@@ -45,7 +99,19 @@ const TrainersModal = ({ id, option }) => {
     });
   };
 
-  console.log(state);
+  // Function to convert base64 to File object
+  const base64toFile = (base64String, filename, mimeType) => {
+    const byteCharacters = atob(base64String.split(",")[1]);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    const file = new File([byteArray], filename, { type: mimeType });
+    return file;
+  };
+
+  // console.log(state);
 
   return (
     <div
@@ -81,6 +147,7 @@ const TrainersModal = ({ id, option }) => {
                 name="trainersName"
                 // onChange={(e) => setTrainersName(e.target.value)}
                 onChange={handleChange}
+                ref={refName}
               />
               {state.trainersName == "" ? (
                 <span style={{ color: "red" }}>Fill trainers name</span>
@@ -98,6 +165,7 @@ const TrainersModal = ({ id, option }) => {
                 id="recipient-position"
                 // onChange={(e) => setPosition(e.target.value)}
                 // value={position}
+                ref={refPosition}
                 onChange={handleChange}
                 name="position"
               />
@@ -117,6 +185,7 @@ const TrainersModal = ({ id, option }) => {
                 id="recipient-position"
                 // onChange={(e) => setContactNo(e.target.value)}
                 // value={contactNo}
+                ref={refContactNo}
                 onChange={handleChange}
                 name="contactNo"
                 placeholder="09+"
@@ -136,6 +205,7 @@ const TrainersModal = ({ id, option }) => {
                 type="file"
                 id="formFile"
                 name="image"
+                ref={refImage}
                 // onChange={(e) => setImage(e.target.files[0])}
                 onChange={handleChangeImage}
               />
