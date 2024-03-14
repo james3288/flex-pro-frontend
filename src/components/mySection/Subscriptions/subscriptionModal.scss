@@ -1,0 +1,21 @@
+.myList {
+  margin-top: 10px;
+  height: 200px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(255, 255, 255) rgb(77, 77, 77);
+
+  .l-wrapper {
+    padding: 0 10px;
+  }
+}
+
+.mySelect {
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #333;
+}

@@ -3,7 +3,7 @@ import MyDashboardSection from "../components/mySection/MyDashboardSection";
 import MyUserRegistrationSection from "../components/mySection/myUserRegistrationSection";
 import MyUserImageRegSection from "../components/mySection/clientsOnline/MyUserImageRegSection";
 import MyUserLoginSection from "../components/mySection/MyUserLoginSection";
-import MySubscriptionPlan from "../components/mySection/MySubscriptionPlan";
+// import MySubscriptionPlan from "../components/mySection/MySubscriptionPlan";
 import { useState } from "react";
 import { Link as ScrollLink, animateScroll as scroll } from "react-scroll";
 import MySubscribedNow from "../components/mySection/MySubscribedNow";
@@ -12,6 +12,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import MyRenewalUser from "../components/mySection/forRenewal/MyRenewalUser";
 import MyTrainors from "../components/mySection/trainers/MyTrainors";
 import MyActiveUser from "../components/mySection/activeUser/MyActiveUser";
+import MySubscriptionPlan from "../components/mySection/Subscriptions/MySubscriptionPlan";
 
 const queryClient = new QueryClient();
 
@@ -106,7 +107,11 @@ const DashboardPage = ({
   }
 
   if (page === "subcriptionPlan") {
-    content = <MySubscriptionPlan />;
+    content = (
+      <QueryClientProvider client={queryClient}>
+        <MySubscriptionPlan />
+      </QueryClientProvider>
+    );
   }
 
   if (page === "subscribeNow") {

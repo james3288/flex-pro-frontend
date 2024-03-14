@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import instance from "../../others/axiosInstance";
-import ListOfSubscriptions from "./Subscriptions/ListOfSubscriptions";
+import instance from "../../../others/axiosInstance";
+import ListOfSubscriptions from "./ListOfSubscriptions";
+import SubscriptionModal from "./subscriptionModal";
 
 const MySubscriptionPlan = () => {
   const [plans, setPlan] = useState([]);
@@ -25,7 +26,14 @@ const MySubscriptionPlan = () => {
             <div className="section-title">
               <span>Our Plan</span>
               <h2>Choose your pricing plan</h2>
-              <button className="btn btn-primary">Add Pricing Plan</button>
+              <button
+                className="btn btn-primary"
+                data-toggle="modal"
+                data-target="#subscriptionModal"
+                data-whatever="@mdo"
+              >
+                Add Pricing Plan
+              </button>
             </div>
           </div>
         </div>
@@ -40,7 +48,7 @@ const MySubscriptionPlan = () => {
           ))}
         </div>
       </div>
-
+      <SubscriptionModal id="subscriptionModal" />
       {/* <!-- Pricing Section End --> */}
     </>
   );

@@ -3,9 +3,10 @@ import Pic1 from "./../../../assets/img/team/team-2.jpg";
 import Pic2 from "./../../../assets/img/hero/hero-1.jpg";
 import Pic3 from "./../../../assets/img/team/team-3.jpg";
 import Trainers from "./Trainers";
-import TrainersModal from "./trainersModal";
+// import TrainersModal from "./trainersModal";
 import getTrainors from "../../../getData/getTrainors";
 import { useQuery } from "@tanstack/react-query";
+import TrainersModal from "./TrainersModal";
 
 const MyTrainors = () => {
   // useEffect(() => {
