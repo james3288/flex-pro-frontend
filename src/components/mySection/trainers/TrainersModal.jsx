@@ -1,6 +1,7 @@
 import React, { useEffect, useReducer, useRef, useState } from "react";
 import SaveTrainers from "./saveTrainers";
 import { INITIAL_STATE, formReducer } from "../../../reducers/trainorsReducer";
+import UpdateTrainers from "./updateTrainers";
 
 const TrainersModal = ({ id, option, selectedTrainer }) => {
   const [state, dispatch] = useReducer(formReducer, INITIAL_STATE);
@@ -27,6 +28,13 @@ const TrainersModal = ({ id, option, selectedTrainer }) => {
       // console.log(file);
 
       // FILL ALL DATA TO STATE
+      dispatch({
+        type: "CHANGE_INPUT",
+        payload: {
+          name: "id",
+          value: selectedTrainer?.id,
+        },
+      });
       dispatch({
         type: "CHANGE_INPUT",
         payload: {
@@ -82,7 +90,24 @@ const TrainersModal = ({ id, option, selectedTrainer }) => {
   };
 
   const handleUpdate = async () => {
-    console.log(state);
+    if (state.trainersName == "" || !isNaN(state.trainersName)) {
+      return;
+    } else if (state.position == "" || !isNaN(state.position)) {
+      return;
+    } else if (state.contactNo == "" || isNaN(state.contactNo)) {
+      return;
+    } else if (state.image === null || state.image === undefined) {
+      return;
+    }
+    const uploadData = new FormData();
+    uploadData.append("id", state.id);
+    uploadData.append("trainersName", state.trainersName);
+    uploadData.append("position", state.position);
+    uploadData.append("image", state.image);
+    uploadData.append("contactNo", state.contactNo);
+    UpdateTrainers(uploadData);
+    dispatch({ type: "CLEAR" });
+  
   };
 
   const handleChange = (e) => {

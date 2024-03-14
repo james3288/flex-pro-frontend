@@ -229,7 +229,7 @@ const FaceScanner = ({
             }
 
             // user has been found successfully
-            if (count >= 60 && result.label === label.flex_pro_user.name) {
+            if (count >= 20 && result.label === label.flex_pro_user.name) {
               setUserId(label.flex_pro_user.id);
               setUserFound(label.flex_pro_user.name);
               await closeWebcam();

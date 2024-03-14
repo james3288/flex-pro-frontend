@@ -25,6 +25,7 @@ const MySubscriptionPlan = () => {
             <div className="section-title">
               <span>Our Plan</span>
               <h2>Choose your pricing plan</h2>
+              <button className="btn btn-primary">Add Pricing Plan</button>
             </div>
           </div>
         </div>

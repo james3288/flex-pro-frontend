@@ -1,4 +1,5 @@
 export const INITIAL_STATE = {
+  id: 0,
   trainersName: "",
   position: "",
   contactNo: "",

@@ -34,7 +34,7 @@ const MyUserLoginSection = () => {
     const userWithImg = async () => {
       let imgData = await getImagePath(userId);
 
-      const imageDataUrl = await loadImageData(imgData.image1);
+      const imageDataUrl = await loadImageData(imgData?.image1);
       let newImgData = { ...imgData, image: imageDataUrl };
       setUserFoundWithImage(newImgData);
     };
@@ -109,7 +109,11 @@ const MyUserLoginSection = () => {
                     <strong>LOGIN</strong> STATUS
                   </span>
                   <div className="scan-profile-wrapper">
-                    <img src={userFoundWithImage.image} alt="" className="scan-profile" />
+                    <img
+                      src={userFoundWithImage?.image}
+                      alt=""
+                      className="scan-profile"
+                    />
                     <div className="scan-profile-name">
                       <h5>You are login as:</h5>
                       <h3>{userFoundWithImage.flex_pro_user?.name}</h3>
@@ -141,7 +145,11 @@ const MyUserLoginSection = () => {
                   <strong>LOGIN</strong> STATUS
                 </span>
                 <div className="scan-profile-wrapper">
-                  <img src={userFoundWithImage.image} alt="" className="scan-profile" />
+                  <img
+                    src={userFoundWithImage?.image}
+                    alt=""
+                    className="scan-profile"
+                  />
                   <div className="scan-profile-name">
                     <h5>Oops, either you are expired or not registered yet!</h5>
                     <h3>{userFound}</h3>
@@ -161,7 +169,11 @@ const MyUserLoginSection = () => {
                 </span>
 
                 <div className="scan-profile-wrapper">
-                  <img src={userFoundWithImage.image} alt="" className="scan-profile" />
+                  <img
+                    src={userFoundWithImage?.image}
+                    alt=""
+                    className="scan-profile"
+                  />
                   <div className="scan-profile-name">
                     <h5>
                       <strong style={{ color: "orange" }}>
