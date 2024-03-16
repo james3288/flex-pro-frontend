@@ -7,6 +7,7 @@ import Trainers from "./Trainers";
 import getTrainors from "../../../getData/getTrainors";
 import { useQuery } from "@tanstack/react-query";
 import TrainersModal from "./TrainersModal";
+import DeleteTrainerModal from "./DeleteTrainerModal";
 
 const MyTrainors = () => {
   // useEffect(() => {
@@ -90,6 +91,10 @@ const MyTrainors = () => {
         id={"trainersModal2"}
         option={"Update"}
         selectedTrainer={selectedTrainer}
+      />
+      <DeleteTrainerModal
+        id={"deleteTrainersModal"}
+        trainer_id={selectedTrainer?.id}
       />
     </>
   );

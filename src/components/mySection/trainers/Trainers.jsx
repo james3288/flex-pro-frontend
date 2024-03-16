@@ -11,6 +11,11 @@ const Trainers = ({
   const handleEdit = () => {
     setSelectedTrainer(trainor);
   };
+
+  const handleRemove = () => {
+    setSelectedTrainer(trainor);
+  };
+
   return (
     <div className="col-lg-2 col-sm-3">
       <div className="ts-item set-bg bg">
@@ -24,10 +29,23 @@ const Trainers = ({
             data-toggle="modal"
             data-target="#trainersModal2"
             data-whatever="@mdo"
+            style={{ color: "white" }}
           >
             Edit
           </a>
-          <button className="btn btn-success ts-button">History</button>
+          <a className="btn btn-success ts-button" style={{ color: "white" }}>
+            History
+          </a>
+          <a
+            className="btn btn-danger ts-button"
+            data-toggle="modal"
+            data-target="#deleteTrainersModal"
+            data-whatever="@mdo"
+            style={{ color: "white" }}
+            onClick={handleRemove}
+          >
+            Remove
+          </a>
           {/* <div className="tt_social"></div> */}
         </div>
       </div>

@@ -53,7 +53,7 @@ const RenewalUsers = ({
     return () => clearInterval(intervalId);
   }, [remaining]);
 
-  return (
+  const context = (
     <>
       <div className="col-lg-3 col-xs-12">
         <div className="c-col">
@@ -105,6 +105,13 @@ const RenewalUsers = ({
       </div>
     </>
   );
+
+  return context;
+  // if (trainers == null && formatTime(remaining, "days-only") > 2) {
+  //   return;
+  // } else {
+  //   return context;
+  // }
 };
 
 export default RenewalUsers;

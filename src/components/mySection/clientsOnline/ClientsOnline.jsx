@@ -164,16 +164,17 @@ function ClientsOnline({
                 <strong>Expired</strong>
               </p>
             )}
-            <h5>Personal Trainers:</h5>
-            {trainersRemainingDays < 0 ? (
-              <>
-                <p>Expired</p>
-              </>
-            ) : (
-              <p>
-                {trainers} - {formatTime(trainersRemainingDays, "days-hours")}
-              </p>
-            )}
+            {/* <h5>Personal Trainers:</h5>
+            <p>
+              {" "}
+              {trainers == null
+                ? "No trainer"
+                : ""
+                ? trainers != null && trainersRemainingDays < 0
+                : trainers + " - expired"
+                ? trainers != null && trainersRemainingDays > 2
+                : trainers}
+            </p> */}
           </div>
         </div>
       </div>

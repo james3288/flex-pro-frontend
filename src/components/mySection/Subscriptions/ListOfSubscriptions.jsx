@@ -24,9 +24,9 @@ const ListOfSubscriptions = ({ plan, option, per }) => {
               Subscribed Now
             </NavLink>
           )}
-          <button className="btn btn-danger" style={{ marginTop: "10px" }}>
+          {/* <button className="btn btn-danger" style={{ marginTop: "10px" }}>
             Edit
-          </button>
+          </button> */}
         </div>
       </div>
     </>

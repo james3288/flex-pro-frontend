@@ -39,10 +39,10 @@ const MyRenewalUser = () => {
           <div className="c-col-wrapper">
             {data.map(
               (user) =>
-                // user.remainingDays <= 2 ||
-                (formatTime(user.trainerRemainingDays, "days-left") <= 2 ||
-                  user.remainingDays <= 2) &&
-                user.usersubscription.trainer?.name != null && (
+                user.usersubscription.trainer?.name == null &&
+                user.remainingDays > 2 ? (
+                  ""
+                ) : (
                   <RenewalUsers
                     key={user.id}
                     blobPic={user.image}
@@ -59,6 +59,25 @@ const MyRenewalUser = () => {
                     trainerRemainingDays={user?.trainerRemainingDays}
                   />
                 )
+              // user.remainingDays <= 2 ||
+              // (formatTime(user.trainerRemainingDays, "days-left") <= 2 ||
+              //   user.remainingDays <= 2) && (
+              //   <RenewalUsers
+              //     key={user.id}
+              //     blobPic={user.image}
+              //     registeredName={user.usersubscription.flexprouser.name}
+              //     date_subscribed={user.usersubscription.date_subscribed}
+              //     subscription={
+              //       user.usersubscription.subscription.gym_rate_desc
+              //     }
+              //     remainingDays={user.remainingDays}
+              //     per={user.usersubscription.subscription.per.per}
+              //     user_id={user.usersubscription.flexprouser.id}
+              //     id={user.id}
+              //     trainers={user.usersubscription.trainer?.name}
+              //     trainerRemainingDays={user?.trainerRemainingDays}
+              //   />
+              // )
             )}
           </div>
         </div>

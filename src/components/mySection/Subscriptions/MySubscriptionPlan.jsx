@@ -26,14 +26,14 @@ const MySubscriptionPlan = () => {
             <div className="section-title">
               <span>Our Plan</span>
               <h2>Choose your pricing plan</h2>
-              <button
+              {/* <button
                 className="btn btn-primary"
                 data-toggle="modal"
                 data-target="#subscriptionModal"
                 data-whatever="@mdo"
               >
                 Add Pricing Plan
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
