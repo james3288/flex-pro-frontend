@@ -67,9 +67,9 @@ const ForRenewal = ({
 
   return (
     <>
-      {formatTime(remainingDays, "days-left") <= 2 ||
+      {/* {formatTime(remainingDays, "days-left") <= 2 ||
         (formatTime(trainersRemainingDays, "days-left") <= 2 &&
-          trainers != undefined && (
+          trainers != undefined && ( */}
             <div className="clients-online">
               <div className="row row2">
                 <div className="col-3">
@@ -99,12 +99,6 @@ const ForRenewal = ({
                     </p>
 
                     <p>Remaining: </p>
-                    {/* <p style={{ lineHeight: "10px !important;" }}>
-                  {" "}
-                  {formatTime(remainingDays1, "days")}{" "}
-                  {formatTime(remainingDays1, "hours")}{" "}
-                </p>
-                <p>{formatTime(remainingDays1, "seconds")} left</p> */}
                     <p style={{ lineHeight: "16px" }}>
                       <strong>
                         {" "}
@@ -115,15 +109,17 @@ const ForRenewal = ({
                     <p>Personal Trainer:</p>
 
                     <p style={{ lineHeight: "16px" }}>
-                      {trainersRemainingDays < 0 ? (
+                      {trainersRemainingDays < 0 && trainers != undefined ? (
                         <strong style={{ color: "pink" }}>
                           {trainers} - Expired
                         </strong>
-                      ) : (
+                      ) : 
+                        trainersRemainingDays < 0 && trainers == undefined ? (<strong>N/A</strong>):
+                      (
                         <strong style={{ color: "pink" }}>
                           {trainers} ({" "}
                           {formatTime(trainersRemainingDays, "days-hours")})
-                          left
+                          left 
                         </strong>
                       )}
                     </p>
@@ -131,7 +127,7 @@ const ForRenewal = ({
                 </div>
               </div>
             </div>
-          ))}
+          {/* // ))} */}
     </>
   );
 };

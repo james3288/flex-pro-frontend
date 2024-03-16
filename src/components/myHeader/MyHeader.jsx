@@ -15,9 +15,14 @@ function MyHeader({ setIsOpen }) {
           <div className="row">
             <div className="col-lg-3">
               <div className="logo">
-                <a href="">
+                <NavLink
+                      to={`/`}
+                      className={({ isActive, isPending }) =>
+                        isActive ? "active" : isPending ? "pending" : ""
+                      }
+                    >
                   <img src={logoImage} alt="" />
-                </a>
+                </NavLink>
               </div>
             </div>
             <div className="col-lg-6">

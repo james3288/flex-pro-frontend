@@ -42,7 +42,8 @@ const MyRenewalUser = () => {
                 user.usersubscription.trainer?.name == null &&
                 user.remainingDays > 2 ? (
                   ""
-                ) : (
+                ) : user.usersubscription.trainer?.name != null && user.remainingDays > 2 && formatTime(user.trainerRemainingDays,"days-only") > 2 ? "" :
+                 (
                   <RenewalUsers
                     key={user.id}
                     blobPic={user.image}

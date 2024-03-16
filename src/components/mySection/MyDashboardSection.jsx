@@ -378,6 +378,11 @@ const MyDashboardSection = () => {
               </h1>
               <div className="scrollable-list-of-user">
                 {forRenewalUsers.map((user) => (
+                   user.usersubscription.trainer?.name == null &&
+                   user.remainingDays > 2 ? (
+                     ""
+                   ) : user.usersubscription.trainer?.name != null && user.remainingDays > 2 && formatTime(user.trainerRemainingDays,"days-only") > 2 ? "" :
+                    (
                   <ForRenewal
                     key={user.id}
                     pix={user.image}
@@ -394,7 +399,7 @@ const MyDashboardSection = () => {
                     setNoRenewalUser={setNoRenewalUser}
                     trainersRemainingDays={user.trainersRemainingDays}
                     trainers={user.usersubscription.trainer?.name}
-                  />
+                  />)
                 ))}
               </div>
               {/* <Trainers
