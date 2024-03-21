@@ -14,6 +14,9 @@ const RenewalUsers = ({
   id,
   trainers,
   trainerRemainingDays,
+  subscriptionId,
+  setUserSubscriptionId,
+  session_days,
 }) => {
   const [remaining, setRemaining] = useState(0);
   const [counter, setCounter] = useState(0);
@@ -53,6 +56,14 @@ const RenewalUsers = ({
     return () => clearInterval(intervalId);
   }, [remaining]);
 
+  const handleAddPersonalTrainers = () => {
+    setUserSubscriptionId(subscriptionId);
+  };
+
+  const getTrainerRemainingDays = () => {
+    return formatTime(trainerRemainingDays, "days-only") + session_days;
+  };
+
   const context = (
     <>
       <div className="col-lg-3 col-xs-12">
@@ -70,6 +81,9 @@ const RenewalUsers = ({
             <h4>{FormatDate(date_subscribed)}</h4>
 
             <h3>{subscription}</h3>
+            <button className="btn btn-secondary btn-sm extend-subscription">
+              Extend Subscripition
+            </button>
             <h5>Remaining Days:</h5>
             <h4>{remaining < 0 ? "Expired" : formatTime(remaining, "all")}</h4>
 
@@ -77,18 +91,20 @@ const RenewalUsers = ({
 
             <h4 style={{ color: "pink" }}>
               {trainers}{" "}
-              {trainerRemainingDays < 0
+              {formatTime(trainerRemainingDays, "days-only") + session_days < 2
                 ? trainers == null
                   ? "N/A"
                   : "- Expired"
-                : "(" +
-                  formatTime(trainerRemainingDays, "days-hours") +
-                  ") left"}
+                : "(" + getTrainerRemainingDays() + " days left)"}
             </h4>
             {trainers == null ? (
               <button
                 className="btn btn-primary"
                 style={{ padding: "3px 10px" }}
+                onClick={handleAddPersonalTrainers}
+                data-toggle="modal"
+                data-target="#addTrainerModal"
+                data-whatever="@mdo"
               >
                 Add Personal Trainer
               </button>
@@ -97,7 +113,7 @@ const RenewalUsers = ({
                 className="btn btn-primary"
                 style={{ padding: "3px 10px" }}
               >
-                Extend
+                Extend Personal Trainer
               </button>
             )}
           </div>

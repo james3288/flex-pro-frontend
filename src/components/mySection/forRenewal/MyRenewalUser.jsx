@@ -3,6 +3,7 @@ import RenewalUsers from "./RenewalUsers";
 import getForRenewalUsers from "../../../getData/getForRenewalUsers";
 import { useQuery } from "@tanstack/react-query";
 import formatTime from "../../../others/ReadableFormatTime";
+import getTrainerRemainingDays from "../../../getData/getTrainerRemainingDays";
 
 const MyRenewalUser = () => {
   let value = false;
@@ -25,6 +26,10 @@ const MyRenewalUser = () => {
 
   console.log(data);
 
+  // const getTrainerRemainingDays = (trainerRemainingDays, session_days) => {
+  //   return formatTime(trainerRemainingDays, "days-only") + session_days;
+  // };
+
   return (
     <>
       <div className="container-fluid content-margin c-col-scrollbar">
@@ -42,8 +47,15 @@ const MyRenewalUser = () => {
                 user.usersubscription.trainer?.name == null &&
                 user.remainingDays > 2 ? (
                   ""
-                ) : user.usersubscription.trainer?.name != null && user.remainingDays > 2 && formatTime(user.trainerRemainingDays,"days-only") > 2 ? "" :
-                 (
+                ) : user.usersubscription.trainer?.name != null &&
+                  user.remainingDays > 2 &&
+                  // formatTime(user.trainerRemainingDays, "days-only") > 2 ? (
+                  getTrainerRemainingDays(
+                    user.trainerRemainingDays,
+                    user?.usersubscription.session_days
+                  ) > 2 ? (
+                  ""
+                ) : (
                   <RenewalUsers
                     key={user.id}
                     blobPic={user.image}
@@ -58,6 +70,7 @@ const MyRenewalUser = () => {
                     id={user.id}
                     trainers={user.usersubscription.trainer?.name}
                     trainerRemainingDays={user?.trainerRemainingDays}
+                    session_days={user?.usersubscription.session_days}
                   />
                 )
               // user.remainingDays <= 2 ||

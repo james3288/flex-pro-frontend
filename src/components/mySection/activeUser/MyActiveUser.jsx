@@ -1,10 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import getActiveUser from "../../../getData/getActiveUsers";
 import formatTime from "../../../others/ReadableFormatTime";
 import RenewalUsers from "../forRenewal/RenewalUsers";
+import AddTrainerModal from "./AddTrainerModal";
 
 const MyActiveUser = () => {
+  const [userSubscriptionId, setUserSubscriptionId] = useState(0);
   const queryKey = useMemo(() => ["forActiveUser"], []);
 
   const { isPending, error, data } = useQuery({
@@ -16,13 +18,13 @@ const MyActiveUser = () => {
   if (isPending)
     return (
       <div id="preloder">
-        <div class="loader"></div>
+        <div className="loader"></div>
       </div>
     );
 
   if (error) return "An error has occurred: " + error.message;
 
-  console.log(data);
+  console.log("activeUser", data);
 
   return (
     <>
@@ -51,8 +53,16 @@ const MyActiveUser = () => {
                 id={user.id}
                 trainers={user.usersubscription.trainer?.name}
                 trainerRemainingDays={user?.trainersRemainingDays}
+                subscriptionId={user?.usersubscription.id}
+                setUserSubscriptionId={setUserSubscriptionId}
+                session_days={user.usersubscription.session_days}
               />
             ))}
+
+            <AddTrainerModal
+              id={"addTrainerModal"}
+              userSubscriptionId={userSubscriptionId}
+            />
           </div>
         </div>
       </div>

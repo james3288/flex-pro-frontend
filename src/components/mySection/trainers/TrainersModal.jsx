@@ -107,7 +107,6 @@ const TrainersModal = ({ id, option, selectedTrainer }) => {
     uploadData.append("contactNo", state.contactNo);
     UpdateTrainers(uploadData);
     dispatch({ type: "CLEAR" });
-  
   };
 
   const handleChange = (e) => {
