@@ -6,7 +6,7 @@ import {
 import getTrainors from "../../../getData/getTrainors";
 import updatePersonalTrainer from "./updatePersonalTrainer";
 
-const AddTrainerModal = ({ id, userSubscriptionId }) => {
+const AddTrainerModal = ({ id, userSubscriptionId, modalTitle }) => {
   const [state, dispatch] = useReducer(addTrainorReducer, INITIAL_STATE);
   const refTrainingSession = useRef(0);
   const [trainers, setTrainers] = useState([]);
@@ -44,6 +44,11 @@ const AddTrainerModal = ({ id, userSubscriptionId }) => {
 
     // dispatch({ type: "CLEAR" });
   };
+
+  const handleExtendTrainerSave = async () => {
+    
+  };
+
   return (
     <>
       <div
@@ -57,7 +62,7 @@ const AddTrainerModal = ({ id, userSubscriptionId }) => {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title" id="exampleModalLongTitle">
-                Add Personal Trainer
+                {modalTitle}
               </h5>
               <button
                 type="button"
@@ -117,13 +122,23 @@ const AddTrainerModal = ({ id, userSubscriptionId }) => {
               >
                 Close
               </button>
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={handleSave}
-              >
-                Save changes
-              </button>
+              {modalTitle === "Add Personal Trainers" ? (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleSave}
+                >
+                  Save changes
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleExtendTrainerSave}
+                >
+                  Save changes
+                </button>
+              )}
             </div>
           </div>
         </div>

@@ -7,6 +7,8 @@ import AddTrainerModal from "./AddTrainerModal";
 
 const MyActiveUser = () => {
   const [userSubscriptionId, setUserSubscriptionId] = useState(0);
+  const [modalTitle, setModalTitle] = useState();
+
   const queryKey = useMemo(() => ["forActiveUser"], []);
 
   const { isPending, error, data } = useQuery({
@@ -56,12 +58,14 @@ const MyActiveUser = () => {
                 subscriptionId={user?.usersubscription.id}
                 setUserSubscriptionId={setUserSubscriptionId}
                 session_days={user.usersubscription.session_days}
+                setModalTitle={setModalTitle}
               />
             ))}
 
             <AddTrainerModal
               id={"addTrainerModal"}
               userSubscriptionId={userSubscriptionId}
+              modalTitle={modalTitle}
             />
           </div>
         </div>

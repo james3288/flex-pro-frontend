@@ -3,6 +3,7 @@ import FormatDate from "../../../others/FormatDate";
 import formatTime from "../../../others/ReadableFormatTime";
 import remainingDays from "../../../others/GetRemainingDays";
 import instance from "../../../others/axiosInstance";
+import getTrainerRemainingDays from "../../../getData/getTrainerRemainingDays";
 
 const RenewalUsers = ({
   blobPic,
@@ -17,6 +18,7 @@ const RenewalUsers = ({
   subscriptionId,
   setUserSubscriptionId,
   session_days,
+  setModalTitle,
 }) => {
   const [remaining, setRemaining] = useState(0);
   const [counter, setCounter] = useState(0);
@@ -57,12 +59,17 @@ const RenewalUsers = ({
   }, [remaining]);
 
   const handleAddPersonalTrainers = () => {
+    setModalTitle("Add Personal Trainers");
     setUserSubscriptionId(subscriptionId);
   };
 
-  const getTrainerRemainingDays = () => {
-    return formatTime(trainerRemainingDays, "days-only") + session_days;
+  const handleExtendPersonalTrainers = () => {
+    setModalTitle("Extend Personal Trainers");
   };
+
+  // const getTrainerRemainingDays = () => {
+  //   return formatTime(trainerRemainingDays, "days-only") + session_days;
+  // };
 
   const context = (
     <>
@@ -95,7 +102,9 @@ const RenewalUsers = ({
                 ? trainers == null
                   ? "N/A"
                   : "- Expired"
-                : "(" + getTrainerRemainingDays() + " days left)"}
+                : "(" +
+                  getTrainerRemainingDays(trainerRemainingDays, session_days) +
+                  " days left)"}
             </h4>
             {trainers == null ? (
               <button
@@ -112,6 +121,10 @@ const RenewalUsers = ({
               <button
                 className="btn btn-primary"
                 style={{ padding: "3px 10px" }}
+                data-toggle="modal"
+                data-target="#addTrainerModal"
+                data-whatever="@mdo"
+                onClick={handleExtendPersonalTrainers}
               >
                 Extend Personal Trainer
               </button>
