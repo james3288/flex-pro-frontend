@@ -70,6 +70,7 @@ const MyActiveUser = () => {
             />
             <ExtendSubscriptionModal
               id={"extendSubscriptionModal"}
+              userSubscriptionId={userSubscriptionId}
               modalTitle={modalTitle}
             />
           </div>

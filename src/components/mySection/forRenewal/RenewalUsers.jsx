@@ -6,6 +6,7 @@ import instance from "../../../others/axiosInstance";
 import getTrainerRemainingDays from "../../../getData/getTrainerRemainingDays";
 import getExtendedTrainer from "../../../getData/getExtendedTrainer";
 import personalTrainerDaysLeft from "../../../getData/personalTrainerDaysLeft";
+import getExtendedSubscription from "../../../getData/getExtendedSubscription";
 
 const RenewalUsers = ({
   blobPic,
@@ -25,12 +26,14 @@ const RenewalUsers = ({
   const [remaining, setRemaining] = useState(0);
   const [counter, setCounter] = useState(0);
   const [extendedTrainer, setExtendedTrainer] = useState([]);
+  const [extendedSubscript, setExtendedSubscript] = useState([]);
 
   // get the remaining days
   const getRemainingDays = async () => {
     setRemaining(await remainingDays(date_subscribed, per, user_id));
   };
 
+  // function for expired subscription
   const handleExpired = () => {
     setCounter((prev) => prev + 1);
     instance
@@ -45,6 +48,7 @@ const RenewalUsers = ({
       });
   };
 
+  // checked expired subscription
   useEffect(() => {
     const intervalId = setInterval(() => {
       if (formatTime(remaining, "minutes-left") < 0) {
@@ -76,6 +80,22 @@ const RenewalUsers = ({
     extended();
   }, [id]);
 
+  // get extended subscription
+  useEffect(() => {
+    const extendedSub = async () => {
+      try {
+        const data = await getExtendedSubscription(subscriptionId);
+        setExtendedSubscript(data);
+
+        console.log("extendedSubscription", data);
+      } catch (error) {
+        console.error("Error in fetching Extended Subscription:", error);
+      }
+    };
+
+    extendedSub();
+  }, [subscriptionId]);
+
   const handleAddPersonalTrainers = () => {
     setModalTitle("Add Personal Trainers");
     setUserSubscriptionId(subscriptionId);
@@ -83,6 +103,11 @@ const RenewalUsers = ({
 
   const handleExtendPersonalTrainers = () => {
     setModalTitle("Extend Personal Trainers");
+    setUserSubscriptionId(subscriptionId);
+  };
+
+  const handleExtendSubscriptions = () => {
+    setModalTitle("Extend Subscriptions");
     setUserSubscriptionId(subscriptionId);
   };
 
@@ -106,11 +131,26 @@ const RenewalUsers = ({
             <h5>DATE SUBSCRIBED</h5>
             <h4>{FormatDate(date_subscribed)}</h4>
             <h3>{subscription}</h3>
+            {/* {extendedSubscript?.maps((extended1) => (
+              <h4 keys={extended1?.id}>
+                {extended1?.subscription.gym_rate_desc}
+              </h4>
+            ))} */}
+            {extendedSubscript?.map((ex) => (
+              // <h4 style={{ color: "pink" }}>
+              //   {extended.trainer.name} ({extended.extended_session_day} days)
+              // </h4>
+              <h4 style={{ color: "orange" }} key={ex?.id}>
+                - {ex?.subscription.gym_rate_desc} / {ex.subscription.rate} per{" "}
+                {ex.subscription.per.per}
+              </h4>
+            ))}
             <button
               className="btn btn-secondary btn-sm extend-subscription"
               data-toggle="modal"
               data-target="#extendSubscriptionModal"
               data-whatever="@mdo"
+              onClick={handleExtendSubscriptions}
             >
               Extend Subscripition
             </button>
@@ -134,7 +174,7 @@ const RenewalUsers = ({
               // <h4 style={{ color: "pink" }}>
               //   {extended.trainer.name} ({extended.extended_session_day} days)
               // </h4>
-              <a style={{ color: "pink", cursor: "pointer" }}>
+              <a style={{ color: "pink", cursor: "pointer" }} key={extended.id}>
                 {extended.trainer.name} ({extended.extended_session_day} days)
               </a>
             ))}

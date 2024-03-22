@@ -1,4 +1,17 @@
-const ExtendSubscriptionModal = ({ id, modalTitle }) => {
+import { useEffect, useState } from "react";
+import getSubscriptions from "../../../getData/getSubscriptions";
+
+const ExtendSubscriptionModal = ({ id, modalTitle, userSubscriptionId }) => {
+  const [subscription, setSubscription] = useState([]);
+  useEffect(() => {
+    const getsubscript = async () => {
+      let data = await getSubscriptions();
+      console.log("subscription", data);
+      setSubscription(data);
+    };
+    getsubscript();
+  }, [userSubscriptionId]);
+
   return (
     <>
       <div
@@ -31,29 +44,19 @@ const ExtendSubscriptionModal = ({ id, modalTitle }) => {
                   name="trainersName"
                   //   onChange={handleChange}
                 >
-                  {/* <option value="day">King James Uayan</option>
-                  <option value="month">John Mayer</option>
-                  <option value="year">Jeoseph Bejec</option> */}
-                  {/* {trainers.map((trainer) => (
-                    <option key={trainer?.id} value={trainer?.id}>
-                      {trainer?.name}
+                  {subscription.map((subs) => (
+                    <option key={subs?.id} value={subs?.id}>
+                      {subs?.gym_rate_desc} / {subs?.rate} per {subs?.per.per}
                     </option>
-                  ))} */}
+                  ))}
                 </select>
+
                 <br />
                 {/* {state.trainersName == 0 && (
                   <span style={{ color: "red" }}>select trainers</span>
                 )} */}
               </div>
-              <label className="col-form-label">
-                Personal Training Session (days):
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="personal-training-session"
-                name="session_days"
-              />
+
               {/* {state.session_days == "" ? (
                 <span style={{ color: "red" }}>Fill session days</span>
               ) : (
