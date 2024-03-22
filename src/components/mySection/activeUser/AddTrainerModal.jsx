@@ -5,6 +5,7 @@ import {
 } from "../../../reducers/addTrainorsReducer";
 import getTrainors from "../../../getData/getTrainors";
 import updatePersonalTrainer from "./updatePersonalTrainer";
+import extendPersonalTrainer from "./extendPersonalTrainer";
 
 const AddTrainerModal = ({ id, userSubscriptionId, modalTitle }) => {
   const [state, dispatch] = useReducer(addTrainorReducer, INITIAL_STATE);
@@ -28,7 +29,8 @@ const AddTrainerModal = ({ id, userSubscriptionId, modalTitle }) => {
     });
   };
 
-  const handleSave = async () => {
+  // update personal trainer
+  const handleSave = async (option) => {
     if (state.trainersName == 0) {
       return;
     } else if (state.session_days == "" || state.session_days <= 0) {
@@ -40,13 +42,12 @@ const AddTrainerModal = ({ id, userSubscriptionId, modalTitle }) => {
     updateData.append("trainersName", state.trainersName);
     updateData.append("session_days", state.session_days);
 
-    updatePersonalTrainer(updateData);
-
+    if (option === "update-personal-trainer") {
+      updatePersonalTrainer(updateData);
+    } else if (option === "extend-personal-trainer") {
+      extendPersonalTrainer(updateData);
+    }
     // dispatch({ type: "CLEAR" });
-  };
-
-  const handleExtendTrainerSave = async () => {
-    
   };
 
   return (
@@ -126,7 +127,7 @@ const AddTrainerModal = ({ id, userSubscriptionId, modalTitle }) => {
                 <button
                   type="button"
                   className="btn btn-primary"
-                  onClick={handleSave}
+                  onClick={() => handleSave("update-personal-trainer")}
                 >
                   Save changes
                 </button>
@@ -134,7 +135,7 @@ const AddTrainerModal = ({ id, userSubscriptionId, modalTitle }) => {
                 <button
                   type="button"
                   className="btn btn-primary"
-                  onClick={handleExtendTrainerSave}
+                  onClick={() => handleSave("extend-personal-trainer")}
                 >
                   Save changes
                 </button>

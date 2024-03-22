@@ -4,6 +4,7 @@ import getActiveUser from "../../../getData/getActiveUsers";
 import formatTime from "../../../others/ReadableFormatTime";
 import RenewalUsers from "../forRenewal/RenewalUsers";
 import AddTrainerModal from "./AddTrainerModal";
+import ExtendSubscriptionModal from "./ExtendSubscriptionModal";
 
 const MyActiveUser = () => {
   const [userSubscriptionId, setUserSubscriptionId] = useState(0);
@@ -65,6 +66,10 @@ const MyActiveUser = () => {
             <AddTrainerModal
               id={"addTrainerModal"}
               userSubscriptionId={userSubscriptionId}
+              modalTitle={modalTitle}
+            />
+            <ExtendSubscriptionModal
+              id={"extendSubscriptionModal"}
               modalTitle={modalTitle}
             />
           </div>

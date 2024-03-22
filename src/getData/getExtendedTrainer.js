@@ -1,4 +1,3 @@
-import React from "react";
 import instance from "../others/axiosInstance";
 
 const getExtendedTrainer = async (id) => {
@@ -8,7 +7,7 @@ const getExtendedTrainer = async (id) => {
 
     return extendedTrainer;
   } catch (error) {
-    console.error("Error fetching users:", error);
+    console.error("Error fetching extendedTrainer:", error);
   }
 };
 

@@ -4,6 +4,8 @@ import formatTime from "../../../others/ReadableFormatTime";
 import remainingDays from "../../../others/GetRemainingDays";
 import instance from "../../../others/axiosInstance";
 import getTrainerRemainingDays from "../../../getData/getTrainerRemainingDays";
+import getExtendedTrainer from "../../../getData/getExtendedTrainer";
+import personalTrainerDaysLeft from "../../../getData/personalTrainerDaysLeft";
 
 const RenewalUsers = ({
   blobPic,
@@ -22,6 +24,8 @@ const RenewalUsers = ({
 }) => {
   const [remaining, setRemaining] = useState(0);
   const [counter, setCounter] = useState(0);
+  const [extendedTrainer, setExtendedTrainer] = useState([]);
+
   // get the remaining days
   const getRemainingDays = async () => {
     setRemaining(await remainingDays(date_subscribed, per, user_id));
@@ -58,6 +62,20 @@ const RenewalUsers = ({
     return () => clearInterval(intervalId);
   }, [remaining]);
 
+  // get extended trainer
+  useEffect(() => {
+    const extended = async () => {
+      try {
+        const data = await getExtendedTrainer(subscriptionId);
+        setExtendedTrainer(data);
+      } catch (error) {
+        console.error("Error in fetchData:", error);
+      }
+    };
+
+    extended();
+  }, [id]);
+
   const handleAddPersonalTrainers = () => {
     setModalTitle("Add Personal Trainers");
     setUserSubscriptionId(subscriptionId);
@@ -65,6 +83,7 @@ const RenewalUsers = ({
 
   const handleExtendPersonalTrainers = () => {
     setModalTitle("Extend Personal Trainers");
+    setUserSubscriptionId(subscriptionId);
   };
 
   // const getTrainerRemainingDays = () => {
@@ -86,9 +105,13 @@ const RenewalUsers = ({
           <div className="c-col-time-in-out">
             <h5>DATE SUBSCRIBED</h5>
             <h4>{FormatDate(date_subscribed)}</h4>
-
             <h3>{subscription}</h3>
-            <button className="btn btn-secondary btn-sm extend-subscription">
+            <button
+              className="btn btn-secondary btn-sm extend-subscription"
+              data-toggle="modal"
+              data-target="#extendSubscriptionModal"
+              data-whatever="@mdo"
+            >
               Extend Subscripition
             </button>
             <h5>Remaining Days:</h5>
@@ -97,14 +120,44 @@ const RenewalUsers = ({
             <h5>Personal Trainers:</h5>
 
             <h4 style={{ color: "pink" }}>
-              {trainers}{" "}
-              {formatTime(trainerRemainingDays, "days-only") + session_days < 2
-                ? trainers == null
-                  ? "N/A"
-                  : "- Expired"
+              {trainers} (
+              {personalTrainerDaysLeft(
+                trainers,
+                "remaining-days",
+                trainerRemainingDays,
+                session_days
+              )}
+              )
+            </h4>
+            <h5 style={{ color: "white" }}>Extended:</h5>
+            {extendedTrainer?.map((extended) => (
+              // <h4 style={{ color: "pink" }}>
+              //   {extended.trainer.name} ({extended.extended_session_day} days)
+              // </h4>
+              <a style={{ color: "pink", cursor: "pointer" }}>
+                {extended.trainer.name} ({extended.extended_session_day} days)
+              </a>
+            ))}
+            <h5>Trainer Remaning Days:</h5>
+            <h4>
+              {" "}
+              {getTrainerRemainingDays(
+                trainerRemainingDays,
+                session_days,
+                extendedTrainer
+              ) < 2
+                ? // formatTime(trainerRemainingDays, "days-only") + session_days < 2
+                  // trainers == null
+                  // ? "N/A"
+                  // : "- Expired"
+                  personalTrainerDaysLeft(trainers, "trainer-remaining-days")
                 : "(" +
-                  getTrainerRemainingDays(trainerRemainingDays, session_days) +
-                  " days left)"}
+                  getTrainerRemainingDays(
+                    trainerRemainingDays,
+                    session_days,
+                    extendedTrainer
+                  ) +
+                  " days)"}
             </h4>
             {trainers == null ? (
               <button
