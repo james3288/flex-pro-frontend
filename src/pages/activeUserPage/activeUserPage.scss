@@ -98,9 +98,18 @@
           font-size: 15px;
         }
         .extend-subscription {
-          margin-bottom: 5px;
+          margin: 5px 0;
         }
       }
+
+      .extendSubscript {
+        cursor: pointer;
+        color: yellowgreen !important;
+      }
+      .extendSubscript:hover {
+        color: yellow !important;
+      }
+
       .online {
         position: absolute;
         width: 15px;

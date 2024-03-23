@@ -1,8 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import getSubscriptions from "../../../getData/getSubscriptions";
+import {
+  INITIAL_STATE,
+  extendSubscriptionReducer,
+} from "../../../reducers/extendSubscriptionReducer";
+import extendNewSubscription from "./extendNewSubscription";
+import updateExtendSubscription from "./updateExtendSubscription";
 
 const ExtendSubscriptionModal = ({ id, modalTitle, userSubscriptionId }) => {
   const [subscription, setSubscription] = useState([]);
+  const [state, dispatch] = useReducer(
+    extendSubscriptionReducer,
+    INITIAL_STATE
+  );
+
   useEffect(() => {
     const getsubscript = async () => {
       let data = await getSubscriptions();
@@ -11,6 +22,42 @@ const ExtendSubscriptionModal = ({ id, modalTitle, userSubscriptionId }) => {
     };
     getsubscript();
   }, [userSubscriptionId]);
+
+  const handleChange = (e) => {
+    dispatch({
+      type: "CHANGE_INPUT",
+      payload: { name: e.target.name, value: e.target.value },
+    });
+  };
+
+  const handleSave = () => {
+    if (state.subscriptionId == 0) {
+      return;
+    } else if (userSubscriptionId == 0) {
+      return;
+    }
+
+    const updateData = new FormData();
+    updateData.append("userSubscriptionId", userSubscriptionId);
+    updateData.append("subscriptionId", state.subscriptionId);
+
+    extendNewSubscription(updateData);
+  };
+
+  const handleUpdate = () => {
+    // NOTE: userSubscriptionId = extendedSubscriptionId
+    if (state.subscriptionId == 0) {
+      return;
+    } else if (userSubscriptionId == 0) {
+      return;
+    }
+
+    const updateData = new FormData();
+    updateData.append("extendedSubscriptionId", userSubscriptionId);
+    updateData.append("subscriptionId", state.subscriptionId);
+
+    updateExtendSubscription(updateData);
+  };
 
   return (
     <>
@@ -41,20 +88,22 @@ const ExtendSubscriptionModal = ({ id, modalTitle, userSubscriptionId }) => {
               <div>
                 <select
                   className="mySelect"
-                  name="trainersName"
-                  //   onChange={handleChange}
+                  name="subscriptionId"
+                  onChange={handleChange}
                 >
+                  <option value={0}>-- Select Extended Subscription --</option>
                   {subscription.map((subs) => (
                     <option key={subs?.id} value={subs?.id}>
-                      {subs?.gym_rate_desc} / {subs?.rate} per {subs?.per.per}
+                      {subs?.gym_rate_desc} /{" "}
+                      {subs?.rate.toLocaleString("en-US")} per {subs?.per.per}
                     </option>
                   ))}
                 </select>
 
                 <br />
-                {/* {state.trainersName == 0 && (
+                {state.subscriptionId == 0 && (
                   <span style={{ color: "red" }}>select trainers</span>
-                )} */}
+                )}
               </div>
 
               {/* {state.session_days == "" ? (
@@ -73,10 +122,23 @@ const ExtendSubscriptionModal = ({ id, modalTitle, userSubscriptionId }) => {
               >
                 Close
               </button>
-
-              <button type="button" className="btn btn-primary">
-                Save changes
-              </button>
+              {modalTitle === "Extend Subscriptions" ? (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleSave}
+                >
+                  Save changes
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleUpdate}
+                >
+                  Update changes
+                </button>
+              )}
             </div>
           </div>
         </div>

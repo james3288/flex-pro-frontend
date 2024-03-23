@@ -7,6 +7,7 @@ import getTrainerRemainingDays from "../../../getData/getTrainerRemainingDays";
 import getExtendedTrainer from "../../../getData/getExtendedTrainer";
 import personalTrainerDaysLeft from "../../../getData/personalTrainerDaysLeft";
 import getExtendedSubscription from "../../../getData/getExtendedSubscription";
+import getSubscriptionDaysLeft from "../../../getData/getSubscriptionDaysLeft";
 
 const RenewalUsers = ({
   blobPic,
@@ -111,6 +112,11 @@ const RenewalUsers = ({
     setUserSubscriptionId(subscriptionId);
   };
 
+  const handleUpdateExtendSubscriptions = (id) => {
+    setModalTitle("Update Extended Subscriptions");
+    setUserSubscriptionId(id);
+  };
+
   // const getTrainerRemainingDays = () => {
   //   return formatTime(trainerRemainingDays, "days-only") + session_days;
   // };
@@ -131,19 +137,20 @@ const RenewalUsers = ({
             <h5>DATE SUBSCRIBED</h5>
             <h4>{FormatDate(date_subscribed)}</h4>
             <h3>{subscription}</h3>
-            {/* {extendedSubscript?.maps((extended1) => (
-              <h4 keys={extended1?.id}>
-                {extended1?.subscription.gym_rate_desc}
-              </h4>
-            ))} */}
+
             {extendedSubscript?.map((ex) => (
-              // <h4 style={{ color: "pink" }}>
-              //   {extended.trainer.name} ({extended.extended_session_day} days)
-              // </h4>
-              <h4 style={{ color: "orange" }} key={ex?.id}>
-                - {ex?.subscription.gym_rate_desc} / {ex.subscription.rate} per{" "}
+              <a
+                className="extendSubscript"
+                key={ex?.id}
+                data-toggle="modal"
+                data-target="#extendSubscriptionModal"
+                data-whatever="@mdo"
+                onClick={() => handleUpdateExtendSubscriptions(ex.id)}
+              >
+                - {ex?.subscription.gym_rate_desc} /{" "}
+                {ex?.subscription.rate.toLocaleString()} per{" "}
                 {ex.subscription.per.per}
-              </h4>
+              </a>
             ))}
             <button
               className="btn btn-secondary btn-sm extend-subscription"
@@ -155,7 +162,7 @@ const RenewalUsers = ({
               Extend Subscripition
             </button>
             <h5>Remaining Days:</h5>
-            <h4>{remaining < 0 ? "Expired" : formatTime(remaining, "all")}</h4>
+            <h4>{getSubscriptionDaysLeft(remaining, extendedSubscript)}</h4>
 
             <h5>Personal Trainers:</h5>
 
