@@ -8,6 +8,7 @@ import getExtendedTrainer from "../../../getData/getExtendedTrainer";
 import personalTrainerDaysLeft from "../../../getData/personalTrainerDaysLeft";
 import getExtendedSubscription from "../../../getData/getExtendedSubscription";
 import getSubscriptionDaysLeft from "../../../getData/getSubscriptionDaysLeft";
+import TrainerRemainingDays from "./TrainerRemainingDays";
 
 const RenewalUsers = ({
   blobPic,
@@ -162,7 +163,13 @@ const RenewalUsers = ({
               Extend Subscripition
             </button>
             <h5>Remaining Days:</h5>
-            <h4>{getSubscriptionDaysLeft(remaining, extendedSubscript)}</h4>
+            <h4>
+              {getSubscriptionDaysLeft(
+                remaining,
+                extendedSubscript,
+                date_subscribed
+              )}
+            </h4>
 
             <h5>Personal Trainers:</h5>
 
@@ -176,17 +183,25 @@ const RenewalUsers = ({
               )}
               )
             </h4>
-            <h5 style={{ color: "white" }}>Extended:</h5>
+            <h5 style={{ color: "white" }}>Extended Personal Trainer:</h5>
             {extendedTrainer?.map((extended) => (
               // <h4 style={{ color: "pink" }}>
               //   {extended.trainer.name} ({extended.extended_session_day} days)
               // </h4>
               <a style={{ color: "pink", cursor: "pointer" }} key={extended.id}>
-                {extended.trainer.name} ({extended.extended_session_day} days)
+                {extended.trainer.name} ({extended.extended_session_day} days) -{" "}
+                {FormatDate(extended.date_extend)}
               </a>
             ))}
             <h5>Trainer Remaning Days:</h5>
-            <h4>
+            <TrainerRemainingDays
+              trainerRemainingDays={trainerRemainingDays}
+              session_days={session_days}
+              extendedTrainer={extendedTrainer}
+              trainers={trainers}
+            />
+
+            {/* <h4>
               {" "}
               {getTrainerRemainingDays(
                 trainerRemainingDays,
@@ -204,9 +219,9 @@ const RenewalUsers = ({
                     session_days,
                     extendedTrainer
                   ) +
-                  " days)"}
-            </h4>
-            {trainers == null ? (
+                  ")"}
+            </h4> */}
+            {/* {trainers == null ? (
               <button
                 className="btn btn-primary"
                 style={{ padding: "3px 10px" }}
@@ -217,9 +232,21 @@ const RenewalUsers = ({
               >
                 Add Personal Trainer
               </button>
-            ) : (
+            ) : ( */}
+            <div className="">
+              {" "}
               <button
                 className="btn btn-primary"
+                style={{ padding: "3px 10px", marginRight: "5px" }}
+                onClick={handleAddPersonalTrainers}
+                data-toggle="modal"
+                data-target="#addTrainerModal"
+                data-whatever="@mdo"
+              >
+                Add Personal Trainer
+              </button>
+              <button
+                className="btn btn-success"
                 style={{ padding: "3px 10px" }}
                 data-toggle="modal"
                 data-target="#addTrainerModal"
@@ -228,7 +255,9 @@ const RenewalUsers = ({
               >
                 Extend Personal Trainer
               </button>
-            )}
+            </div>
+
+            {/* )} */}
           </div>
         </div>
       </div>

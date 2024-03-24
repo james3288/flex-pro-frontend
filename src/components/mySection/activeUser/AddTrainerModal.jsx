@@ -85,6 +85,7 @@ const AddTrainerModal = ({ id, userSubscriptionId, modalTitle }) => {
                   {/* <option value="day">King James Uayan</option>
                   <option value="month">John Mayer</option>
                   <option value="year">Jeoseph Bejec</option> */}
+                  <option value={0}>--- Select Trainer ---</option>
                   {trainers.map((trainer) => (
                     <option key={trainer?.id} value={trainer?.id}>
                       {trainer?.name}

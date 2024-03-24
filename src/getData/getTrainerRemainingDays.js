@@ -1,18 +1,30 @@
+import { useState } from "react";
+import remainingDays from "../others/GetRemainingDays";
 import formatTime from "../others/ReadableFormatTime";
 
-const getTrainerRemainingDays = (
+const getTrainerRemainingDays = async (
   trainerRemainingDays,
   session_days,
   extendedTrainer
 ) => {
-  let result = formatTime(trainerRemainingDays, "days-only") + session_days;
-  //   console.log(result);
+  // let result = formatTime(trainerRemainingDays, "days-only") + session_days;
 
   let extendedSession = 0;
-  extendedTrainer?.map(
-    (extend) => (extendedSession += extend.extended_session_day)
+  let result = 0;
+
+  await Promise.all(
+    extendedTrainer?.map(async (extend) => {
+      extendedSession += await remainingDays(
+        extend.date_extend,
+        "personal_training_day",
+        extend.extended_session_day
+      );
+
+      result += extendedSession >= 0 && extendedSession;
+    })
   );
-  return result + extendedSession;
+  console.log("extendedSession", result);
+  return result;
 };
 
 export default getTrainerRemainingDays;
