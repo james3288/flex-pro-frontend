@@ -14,16 +14,16 @@ const getSubscriptionDaysLeft = (
   remainingDays += formatTime(remaining, "days-only");
 
   extendedSubscript.map((extend) => {
-    if (extend.subscription.per.per === "month") {
-      remainingDays += 31;
-    } else if (extend.subscription.per.per === "day") {
-      remainingDays += 1;
-    } else if (extend.subscription.per.per === "year") {
-      remainingDays += 365;
-    }
+    // if (extend.subscription.per.per === "month") {
+    //   remainingDays += 31;
+    // } else if (extend.subscription.per.per === "day") {
+    //   remainingDays += 1;
+    // } else if (extend.subscription.per.per === "year") {
+    //   remainingDays += 365;
+    // }
+    remainingDays += extend.extended_session_day;
   });
 
-  console.log(remainingDays);
   return remaining < 0 ? "Expired" : remainingDays + " Days";
 };
 

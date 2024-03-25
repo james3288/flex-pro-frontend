@@ -110,6 +110,24 @@
         color: yellow !important;
       }
 
+      .removeExtendedSubs {
+        color: yellowgreen;
+        cursor: pointer;
+      }
+
+      .removeExtendedSubs:hover {
+        color: red;
+      }
+
+      .extendedTrainer {
+        color: pink;
+        cursor: pointer;
+      }
+
+      .extendedTrainer:hover {
+        color: orange;
+      }
+
       .online {
         position: absolute;
         width: 15px;

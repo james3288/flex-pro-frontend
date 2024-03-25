@@ -6,11 +6,17 @@ import {
 import getTrainors from "../../../getData/getTrainors";
 import updatePersonalTrainer from "./updatePersonalTrainer";
 import extendPersonalTrainer from "./extendPersonalTrainer";
-
-const AddTrainerModal = ({ id, userSubscriptionId, modalTitle }) => {
+import getSpecificExtendedTrainer from "../../../getData/getSpecificExtendedTrainer";
+const AddTrainerModal = ({
+  id,
+  userSubscriptionId,
+  modalTitle,
+  extendedTrainerId,
+}) => {
   const [state, dispatch] = useReducer(addTrainorReducer, INITIAL_STATE);
   const refTrainingSession = useRef(0);
   const [trainers, setTrainers] = useState([]);
+  const [extendedTrainer, setExtendedTrainer] = useState({});
 
   useEffect(() => {
     const getTrainers = async () => {
@@ -21,6 +27,36 @@ const AddTrainerModal = ({ id, userSubscriptionId, modalTitle }) => {
 
     getTrainers();
   }, []);
+
+  useEffect(() => {
+    const getSpecificExtendedTr = async () => {
+      let data = await getSpecificExtendedTrainer(extendedTrainerId);
+      console.log("Specific Extender Trainer", data);
+      // setExtendedSubscription(data);
+      setExtendedTrainer(data);
+
+      // trainersName: 0,
+      // session_days: 0,
+
+      dispatch({
+        type: "CHANGE_INPUT",
+        payload: {
+          name: "trainersName",
+          value: data?.trainer?.id,
+        },
+      });
+
+      dispatch({
+        type: "CHANGE_INPUT",
+        payload: {
+          name: "session_days",
+          value: data?.extended_session_day,
+        },
+      });
+    };
+
+    getSpecificExtendedTr();
+  }, [extendedTrainerId]);
 
   const handleChange = (e) => {
     dispatch({
@@ -81,6 +117,7 @@ const AddTrainerModal = ({ id, userSubscriptionId, modalTitle }) => {
                   className="mySelect"
                   name="trainersName"
                   onChange={handleChange}
+                  value={state.trainersName}
                 >
                   {/* <option value="day">King James Uayan</option>
                   <option value="month">John Mayer</option>

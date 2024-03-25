@@ -1,6 +1,7 @@
 export const INITIAL_STATE = {
   userSubscriptionId: 0,
   subscriptionId: 0,
+  session_days: 0,
 };
 
 export const extendSubscriptionReducer = (state, action) => {
@@ -19,6 +20,7 @@ export const extendSubscriptionReducer = (state, action) => {
         ...state,
         userSubscriptionId: 0,
         subscriptionId: 0,
+        session_days: 0,
       };
   }
 };

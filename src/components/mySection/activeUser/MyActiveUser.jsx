@@ -5,9 +5,12 @@ import formatTime from "../../../others/ReadableFormatTime";
 import RenewalUsers from "../forRenewal/RenewalUsers";
 import AddTrainerModal from "./AddTrainerModal";
 import ExtendSubscriptionModal from "./ExtendSubscriptionModal";
+import RemoveExtendedSub from "./RemoveExtendedSub";
 
 const MyActiveUser = () => {
   const [userSubscriptionId, setUserSubscriptionId] = useState(0);
+  const [extendedSubId, setExtendedSubId] = useState(0);
+  const [extendedTrainerId, setExtendedTrainerId] = useState(0);
   const [modalTitle, setModalTitle] = useState();
 
   const queryKey = useMemo(() => ["forActiveUser"], []);
@@ -60,6 +63,8 @@ const MyActiveUser = () => {
                 setUserSubscriptionId={setUserSubscriptionId}
                 session_days={user.usersubscription.session_days}
                 setModalTitle={setModalTitle}
+                setExtendedSubId={setExtendedSubId}
+                setExtendedTrainerId={setExtendedTrainerId}
               />
             ))}
 
@@ -67,10 +72,16 @@ const MyActiveUser = () => {
               id={"addTrainerModal"}
               userSubscriptionId={userSubscriptionId}
               modalTitle={modalTitle}
+              extendedTrainerId={extendedTrainerId}
             />
             <ExtendSubscriptionModal
               id={"extendSubscriptionModal"}
               userSubscriptionId={userSubscriptionId}
+              modalTitle={modalTitle}
+            />
+            <RemoveExtendedSub
+              id={"removeExtendedSubModal"}
+              extendedSubId={extendedSubId}
               modalTitle={modalTitle}
             />
           </div>
