@@ -7,6 +7,7 @@ import getTrainors from "../../../getData/getTrainors";
 import updatePersonalTrainer from "./updatePersonalTrainer";
 import extendPersonalTrainer from "./extendPersonalTrainer";
 import getSpecificExtendedTrainer from "../../../getData/getSpecificExtendedTrainer";
+import updateExtendedTrainer from "./updateExtendedTrainer";
 const AddTrainerModal = ({
   id,
   userSubscriptionId,
@@ -82,6 +83,9 @@ const AddTrainerModal = ({
       updatePersonalTrainer(updateData);
     } else if (option === "extend-personal-trainer") {
       extendPersonalTrainer(updateData);
+    } else if (option === "update-extended-trainer") {
+      updateData.append("extendedTrainerId", extendedTrainerId);
+      updateExtendedTrainer(updateData);
     }
     // dispatch({ type: "CLEAR" });
   };
@@ -144,6 +148,7 @@ const AddTrainerModal = ({
                 name="session_days"
                 onChange={handleChange}
                 ref={refTrainingSession}
+                value={state.session_days}
               />
               {state.session_days == "" ? (
                 <span style={{ color: "red" }}>Fill session days</span>
@@ -169,7 +174,7 @@ const AddTrainerModal = ({
                 >
                   Save changes
                 </button>
-              ) : (
+              ) : modalTitle === "Extend Personal Trainers" ? (
                 <button
                   type="button"
                   className="btn btn-primary"
@@ -177,6 +182,16 @@ const AddTrainerModal = ({
                 >
                   Save changes
                 </button>
+              ) : modalTitle === "Update Extended Trainer" ? (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => handleSave("update-extended-trainer")}
+                >
+                  Update
+                </button>
+              ) : (
+                ""
               )}
             </div>
           </div>

@@ -128,6 +128,14 @@
         color: orange;
       }
 
+      .removeExtendedTrainer {
+        color: pink;
+      }
+
+      .removeExtendedTrainer:hover {
+        color: red;
+      }
+
       .online {
         position: absolute;
         width: 15px;

@@ -1,10 +1,23 @@
 import React from "react";
 import deleteExtendedSub from "../../../deleteData/deleteExtendedSub";
+import deleteExtendedTrainer from "../../../deleteData/deleteExtendedTrainer";
 
-const RemoveExtendedSub = ({ id, extendedSubId, modalTitle }) => {
+const RemoveExtendedSub = ({
+  id,
+  extendedSubId,
+  modalTitle,
+  extendedTrainerId,
+}) => {
+  console.log(extendedSubId, modalTitle, extendedTrainerId);
+
   const handleDeleteExtendedSub = () => {
     deleteExtendedSub(extendedSubId);
   };
+
+  const handleDeleteExtendedTrainer = () => {
+    deleteExtendedTrainer(extendedTrainerId);
+  };
+
   return (
     <div
       className="modal fade"
@@ -39,7 +52,9 @@ const RemoveExtendedSub = ({ id, extendedSubId, modalTitle }) => {
             </button>
           </div>
           <div className="modal-body">
-            Are you sure you want delete extended subscription?
+            {modalTitle === "Remove Extended Trainers"
+              ? "Are you sure you want delete extended personal trainer?"
+              : "Are you sure you want delete extended subscription?"}
           </div>
           <div className="modal-footer">
             <button
@@ -49,13 +64,23 @@ const RemoveExtendedSub = ({ id, extendedSubId, modalTitle }) => {
             >
               Close
             </button>
-            <button
-              type="button"
-              className="btn btn-danger"
-              onClick={() => handleDeleteExtendedSub(extendedSubId)}
-            >
-              Delete
-            </button>
+            {modalTitle === "Remove Extended Trainers" ? (
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={() => handleDeleteExtendedTrainer()}
+              >
+                Delete
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={() => handleDeleteExtendedSub(extendedSubId)}
+              >
+                Delete
+              </button>
+            )}
           </div>
         </div>
       </div>

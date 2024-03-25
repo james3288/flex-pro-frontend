@@ -82,6 +82,7 @@ const MyActiveUser = () => {
             <RemoveExtendedSub
               id={"removeExtendedSubModal"}
               extendedSubId={extendedSubId}
+              extendedTrainerId={extendedTrainerId}
               modalTitle={modalTitle}
             />
           </div>
