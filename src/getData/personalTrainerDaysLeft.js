@@ -49,8 +49,11 @@ const personalTrainerDaysLeft = (
         ? formatTime(grandTotalTrainingDaysLeft, "days-hours") + " left"
         : grandTotalTrainingDaysLeft;
 
-    return grandTotalTrainingDaysLeft === 0 ? "Expired" : result;
-
+    return grandTotalTrainingDaysLeft === 0
+      ? trainers == null
+        ? "N/A"
+        : "Expired"
+      : result;
   } else if (option === "remaining-days") {
     const result =
       trainers == null

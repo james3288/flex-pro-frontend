@@ -115,7 +115,10 @@ const getForRenewalUsers = async () => {
           image: imageDataUrl || "/media/image/default.jpg",
           remainingDays: formatTime(getRemainingDays, "days-left"),
           extendedSubDays: extendedSubDays,
-          extendedTrainerDays: extendedTrainerDays,
+          extendedTrainerDays: formatTime(
+            extendedTrainerDays === "Expired" ? 0 : extendedTrainerDays,
+            "days-only"
+          ),
         }; // If imgpath is null, use default image
       })
     );

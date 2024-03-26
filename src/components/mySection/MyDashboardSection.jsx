@@ -18,6 +18,7 @@ import remainingDays from "../../others/GetRemainingDays";
 import formatTime from "../../others/ReadableFormatTime";
 import { NavLink } from "react-router-dom";
 import getTrainerRemainingDays from "../../getData/getTrainerRemainingDays";
+import getForRenewalUsers from "../../getData/getForRenewalUsers";
 
 const MyDashboardSection = () => {
   const [flexProUsers, setFlexProUsers] = useState([]);
@@ -168,62 +169,62 @@ const MyDashboardSection = () => {
     }
   };
 
-  const getForRenewalUsers = async () => {
-    try {
-      const response = await instance.get(`/api/user_all_status/`);
-      const users = response.data;
+  // const getForRenewalUsers = async () => {
+  //   try {
+  //     const response = await instance.get(`/api/user_all_status/`);
+  //     const users = response.data;
 
-      const newUser = await Promise.all(
-        users.map(async (user) => {
-          // Call getImagePath asynchronously for each user
-          const imgpath = await getImagePath(
-            user.usersubscription.flexprouser.id
-          );
+  //     const newUser = await Promise.all(
+  //       users.map(async (user) => {
+  //         // Call getImagePath asynchronously for each user
+  //         const imgpath = await getImagePath(
+  //           user.usersubscription.flexprouser.id
+  //         );
 
-          const imageDataUrl = await loadImageData(imgpath.image1);
+  //         const imageDataUrl = await loadImageData(imgpath.image1);
 
-          // get the remaining days
-          const getRemainingDays = await remainingDays(
-            user.usersubscription.date_subscribed,
-            user.usersubscription.subscription.per.per
-          );
-          // end get the reamining days
+  //         // get the remaining days
+  //         const getRemainingDays = await remainingDays(
+  //           user.usersubscription.date_subscribed,
+  //           user.usersubscription.subscription.per.per
+  //         );
+  //         // end get the reamining days
 
-          // get trainiers remaining days
-          const getTrainersRemainingDays = await remainingDays(
-            user.usersubscription.date_subscribed,
-            "personal_training_day",
-            user.usersubscription.subscription.personal_training_session
-          );
-          //end get trainers remaining days
+  //         // get trainiers remaining days
+  //         const getTrainersRemainingDays = await remainingDays(
+  //           user.usersubscription.date_subscribed,
+  //           "personal_training_day",
+  //           user.usersubscription.subscription.personal_training_session
+  //         );
+  //         //end get trainers remaining days
 
-          return {
-            ...user,
-            image: imageDataUrl || "/media/image/default.jpg",
-            remainingDays: formatTime(getRemainingDays, "days-left"),
-            trainersRemainingDays: getTrainersRemainingDays,
-          }; // If imgpath is null, use default image
-        })
-      );
+  //         return {
+  //           ...user,
+  //           image: imageDataUrl || "/media/image/default.jpg",
+  //           remainingDays: formatTime(getRemainingDays, "days-left"),
+  //           trainersRemainingDays: getTrainersRemainingDays,
+  //         }; // If imgpath is null, use default image
+  //       })
+  //     );
 
-      console.log("forRenewal", newUser);
-      setNoRenewalUser(
-        newUser.filter(
-          (user) =>
-            user.remainingDays <= 2 ||
-            // (formatTime(user.trainersRemainingDays, "days-left") <= 2 &&
-            (getTrainerRemainingDays(
-              user.trainersRemainingDays,
-              user.usersubscription.session_days
-            ) <= 2 &&
-              user.usersubscription.trainer != null)
-        ).length
-      );
-      setForRenewalUsers(newUser);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-  };
+  //     console.log("forRenewal", newUser);
+  //     setNoRenewalUser(
+  //       newUser.filter(
+  //         (user) =>
+  //           user.remainingDays <= 2 ||
+  //           // (formatTime(user.trainersRemainingDays, "days-left") <= 2 &&
+  //           (getTrainerRemainingDays(
+  //             user.trainersRemainingDays,
+  //             user.usersubscription.session_days
+  //           ) <= 2 &&
+  //             user.usersubscription.trainer != null)
+  //       ).length
+  //     );
+  //     setForRenewalUsers(newUser);
+  //   } catch (error) {
+  //     console.error("Error fetching users:", error);
+  //   }
+  // };
 
   const getNoOnlineUser = async () => {
     try {
@@ -261,7 +262,18 @@ const MyDashboardSection = () => {
 
   // refresher
   useEffect(() => {
-    getForRenewalUsers();
+    // setForRenewalUsers(()=> getForRenewalUsers())
+    const getRenewalUsers = async () => {
+      let users = await getForRenewalUsers();
+      let noOfRenewalUsers = users.filter(
+        (user) => user.extendedSubDays <= 2 || user.extendedTrainerDays <= 2
+      ).length;
+      setNoRenewalUser(noOfRenewalUsers);
+      setForRenewalUsers(users);
+    };
+
+    getRenewalUsers();
+
     setRefresher(false);
   }, [refresher]);
 
@@ -382,36 +394,41 @@ const MyDashboardSection = () => {
                 <strong> {noRenewalUser > 1 ? "USERS" : "USER"}</strong>
               </h1>
               <div className="scrollable-list-of-user">
-                {forRenewalUsers.map((user) =>
-                  user.usersubscription.trainer?.name == null &&
-                  user.remainingDays > 2 ? (
-                    ""
-                  ) : user.usersubscription.trainer?.name != null &&
-                    user.remainingDays > 2 &&
-                    getTrainerRemainingDays(
-                      user?.trainersRemainingDays,
-                      user?.usersubscription.session_days
-                    ) > 2 ? (
-                    ""
-                  ) : (
-                    <ForRenewal
-                      key={user.id}
-                      pix={user.image}
-                      user_id={user.usersubscription.flexprouser.id}
-                      id={user.id}
-                      registeredName={user.usersubscription.flexprouser.name}
-                      remaining={"0"}
-                      subscription={
-                        user.usersubscription.subscription.gym_rate_desc
-                      }
-                      date_log={user.usersubscription.date_subscribed}
-                      per={user.usersubscription.subscription.per.per}
-                      setRefresher={setRefresher}
-                      setNoRenewalUser={setNoRenewalUser}
-                      trainersRemainingDays={user.trainersRemainingDays}
-                      trainers={user.usersubscription.trainer?.name}
-                    />
-                  )
+                {forRenewalUsers.map(
+                  (user) =>
+                    // user.usersubscription.trainer?.name == null &&
+                    // user.remainingDays > 2 ? (
+                    //   ""
+                    // ) : user.usersubscription.trainer?.name != null &&
+                    //   user.remainingDays > 2 &&
+                    //   getTrainerRemainingDays(
+                    //     user?.trainersRemainingDays,
+                    //     user?.usersubscription.session_days
+                    //   ) > 2 ? (
+                    //   ""
+                    // ) : (
+                    (user.extendedSubDays <= 2 ||
+                      user.extendedTrainerDays <= 2) && (
+                      <ForRenewal
+                        key={user.id}
+                        pix={user.image}
+                        user_id={user.usersubscription.flexprouser.id}
+                        id={user.id}
+                        registeredName={user.usersubscription.flexprouser.name}
+                        remaining={"0"}
+                        subscription={
+                          user.usersubscription.subscription.gym_rate_desc
+                        }
+                        date_log={user.usersubscription.date_subscribed}
+                        per={user.usersubscription.subscription.per.per}
+                        setRefresher={setRefresher}
+                        setNoRenewalUser={setNoRenewalUser}
+                        trainersRemainingDays={user.trainersRemainingDays}
+                        trainers={user.usersubscription.trainer?.name}
+                        extendedSubDays={user.extendedSubDays}
+                        extendedTrainerDays={user.extendedTrainerDays}
+                      />
+                    )
                 )}
               </div>
               {/* <Trainers

@@ -16,6 +16,8 @@ const ForRenewal = ({
   setNoRenewalUser,
   trainersRemainingDays,
   trainers,
+  extendedSubDays,
+  extendedTrainerDays,
 }) => {
   const dateLogObj = new Date(date_log);
   const dateLogObj1 = new Date(date_log);
@@ -40,7 +42,8 @@ const ForRenewal = ({
     const minutesleft = formatTime(remainingDays, "minutes-left");
 
     const intervalId = setInterval(() => {
-      if (daysleft <= 0 && hoursleft <= 0 && minutesleft <= 0) {
+      // if (daysleft <= 0 && hoursleft <= 0 && minutesleft <= 0) {
+      if (extendedSubDays < 0) {
         console.log(registeredName + ` ${id} has been expired`);
 
         instance
@@ -70,64 +73,69 @@ const ForRenewal = ({
       {/* {formatTime(remainingDays, "days-left") <= 2 ||
         (formatTime(trainersRemainingDays, "days-left") <= 2 &&
           trainers != undefined && ( */}
-            <div className="clients-online">
-              <div className="row row2">
-                <div className="col-3">
-                  <img
-                    src={pix}
-                    alt=""
-                    className="circle"
-                    style={{ border: "2px solid red" }}
-                  />
-                </div>
-                <div className="col-7">
-                  <div className="clients-flex">
-                    <h5>{registeredName}</h5>
-                    <p
-                      style={{
-                        color: "yellow",
-                        fontSize: "18px",
-                        lineHeight: "14px",
-                      }}
-                    >
-                      {subscription} per {per}
-                    </p>
-                    {/* <p>ID:{user_id}</p> */}
-                    <p>Date Registered:</p>
-                    <p>
-                      <strong>{FormatDate(date_log)}</strong>
-                    </p>
+      <div className="clients-online">
+        <div className="row row2">
+          <div className="col-3">
+            <img
+              src={pix}
+              alt=""
+              className="circle"
+              style={{ border: "2px solid red" }}
+            />
+          </div>
+          <div className="col-7">
+            <div className="clients-flex">
+              <h5>{registeredName}</h5>
+              <p
+                style={{
+                  color: "yellow",
+                  fontSize: "18px",
+                  lineHeight: "14px",
+                }}
+              >
+                {subscription} per {per}
+              </p>
+              {/* <p>ID:{user_id}</p> */}
+              <p>Date Registered:</p>
+              <p>
+                <strong>{FormatDate(date_log)}</strong>
+              </p>
 
-                    <p>Remaining: </p>
-                    <p style={{ lineHeight: "16px" }}>
-                      <strong>
-                        {" "}
-                        {formatTime(remainingDays1, "days-hours")}
-                      </strong>{" "}
-                      left
-                    </p>
-                    <p>Personal Trainer:</p>
+              <p>Subscription Remaining Days: </p>
+              <p style={{ lineHeight: "16px" }}>
+                <strong>
+                  {" "}
+                  {/* {formatTime(remainingDays1, "days-hours")} */}
+                  {extendedSubDays} day/s
+                </strong>{" "}
+                left
+              </p>
+              <p>Personal Trainer Days:</p>
 
-                    <p style={{ lineHeight: "16px" }}>
-                      {trainersRemainingDays < 0 && trainers != undefined ? (
-                        <strong style={{ color: "pink" }}>
-                          {trainers} - Expired
-                        </strong>
-                      ) : 
-                        trainersRemainingDays < 0 && trainers == undefined ? (<strong>N/A</strong>):
-                      (
-                        <strong style={{ color: "pink" }}>
-                          {trainers} ({" "}
-                          {formatTime(trainersRemainingDays, "days-hours")})
-                          left 
-                        </strong>
-                      )}
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <p style={{ lineHeight: "16px" }}>
+                {/* {trainersRemainingDays < 0 && trainers != undefined ? (
+                  <strong style={{ color: "pink" }}>
+                    {trainers} - Expired
+                  </strong>
+                ) : trainersRemainingDays < 0 && trainers == undefined ? (
+                  <strong>N/A</strong>
+                ) : (
+                  <strong style={{ color: "pink" }}>
+                    {trainers} ({" "}
+                    {formatTime(trainersRemainingDays, "days-hours")}) left
+                  </strong>
+                )} */}
+                <strong>
+                  {extendedTrainerDays < 0 ? "Expired" : extendedTrainerDays}{" "}
+                  day/s{" "}
+                </strong>{" "}
+                left
+              </p>
             </div>
-          {/* // ))} */}
+          </div>
+        </div>
+      </div>
+      {/* // ))} */}
     </>
   );
 };
