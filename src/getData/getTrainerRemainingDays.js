@@ -12,18 +12,22 @@ const getTrainerRemainingDays = async (
   let extendedSession = 0;
   let result = 0;
 
-  await Promise.all(
-    extendedTrainer?.map(async (extend) => {
-      extendedSession += await remainingDays(
-        extend.date_extend,
-        "personal_training_day",
-        extend.extended_session_day
-      );
+  if (extendedTrainer && Array.isArray(extendedTrainer)) {
+    await Promise?.all(
+      extendedTrainer.map(async (extend, index) => {
+        extendedSession += await remainingDays(
+          extend.date_extend,
+          "personal_training_day",
+          extend.extended_session_day
+        );
 
-      result += extendedSession >= 0 && extendedSession;
-    })
-  );
-  console.log("extendedSession", result);
+        result += extendedSession >= 0 && extendedSession;
+      })
+    );
+  } else {
+    console.error("extendedTrainer is not defined or is not an array.");
+  }
+
   return result;
 };
 

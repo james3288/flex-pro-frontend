@@ -2,6 +2,8 @@ import React from "react";
 import instance from "../others/axiosInstance";
 
 const deleteExtendedTrainer = (id) => {
+  console.log('trainerid',id)
+  
   instance
     .delete(`api/delete_extended_trainer/${id}`)
     .then((response) => {

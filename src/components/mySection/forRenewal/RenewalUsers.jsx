@@ -134,7 +134,7 @@ const RenewalUsers = ({
   };
 
   // const getTrainerRemainingDays = () => {
-  //   return formatTime(trainerRemainingDays, "days-only") + session_days;
+  //   retsurn formatTime(trainerRemainingDays, "days-only") + session_days;
   // };
 
   const context = (
@@ -154,12 +154,11 @@ const RenewalUsers = ({
             <h4>{FormatDate(date_subscribed)}</h4>
             <h3>{subscription}</h3>
 
-            {extendedSubscript?.map((ex) => (
+            {extendedSubscript?.map((ex, index) => (
               <>
-                <div>
+                <div key={index}>
                   <a
                     className="extendSubscript"
-                    key={ex?.id}
                     data-toggle="modal"
                     data-target="#extendSubscriptionModal"
                     data-whatever="@mdo"
@@ -182,7 +181,7 @@ const RenewalUsers = ({
                       width="16"
                       height="16"
                       fill="currentColor"
-                      class="bi bi-trash"
+                      className="bi bi-trash"
                       viewBox="0 0 16 16"
                     >
                       <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
@@ -225,22 +224,20 @@ const RenewalUsers = ({
             <h5 style={{ color: "white" }}>Extended Personal Trainer:</h5>
             {extendedTrainer?.map((extended) => (
               <>
-                <div>
+                <div key={extended.id}>
                   <a
                     className="removeExtendedTrainer"
                     data-toggle="modal"
                     data-target="#removeExtendedSubModal"
                     data-whatever="@mdo"
-                    onClick={() =>
-                      handleRemoveExtendedTrainer(extendedTrainer.id)
-                    }
+                    onClick={() => handleRemoveExtendedTrainer(extended?.id)}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"
                       height="16"
                       fill="currentColor"
-                      class="bi bi-trash"
+                      className="bi bi-trash"
                       viewBox="0 0 16 16"
                     >
                       <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
@@ -305,7 +302,11 @@ const RenewalUsers = ({
               {" "}
               <button
                 className="btn btn-primary"
-                style={{ padding: "3px 10px", marginRight: "5px" }}
+                style={{
+                  padding: "3px 10px",
+                  marginRight: "5px",
+                  marginBottom: "5px",
+                }}
                 onClick={handleAddPersonalTrainers}
                 data-toggle="modal"
                 data-target="#addTrainerModal"
@@ -315,7 +316,7 @@ const RenewalUsers = ({
               </button>
               <button
                 className="btn btn-success"
-                style={{ padding: "3px 10px" }}
+                style={{ padding: "3px 10px", marginBottom: "5px" }}
                 data-toggle="modal"
                 data-target="#addTrainerModal"
                 data-whatever="@mdo"

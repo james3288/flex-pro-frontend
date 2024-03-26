@@ -9,7 +9,9 @@ const TrainerRemainingDays = ({
   extendedTrainer,
   trainers,
 }) => {
-  const [remainingDays, setRemainingDays] = useState(null);
+  // const [remainingDays, setRemainingDays] = useState(null);
+  const [extendedTrainerRemainingDays, setExtendedTrainerRemainingDays] =
+    useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,7 +21,7 @@ const TrainerRemainingDays = ({
           session_days,
           extendedTrainer
         );
-        setRemainingDays(days);
+        setExtendedTrainerRemainingDays(days);
       } catch (error) {
         console.error("Error fetching remaining days:", error);
       }
@@ -31,11 +33,25 @@ const TrainerRemainingDays = ({
   return (
     <h4>
       {" "}
-      {remainingDays !== null
-        ? remainingDays < 2
-          ? personalTrainerDaysLeft(trainers, "trainer-remaining-days")
-          : `(${formatTime(remainingDays, "days-hours")})`
-        : "Loading..."}
+      {personalTrainerDaysLeft(
+        trainers,
+        "trainer-remaining-days",
+        trainerRemainingDays,
+        session_days,
+        extendedTrainerRemainingDays,
+        true
+      )}
+      {/* {extendedTrainerRemainingDays !== null
+        ? extendedTrainerRemainingDays < 3
+          ? personalTrainerDaysLeft(
+              trainers,
+              "trainer-remaining-days",
+              trainerRemainingDays,
+              session_days,
+              extendedTrainerRemainingDays
+            )
+          : `(${formatTime(extendedTrainerRemainingDays, "days-hours")})`
+        : "Loading..."} */}
     </h4>
   );
 };

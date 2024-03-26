@@ -32,7 +32,6 @@ const AddTrainerModal = ({
   useEffect(() => {
     const getSpecificExtendedTr = async () => {
       let data = await getSpecificExtendedTrainer(extendedTrainerId);
-      console.log("Specific Extender Trainer", data);
       // setExtendedSubscription(data);
       setExtendedTrainer(data);
 
@@ -121,7 +120,7 @@ const AddTrainerModal = ({
                   className="mySelect"
                   name="trainersName"
                   onChange={handleChange}
-                  value={state.trainersName}
+                  value={state?.trainersName}
                 >
                   {/* <option value="day">King James Uayan</option>
                   <option value="month">John Mayer</option>

@@ -18,7 +18,7 @@ const MyRenewalUser = () => {
   if (isPending)
     return (
       <div id="preloder">
-        <div class="loader"></div>
+        <div className="loader"></div>
       </div>
     );
 
@@ -57,7 +57,7 @@ const MyRenewalUser = () => {
                   ""
                 ) : (
                   <RenewalUsers
-                    key={user.id}
+                    key={user?.id}
                     blobPic={user.image}
                     registeredName={user.usersubscription.flexprouser.name}
                     date_subscribed={user.usersubscription.date_subscribed}
