@@ -51,10 +51,10 @@ const RegisteredUser = ({
             <h5>{registeredName}</h5>
             <p>ID: {user_id}</p>
             <p style={{ color: "yellow", fontSize: "18px" }}>{subscription}</p>
-            <p style={{ lineHeight: "16px" }}>
+            {/* <p style={{ lineHeight: "16px" }}>
               <strong>{formatTime(remaining, "days-hours")}</strong>
-            </p>
-            <h5>Personal Trainer</h5>
+            </p> */}
+            {/* <h5>Personal Trainer</h5>
             {trainersRemainingDays < 0 ? (
               <ExtendButton />
             ) : (
@@ -62,7 +62,7 @@ const RegisteredUser = ({
                 {trainers} - {formatTime(trainersRemainingDays, "days-hours")}{" "}
                 left
               </p>
-            )}
+            )} */}
           </div>
         </div>
       </div>

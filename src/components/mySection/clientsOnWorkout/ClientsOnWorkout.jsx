@@ -20,6 +20,8 @@ const ClientsOnWorkout = ({
   blobPix,
   per,
   setTriggerLogout,
+  extendedSubDays,
+  extendedSubscriptions,
 }) => {
   const time_in = formatTimeToString(timeIn);
   const time_out = formatTimeToString(timeOut);
@@ -108,18 +110,31 @@ const ClientsOnWorkout = ({
             <p>{formatDateOnly(date_log)}</p>
             <p>
               {" "}
-              <ReactTimeAgo date={timeIn} locale="en-US" timeStyle="twitter" />
+              <ReactTimeAgo
+                date={timeIn}
+                locale="en-US"
+                timeStyle="twitter"
+              />{" "}
+              ago
             </p>
-            <h3>{subscription}</h3>
+            <h3 style={{ color: "yellowgreen" }}>{subscription}</h3>
+            {extendedSubscriptions.map((extended) => (
+              <p style={{ color: "yellowgreen" }}>
+                {" "}
+                - {extended.subscription.gym_rate_desc} / extend{" "}
+                {extended.extended_session_day} day/s
+              </p>
+            ))}
             <h5>Remaining Days:</h5>
-            <h5>
-              {remaining < 0 ? (
+            <h5 style={{ color: "orange" }}>
+              {/* {remaining < 0 ? (
                 <span style={{ color: "pink" }}>
                   Subscription has already expired!
                 </span>
               ) : (
                 formatTime(remaining, "all")
-              )}
+              )} */}
+              {extendedSubDays} day/s left
             </h5>
           </div>
 

@@ -26,6 +26,8 @@ function ClientsOnline({
   setRefresher2,
   trainers,
   trainersRemainingDays,
+  extendedSubDays,
+  extendedSubscriptions,
 }) {
   // Parse the timestamp
   const timeInObj = new Date(timeIn);
@@ -108,7 +110,7 @@ function ClientsOnline({
         <div className="col-7">
           <div className="clients-flex">
             <h5>{clientName}</h5>
-            <p>ID: {user_online_id}</p>
+            {/* <p>ID: {user_online_id}</p> */}
             <div className="timein_timeout">
               <p>
                 IN: <strong>{timeInString}</strong>- OUT:
@@ -135,7 +137,14 @@ function ClientsOnline({
             >
               {gym_rate_desc} - {rate} / {per}
             </p>
-
+            {extendedSubscriptions.map((extended) => (
+              <p style={{ color: "yellowgreen" }} key={extended.id}>
+                {" "}
+                - {extended.subscription.gym_rate_desc} / extend{" "}
+                {extended.extended_session_day} day/s
+              </p>
+            ))}
+            <br />
             <p>
               <ReactTimeAgo date={timeAgo} locale="en-US" timeStyle="twitter" />{" "}
               ago
@@ -143,7 +152,17 @@ function ClientsOnline({
 
             <h5>Remaining days:</h5>
 
-            {remaining >= 0 ? (
+            <p
+              style={{
+                color: "orange",
+                fontSize: "18px",
+                lineHeight: "20px",
+              }}
+            >
+              <strong>{extendedSubDays} day/s left</strong>
+            </p>
+
+            {/* {remaining >= 0 ? (
               <p
                 style={{
                   color: "orange",
@@ -163,7 +182,7 @@ function ClientsOnline({
               >
                 <strong>Expired</strong>
               </p>
-            )}
+            )} */}
             {/* <h5>Personal Trainers:</h5>
             <p>
               {" "}

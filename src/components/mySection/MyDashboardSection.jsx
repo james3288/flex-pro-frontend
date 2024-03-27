@@ -19,6 +19,8 @@ import formatTime from "../../others/ReadableFormatTime";
 import { NavLink } from "react-router-dom";
 import getTrainerRemainingDays from "../../getData/getTrainerRemainingDays";
 import getForRenewalUsers from "../../getData/getForRenewalUsers";
+import getSubscriptionDaysLeft from "../../getData/getSubscriptionDaysLeft";
+import getExtendedSubscription from "../../getData/getExtendedSubscription";
 
 const MyDashboardSection = () => {
   const [flexProUsers, setFlexProUsers] = useState([]);
@@ -61,6 +63,16 @@ const MyDashboardSection = () => {
     }
   };
 
+  // get extended subscription
+  const extendedSub = async (subscriptionId) => {
+    try {
+      const data = await getExtendedSubscription(subscriptionId);
+      return await data;
+    } catch (error) {
+      console.error("Error in fetching Extended Subscription:", error);
+    }
+  };
+
   const getUsersOnline = async () => {
     try {
       const response = await instance.get(`/api/user_online/`);
@@ -83,10 +95,30 @@ const MyDashboardSection = () => {
           );
           //end get trainers remaining days
 
+          // get the remaining days
+          const getRemainingDays = await remainingDays(
+            user.usersubscription.date_subscribed,
+            user.usersubscription.subscription.per.per
+          );
+
+          const getExtendedSubscriptionDays = await extendedSub(
+            user.usersubscription.id
+          );
+
+          // get extended subscription days left and main subscription days
+          const extendedSubDays = getSubscriptionDaysLeft(
+            getRemainingDays,
+            getExtendedSubscriptionDays,
+            user.usersubscription.date_subscribed,
+            true
+          );
+
           return {
             ...user,
             trainersRemainingDays: getTrainersRemainingDays,
             image: imageDataUrl || "/media/image/default.jpg",
+            extendedSubDays: extendedSubDays,
+            extendedSubscriptions: getExtendedSubscriptionDays,
           }; // If imgpath is null, use default image
         })
       );
@@ -373,6 +405,8 @@ const MyDashboardSection = () => {
                     setRefresher2={setRefresher2}
                     trainers={user.usersubscription.trainer?.name}
                     trainersRemainingDays={user.trainersRemainingDays}
+                    extendedSubDays={user?.extendedSubDays}
+                    extendedSubscriptions={user?.extendedSubscriptions}
                   />
                 ))}
               </div>

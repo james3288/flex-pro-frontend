@@ -70,7 +70,7 @@ const MyCLientsOnWorkout = () => {
               data1?.map((online) => (
                 <ClientsOnWorkout
                   key={online.id}
-                  id={online.id}
+                  id={online.usersubscription.flexprouser.id}
                   name={online.usersubscription.flexprouser.name}
                   subscription={
                     online.usersubscription.subscription.gym_rate_desc
@@ -82,6 +82,8 @@ const MyCLientsOnWorkout = () => {
                   blobPix={online.image}
                   per={online.usersubscription.subscription.per.per}
                   setTriggerLogout={setTriggerLogout}
+                  extendedSubDays={online.extendedSubDays}
+                  extendedSubscriptions={online.extendedSubscriptions}
                 />
               ))
             ) : (
