@@ -70,9 +70,6 @@ const ForRenewal = ({
 
   return (
     <>
-      {/* {formatTime(remainingDays, "days-left") <= 2 ||
-        (formatTime(trainersRemainingDays, "days-left") <= 2 &&
-          trainers != undefined && ( */}
       <div className="clients-online">
         <div className="row row2">
           <div className="col-3">
@@ -113,18 +110,6 @@ const ForRenewal = ({
               <p>Personal Trainer Days:</p>
 
               <p style={{ lineHeight: "16px" }}>
-                {/* {trainersRemainingDays < 0 && trainers != undefined ? (
-                  <strong style={{ color: "pink" }}>
-                    {trainers} - Expired
-                  </strong>
-                ) : trainersRemainingDays < 0 && trainers == undefined ? (
-                  <strong>N/A</strong>
-                ) : (
-                  <strong style={{ color: "pink" }}>
-                    {trainers} ({" "}
-                    {formatTime(trainersRemainingDays, "days-hours")}) left
-                  </strong>
-                )} */}
                 <strong>
                   {extendedTrainerDays < 0 ? "Expired" : extendedTrainerDays}{" "}
                   day/s{" "}

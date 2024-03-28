@@ -27,9 +27,9 @@ const getSubscriptionDaysLeft = (
 
   return daysOnly === true
     ? remainingDays
-    : remaining < 0
+    : remainingDays < 0
     ? "Expired"
-    : remainingDays + " Days";
+    : remainingDays + " Day/s";
   // return remaining < 0 ? "Expired" : remainingDays + " Days";
 };
 

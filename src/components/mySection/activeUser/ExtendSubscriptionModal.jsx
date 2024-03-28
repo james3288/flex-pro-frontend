@@ -127,7 +127,7 @@ const ExtendSubscriptionModal = ({ id, modalTitle, userSubscriptionId }) => {
               </button>
             </div>
             <div className="modal-body">
-              <label className="col-form-label">Personal Trainer:</label>
+              <label className="col-form-label">Subscription</label>
               <div>
                 <select
                   className="mySelect"
@@ -152,9 +152,7 @@ const ExtendSubscriptionModal = ({ id, modalTitle, userSubscriptionId }) => {
                   <span style={{ color: "red" }}>select trainers</span>
                 )}
               </div>
-              <label className="col-form-label">
-                Personal Training Session (days):
-              </label>
+              <label className="col-form-label">Extended (days):</label>
               <input
                 type="text"
                 className="form-control"

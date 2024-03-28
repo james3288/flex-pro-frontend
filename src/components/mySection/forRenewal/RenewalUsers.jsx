@@ -55,7 +55,14 @@ const RenewalUsers = ({
   // checked expired subscription
   useEffect(() => {
     const intervalId = setInterval(() => {
-      if (formatTime(remaining, "minutes-left") < 0) {
+      let daysleft = getSubscriptionDaysLeft(
+        remaining,
+        extendedSubscript,
+        date_subscribed,
+        false
+      );
+
+      if (daysleft < 0) {
         // setRefresher2(true);
 
         counter == 0 && handleExpired();
@@ -205,7 +212,8 @@ const RenewalUsers = ({
               {getSubscriptionDaysLeft(
                 remaining,
                 extendedSubscript,
-                date_subscribed
+                date_subscribed,
+                false
               )}
             </h4>
 

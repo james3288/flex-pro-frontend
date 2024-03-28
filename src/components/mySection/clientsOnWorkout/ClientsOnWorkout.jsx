@@ -11,6 +11,7 @@ import UserLogout from "../clientsOnline/userLogout";
 
 const ClientsOnWorkout = ({
   id,
+  user_id,
   name,
   subscription,
   timeIn,
@@ -94,7 +95,7 @@ const ClientsOnWorkout = ({
             />
             <div className="col-name">
               <h4>
-                <span>ID:{id}</span> {name}
+                <span>ID:{user_id}</span> {name}
               </h4>
             </div>
           </div>

@@ -33,7 +33,7 @@ const MyCLientsOnWorkout = () => {
   if (isPending)
     return (
       <div id="preloder">
-        <div class="loader"></div>
+        <div className="loader"></div>
       </div>
     );
 
@@ -41,6 +41,7 @@ const MyCLientsOnWorkout = () => {
 
   const data1 = data?.filter((user) => user?.date_log.includes(date));
   console.log(data1, value);
+
   function handleChange(e) {
     const value = e.target.value;
     setDate(value); // Update state with the new value
@@ -70,7 +71,8 @@ const MyCLientsOnWorkout = () => {
               data1?.map((online) => (
                 <ClientsOnWorkout
                   key={online.id}
-                  id={online.usersubscription.flexprouser.id}
+                  id={online.id}
+                  user_id={online.usersubscription.flexprouser.id}
                   name={online.usersubscription.flexprouser.name}
                   subscription={
                     online.usersubscription.subscription.gym_rate_desc

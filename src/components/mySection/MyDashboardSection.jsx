@@ -430,17 +430,6 @@ const MyDashboardSection = () => {
               <div className="scrollable-list-of-user">
                 {forRenewalUsers.map(
                   (user) =>
-                    // user.usersubscription.trainer?.name == null &&
-                    // user.remainingDays > 2 ? (
-                    //   ""
-                    // ) : user.usersubscription.trainer?.name != null &&
-                    //   user.remainingDays > 2 &&
-                    //   getTrainerRemainingDays(
-                    //     user?.trainersRemainingDays,
-                    //     user?.usersubscription.session_days
-                    //   ) > 2 ? (
-                    //   ""
-                    // ) : (
                     (user.extendedSubDays <= 2 ||
                       user.extendedTrainerDays <= 2) && (
                       <ForRenewal

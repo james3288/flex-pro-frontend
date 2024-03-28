@@ -1,13 +1,20 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import RenewalUsers from "./RenewalUsers";
 import getForRenewalUsers from "../../../getData/getForRenewalUsers";
 import { useQuery } from "@tanstack/react-query";
 import formatTime from "../../../others/ReadableFormatTime";
 import getTrainerRemainingDays from "../../../getData/getTrainerRemainingDays";
+import AddTrainerModal from "../activeUser/AddTrainerModal";
+import ExtendSubscriptionModal from "../activeUser/ExtendSubscriptionModal";
+import RemoveExtendedSub from "../activeUser/RemoveExtendedSub";
 
 const MyRenewalUser = () => {
   let value = false;
   const queryKey = useMemo(() => ["forRenewalData"], []);
+  const [modalTitle, setModalTitle] = useState();
+  const [userSubscriptionId, setUserSubscriptionId] = useState(0);
+  const [extendedTrainerId, setExtendedTrainerId] = useState(0);
+  const [extendedSubId, setExtendedSubId] = useState(0);
 
   const { isPending, error, data } = useQuery({
     queryKey,
@@ -62,9 +69,31 @@ const MyRenewalUser = () => {
                     subscriptionId={user?.usersubscription.id}
                     trainerRemainingDays={user?.trainerRemainingDays}
                     session_days={user?.usersubscription.session_days}
+                    setUserSubscriptionId={setUserSubscriptionId}
+                    setModalTitle={setModalTitle}
+                    setExtendedTrainerId={setExtendedTrainerId}
+                    setExtendedSubId={setExtendedSubId}
                   />
                 )
             )}
+
+            <AddTrainerModal
+              id={"addTrainerModal"}
+              userSubscriptionId={userSubscriptionId}
+              modalTitle={modalTitle}
+              extendedTrainerId={extendedTrainerId}
+            />
+            <ExtendSubscriptionModal
+              id={"extendSubscriptionModal"}
+              userSubscriptionId={userSubscriptionId}
+              modalTitle={modalTitle}
+            />
+            <RemoveExtendedSub
+              id={"removeExtendedSubModal"}
+              extendedSubId={extendedSubId}
+              extendedTrainerId={extendedTrainerId}
+              modalTitle={modalTitle}
+            />
           </div>
         </div>
       </div>
