@@ -13,6 +13,7 @@ import MyRenewalUser from "../components/mySection/forRenewal/MyRenewalUser";
 import MyTrainors from "../components/mySection/trainers/MyTrainors";
 import MyActiveUser from "../components/mySection/activeUser/MyActiveUser";
 import MySubscriptionPlan from "../components/mySection/Subscriptions/MySubscriptionPlan";
+import MyUsers from "../components/mySection/users/MyUsers";
 
 const queryClient = new QueryClient();
 
@@ -146,6 +147,14 @@ const DashboardPage = ({
     content = (
       <QueryClientProvider client={queryClient}>
         <MyActiveUser />
+      </QueryClientProvider>
+    );
+  }
+
+  if (page === "usersPage") {
+    content = (
+      <QueryClientProvider client={queryClient}>
+        <MyUsers />
       </QueryClientProvider>
     );
   }

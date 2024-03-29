@@ -76,6 +76,15 @@
           color: gray;
         }
       }
+
+      .daypass-link {
+        font-size: 16px;
+        color: yellowgreen;
+        cursor: pointer;
+      }
+      .daypass-link:hover {
+        color: yellow;
+      }
     }
 
     .camera-wrapper {

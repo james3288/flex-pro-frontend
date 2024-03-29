@@ -135,7 +135,9 @@ const ClientsOnWorkout = ({
               ) : (
                 formatTime(remaining, "all")
               )} */}
-              {extendedSubDays} day/s left
+              {extendedSubDays < 0
+                ? "Expired"
+                : extendedSubDays + " day/s left"}
             </h5>
           </div>
 

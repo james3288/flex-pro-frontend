@@ -103,18 +103,19 @@ const ForRenewal = ({
                 <strong>
                   {" "}
                   {/* {formatTime(remainingDays1, "days-hours")} */}
-                  {extendedSubDays} day/s
+                  {extendedSubDays + " day/s left"}
                 </strong>{" "}
-                left
               </p>
               <p>Personal Trainer Days:</p>
 
               <p style={{ lineHeight: "16px" }}>
                 <strong>
-                  {extendedTrainerDays < 0 ? "Expired" : extendedTrainerDays}{" "}
-                  day/s{" "}
+                  {extendedTrainerDays < 0
+                    ? "Expired"
+                    : isNaN(extendedTrainerDays)
+                    ? "N/A"
+                    : extendedTrainerDays + " day/s left"}
                 </strong>{" "}
-                left
               </p>
             </div>
           </div>

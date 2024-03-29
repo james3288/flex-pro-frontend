@@ -16,11 +16,11 @@ function MyHeader({ setIsOpen }) {
             <div className="col-lg-3">
               <div className="logo">
                 <NavLink
-                      to={`/`}
-                      className={({ isActive, isPending }) =>
-                        isActive ? "active" : isPending ? "pending" : ""
-                      }
-                    >
+                  to={`/`}
+                  className={({ isActive, isPending }) =>
+                    isActive ? "active" : isPending ? "pending" : ""
+                  }
+                >
                   <img src={logoImage} alt="" />
                 </NavLink>
               </div>
@@ -60,6 +60,16 @@ function MyHeader({ setIsOpen }) {
                           }
                         >
                           TRAINERS
+                        </NavLink>
+                      </li>
+                      <li>
+                        <NavLink
+                          to={`/users`}
+                          className={({ isActive, isPending }) =>
+                            isActive ? "active" : isPending ? "pending" : ""
+                          }
+                        >
+                          USERS
                         </NavLink>
                       </li>
                       <li>

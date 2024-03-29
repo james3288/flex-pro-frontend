@@ -18,6 +18,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ForRenewalPage from "./pages/forRenewalPage/ForRenewalPage.jsx";
 import TrainorPage from "./pages/trainorPage/TrainorPage.jsx";
 import ActiveUserPage from "./pages/activeUserPage/ActiveUserPage.jsx";
+import UsersPage from "./pages/usersPage/UsersPage.jsx";
 
 const queryClient = new QueryClient();
 
@@ -65,6 +66,10 @@ const router = createBrowserRouter([
   {
     path: "/active-users",
     element: <ActiveUserPage />,
+  },
+  {
+    path: "/users",
+    element: <UsersPage />,
   },
 ]);
 
