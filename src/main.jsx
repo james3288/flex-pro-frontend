@@ -19,6 +19,7 @@ import ForRenewalPage from "./pages/forRenewalPage/ForRenewalPage.jsx";
 import TrainorPage from "./pages/trainorPage/TrainorPage.jsx";
 import ActiveUserPage from "./pages/activeUserPage/ActiveUserPage.jsx";
 import UsersPage from "./pages/usersPage/UsersPage.jsx";
+import UserHistoryPage from "./pages/userHistory/UserHistoryPage.jsx";
 
 const queryClient = new QueryClient();
 
@@ -70,6 +71,10 @@ const router = createBrowserRouter([
   {
     path: "/users",
     element: <UsersPage />,
+  },
+  {
+    path: "/user-history",
+    element: <UserHistoryPage />,
   },
 ]);
 

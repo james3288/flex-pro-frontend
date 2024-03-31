@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import { NavLink } from "react-router-dom";
 
 const Users1 = ({
   name,
@@ -22,7 +23,9 @@ const Users1 = ({
       <div className="ts-item set-bg bg">
         <img src={image} alt="" className="img" />
         <div className="ts_text">
-          <h4>{name}</h4>
+          <h4>
+            <small style={{ color: "green" }}>{user_id}</small> {name}
+          </h4>
           <span>Contact: {contactNo}</span>
           <br />
           <a
@@ -35,9 +38,14 @@ const Users1 = ({
           >
             Edit
           </a>
-          <a className="btn btn-primary ts-button" style={{ color: "white" }}>
+          <NavLink
+            className="btn btn-primary ts-button"
+            to={`/user-history/?q=${user_id}`}
+            style={{ color: "white" }}
+          >
             History
-          </a>
+          </NavLink>
+
           <a
             className="btn btn-danger ts-button"
             data-toggle="modal"
