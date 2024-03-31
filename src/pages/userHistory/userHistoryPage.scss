@@ -1,3 +1,8 @@
+$backgroundColor: rgb(75, 75, 75);
+$titleColor: rgb(169, 167, 167);
+$headerColor: rgb(49, 49, 49);
+$textColor: white;
+
 .userHistoryPage {
   background-image: url("./../../assets/img/hero/hero-8.jpg");
   height: 100vh;
@@ -19,5 +24,36 @@
   .ts-button {
     margin-right: 3px;
     margin-top: 3px;
+  }
+
+  .myCard {
+    background: $backgroundColor;
+
+    .myCard-header {
+      background: $headerColor;
+
+      h5 {
+        color: $titleColor;
+      }
+    }
+    .myCard-title {
+      color: $titleColor;
+      span {
+        color: $textColor;
+      }
+    }
+
+    .card-text {
+      color: $titleColor;
+    }
+    .card-text span {
+      color: $textColor;
+    }
+
+    .myCard-footer {
+      h4 {
+        color: $textColor;
+      }
+    }
   }
 }
