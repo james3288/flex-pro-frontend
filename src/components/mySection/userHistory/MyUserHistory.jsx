@@ -14,6 +14,7 @@ const MyUserHistory = () => {
   const [extendedSubId, setExtendedSubId] = useState(0);
   const [extendedTrainerId, setExtendedTrainerId] = useState(0);
   const [modalTitle, setModalTitle] = useState();
+  const [date, setDate] = useState(getFormattedDate());
   const location = useLocation();
   // Access the query parameters from the location object
   const queryParams = new URLSearchParams(location.search);
@@ -21,6 +22,20 @@ const MyUserHistory = () => {
 
   const queryKey = useMemo(() => ["forUserHistory"], []);
   const queryKey2 = useMemo(() => ["forUserSubscription"], []);
+
+  function getFormattedDate(date) {
+    // Create a new Date object
+    const currentDate = new Date(date);
+
+    // Get the individual date components
+    const year = String(currentDate.getFullYear()).slice(-2); // Get last two digits of the year
+    const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Month is zero-indexed
+    const day = String(currentDate.getDate()).padStart(2, "0");
+
+    // Concatenate the components in the desired format
+    const formattedDate = `${month}-${day}-${year}`;
+    return formattedDate;
+  }
 
   const {
     isLoading: isPending,
@@ -57,6 +72,12 @@ const MyUserHistory = () => {
 
   console.log("userHistoryData", data);
   console.log("userSubscription", data2);
+
+  function handleChange(e) {
+    const value = e.target.value;
+    setDate(value); // Update state with the new value
+  }
+
   return (
     <>
       <section
@@ -65,7 +86,7 @@ const MyUserHistory = () => {
       >
         <div className="container">
           <div className="row">
-            <div className="col-lg-12">
+            <div className="col-lg-6">
               <div className="team-title">
                 <div className="section-title">
                   <span>Flex Pro</span>
@@ -73,17 +94,32 @@ const MyUserHistory = () => {
                 </div>
               </div>
             </div>
+            {/* <div className="col-lg-6">
+              <div className="team-title">
+                <div className="section-title">
+                  <span>Date</span>
+                  <input
+                    type="date"
+                    className="form-control"
+                    id="userHistoryDate"
+                    name="user_history_date"
+                    onChange={handleChange}
+                    defaultValue={date}
+                  />
+                </div>
+              </div>
+            </div> */}
           </div>
 
           {data2.map((user2) => (
             <>
-              <div className="row">
+              <div className="row subInfo">
                 {/* SUBSCRIPTION INFO */}
                 <div className="col-lg-6">
                   {/* USER SUBSCRIPTION */}
                   <h3 style={{ color: "orange", marginTop: "15px" }}>
                     {user2.subscription.gym_rate_desc}
-                    {" / "}
+                    {" - "}
                     {FormatDate(user2.date_subscribed)}
                   </h3>
 
@@ -93,8 +129,8 @@ const MyUserHistory = () => {
                   {user2.extendedSubscriptions.length > 0 ? (
                     user2.extendedSubscriptions?.map((extended) => (
                       <h5 style={{ color: "yellowgreen" }}>
-                        - {extended?.subscription?.gym_rate_desc} /{" "}
-                        {extended?.extended_session_day} day/s{" "}
+                        - {extended?.subscription?.gym_rate_desc} -{" "}
+                        {extended?.extended_session_day} day/s -{" "}
                         {FormatDate(extended?.date_extend)}
                       </h5>
                     ))
@@ -115,15 +151,22 @@ const MyUserHistory = () => {
                 {/* TRAINERS */}
                 <div className="col-lg-6">
                   <h4 style={{ color: "gray", marginTop: "15px" }}>
-                    Trainers:
+                    Main Trainer:
                   </h4>
-                  <h5 style={{ color: "pink" }}>JUAN DELA CRUZ</h5>
-                  <h5 style={{ color: "pink" }}>LUFFY D. MONKEY</h5>
+                  <h5 style={{ color: "pink" }}>{user2.trainer?.name}</h5>
+                  <h4 style={{ color: "gray", marginTop: "15px" }}>
+                    Extended Trainers:
+                  </h4>
+                  {user2?.extendedTrainer?.map((trainer) => (
+                    <h5 style={{ color: "pink" }}>{trainer.trainer?.name}</h5>
+                  ))}
+                  {/* <h5 style={{ color: "pink" }}>JUAN DELA CRUZ</h5>
+                  <h5 style={{ color: "pink" }}>LUFFY D. MONKEY</h5> */}
                 </div>
               </div>
 
               {/* USER LOGS */}
-              <div className="row" key={user2.id}>
+              <div className="row subInfo" key={user2.id}>
                 {data.map(
                   (user) =>
                     user2.id === user.usersubscription.id && (
@@ -134,13 +177,6 @@ const MyUserHistory = () => {
               <hr />
             </>
           ))}
-
-          {/* <div className="row">
-            {data?.map((user) => (
-              // user.remainingDays <= 2 ||
-              <UserHistory key={user.id} user={user} />
-            ))}
-          </div> */}
         </div>
       </section>
     </>

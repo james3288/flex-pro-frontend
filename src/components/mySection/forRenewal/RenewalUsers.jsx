@@ -320,7 +320,7 @@ const RenewalUsers = ({
                 data-target="#addTrainerModal"
                 data-whatever="@mdo"
               >
-                Add Personal Trainer
+                Main Personal Trainer
               </button>
               <button
                 className="btn btn-success"

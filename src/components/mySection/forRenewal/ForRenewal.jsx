@@ -98,7 +98,9 @@ const ForRenewal = ({
                 <strong>{FormatDate(date_log)}</strong>
               </p>
 
-              <p>Subscription Remaining Days: </p>
+              <p style={{ lineHeight: "16px" }}>
+                Subscription Remaining Days:{" "}
+              </p>
               <p style={{ lineHeight: "16px" }}>
                 <strong>
                   {" "}

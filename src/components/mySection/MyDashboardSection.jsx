@@ -151,7 +151,7 @@ const MyDashboardSection = () => {
       );
 
       // console.log(newUser);
-      setRegisteredUsers(newUser);
+      setRegisteredUsers(() => newUser.slice(0, 5));
     } catch (error) {
       console.error("Error fetching users:", error);
     }
@@ -195,68 +195,11 @@ const MyDashboardSection = () => {
       );
 
       console.log("activeUsers", newUser);
-      setActiveUsers(newUser);
+      setActiveUsers(() => newUser.slice(0, 5));
     } catch (error) {
       console.error("Error fetching users:", error);
     }
   };
-
-  // const getForRenewalUsers = async () => {
-  //   try {
-  //     const response = await instance.get(`/api/user_all_status/`);
-  //     const users = response.data;
-
-  //     const newUser = await Promise.all(
-  //       users.map(async (user) => {
-  //         // Call getImagePath asynchronously for each user
-  //         const imgpath = await getImagePath(
-  //           user.usersubscription.flexprouser.id
-  //         );
-
-  //         const imageDataUrl = await loadImageData(imgpath.image1);
-
-  //         // get the remaining days
-  //         const getRemainingDays = await remainingDays(
-  //           user.usersubscription.date_subscribed,
-  //           user.usersubscription.subscription.per.per
-  //         );
-  //         // end get the reamining days
-
-  //         // get trainiers remaining days
-  //         const getTrainersRemainingDays = await remainingDays(
-  //           user.usersubscription.date_subscribed,
-  //           "personal_training_day",
-  //           user.usersubscription.subscription.personal_training_session
-  //         );
-  //         //end get trainers remaining days
-
-  //         return {
-  //           ...user,
-  //           image: imageDataUrl || "/media/image/default.jpg",
-  //           remainingDays: formatTime(getRemainingDays, "days-left"),
-  //           trainersRemainingDays: getTrainersRemainingDays,
-  //         }; // If imgpath is null, use default image
-  //       })
-  //     );
-
-  //     console.log("forRenewal", newUser);
-  //     setNoRenewalUser(
-  //       newUser.filter(
-  //         (user) =>
-  //           user.remainingDays <= 2 ||
-  //           // (formatTime(user.trainersRemainingDays, "days-left") <= 2 &&
-  //           (getTrainerRemainingDays(
-  //             user.trainersRemainingDays,
-  //             user.usersubscription.session_days
-  //           ) <= 2 &&
-  //             user.usersubscription.trainer != null)
-  //       ).length
-  //     );
-  //     setForRenewalUsers(newUser);
-  //   } catch (error) {
-  //     console.error("Error fetching users:", error);
-  //   }
-  // };
 
   const getNoOnlineUser = async () => {
     try {
@@ -301,7 +244,7 @@ const MyDashboardSection = () => {
         (user) => user.extendedSubDays <= 2 || user.extendedTrainerDays <= 2
       ).length;
       setNoRenewalUser(noOfRenewalUsers);
-      setForRenewalUsers(users);
+      setForRenewalUsers(() => users.slice(0, 5));
     };
 
     getRenewalUsers();

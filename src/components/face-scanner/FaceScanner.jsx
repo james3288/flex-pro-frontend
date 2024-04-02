@@ -190,7 +190,7 @@ const FaceScanner = ({
 
   const handleVideoOnPlay = async () => {
     const labeledFaceDescriptors = await getLabeledFaceDescriptions();
-    const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.45);
+    const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.4);
 
     setInterval(async () => {
       if (canvasRef && canvasRef.current) {
@@ -301,33 +301,14 @@ const FaceScanner = ({
         <div style={{ textAlign: "center" }}>
           {captureVideo && modelsLoaded ? (
             <button
-              onClick={closeWebcam}
-              // style={{
-              //   cursor: "pointer",
-              //   backgroundColor: "green",
-              //   color: "white",
-              //   padding: "15px",
-              //   fontSize: "25px",
-              //   border: "none",
-              //   borderRadius: "10px",
-              //   position: "absolute",
-              // }}
+              onClick={closeWebcam}           
               className="btn btn-danger c-btn"
             >
               Close Webcam
             </button>
           ) : (
             <button
-              onClick={startVideo}
-              // style={{
-              //   cursor: "pointer",
-              //   backgroundColor: "green",
-              //   color: "white",
-              //   padding: "15px",
-              //   fontSize: "25px",
-              //   border: "none",
-              //   borderRadius: "10px",
-              // }}
+              onClick={startVideo}         
               className="btn btn-success"
             >
               Open Webcam

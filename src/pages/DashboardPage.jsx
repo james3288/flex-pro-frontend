@@ -15,6 +15,7 @@ import MyActiveUser from "../components/mySection/activeUser/MyActiveUser";
 import MySubscriptionPlan from "../components/mySection/Subscriptions/MySubscriptionPlan";
 import MyUsers from "../components/mySection/users/MyUsers";
 import MyUserHistory from "../components/mySection/userHistory/MyUserHistory";
+import MyTrainerHistory from "../components/mySection/trainerHistory/MyTrainerHistory";
 
 const queryClient = new QueryClient();
 
@@ -164,6 +165,14 @@ const DashboardPage = ({
     content = (
       <QueryClientProvider client={queryClient}>
         <MyUserHistory />
+      </QueryClientProvider>
+    );
+  }
+
+  if (page === "trainerHistoryPage") {
+    content = (
+      <QueryClientProvider client={queryClient}>
+        <MyTrainerHistory />
       </QueryClientProvider>
     );
   }

@@ -1,6 +1,6 @@
-$backgroundColor: rgb(75, 75, 75);
+$backgroundColor: rgb(59, 49, 49);
 $titleColor: rgb(169, 167, 167);
-$headerColor: rgb(49, 49, 49);
+$headerColor: rgb(36, 23, 23);
 $textColor: white;
 
 .userHistoryPage {
@@ -21,14 +21,24 @@ $textColor: white;
     position: absolute;
   }
 
+  .team-page {
+    background: rgb(6, 1, 1);
+  }
+
   .ts-button {
     margin-right: 3px;
     margin-top: 3px;
   }
 
+  .subInfo {
+    background: rgb(27, 17, 17);
+    border-radius: 5px;
+    padding: 10px 0;
+  }
+
   .myCard {
     background: $backgroundColor;
-
+    margin: 10px 0;
     .myCard-header {
       background: $headerColor;
 

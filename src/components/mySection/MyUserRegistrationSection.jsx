@@ -160,23 +160,27 @@ const MyUserRegistrationSection = ({
                 <h5>
                   LIABILITY <strong>WAIVER</strong>
                 </h5>
+
                 <p>
-                  quis dolor quam ex. Ad ex fuga nisi, enim consectetur commodi
-                  atque suscipit culpa.
+                  I acknowledge that I am responsible for my own health and
+                  pyhsical condition. Also, I understand that my participation
+                  in this exercise program could cause injury based on
+                  performing these activities.
                 </p>
                 <p>
-                  Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                  Quia, tenetur. Id quam consequatur, pariatur quisquam eos
-                  exercitationem natus incidunt harum repellendus provident
-                  accusamus dolore ea officiis maiores, distinctio omnis
-                  voluptatem.
+                  No fitness trainer or fellow members are liable for any
+                  accidental injuries in which I may incur in participating
+                  exercises.
                 </p>
                 <p>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Dolore, optio. Blanditiis modi necessitatibus itaque
-                  aspernatur esse perspiciatis facilis labore cumque facere,
-                  iusto rerum accusantium perferendis dicta inventore natus
-                  aperiam obcaecati.
+                  I assume all risk connected to all programs and consent to
+                  participate. The Company, Management, Employees shall not be
+                  responsible for any claims, demands, losses, actions or legal
+                  proceedings due to or otherwise arising from death, injury
+                  loss, damage, or theft to a Members person or property
+                  attributable to, arising out of or otherwise in connection
+                  with the use by a member or any other member of any services,
+                  facilities, equipment of fitness gym.
                 </p>
               </div>
             </div>

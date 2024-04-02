@@ -50,7 +50,11 @@ const RegisteredUser = ({
           <div className="clients-flex">
             <h5>{registeredName}</h5>
             <p>ID: {user_id}</p>
-            <p style={{ color: "yellow", fontSize: "18px" }}>{subscription}</p>
+            <p
+              style={{ color: "yellow", fontSize: "18px", lineHeight: "14px" }}
+            >
+              {subscription}
+            </p>
             {/* <p style={{ lineHeight: "16px" }}>
               <strong>{formatTime(remaining, "days-hours")}</strong>
             </p> */}

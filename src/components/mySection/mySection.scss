@@ -13,7 +13,7 @@
 }
 
 .dashboard {
-  background-image: url("./../../assets/img/hero/hero-1.jpg");
+  background-image: url("./../../assets/img/hero/hero-8.jpg");
   height: 100vh;
   box-sizing: border-box;
   font-family: "Muli", "Franklin Gothic Medium", "Arial Narrow", Arial,
@@ -35,6 +35,7 @@
       font-weight: 500;
       color: white;
       width: 100%;
+      margin: 10px 0;
     }
 
     h1 {
@@ -71,12 +72,12 @@
           padding: 0;
         }
         .small-circle {
-          width: 10px;
-          height: 10px;
+          width: 13px;
+          height: 13px;
           position: absolute;
           top: 0;
           left: 0;
-          background-color: green;
+          background-color: rgb(48, 255, 48);
           border-radius: 50%;
         }
         h5 {

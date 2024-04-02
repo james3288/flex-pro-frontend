@@ -57,6 +57,9 @@ const Users1 = ({
             Remove
           </a>
           {/* <div className="tt_social"></div> */}
+          <a className="btn btn-success ts-button" style={{ color: "white" }}>
+            Download Contract
+          </a>
         </div>
       </div>
     </div>

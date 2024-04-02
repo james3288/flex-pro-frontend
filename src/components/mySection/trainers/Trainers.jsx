@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import { NavLink } from "react-router-dom";
 
 const Trainers = ({
   name,
@@ -33,9 +34,16 @@ const Trainers = ({
           >
             Edit
           </a>
-          <a className="btn btn-success ts-button" style={{ color: "white" }}>
+          {/* <a className="btn btn-success ts-button" style={{ color: "white" }}>
             History
-          </a>
+          </a> */}
+          <NavLink
+            className="btn btn-primary ts-button"
+            to={`/trainer-history/?q=${trainer_id}`}
+            style={{ color: "white" }}
+          >
+            History
+          </NavLink>
           <a
             className="btn btn-danger ts-button"
             data-toggle="modal"
