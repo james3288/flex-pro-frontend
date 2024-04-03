@@ -4,6 +4,7 @@ import getUsers from "../../../getData/getUsers";
 import Users from "./Users";
 import UsersModal from "./usersModal";
 import DeleteUserModal from "./DeleteUserModal";
+import UserContractModal from "./UserContractModal";
 
 const MyUsers = () => {
   const searchRef = useRef();
@@ -131,6 +132,8 @@ const MyUsers = () => {
         id={"deleteUserModal"}
         user_id={selectedUser?.flex_pro_user?.id}
       />
+
+      <UserContractModal id={"userContractModal"} user={selectedUser} />
 
       {/* <TrainersModal
         id={"usersModal"}

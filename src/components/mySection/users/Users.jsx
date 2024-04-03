@@ -18,6 +18,10 @@ const Users1 = ({
     setSelectedUser(() => user);
   };
 
+  const handleDownloadPDF = () => {
+    setSelectedUser(() => user);
+  };
+
   return (
     <div className="col-lg-2 col-sm-3">
       <div className="ts-item set-bg bg">
@@ -57,7 +61,13 @@ const Users1 = ({
             Remove
           </a>
           {/* <div className="tt_social"></div> */}
-          <a className="btn btn-success ts-button" style={{ color: "white" }}>
+          <a
+            className="btn btn-success ts-button"
+            style={{ color: "white" }}
+            data-toggle="modal"
+            data-target="#userContractModal"
+            onClick={handleDownloadPDF}
+          >
             Download Contract
           </a>
         </div>
