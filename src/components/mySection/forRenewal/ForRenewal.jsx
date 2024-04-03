@@ -8,6 +8,7 @@ const ForRenewal = ({
   registeredName,
   remaining,
   user_id,
+  contactNo,
   id,
   subscription,
   date_log,
@@ -83,6 +84,7 @@ const ForRenewal = ({
           <div className="col-7">
             <div className="clients-flex">
               <h5>{registeredName}</h5>
+              <p>{contactNo}</p>
               <p
                 style={{
                   color: "yellow",

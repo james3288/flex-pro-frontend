@@ -109,17 +109,18 @@ const ClientsOnWorkout = ({
                 : time_out}
             </h4>
             <p>{formatDateOnly(date_log)}</p>
-            <p>
-              {yearValidation === 1990
-                ? (
-                    <ReactTimeAgo
-                      date={timeIn}
-                      locale="en-US"
-                      timeStyle="twitter"
-                    />
-                  ) + " ago"
-                : ""}
-            </p>
+
+            {yearValidation === 1990 && (
+              <p>
+                <ReactTimeAgo
+                  date={timeIn}
+                  locale="en-US"
+                  timeStyle="twitter"
+                />{" "}
+                ago
+              </p>
+            )}
+
             <h3 style={{ color: "yellowgreen" }}>{subscription}</h3>
             {extendedSubscriptions.map((extended) => (
               <p style={{ color: "yellowgreen" }}>

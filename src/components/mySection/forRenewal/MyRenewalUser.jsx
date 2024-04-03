@@ -31,12 +31,6 @@ const MyRenewalUser = () => {
 
   if (error) return "An error has occurred: " + error.message;
 
-  console.log(data);
-
-  // const getTrainerRemainingDays = (trainerRemainingDays, session_days) => {
-  //   return formatTime(trainerRemainingDays, "days-only") + session_days;
-  // };
-
   return (
     <>
       <div className="container-fluid content-margin c-col-scrollbar">
@@ -73,6 +67,9 @@ const MyRenewalUser = () => {
                     setModalTitle={setModalTitle}
                     setExtendedTrainerId={setExtendedTrainerId}
                     setExtendedSubId={setExtendedSubId}
+                    contactNo={
+                      user?.usersubscription.flexprouser.contact_number
+                    }
                   />
                 )
             )}

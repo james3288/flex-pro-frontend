@@ -194,7 +194,6 @@ const MyDashboardSection = () => {
         })
       );
 
-      console.log("activeUsers", newUser);
       setActiveUsers(() => newUser.slice(0, 5));
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -393,6 +392,9 @@ const MyDashboardSection = () => {
                         trainers={user.usersubscription.trainer?.name}
                         extendedSubDays={user.extendedSubDays}
                         extendedTrainerDays={user.extendedTrainerDays}
+                        contactNo={
+                          user.usersubscription.flexprouser.contact_number
+                        }
                       />
                     )
                 )}

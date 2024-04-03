@@ -26,6 +26,7 @@ const RenewalUsers = ({
   setModalTitle,
   setExtendedSubId,
   setExtendedTrainerId,
+  contactNo,
 }) => {
   const [remaining, setRemaining] = useState(0);
   const [counter, setCounter] = useState(0);
@@ -154,6 +155,10 @@ const RenewalUsers = ({
               <h4>
                 <span>ID:{user_id}</span> {registeredName}
               </h4>
+              <p>
+                {contactNo} <br />
+                User Subscription Id: {subscriptionId}
+              </p>
             </div>
           </div>
           <div className="c-col-time-in-out">
@@ -217,7 +222,7 @@ const RenewalUsers = ({
               )}
             </h4>
 
-            <h5>Personal Trainers:</h5>
+            <h5>Free Personal Trainer:</h5>
 
             <h4 style={{ color: "pink" }}>
               {trainers} (
@@ -342,11 +347,6 @@ const RenewalUsers = ({
   );
 
   return context;
-  // if (trainers == null && formatTime(remaining, "days-only") > 2) {
-  //   return;
-  // } else {
-  //   return context;
-  // }
 };
 
 export default RenewalUsers;

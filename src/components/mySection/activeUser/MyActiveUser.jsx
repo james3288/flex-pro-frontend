@@ -65,6 +65,7 @@ const MyActiveUser = () => {
                 setModalTitle={setModalTitle}
                 setExtendedSubId={setExtendedSubId}
                 setExtendedTrainerId={setExtendedTrainerId}
+                contactNo={user.usersubscription.flexprouser.contact_number}
               />
             ))}
 

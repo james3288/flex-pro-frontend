@@ -40,7 +40,6 @@ const MyCLientsOnWorkout = () => {
   if (error) return "An error has occurred: " + error.message;
 
   const data1 = data?.filter((user) => user?.date_log.includes(date));
-  console.log(data1, value);
 
   function handleChange(e) {
     const value = e.target.value;
