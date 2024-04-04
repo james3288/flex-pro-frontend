@@ -13,7 +13,7 @@ const MyCLientsOnWorkout = () => {
   const { isPending, error, data } = useQuery({
     queryKey,
     queryFn: () => getUsersOnline(),
-    // refetchInterval: 1000,
+    refetchInterval: 1000,
   });
 
   const [date, setDate] = useState(getFormattedDate());

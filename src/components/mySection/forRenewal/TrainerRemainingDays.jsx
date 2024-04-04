@@ -31,7 +31,7 @@ const TrainerRemainingDays = ({
   }, [trainerRemainingDays, session_days, extendedTrainer]);
 
   return (
-    <h4>
+    <h4 style={{ fontSize: "20px" }}>
       {" "}
       {personalTrainerDaysLeft(
         trainers,

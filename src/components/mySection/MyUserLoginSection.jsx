@@ -115,7 +115,7 @@ const MyUserLoginSection = () => {
                 </div>
                 <div className="dashboard-col">
                   <div className="personal-trainer">
-                    <h5>Free Personal Trainer</h5>
+                    <h5>Free Personal Trainer:</h5>
                     {/* <h3>
                       Jeoseph Bejec - <strong>CARDIO EXPERT</strong>
                     </h3> */}
@@ -130,21 +130,34 @@ const MyUserLoginSection = () => {
 
                   <div className="personal-trainer">
                     <h5>Subscription Remaining Days:</h5>
-                    <h3>{trainers?.extendedSubDays} day/s</h3>
+                    <h3 style={{ color: "yellowgreen" }}>
+                      {trainers?.extendedSubDays} day/s
+                    </h3>
                   </div>
                   <div className="personal-trainer">
                     <h5>Extended Trainer:</h5>
                     {trainers?.extendedTrainer?.map((extended) => (
-                      <h6 key={extended?.id}>
+                      <h6 style={{ color: "yellowgreen" }} key={extended?.id}>
                         {extended.trainer?.name} -{" "}
                         {FormatDate(extended?.date_extend)}
                       </h6>
                     ))}
                   </div>
                 </div>
-                <NavLink className="btn btn-danger" to={"/"}>
-                  Back to Dashboard
-                </NavLink>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    gap: "5px",
+                  }}
+                >
+                  <NavLink className="btn btn-danger" to={"/"}>
+                    Back to Dashboard
+                  </NavLink>
+                  <form action="">
+                    <button className="btn btn-success">Refresh</button>
+                  </form>
+                </div>
               </>
             </div>
           ) : isOnGoing === "expired" ? (
@@ -194,9 +207,20 @@ const MyUserLoginSection = () => {
                       </strong>{" "}
                       has already login!
                     </h5>
-                    <NavLink className="btn btn-danger" to={"/"}>
-                      Back to Dashboard
-                    </NavLink>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "5px",
+                      }}
+                    >
+                      <NavLink className="btn btn-danger" to={"/"}>
+                        Back to Dashboard
+                      </NavLink>
+                      <form action="">
+                        <button className="btn btn-success">Refresh</button>
+                      </form>
+                    </div>
                   </div>
                 </div>
               </div>

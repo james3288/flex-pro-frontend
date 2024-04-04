@@ -69,7 +69,7 @@ const AddTrainerModal = ({
   const handleSave = async (option) => {
     if (state.trainersName == 0) {
       return;
-    } else if (state.session_days == "" || state.session_days <= 0) {
+    } else if (state.session_days == "" || state.session_days < 0) {
       return;
     }
 

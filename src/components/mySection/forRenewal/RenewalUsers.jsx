@@ -212,8 +212,8 @@ const RenewalUsers = ({
             >
               Extend Subscripition
             </button>
-            <h5>Remaining Days:</h5>
-            <h4>
+            <h5>Subscription Remaining Days:</h5>
+            <h4 style={{ fontSize: "20px" }}>
               {getSubscriptionDaysLeft(
                 remaining,
                 extendedSubscript,

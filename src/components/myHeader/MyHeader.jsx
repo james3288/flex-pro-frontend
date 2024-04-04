@@ -4,10 +4,16 @@ import { NavLink } from "react-router-dom";
 import "./myHeader.scss";
 import RightMenu from "../rightMenu/RightMenu";
 
-function MyHeader({ setIsOpen }) {
+function MyHeader({ setIsOpen, setLeftMenuOpen, setOffCanvasMenu }) {
   const handleClick = () => {
     setIsOpen((prev) => !prev);
   };
+
+  const handleLeftMenuClick = () => {
+    setLeftMenuOpen((prev) => !prev);
+    setOffCanvasMenu(true);
+  };
+
   return (
     <>
       <header className="header-section">
@@ -131,6 +137,9 @@ function MyHeader({ setIsOpen }) {
                 </div>
               </div>
             </div>
+          </div>
+          <div className="canvas-open">
+            <i className="fa fa-bars" onClick={handleLeftMenuClick}></i>
           </div>
         </div>
       </header>

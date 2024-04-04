@@ -1,0 +1,38 @@
+.left-mobile-menu-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px 0;
+
+  .left-item {
+    width: 100%;
+  }
+  .left-item a:hover {
+    background: #641217;
+    color: white;
+  }
+
+  .left-item a {
+    padding: 5px;
+    color: #641217;
+    display: block;
+    border-radius: 5px;
+    margin: 0;
+    font-weight: 600;
+    font-size: 18px;
+    text-transform: uppercase;
+    font-family: "Oswald";
+    cursor: pointer;
+  }
+
+  .isActive {
+    background: #641217;
+    color: white !important;
+  }
+  .isNotActive {
+    background: white;
+    color: #641217;
+  }
+}

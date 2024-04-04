@@ -14,7 +14,7 @@ const getSubscriptionDaysLeft = (
   // this is the remaining days of the main subscription
   remainingDays += formatTime(remaining, "days-only");
 
-  extendedSubscript.map((extend, index) => {
+  extendedSubscript?.map((extend, index) => {
     // if (extend.subscription.per.per === "month") {
     //   remainingDays += 31;
     // } else if (extend.subscription.per.per === "day") {

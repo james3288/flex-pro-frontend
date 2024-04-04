@@ -188,7 +188,7 @@ const FaceScanner = ({
         `/api/user_time_record_get/${user_id}`
       );
 
-      return response.data;
+      return await response.data;
     } catch (error) {
       console.error("Error fetching data:", error);
       return null; // or handle the error appropriately based on your application's needs
@@ -304,7 +304,7 @@ const FaceScanner = ({
                 label.flex_pro_user.id
               );
 
-              if (isAlreadyLogin.length > 0) {
+              if (isAlreadyLogin?.length > 0) {
                 setIsLogin = true;
                 setIsOnGoing("already-login");
                 return;
@@ -336,7 +336,7 @@ const FaceScanner = ({
               // if expired
               get_userStatus.length === 0
                 ? setIsOnGoing("expired")
-                : handleSaveTimeRecords(timeRecordData);
+                : await handleSaveTimeRecords(timeRecordData);
               // setIsOnGoing("expired");
               return;
             }
