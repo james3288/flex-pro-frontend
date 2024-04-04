@@ -5,6 +5,7 @@ import instance from "../../others/axiosInstance";
 import { NavLink } from "react-router-dom";
 import getImagePath from "../../getData/getImagePath";
 import loadImageData from "../../getData/loadImageData";
+import FormatDate from "../../others/FormatDate";
 
 const MyUserLoginSection = () => {
   const [play, setPlay] = useState(false);
@@ -14,6 +15,7 @@ const MyUserLoginSection = () => {
   const [userFoundWithImage, setUserFoundWithImage] = useState();
   const [userFound, setUserFound] = useState();
   const [isOnGoing, setIsOnGoing] = useState();
+  const [trainers, setTrainers] = useState();
   const [isLogin, setIsLogin] = useState(false);
 
   const handlePlayClick = () => {
@@ -66,6 +68,7 @@ const MyUserLoginSection = () => {
                       setIsOnGoing={setIsOnGoing}
                       isOnGoing={isOnGoing}
                       setIsLogin={setIsLogin}
+                      setTrainers={setTrainers}
                     />
                   )}
                 </div>
@@ -112,15 +115,31 @@ const MyUserLoginSection = () => {
                 </div>
                 <div className="dashboard-col">
                   <div className="personal-trainer">
-                    <h5>Personal Trainer</h5>
-                    <h3>
+                    <h5>Free Personal Trainer</h5>
+                    {/* <h3>
                       Jeoseph Bejec - <strong>CARDIO EXPERT</strong>
+                    </h3> */}
+
+                    <h3>
+                      {trainers.usersubscription?.trainer?.name} -{" "}
+                      <strong>
+                        {trainers.usersubscription?.trainer?.position}
+                      </strong>
                     </h3>
                   </div>
 
                   <div className="personal-trainer">
-                    <h5>Subscription Remaining Days</h5>
-                    <h3>10 DAYS</h3>
+                    <h5>Subscription Remaining Days:</h5>
+                    <h3>{trainers?.extendedSubDays} day/s</h3>
+                  </div>
+                  <div className="personal-trainer">
+                    <h5>Extended Trainer:</h5>
+                    {trainers?.extendedTrainer?.map((extended) => (
+                      <h6 key={extended?.id}>
+                        {extended.trainer?.name} -{" "}
+                        {FormatDate(extended?.date_extend)}
+                      </h6>
+                    ))}
                   </div>
                 </div>
                 <NavLink className="btn btn-danger" to={"/"}>

@@ -3,6 +3,12 @@ import * as faceapi from "face-api.js";
 // import CountFileInsideFolder from "./CountFileInsideFolder";
 import axios from "axios";
 import instance from "../../others/axiosInstance";
+import getImagePath from "../../getData/getImagePath";
+import loadImageData from "../../getData/loadImageData";
+import remainingDays from "../../others/GetRemainingDays";
+import getExtendedSubscription from "../../getData/getExtendedSubscription";
+import getSubscriptionDaysLeft from "../../getData/getSubscriptionDaysLeft";
+import getExtendedTrainer from "../../getData/getExtendedTrainer";
 
 const FaceScanner = ({
   playNow,
@@ -14,6 +20,7 @@ const FaceScanner = ({
   setIsOnGoing,
   isOnGoing,
   setIsLogin,
+  setTrainers,
 }) => {
   const [modelsLoaded, setModelsLoaded] = React.useState(false);
   const [captureVideo, setCaptureVideo] = React.useState(false);
@@ -112,11 +119,63 @@ const FaceScanner = ({
     }
   };
 
+  const extendedSub = async (subscriptionId) => {
+    try {
+      const data = await getExtendedSubscription(subscriptionId);
+      return await data;
+    } catch (error) {
+      console.error("Error in fetching Extended Subscription:", error);
+    }
+  };
+
   const fetchUserStatus = async (id) => {
     try {
       const response = await instance.get(`/api/user_status/${id}`);
+      const users = response.data;
 
-      return response.data;
+      const newUser = await Promise.all(
+        users.map(async (user) => {
+          // Call getImagePath asynchronously for each user
+          const imgpath = await getImagePath(
+            user.usersubscription.flexprouser.id
+          );
+
+          const imageDataUrl = await loadImageData(imgpath.image1);
+
+          // get the remaining days
+          const getRemainingDays = await remainingDays(
+            user.usersubscription.date_subscribed,
+            user.usersubscription.subscription.per.per
+          );
+
+          const getExtendedSubscriptionDays = await extendedSub(
+            user.usersubscription.id
+          );
+
+          // get extended subscription days left and main subscription days
+          const extendedSubDays = getSubscriptionDaysLeft(
+            getRemainingDays,
+            getExtendedSubscriptionDays,
+            user.usersubscription.date_subscribed,
+            true
+          );
+
+          const extendedTrainer = await getExtendedTrainer(
+            user.usersubscription.id
+          );
+
+          return {
+            ...user,
+            image: imageDataUrl || "/media/image/default.jpg",
+            extendedSubDays: extendedSubDays,
+            extendedSubscriptions: getExtendedSubscriptionDays,
+            extendedTrainer: extendedTrainer,
+          }; // If imgpath is null, use default image
+        })
+      );
+
+      console.log("userStatus", newUser);
+      return newUser;
     } catch (error) {
       console.error("Error fetching data:", error);
       return null; // or handle the error appropriately based on your application's needs
@@ -221,7 +280,7 @@ const FaceScanner = ({
           return faceMatcher.findBestMatch(d.descriptor);
         });
 
-        //  COUNT UPTO 60 TO FIND OUT THAT YOU
+        //  COUNT UPTO 20 TO FIND OUT THAT YOU
         results.forEach((result, i) => {
           flexProUser.forEach(async (label) => {
             if (result.label === label.flex_pro_user.name) {
@@ -252,6 +311,7 @@ const FaceScanner = ({
                 //to be continue here sa balay hehehe
               }
 
+              // og wala pa ka login
               let timeRecordData = {};
               get_userStatus.map((userStatus) => {
                 const user_id = userStatus.usersubscription.flexprouser;
@@ -266,6 +326,9 @@ const FaceScanner = ({
 
                   console.log(timeRecordData);
                   setIsOnGoing("on-going");
+                  // console.log("userStatus", userStatus);
+
+                  setTrainers(() => userStatus);
                   return;
                 }
               });
@@ -300,17 +363,11 @@ const FaceScanner = ({
       <div>
         <div style={{ textAlign: "center" }}>
           {captureVideo && modelsLoaded ? (
-            <button
-              onClick={closeWebcam}           
-              className="btn btn-danger c-btn"
-            >
+            <button onClick={closeWebcam} className="btn btn-danger c-btn">
               Close Webcam
             </button>
           ) : (
-            <button
-              onClick={startVideo}         
-              className="btn btn-success"
-            >
+            <button onClick={startVideo} className="btn btn-success">
               Open Webcam
             </button>
           )}
