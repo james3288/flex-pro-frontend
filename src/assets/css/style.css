@@ -1031,7 +1031,7 @@ ol {
   transform: skewY(-5deg);
   position: absolute;
   left: 0;
-  bottom: -290px;
+  bottom: -350px;
   width: 100%;
   -webkit-transition: all 0.3s;
   -o-transition: all 0.3s;

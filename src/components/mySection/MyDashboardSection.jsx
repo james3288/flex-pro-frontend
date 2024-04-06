@@ -21,6 +21,7 @@ import getTrainerRemainingDays from "../../getData/getTrainerRemainingDays";
 import getForRenewalUsers from "../../getData/getForRenewalUsers";
 import getSubscriptionDaysLeft from "../../getData/getSubscriptionDaysLeft";
 import getExtendedSubscription from "../../getData/getExtendedSubscription";
+import LoadingEffect from "./loadingEffect/LoadingEffect";
 
 const MyDashboardSection = () => {
   const [flexProUsers, setFlexProUsers] = useState([]);
@@ -281,6 +282,9 @@ const MyDashboardSection = () => {
                 {activeUsers?.length}{" "}
                 <strong> {activeUsers?.length > 1 ? "USERS" : "USER"}</strong>
               </h1>
+
+              {activeUsers?.length > 0 ? "" : <LoadingEffect />}
+
               <div className="scrollable-list-of-user">
                 {activeUsers?.map((user) => (
                   <RegisteredUser
@@ -318,6 +322,7 @@ const MyDashboardSection = () => {
               </h1>
 
               <div className="scrollable-list-of-user">
+                {flexProUsers?.length > 0 ? "" : <LoadingEffect />}
                 {flexProUsers.map((user) => (
                   // Get the time portion
 
@@ -369,6 +374,8 @@ const MyDashboardSection = () => {
                 {noRenewalUser}
                 <strong> {noRenewalUser > 1 ? "USERS" : "USER"}</strong>
               </h1>
+
+              {forRenewalUsers?.length > 0 ? "" : <LoadingEffect />}
               <div className="scrollable-list-of-user">
                 {forRenewalUsers.map(
                   (user) =>
