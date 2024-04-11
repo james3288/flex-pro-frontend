@@ -84,24 +84,28 @@ const DashboardPage = ({
 
   if (page === "userRegistration") {
     content = (
-      <MyUserRegistrationSection
-        formData={formData}
-        setFormData={setFormData}
-        handleFormFilter={handleFormFilter}
-        formDone={formDone}
-        inputError={inputError}
-      />
+      <QueryClientProvider client={queryClient}>
+        <MyUserRegistrationSection
+          formData={formData}
+          setFormData={setFormData}
+          handleFormFilter={handleFormFilter}
+          formDone={formDone}
+          inputError={inputError}
+        />
+      </QueryClientProvider>
     );
   }
 
   if (page === "userImageRegistration") {
     content = (
-      <MyUserImageRegSection
-        formData={formData}
-        setFormData={setFormData}
-        formDone={formDone}
-        inputError={inputError}
-      />
+      <QueryClientProvider client={queryClient}>
+        <MyUserImageRegSection
+          formData={formData}
+          setFormData={setFormData}
+          formDone={formDone}
+          inputError={inputError}
+        />
+      </QueryClientProvider>
     );
   }
 

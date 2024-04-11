@@ -10,18 +10,13 @@ const getSubscriptionDaysLeft = (
   const now = new Date();
   // initialize  remainingdays to default 0
   let remainingDays = 0;
+  let remainingHoursOnly = 0;
 
   // this is the remaining days of the main subscription
-  remainingDays += formatTime(remaining, "days-only");
+  remainingDays += formatTime(remaining, "days-left");
+  remainingHoursOnly += formatTime(remaining, "hours-left");
 
   extendedSubscript?.map((extend, index) => {
-    // if (extend.subscription.per.per === "month") {
-    //   remainingDays += 31;
-    // } else if (extend.subscription.per.per === "day") {
-    //   remainingDays += 1;
-    // } else if (extend.subscription.per.per === "year") {
-    //   remainingDays += 365;
-    // }
     remainingDays += extend?.extended_session_day;
   });
 
@@ -29,7 +24,9 @@ const getSubscriptionDaysLeft = (
     ? remainingDays
     : remainingDays < 0
     ? "Expired"
-    : remainingDays + " Day/s";
+    : `${remainingDays} ${
+        remainingDays > 1 ? " days," : "day,"
+      } ${remainingHoursOnly} ${remainingHoursOnly > 1 ? " hours" : " hour"}`;
   // return remaining < 0 ? "Expired" : remainingDays + " Days";
 };
 

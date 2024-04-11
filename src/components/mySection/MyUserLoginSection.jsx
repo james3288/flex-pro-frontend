@@ -50,7 +50,7 @@ const MyUserLoginSection = () => {
       <div className="container content-margin">
         <div className="row">
           {/* scan face section */}
-          <div className="col-lg-6 col-xs-12">
+          <div className="col-lg-12 col-xs-12">
             {userId === 0 ? (
               <div className="dashboard-col">
                 <span>
@@ -80,7 +80,7 @@ const MyUserLoginSection = () => {
                   >
                     Face Recognition
                   </button>
-                  <button className="btn btn-success">QR Code</button>
+                  {/* <button className="btn btn-success">QR Code</button> */}
                   <button className="btn btn-danger" onClick={handleStopClick}>
                     Stop
                   </button>
@@ -226,7 +226,7 @@ const MyUserLoginSection = () => {
               </div>
             </div>
           ) : (
-            <div className="col-lg-6 col-xs-12">
+            <div className="col-lg-12 col-xs-12">
               <div className="dashboard-col">
                 <span>
                   <strong>LOGIN</strong> STATUS

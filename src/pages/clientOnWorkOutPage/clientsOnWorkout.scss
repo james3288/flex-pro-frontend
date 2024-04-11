@@ -12,6 +12,7 @@
     justify-content: center;
     padding: 0 10px;
     background: rgba(7, 7, 7, 0.7);
+    backdrop-filter: blur(19px) saturate(180%);
     margin: 0;
   }
   .dateTimePicker input {
@@ -47,6 +48,8 @@
       justify-content: center;
       padding: 20px;
       background: rgba(7, 7, 7, 0.7);
+      // background: rgba(7, 7, 7, 0.482);
+      backdrop-filter: blur(19px) saturate(180%);
       margin: 10px 0;
       border-radius: 5px;
       // border: 1px solid black;
