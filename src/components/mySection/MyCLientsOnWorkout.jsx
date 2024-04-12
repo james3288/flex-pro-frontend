@@ -6,6 +6,7 @@ import instance from "../../others/axiosInstance";
 import getUsersOnline from "../../getData/getUserOnline";
 import YearValidation from "../../others/YearValidation";
 import FormatDate from "../../others/FormatDate";
+import NoDataFound from "./noDataFound/NoDataFound";
 
 const MyCLientsOnWorkout = () => {
   let value = false;
@@ -37,7 +38,7 @@ const MyCLientsOnWorkout = () => {
       </div>
     );
 
-  if (error) return "An error has occurred: " + error.message;
+  if (error) return <NoDataFound />;
 
   const data1 = data?.filter((user) => user?.date_log.includes(date));
 

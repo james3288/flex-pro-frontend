@@ -101,6 +101,17 @@ function MyHeader({ setIsOpen, setLeftMenuOpen, setOffCanvasMenu }) {
                         </NavLink>
                         {/* <a href="">MEMBER LOGIN</a> */}
                       </li>
+                      <li>
+                        <a
+                          href="http://127.0.0.1:8000/admin/"
+                          className={({ isActive, isPending }) =>
+                            isActive ? "active" : isPending ? "pending" : ""
+                          }
+                          target="_blank"
+                        >
+                          ADMIN
+                        </a>
+                      </li>
                     </ul>
                   </li>
                   <li>
@@ -116,9 +127,10 @@ function MyHeader({ setIsOpen, setLeftMenuOpen, setOffCanvasMenu }) {
                 </div>
                 <div className="to-social right-nav">
                   <span style={{ color: "white" }}>
-                    Welcome,<strong style={{ color: "#dc151c" }}> King</strong>
+                    Welcome,
+                    <strong style={{ color: "red" }}> FlexPro Users</strong>
                   </span>
-                  <a onClick={handleClick}>
+                  <a>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"
