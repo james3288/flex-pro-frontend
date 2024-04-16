@@ -3,7 +3,18 @@
   height: 100vh;
   box-sizing: border-box;
   font-family: "Muli", Arial;
-  padding-top: 11em;
+  // padding-top: 11em;
+
+  .back-to-dashboard {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+
+    button,
+    a {
+      font-size: 30px;
+    }
+  }
 
   .dashboard-col {
     display: flex;
@@ -68,6 +79,7 @@
         margin: 0 10px;
         h5 {
           color: white;
+          font-size: 40px;
         }
         h3 {
           color: orange;
@@ -157,5 +169,9 @@
   .camera-btn {
     display: flex;
     gap: 10px;
+
+    button {
+      font-size: 30px;
+    }
   }
 }

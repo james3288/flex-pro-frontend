@@ -31,6 +31,7 @@ const MyRenewalUser = () => {
 
   if (error) return "An error has occurred: " + error.message;
 
+  console.log("wew", data);
   return (
     <>
       <div className="container-fluid content-margin c-col-scrollbar">
@@ -45,33 +46,35 @@ const MyRenewalUser = () => {
           <div className="c-col-wrapper">
             {data.map(
               (user) =>
-                (user.extendedSubDays <= 2 ||
-                  user.extendedTrainerDays <= 2) && (
-                  <RenewalUsers
-                    key={user?.id}
-                    blobPic={user.image}
-                    registeredName={user.usersubscription.flexprouser.name}
-                    date_subscribed={user.usersubscription.date_subscribed}
-                    subscription={
-                      user.usersubscription.subscription.gym_rate_desc
-                    }
-                    remainingDays={user.remainingDays}
-                    per={user.usersubscription.subscription.per.per}
-                    user_id={user.usersubscription.flexprouser.id}
-                    id={user.id}
-                    trainers={user.usersubscription.trainer?.name}
-                    subscriptionId={user?.usersubscription.id}
-                    trainerRemainingDays={user?.trainerRemainingDays}
-                    session_days={user?.usersubscription.session_days}
-                    setUserSubscriptionId={setUserSubscriptionId}
-                    setModalTitle={setModalTitle}
-                    setExtendedTrainerId={setExtendedTrainerId}
-                    setExtendedSubId={setExtendedSubId}
-                    contactNo={
-                      user?.usersubscription.flexprouser.contact_number
-                    }
-                  />
-                )
+                user.extendedSubDays <= 2 ||
+                (user.extendedTrainerDays <= 2 &&
+                  user.usersubscription.subscription.gym_rate_desc.toUpperCase() !=
+                    "DAY PASS" && (
+                    <RenewalUsers
+                      key={user?.id}
+                      blobPic={user.image}
+                      registeredName={user.usersubscription.flexprouser.name}
+                      date_subscribed={user.usersubscription.date_subscribed}
+                      subscription={
+                        user.usersubscription.subscription.gym_rate_desc
+                      }
+                      remainingDays={user.remainingDays}
+                      per={user.usersubscription.subscription.per.per}
+                      user_id={user.usersubscription.flexprouser.id}
+                      id={user.id}
+                      trainers={user.usersubscription.trainer?.name}
+                      subscriptionId={user?.usersubscription.id}
+                      trainerRemainingDays={user?.trainerRemainingDays}
+                      session_days={user?.usersubscription.session_days}
+                      setUserSubscriptionId={setUserSubscriptionId}
+                      setModalTitle={setModalTitle}
+                      setExtendedTrainerId={setExtendedTrainerId}
+                      setExtendedSubId={setExtendedSubId}
+                      contactNo={
+                        user?.usersubscription.flexprouser.contact_number
+                      }
+                    />
+                  ))
             )}
 
             <AddTrainerModal

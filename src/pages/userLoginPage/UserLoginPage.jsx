@@ -22,11 +22,11 @@ const UserLoginPage = () => {
       />
 
       {/* Header */}
-      <MyHeader
+      {/* <MyHeader
         setIsOpen={setIsOpen}
         setLeftMenuOpen={setLeftMenuOpen}
         setOffCanvasMenu={setOffCanvasMenu}
-      />
+      /> */}
       {/* End Header */}
       <DashboardPage dashboardBg="userLogin" page="userLogin" />
     </>

@@ -5,12 +5,51 @@
   font-family: "Muli", Arial;
   padding-top: 11em;
 
-  .selected-user {
+  .messageBox {
     display: flex;
     align-items: center;
     justify-content: center;
+    background: yellowgreen;
+    width: 95%;
+    border-radius: 10px;
+    border: 2px solid rgb(37, 140, 37);
+    h3 {
+      color: black;
+    }
+  }
+
+  .messageBox1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: orange;
+    width: 95%;
+    border-radius: 10px;
+    border: 2px solid rgb(255, 191, 71);
+    h3 {
+      color: black;
+    }
+  }
+
+  .left-column {
+    // border: 1px solid green;
+    padding: 5px 0;
+  }
+
+  .right-column {
+    // border: 1px solid red;
+  }
+
+  .selected-user {
+    display: flex;
+    align-items: center;
+    justify-content: left;
     flex-direction: row;
     gap: 10px;
+    border-radius: 5px;
+    padding: 5px;
+    background: rgba(7, 7, 7, 0.7);
+    min-height: 50px;
     img {
       border-radius: 50%;
       width: 40px;
@@ -24,16 +63,17 @@
     display: flex;
     justify-content: center;
     align-items: center;
-
     position: relative;
+    margin-bottom: 10px;
 
     input {
-      width: 100%;
+      width: 98%;
       border-radius: 5px;
-      border: 2px solid black;
-      padding: 5px 10px;
-      margin-bottom: 40px;
-      background-color: rgb(20, 15, 15);
+      border: 2px solid rgb(42, 42, 42);
+      padding: 10px 10px;
+      box-sizing: border-box;
+      margin: 5px 5px;
+      background-color: rgb(0, 0, 0);
       color: white;
     }
 
@@ -86,6 +126,9 @@
 
   .save-subscriptions {
     text-decoration: none;
+    width: 100%;
+    text-align: center;
+    border-radius: 5px;
   }
 
   .save-subscriptions:hover {

@@ -84,6 +84,7 @@ function MyHeader({ setIsOpen, setLeftMenuOpen, setOffCanvasMenu }) {
                           className={({ isActive, isPending }) =>
                             isActive ? "active" : isPending ? "pending" : ""
                           }
+                          target="_blank"
                         >
                           MEMBER LOGIN
                         </NavLink>

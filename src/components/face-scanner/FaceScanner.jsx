@@ -25,6 +25,9 @@ const FaceScanner = ({
   const [modelsLoaded, setModelsLoaded] = React.useState(false);
   const [captureVideo, setCaptureVideo] = React.useState(false);
   const [flexProUser, setFlexProUser] = React.useState([]);
+  const [timeInStatus, setTimeInStatus] = React.useState(false);
+
+  const numberOfDetection = 20;
 
   let count = 0;
   const videoRef = React.useRef(null);
@@ -280,7 +283,7 @@ const FaceScanner = ({
           return faceMatcher.findBestMatch(d.descriptor);
         });
 
-        //  COUNT UPTO 20 TO FIND OUT THAT YOU
+        //  COUNT UPTO numberOfDetection TO FIND OUT THAT YOU
         results.forEach((result, i) => {
           flexProUser.forEach(async (label) => {
             if (result.label === label.flex_pro_user.name) {
@@ -288,7 +291,10 @@ const FaceScanner = ({
             }
 
             // user has been found successfully
-            if (count >= 20 && result.label === label.flex_pro_user.name) {
+            if (
+              count >= numberOfDetection &&
+              result.label === label.flex_pro_user.name
+            ) {
               setUserId(label.flex_pro_user.id);
               setUserFound(label.flex_pro_user.name);
               await closeWebcam();
@@ -316,25 +322,29 @@ const FaceScanner = ({
               get_userStatus.map((userStatus) => {
                 const user_id = userStatus.usersubscription.flexprouser;
 
-                if (userStatus.status === "on-going") {
+                if (
+                  userStatus.status === "on-going" &&
+                  timeInStatus === false
+                ) {
                   // insert to time record table
                   timeRecordData = {
                     id: userStatus.usersubscription.id,
                     time_in: new Date(),
                     time_out: new Date(1990, 0, 1, 0, 0),
                   };
-
+                  setTimeInStatus(true);
                   console.log(timeRecordData);
                   setIsOnGoing("on-going");
                   // console.log("userStatus", userStatus);
 
                   setTrainers(() => userStatus);
+
                   return;
                 }
               });
 
               // if expired
-              get_userStatus.length === 0
+              get_userStatus.length === 0 && timeInStatus === false
                 ? setIsOnGoing("expired")
                 : await handleSaveTimeRecords(timeRecordData);
               // setIsOnGoing("expired");

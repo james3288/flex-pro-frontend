@@ -81,9 +81,14 @@ const MyUserLoginSection = () => {
                     Face Recognition
                   </button>
                   {/* <button className="btn btn-success">QR Code</button> */}
-                  <button className="btn btn-danger" onClick={handleStopClick}>
-                    Stop
-                  </button>
+                  <form action="">
+                    <button
+                      className="btn btn-danger"
+                      //onClick={handleStopClick}
+                    >
+                      Refresh
+                    </button>
+                  </form>
                 </div>
               </div>
             ) : (
@@ -144,16 +149,10 @@ const MyUserLoginSection = () => {
                     ))}
                   </div>
                 </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: "5px",
-                  }}
-                >
-                  <NavLink className="btn btn-danger" to={"/"}>
+                <div class="back-to-dashboard">
+                  {/* <NavLink className="btn btn-danger" to={"/"}>
                     Back to Dashboard
-                  </NavLink>
+                  </NavLink> */}
                   <form action="">
                     <button className="btn btn-success">Refresh</button>
                   </form>
@@ -207,16 +206,10 @@ const MyUserLoginSection = () => {
                       </strong>{" "}
                       has already login!
                     </h5>
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        gap: "5px",
-                      }}
-                    >
-                      <NavLink className="btn btn-danger" to={"/"}>
+                    <div className="back-to-dashboard">
+                      {/* <NavLink className="btn btn-danger" to={"/"}>
                         Back to Dashboard
-                      </NavLink>
+                      </NavLink> */}
                       <form action="">
                         <button className="btn btn-success">Refresh</button>
                       </form>

@@ -2,14 +2,15 @@ import React, { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 
 const ListOfSubscriptions = ({ plan, option, per }) => {
+  console.log(plan);
   return (
     <>
-      <div className="col-lg-4 col-md-8">
+      <div className={option ? "col-lg-4 col-md-6" : "col-lg-9 col-md-12"}>
         <div className="ps-item">
           <h3>{plan.gym_rate_desc}</h3>
           <div className="pi-price">
             <h2>{plan.rate.toLocaleString()}</h2>
-            <span>per {per}</span>
+            <span>per {plan.per.per}</span>
           </div>
           <ul>
             {plan.packages_details.map((p) => (

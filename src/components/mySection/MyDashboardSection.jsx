@@ -241,9 +241,16 @@ const MyDashboardSection = () => {
     const getRenewalUsers = async () => {
       let users = await getForRenewalUsers();
       let noOfRenewalUsers = users.filter(
-        (user) => user.extendedSubDays <= 2 || user.extendedTrainerDays <= 2
-      ).length;
-      setNoRenewalUser(noOfRenewalUsers);
+        (user) =>
+          user.extendedSubDays <= 2 ||
+          (user.extendedTrainerDays <= 2 &&
+            user.usersubscription.subscription.gym_rate_desc.toUpperCase() !=
+              "DAY PASS")
+      );
+
+      console.log("haha", noOfRenewalUsers);
+
+      setNoRenewalUser(noOfRenewalUsers.length);
       setForRenewalUsers(() => users.slice(0, 5));
     };
 
@@ -380,7 +387,9 @@ const MyDashboardSection = () => {
                 {forRenewalUsers.map(
                   (user) =>
                     (user.extendedSubDays <= 2 ||
-                      user.extendedTrainerDays <= 2) && (
+                      user.extendedTrainerDays <= 2) &&
+                    user.usersubscription.subscription.gym_rate_desc.toUpperCase() !=
+                      "DAY PASS" && (
                       <ForRenewal
                         key={user.id}
                         pix={user.image}

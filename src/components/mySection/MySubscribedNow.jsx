@@ -28,6 +28,8 @@ const MySubscribedNow = () => {
   const imageRef = useRef(null);
   const trainerImageRef = useRef(null);
 
+  const [message, setMessage] = useState("");
+
   // Access the query parameters from the location object
   const queryParams = new URLSearchParams(location.search);
   const id = queryParams.get("q");
@@ -112,20 +114,34 @@ const MySubscribedNow = () => {
   const handleSaveSubscription = async () => {
     let cc = await checkIfAlreadySubscribed(subscriptionData.flexpro_id);
 
-    if (cc.length > 0) {
-      setAlreadySubscribed(true);
-    } else {
-      instance
-        .post("/api/save_subscriptions/", subscriptionData)
-        .then(function (response) {
-          console.log(response.data);
-          setRegistered(true);
-        })
-        .catch(function (error) {
-          console.log(error);
-          return;
-        });
-    }
+    // if (cc.length > 0) {
+    //   setAlreadySubscribed(true);
+    //   setMessage("You're subscription has not been expired yet..");
+    // } else {
+    //   instance
+    //     .post("/api/save_subscriptions/", subscriptionData)
+    //     .then(function (response) {
+    //       console.log(response.data);
+    //       setRegistered(true);
+    //       setMessage("You are successfully registered..");
+    //     })
+    //     .catch(function (error) {
+    //       console.log(error);
+    //       return;
+    //     });
+    // }
+
+    instance
+      .post("/api/save_subscriptions/", subscriptionData)
+      .then(function (response) {
+        console.log(response.data);
+        setRegistered(true);
+        setMessage("You are successfully registered..");
+      })
+      .catch(function (error) {
+        console.log(error);
+        return;
+      });
   };
 
   // ### USE EFFECT FUNCTION HERE ####
@@ -186,8 +202,20 @@ const MySubscribedNow = () => {
       <div className="container content-margin">
         {planNow.id > 0 && (
           <>
+            {alreadySubscribed && (
+              <div className="row messageBox1">
+                <h3>{message}</h3>
+              </div>
+            )}
+            {registered && (
+              <div className="row messageBox">
+                <h3>{message}</h3>
+              </div>
+            )}
+
             <div className="row">
-              <div className="col-lg-12">
+              {/* selected user and trainer */}
+              <div className="col-lg-6 left-column">
                 <div className="section-title">
                   <span>SELECTED USER</span>
                   <div className="selected-user">
@@ -206,112 +234,104 @@ const MySubscribedNow = () => {
 
                     <h2 ref={trainerRef}></h2>
                   </div>
+                </div>
+                <div className="row search-users">
+                  <div className="col-lg-12">
+                    <input
+                      type="text"
+                      placeholder="Search User Here..."
+                      onChange={(e) => setSearchField(e.target.value)}
+                    />
 
-                  {alreadySubscribed && (
-                    <h3 style={{ color: "yellow" }}>
-                      You're subscription has not been expired yet..
-                    </h3>
-                  )}
+                    <input
+                      type="text"
+                      placeholder="Search Trainor Here..."
+                      onChange={(e) => setTrainerField(e.target.value)}
+                    />
+                    <div className="list-of-user">
+                      {searchField != "" ? (
+                        <ul className="list-group">
+                          {searchOutput.map((user) => (
+                            <li
+                              className="list-group-item d-flex justify-content-between align-items-center"
+                              key={user.flex_pro_user.id}
+                            >
+                              {user.flex_pro_user.name}
+                              <span
+                                className="badge badge-primary badge-pill dreg"
+                                onClick={() =>
+                                  handleSelectUser(
+                                    user.flex_pro_user.id,
+                                    user.flex_pro_user.name,
+                                    user.image1
+                                  )
+                                }
+                              >
+                                Select
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        ""
+                      )}
+                    </div>
 
-                  {registered && (
-                    <h3 style={{ color: "green" }}>
-                      You are successfully registered..
-                    </h3>
+                    <div className="list-of-trainers">
+                      {trainerField != "" ? (
+                        <ul className="list-group">
+                          {trainerSearchOutput.map((trainer) => (
+                            <li
+                              className="list-group-item d-flex justify-content-between align-items-center"
+                              key={trainer.id}
+                            >
+                              {trainer.name}
+                              <span
+                                className="badge badge-primary badge-pill dreg"
+                                onClick={() =>
+                                  handleSelectTrainer(
+                                    trainer.id,
+                                    trainer.name,
+                                    trainer.image
+                                  )
+                                }
+                              >
+                                Select
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="">
+                  {registered === true ? (
+                    <NavLink
+                      className="primary-btn pricing-btn save-subscriptions-successfully"
+                      to={"/"}
+                    >
+                      Back to Dashboard
+                    </NavLink>
+                  ) : (
+                    <NavLink
+                      className="primary-btn pricing-btn save-subscriptions"
+                      onClick={handleSaveSubscription}
+                    >
+                      Save Subscription
+                    </NavLink>
                   )}
                 </div>
               </div>
-            </div>
-            <div className="row search-users">
-              <div className="col-lg-4">
-                <input
-                  type="text"
-                  placeholder="Search User Here..."
-                  onChange={(e) => setSearchField(e.target.value)}
-                />
 
-                <input
-                  type="text"
-                  placeholder="Search Trainor Here..."
-                  onChange={(e) => setTrainerField(e.target.value)}
-                />
-                <div className="list-of-user">
-                  {searchField != "" ? (
-                    <ul className="list-group">
-                      {searchOutput.map((user) => (
-                        <li
-                          className="list-group-item d-flex justify-content-between align-items-center"
-                          key={user.flex_pro_user.id}
-                        >
-                          {user.flex_pro_user.name}
-                          <span
-                            className="badge badge-primary badge-pill dreg"
-                            onClick={() =>
-                              handleSelectUser(
-                                user.flex_pro_user.id,
-                                user.flex_pro_user.name,
-                                user.image1
-                              )
-                            }
-                          >
-                            Select
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    ""
-                  )}
-                </div>
-
-                <div className="list-of-trainers">
-                  {trainerField != "" ? (
-                    <ul className="list-group">
-                      {trainerSearchOutput.map((trainer) => (
-                        <li
-                          className="list-group-item d-flex justify-content-between align-items-center"
-                          key={trainer.id}
-                        >
-                          {trainer.name}
-                          <span
-                            className="badge badge-primary badge-pill dreg"
-                            onClick={() =>
-                              handleSelectTrainer(
-                                trainer.id,
-                                trainer.name,
-                                trainer.image
-                              )
-                            }
-                          >
-                            Select
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    ""
-                  )}
+              <div className="col-lg-6 right-column">
+                <div className="row">
+                  <ListOfSubscriptions plan={planNow} key={planNow.id} />
                 </div>
               </div>
-            </div>
-            <div className="row justify-content-center">
-              <ListOfSubscriptions plan={planNow} key={planNow.id} />
-            </div>
-            <div className="row justify-content-center">
-              {registered === true ? (
-                <NavLink
-                  className="primary-btn pricing-btn save-subscriptions-successfully"
-                  to={"/"}
-                >
-                  Back to Dashboard
-                </NavLink>
-              ) : (
-                <NavLink
-                  className="primary-btn pricing-btn save-subscriptions"
-                  onClick={handleSaveSubscription}
-                >
-                  Save Subscription
-                </NavLink>
-              )}
             </div>
           </>
         )}
