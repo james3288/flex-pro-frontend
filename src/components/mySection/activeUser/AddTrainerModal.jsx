@@ -156,7 +156,17 @@ const AddTrainerModal = ({
                   <span style={{ color: "red" }}>input must day/s</span>
                 )
               )}
+              <br />
+              <label className="col-form-label">Training Date Started:</label>
+              <input
+                type="date"
+                className="form-control"
+                name="trainer_date_started"
+                onChange={handleChange}
+                value={state.trainer_date_started}
+              />
             </div>
+
             <div className="modal-footer">
               <button
                 type="button"

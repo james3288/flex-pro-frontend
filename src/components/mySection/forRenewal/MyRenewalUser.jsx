@@ -31,7 +31,6 @@ const MyRenewalUser = () => {
 
   if (error) return "An error has occurred: " + error.message;
 
-  console.log("wew", data);
   return (
     <>
       <div className="container-fluid content-margin c-col-scrollbar">
@@ -72,6 +71,9 @@ const MyRenewalUser = () => {
                       setExtendedSubId={setExtendedSubId}
                       contactNo={
                         user?.usersubscription.flexprouser.contact_number
+                      }
+                      trainer_date_started={
+                        user.usersubscription.trainer_date_started
                       }
                     />
                   ))

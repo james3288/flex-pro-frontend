@@ -27,6 +27,8 @@ const RenewalUsers = ({
   setExtendedSubId,
   setExtendedTrainerId,
   contactNo,
+  trainer_date_started,
+  packages_details,
 }) => {
   const [remaining, setRemaining] = useState(0);
   const [counter, setCounter] = useState(0);
@@ -53,7 +55,7 @@ const RenewalUsers = ({
       });
   };
 
-  // checked expired subscription
+  // checked expired subscription and set from on-going to expired
   useEffect(() => {
     const intervalId = setInterval(() => {
       let daysleft = getSubscriptionDaysLeft(
@@ -63,7 +65,7 @@ const RenewalUsers = ({
         false
       );
 
-      if (daysleft < 0) {
+      if (daysleft === "Expired") {
         // setRefresher2(true);
 
         counter == 0 && handleExpired();
@@ -106,36 +108,43 @@ const RenewalUsers = ({
     extendedSub();
   }, [subscriptionId]);
 
+  // HANDLE ADD PERSONAL TRAINERS
   const handleAddPersonalTrainers = () => {
     setModalTitle("Add Personal Trainers");
     setUserSubscriptionId(subscriptionId);
   };
 
+  // HANDLE EXTEND PERSONAL TRAINERS
   const handleExtendPersonalTrainers = () => {
     setModalTitle("Extend Personal Trainers");
     setUserSubscriptionId(subscriptionId);
   };
 
+  // HANDLE EXTEND SUBSCRIPTIONS
   const handleExtendSubscriptions = () => {
     setModalTitle("Extend Subscriptions");
     setUserSubscriptionId(subscriptionId);
   };
 
+  // HANDLE UPDATE EXTENDED SUBSUBSCRIPTIONS
   const handleUpdateExtendSubscriptions = (id) => {
     setModalTitle("Update Extended Subscriptions");
     setUserSubscriptionId(id);
   };
 
+  // HANDLE REMOVE EXTENDED TRAINER
   const handleUpdateExtendedTrainer = (id) => {
     setModalTitle("Update Extended Trainer");
     setExtendedTrainerId(id);
   };
 
+  // HANDLE REMOVE EXTENDED SUBSCRIPTION
   const handleRemoveExtendedSub = (id) => {
     setModalTitle("Remove Extended Subscriptions");
     setExtendedSubId(id);
   };
 
+  // HANDLE REMOVE EXTENDED TRAINER
   const handleRemoveExtendedTrainer = (id) => {
     setModalTitle("Remove Extended Trainers");
     setExtendedTrainerId(id);
@@ -165,8 +174,16 @@ const RenewalUsers = ({
           <div className="c-col-time-in-out">
             <h5>DATE SUBSCRIBED</h5>
             <h4>{FormatDate(date_subscribed)}</h4>
+
+            {/* MAIN SUBSCRIPTION */}
             <h3>{subscription}</h3>
 
+            {/* PACKAGES DETAILS */}
+            <span style={{ fontSize: "12px", color: "yellowgreen" }}>
+              {packages_details?.map(
+                (packages) => packages.packages_details + "▐ "
+              )}
+            </span>
             {extendedSubscript?.map((ex, index) => (
               <>
                 <div key={index}>
@@ -179,8 +196,6 @@ const RenewalUsers = ({
                   >
                     - {ex?.subscription.gym_rate_desc} /{" extend "}
                     {ex?.extended_session_day} {" days"}
-                    {/* {ex?.subscription.rate.toLocaleString()} per{" "}
-                {ex.subscription.per.per} */}
                   </a>{" "}
                   <a
                     className="removeExtendedSubs"
@@ -223,6 +238,7 @@ const RenewalUsers = ({
               )}
             </h4>
 
+            {/* FREE PERSONAL TRAINER */}
             <h5>Free Personal Trainer:</h5>
 
             <h4 style={{ color: "pink" }}>
@@ -234,6 +250,9 @@ const RenewalUsers = ({
                 session_days
               )}
               )
+              {trainers === undefined
+                ? ""
+                : " - " + FormatDate(trainer_date_started)}
             </h4>
             <h5 style={{ color: "white" }}>Extended Personal Trainer:</h5>
             {extendedTrainer?.map((extended) => (
@@ -272,6 +291,8 @@ const RenewalUsers = ({
                 </div>
               </>
             ))}
+
+            {/* TRAINER REMAINING DAYS */}
             <h5>Trainer Remaning Days:</h5>
             <TrainerRemainingDays
               trainerRemainingDays={trainerRemainingDays}

@@ -66,6 +66,12 @@ const MyActiveUser = () => {
                 setExtendedSubId={setExtendedSubId}
                 setExtendedTrainerId={setExtendedTrainerId}
                 contactNo={user.usersubscription.flexprouser.contact_number}
+                trainer_date_started={
+                  user.usersubscription.trainer_date_started
+                }
+                packages_details={
+                  user.usersubscription.subscription.packages_details
+                }
               />
             ))}
 

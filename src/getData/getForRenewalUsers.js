@@ -67,9 +67,10 @@ const getForRenewalUsers = async () => {
         );
         // end get the reamining days
 
-        // get trainiers remaining days
+        // get free trainiers remaining days
         const getTrainersRemainingDays = await remainingDays(
-          user.usersubscription.date_subscribed,
+          // user.usersubscription.date_subscribed,
+          user.usersubscription.trainer_date_started,
           "personal_training_day",
           user.usersubscription.subscription.personal_training_session
         );
