@@ -8,6 +8,8 @@ import updatePersonalTrainer from "./updatePersonalTrainer";
 import extendPersonalTrainer from "./extendPersonalTrainer";
 import getSpecificExtendedTrainer from "../../../getData/getSpecificExtendedTrainer";
 import updateExtendedTrainer from "./updateExtendedTrainer";
+import FormatDate from "../../../others/FormatDate";
+import FormatDateISO from "../../../others/FormatDateISO";
 const AddTrainerModal = ({
   id,
   userSubscriptionId,
@@ -35,8 +37,9 @@ const AddTrainerModal = ({
       // setExtendedSubscription(data);
       setExtendedTrainer(data);
 
-      // trainersName: 0,
-      // session_days: 0,
+      let date_extend = new Date(data?.date_extend);
+
+      console.log(FormatDateISO(date_extend));
 
       dispatch({
         type: "CHANGE_INPUT",
@@ -53,9 +56,47 @@ const AddTrainerModal = ({
           value: data?.extended_session_day,
         },
       });
+
+      dispatch({
+        type: "CHANGE_INPUT",
+        payload: {
+          name: "trainer_date_started",
+          value: FormatDateISO(date_extend),
+        },
+      });
     };
 
-    getSpecificExtendedTr();
+    const clearExntededTr = async () => {
+      dispatch({
+        type: "CHANGE_INPUT",
+        payload: {
+          name: "trainersName",
+          value: 0,
+        },
+      });
+
+      dispatch({
+        type: "CHANGE_INPUT",
+        payload: {
+          name: "session_days",
+          value: 0,
+        },
+      });
+
+      dispatch({
+        type: "CHANGE_INPUT",
+        payload: {
+          name: "trainer_date_started",
+          value: null,
+        },
+      });
+    };
+
+    console.log("modaltitle", modalTitle);
+    modalTitle === "Extend Personal Trainers" && clearExntededTr();
+    modalTitle === "Update Extended Trainer" && getSpecificExtendedTr();
+
+    //: clearExntededTr();
   }, [extendedTrainerId]);
 
   const handleChange = (e) => {
@@ -71,12 +112,15 @@ const AddTrainerModal = ({
       return;
     } else if (state.session_days == "" || state.session_days < 0) {
       return;
+    } else if (state.trainer_date_started === null) {
+      return;
     }
 
     const updateData = new FormData();
     updateData.append("id", userSubscriptionId);
     updateData.append("trainersName", state.trainersName);
     updateData.append("session_days", state.session_days);
+    updateData.append("trainer_date_started", state.trainer_date_started);
 
     if (option === "update-personal-trainer") {
       updatePersonalTrainer(updateData);
@@ -86,6 +130,7 @@ const AddTrainerModal = ({
       updateData.append("extendedTrainerId", extendedTrainerId);
       updateExtendedTrainer(updateData);
     }
+
     // dispatch({ type: "CLEAR" });
   };
 
@@ -159,11 +204,11 @@ const AddTrainerModal = ({
               <br />
               <label className="col-form-label">Training Date Started:</label>
               <input
-                type="date"
+                type="datetime-local"
                 className="form-control"
                 name="trainer_date_started"
                 onChange={handleChange}
-                value={state.trainer_date_started}
+                value={state?.trainer_date_started}
               />
             </div>
 

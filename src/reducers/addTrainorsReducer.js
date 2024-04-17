@@ -1,7 +1,7 @@
 export const INITIAL_STATE = {
   trainersName: 0,
   session_days: 0,
-  trainer_date_started: new Date(),
+  trainer_date_started: null,
 };
 
 export const addTrainorReducer = (state, action) => {
@@ -21,7 +21,7 @@ export const addTrainorReducer = (state, action) => {
         ...state,
         trainersName: 0,
         session_days: 0,
-        trainer_date_started: new Date(),
+        trainer_date_started: null,
       };
   }
 };
