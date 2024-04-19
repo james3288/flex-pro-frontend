@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { NavLink } from "react-router-dom";
 import getAgreements from "../../getData/getAgreements";
 import { AgreementProvider } from "../../context/UserRegistrationContext";
@@ -11,6 +11,8 @@ const MyUserRegistrationSection = ({
   handleFormFilter,
   inputError,
   formDone,
+  state,
+  dispatch,
 }) => {
   const [agreements, setAgreements] = useState([]);
   const [userAgreements, setUserAgreements] = useState([]);
@@ -79,6 +81,47 @@ const MyUserRegistrationSection = ({
     console.log(inputError);
   }, [inputError]);
 
+  // useEffect(() => {
+  //   console.log(state);
+  // }, [state]);
+
+  const handleChange = (e) => {
+    dispatch({
+      type: "CHANGE_INPUT",
+      payload: { name: e.target.name, value: e.target.value },
+    });
+  };
+
+  const handleProceed = () => {
+    // filter first before proceed
+    if (state.name === "") {
+      return;
+    } else if (!isNaN(state.name)) {
+      return;
+    }
+
+    if (
+      state?.weights === "" ||
+      state?.contact_number === "" ||
+      state?.contact_number_ioe === ""
+    ) {
+      return;
+    } else if (
+      isNaN(state?.weights) ||
+      isNaN(state?.contact_number) ||
+      isNaN(state?.contact_number_ioe)
+    ) {
+      return;
+    }
+
+    if (state?.agreements.length == 0) {
+      return;
+    }
+
+    // filter first before proceed
+    handleFormFilter(1);
+  };
+
   const context = () => {
     return (
       <div className="container content-margin">
@@ -96,45 +139,88 @@ const MyUserRegistrationSection = ({
                   <input
                     type="text"
                     placeholder="Name"
-                    value={formData.name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
-                    }
+                    // value={formData.name}
+                    // onChange={(e) =>
+                    //   setFormData({ ...formData, name: e.target.value })
+                    // }
                     disabled={formDone}
+                    name="name"
+                    value={state?.name}
+                    onChange={handleChange}
                   />
+
+                  <span className="registrationError">
+                    {state.name === ""
+                      ? "you must fill name..."
+                      : !isNaN(state.name) &&
+                        "it must be a letter not a number"}
+                  </span>
+
                   <input
                     type="text"
                     placeholder="Weight"
-                    value={formData.weights}
-                    onChange={(e) =>
-                      setFormData({ ...formData, weights: e.target.value })
-                    }
+                    // value={formData.weights}
+                    // onChange={(e) =>
+                    //   setFormData({ ...formData, weights: e.target.value })
+                    // }
                     disabled={formDone}
+                    name="weights"
+                    value={state?.weights}
+                    onChange={handleChange}
                   />
+
+                  <span className="registrationError">
+                    {state?.weights === ""
+                      ? "you must fill weights"
+                      : isNaN(state?.weights) &&
+                        "it must be a number not a letter"}
+                  </span>
+
                   <input
                     type="text"
                     placeholder="Contact Number"
-                    value={formData.contact_number}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        contact_number: e.target.value,
-                      })
-                    }
+                    // value={formData.contact_number}
+                    // onChange={(e) =>
+                    //   setFormData({
+                    //     ...formData,
+                    //     contact_number: e.target.value,
+                    //   })
+                    // }
                     disabled={formDone}
+                    name="contact_number"
+                    value={state?.contact_number}
+                    onChange={handleChange}
                   />
+
+                  <span className="registrationError">
+                    {state?.contact_number === ""
+                      ? "you must fill contact number"
+                      : isNaN(state?.contact_number) &&
+                        "it must be a number not a letter"}
+                  </span>
+
                   <input
                     type="text"
                     placeholder="Contact Number Incase of Emergency"
-                    value={formData.contact_number_ioe}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        contact_number_ioe: e.target.value,
-                      })
-                    }
+                    // value={formData.contact_number_ioe}
+                    // onChange={(e) =>
+                    //   setFormData({
+                    //     ...formData,
+                    //     contact_number_ioe: e.target.value,
+                    //   })
+                    // }
                     disabled={formDone}
+                    name="contact_number_ioe"
+                    value={state?.contact_number_ioe}
+                    onChange={handleChange}
                   />
+
+                  <span className="registrationError">
+                    {state?.contact_number_ioe === ""
+                      ? "you must fill incase of emergency number "
+                      : isNaN(state?.contact_number_ioe) &&
+                        "it must be a number not a letter"}
+                  </span>
                 </form>
               </div>
             </div>
@@ -145,11 +231,16 @@ const MyUserRegistrationSection = ({
           <div className="col-lg-6 col-xs-12">
             <div className="dashboard-col">
               {/* contract wrapper here */}
-              <UserRegistrationContract setFormData={setFormData} />
+              <UserRegistrationContract
+                setFormData={setFormData}
+                state={state}
+                dispatch={dispatch}
+              />
             </div>
             <button
               className="btn btn-danger"
-              onClick={() => handleFormFilter(1)}
+              // onClick={() => handleFormFilter(1)}
+              onClick={handleProceed}
             >
               Proceed
             </button>

@@ -26,6 +26,8 @@ const DashboardPage = ({
   setFormDone,
   formData,
   setFormData,
+  state,
+  dispatch,
 }) => {
   let content;
   const [inputError, setInputError] = useState("");
@@ -45,32 +47,32 @@ const DashboardPage = ({
   };
 
   const handleFormFilter = (param) => {
-    if (formData.name === "") {
-      setInputError("Name is empty.");
-      setFormDone(false);
-      scrollToTop();
-      return; // Exit the function if name is empty
-    } else if (formData.weights === "") {
-      setInputError("Weights is empty.");
-      setFormDone(false);
-      scrollToTop();
-      return; // Exit the function if weights is empty
-    } else if (isNaN(parseFloat(formData.weights))) {
-      setInputError("Weights must be numeric.");
-      setFormDone(false);
-      scrollToTop();
-      return;
-    } else if (formData.contact_number === "") {
-      setInputError("Contact number is empty.");
-      setFormDone(false);
-      scrollToTop();
-      return; // Exit the function if contact number is empty
-    } else if (formData.contact_number_ioe === "") {
-      setInputError("Contact number IOE is empty.");
-      setFormDone(false);
-      scrollToTop();
-      return; // Exit the function if contact number IOE is empty
-    }
+    // if (formData.name === "") {
+    //   setInputError("Name is empty.");
+    //   setFormDone(false);
+    //   scrollToTop();
+    //   return; // Exit the function if name is empty
+    // } else if (formData.weights === "") {
+    //   setInputError("Weights is empty.");
+    //   setFormDone(false);
+    //   scrollToTop();
+    //   return; // Exit the function if weights is empty
+    // } else if (isNaN(parseFloat(formData.weights))) {
+    //   setInputError("Weights must be numeric.");
+    //   setFormDone(false);
+    //   scrollToTop();
+    //   return;
+    // } else if (formData.contact_number === "") {
+    //   setInputError("Contact number is empty.");
+    //   setFormDone(false);
+    //   scrollToTop();
+    //   return; // Exit the function if contact number is empty
+    // } else if (formData.contact_number_ioe === "") {
+    //   setInputError("Contact number IOE is empty.");
+    //   setFormDone(false);
+    //   scrollToTop();
+    //   return; // Exit the function if contact number IOE is empty
+    // }
 
     param === 1 ? scrollToBottom() : scrollToTop();
     param === 1 && setInputError("");
@@ -91,6 +93,8 @@ const DashboardPage = ({
           handleFormFilter={handleFormFilter}
           formDone={formDone}
           inputError={inputError}
+          state={state}
+          dispatch={dispatch}
         />
       </QueryClientProvider>
     );
@@ -104,6 +108,8 @@ const DashboardPage = ({
           setFormData={setFormData}
           formDone={formDone}
           inputError={inputError}
+          state={state}
+          dispatch={dispatch}
         />
       </QueryClientProvider>
     );

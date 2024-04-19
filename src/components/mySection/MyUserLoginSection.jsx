@@ -178,9 +178,12 @@ const MyUserLoginSection = () => {
                     </h5>
                     <h3>{userFound}</h3>
 
-                    <a className="daypass-link">
-                      Do you want to bypass and continue as Day Pass
-                      Subscription?
+                    <a
+                      className="btn btn-success"
+                      href=""
+                      style={{ padding: "10px 20px", fontSize: "20px" }}
+                    >
+                      Refresh
                     </a>
                   </div>
                 </div>

@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { AgreementContext } from "../../../context/UserRegistrationContext";
 
-const UserRegistrationContract = ({ setFormData }) => {
+const UserRegistrationContract = ({ setFormData, state, dispatch }) => {
   const { agreementDatas } = useContext(AgreementContext);
 
   const handleCheckboxChange = (event) => {
@@ -9,15 +9,29 @@ const UserRegistrationContract = ({ setFormData }) => {
     const isChecked = event.target.checked;
 
     if (isChecked) {
-      setFormData((prevState) => ({
-        ...prevState,
-        agreements: [...prevState.agreements, agreementId],
-      }));
+      // setFormData((prevState) => ({
+      //   ...prevState,
+      //   agreements: [...prevState.agreements, agreementId],
+      // }));
+      dispatch({
+        type: "SELECT_OPTION",
+        payload: {
+          name: "agreements",
+          value: [...state.agreements, agreementId],
+        },
+      });
     } else {
-      setFormData((prevState) => ({
-        ...prevState,
-        agreements: prevState.agreements.filter((id) => id !== agreementId),
-      }));
+      // setFormData((prevState) => ({
+      //   ...prevState,
+      //   agreements: prevState.agreements.filter((id) => id !== agreementId),
+      // }));
+      dispatch({
+        type: "SELECT_OPTION",
+        payload: {
+          name: "agreements",
+          value: state.agreements.filter((id) => id !== agreementId),
+        },
+      });
     }
   };
 
@@ -63,6 +77,11 @@ const UserRegistrationContract = ({ setFormData }) => {
           any other member of any services, facilities, equipment of fitness
           gym.
         </p>
+        {state.agreements == 0 && (
+          <p style={{ color: "orange", fontStyle: "italic" }}>
+            Select an agreement first!
+          </p>
+        )}
       </div>
     </div>
   );

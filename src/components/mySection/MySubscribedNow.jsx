@@ -114,34 +114,54 @@ const MySubscribedNow = () => {
   const handleSaveSubscription = async () => {
     let cc = await checkIfAlreadySubscribed(subscriptionData.flexpro_id);
 
-    // if (cc.length > 0) {
-    //   setAlreadySubscribed(true);
-    //   setMessage("You're subscription has not been expired yet..");
-    // } else {
-    //   instance
-    //     .post("/api/save_subscriptions/", subscriptionData)
-    //     .then(function (response) {
-    //       console.log(response.data);
-    //       setRegistered(true);
-    //       setMessage("You are successfully registered..");
-    //     })
-    //     .catch(function (error) {
-    //       console.log(error);
-    //       return;
-    //     });
-    // }
+    if (cc.length > 0) {
+      setAlreadySubscribed(true);
+      setMessage("You're subscription has not been expired yet..");
+    } else {
+      instance
+        .post("/api/save_subscriptions/", subscriptionData)
+        .then(function (response) {
+          console.log(response.data);
+          setRegistered(true);
+          setMessage("You are successfully registered..");
+        })
+        .catch(function (error) {
+          console.log(error);
+          return;
+        });
+    }
 
-    instance
-      .post("/api/save_subscriptions/", subscriptionData)
-      .then(function (response) {
-        console.log(response.data);
-        setRegistered(true);
-        setMessage("You are successfully registered..");
-      })
-      .catch(function (error) {
-        console.log(error);
-        return;
-      });
+    // instance
+    //   .post("/api/save_subscriptions/", subscriptionData)
+    //   .then(function (response) {
+    //     console.log(response.data);
+    //     setRegistered(true);
+    //     setMessage("You are successfully registered..");
+    //   })
+    //   .catch(function (error) {
+    //     console.log(error);
+    //     return;
+    //   });
+  };
+
+  const handleCancelUser = async () => {
+    userRef.current.innerText = "";
+    setMyImage(null);
+
+    setSubscriptionData((prev) => ({
+      ...prev,
+      flexpro_id: 0,
+    }));
+  };
+
+  const handleCancelTrainer = async () => {
+    trainerRef.current.innerText = "";
+    setMyImage2(null);
+
+    setSubscriptionData((prev) => ({
+      ...prev,
+      trainer_id: 0,
+    }));
   };
 
   // ### USE EFFECT FUNCTION HERE ####
@@ -212,6 +232,11 @@ const MySubscribedNow = () => {
                 <h3>{message}</h3>
               </div>
             )}
+            {subscriptionData.flexpro_id === 0 && (
+              <div className="row messageBox1">
+                <h3>{"You must select a user first!"}</h3>
+              </div>
+            )}
 
             <div className="row">
               {/* selected user and trainer */}
@@ -224,6 +249,17 @@ const MySubscribedNow = () => {
                     )}
 
                     <h2 ref={userRef}></h2>
+
+                    {myImage != null && (
+                      <button
+                        className="btn btn-danger cancelUser"
+                        onClick={() => {
+                          handleCancelUser();
+                        }}
+                      >
+                        Cancel
+                      </button>
+                    )}
                   </div>
 
                   <span>SELECTED TRAINER</span>
@@ -233,6 +269,15 @@ const MySubscribedNow = () => {
                     )}
 
                     <h2 ref={trainerRef}></h2>
+
+                    {myImage2 != null && (
+                      <button
+                        className="btn btn-danger cancelUser"
+                        onClick={() => handleCancelTrainer()}
+                      >
+                        Cancel
+                      </button>
+                    )}
                   </div>
                 </div>
                 <div className="row search-users">
@@ -256,7 +301,7 @@ const MySubscribedNow = () => {
                               className="list-group-item d-flex justify-content-between align-items-center"
                               key={user.flex_pro_user.id}
                             >
-                              {user.flex_pro_user.name}
+                              {user.flex_pro_user.name.toUpperCase()}
                               <span
                                 className="badge badge-primary badge-pill dreg"
                                 onClick={() =>
@@ -285,7 +330,7 @@ const MySubscribedNow = () => {
                               className="list-group-item d-flex justify-content-between align-items-center"
                               key={trainer.id}
                             >
-                              {trainer.name}
+                              {trainer.name.toUpperCase()}
                               <span
                                 className="badge badge-primary badge-pill dreg"
                                 onClick={() =>

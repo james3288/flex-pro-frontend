@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { useReducer, useState } from "react";
 import DashboardPage from "../DashboardPage";
 import MyHeader from "../../components/myHeader/MyHeader";
 import "./userRegistrationPage.scss";
 
 import MyLeftSideMenu from "../../components/myLeftSideMenu/MyLeftSideMenu";
+import {
+  INITIAL_STATE,
+  registrationFormReducer,
+} from "../../reducers/registrationFormReducer";
 
 const UserRegistrationPage = () => {
   const [formDone, setFormDone] = useState(false);
@@ -19,6 +23,7 @@ const UserRegistrationPage = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [leftMenuOpen, setLeftMenuOpen] = useState(false);
   const [offCanvasMenu, setOffCanvasMenu] = useState(true);
+  const [state, dispatch] = useReducer(registrationFormReducer, INITIAL_STATE);
 
   return (
     <>
@@ -45,6 +50,8 @@ const UserRegistrationPage = () => {
         setFormDone={setFormDone}
         formData={formData}
         setFormData={setFormData}
+        state={state}
+        dispatch={dispatch}
       />
       {/* end user registration */}
 
@@ -55,6 +62,8 @@ const UserRegistrationPage = () => {
         setFormDone={setFormDone}
         formData={formData}
         setFormData={setFormData}
+        state={state}
+        dispatch={dispatch}
       />
     </>
   );

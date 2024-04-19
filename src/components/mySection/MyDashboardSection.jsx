@@ -195,7 +195,7 @@ const MyDashboardSection = () => {
         })
       );
 
-      setActiveUsers(() => newUser.slice(0, 5));
+      setActiveUsers(() => newUser);
     } catch (error) {
       console.error("Error fetching users:", error);
     }
@@ -242,16 +242,13 @@ const MyDashboardSection = () => {
       let users = await getForRenewalUsers();
       let noOfRenewalUsers = users.filter(
         (user) =>
-          user.extendedSubDays <= 2 ||
-          (user.extendedTrainerDays <= 2 &&
-            user.usersubscription.subscription.gym_rate_desc.toUpperCase() !=
-              "DAY PASS")
+          (user.extendedSubDays <= 2 || user.extendedTrainerDays <= 2) &&
+          user.usersubscription.subscription.gym_rate_desc.toUpperCase() !=
+            "DAY PASS"
       );
 
-      console.log("haha", noOfRenewalUsers);
-
       setNoRenewalUser(noOfRenewalUsers.length);
-      setForRenewalUsers(() => users.slice(0, 5));
+      setForRenewalUsers(() => users);
     };
 
     getRenewalUsers();
@@ -293,7 +290,7 @@ const MyDashboardSection = () => {
               {activeUsers?.length > 0 ? "" : <LoadingEffect />}
 
               <div className="scrollable-list-of-user">
-                {activeUsers?.map((user) => (
+                {activeUsers?.slice(0, 5).map((user) => (
                   <RegisteredUser
                     key={user.id}
                     pix={Pic3}

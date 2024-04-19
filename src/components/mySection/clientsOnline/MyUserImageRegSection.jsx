@@ -2,12 +2,16 @@ import React, { useEffect } from "react";
 import Cameras from "../../cameras/Cameras";
 import { useState, useRef } from "react";
 import axios from "axios";
+import instance from "../../../others/axiosInstance";
+import { NavLink } from "react-router-dom";
 
 const MyUserImageRegSection = ({
   formData,
   setFormData,
   formDone,
   inputError,
+  state,
+  dispatch,
 }) => {
   const webcamRef = useRef(null);
   const [url, setUrl] = useState(null);
@@ -16,6 +20,7 @@ const MyUserImageRegSection = ({
   const [capture, setCapture] = useState(false);
   const [register, setRegister] = useState(false);
   const [count, setCount] = useState(0);
+  const [msg, setMsg] = useState("");
 
   const capturePhoto = React.useCallback(async () => {
     const imageSrc = webcamRef.current.getScreenshot();
@@ -101,17 +106,101 @@ const MyUserImageRegSection = ({
     }
   };
 
+  const saveUserInfo = async () => {
+    const result = await instance
+      .post("/api/save_users/", state)
+      .then(function (response) {
+        return response.data.id;
+      })
+      .catch(function (error) {
+        console.log(error);
+        return 0;
+      });
+
+    return result;
+  };
+
+  // return true or false
+  const saveUserImage = async (id) => {
+    // Convert the image data to Base64
+    const base64Image = await convertToBase64(url);
+    const datas = { image: base64Image, id: id };
+
+    const result = await instance
+      .post("/api/save_image/", datas)
+      .then(function (response) {
+        console.log(response);
+        return true;
+      })
+      .catch(function (error) {
+        console.log(error);
+        return false;
+      });
+
+    return result;
+  };
+
+  const handleSaveUserData = async () => {
+    if (formDone === true && capture === true) {
+      // console.log("state", state);
+      // console.log("formdata", formData);
+      // const result = instance
+      //   .post("/api/save_users/", state)
+      //   .then(function (response) {
+      //     id1 = response.data.id;
+      //     console.log(id1);
+      //     return id1;
+      //   })
+      //   .catch(function (error) {
+      //     console.log(error);
+      //     return;
+      //   });
+
+      // setTimeout(async () => {
+      //   // Convert the image data to Base64
+      //   const base64Image = await convertToBase64(url); };
+      //   instance
+      //   const datas = { image: base64Image, id: saveuserinfo
+      //     .post("/api/save_image/", datas)
+      //     .then(function (response) {
+      //       console.log(response);
+      //       setCount(0);
+      //       setRegister(true);
+      //     })
+      //     .catch(function (error) {
+      //       console.log(error);
+      //       return;
+      //     });
+      // }, 1000);
+
+      const saveuserinfo = await saveUserInfo();
+
+      if (saveuserinfo > 0) {
+        const saveuserimage = await saveUserImage(saveuserinfo);
+
+        // if userinfo successfully registered, next is saving image
+        if (saveuserimage == true) {
+          setCount(0);
+          setRegister(true);
+          setMsg("User Successfully Registered");
+        }
+      } else {
+        setMsg("There is is something wrong with your registration!");
+      }
+    }
+  };
+
   return (
     <>
       <div className="container" id="userRegistrationId">
         <div className="row">
-          <div className="col-12">
+          <div className="col-6">
             {register && (
               <div
                 className="alert alert-success alert-dismissible fade show"
                 role="alert"
               >
-                <strong>User Successfuly Registered!</strong>
+                <strong>{msg}</strong>
                 <button
                   type="button"
                   className="close"
@@ -121,6 +210,33 @@ const MyUserImageRegSection = ({
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
+            )}
+          </div>
+          <div className="col-6">
+            {register && (
+              <>
+                <NavLink
+                  className="btn btn-primary"
+                  to={`/user-subscription`}
+                  style={{ marginRight: "5px" }}
+                >
+                  Create Subscription
+                </NavLink>
+                <NavLink
+                  className="btn btn-success"
+                  to={`/`}
+                  style={{ marginRight: "5px" }}
+                >
+                  Back to Dashboard
+                </NavLink>
+                <a
+                  className="btn btn-danger"
+                  href=""
+                  style={{ marginRight: "5px" }}
+                >
+                  Refresh
+                </a>
+              </>
             )}
           </div>
         </div>
@@ -204,7 +320,8 @@ const MyUserImageRegSection = ({
                 </button>
                 <button
                   className="btn btn-success"
-                  onClick={() => handleSave()}
+                  // onClick={() => handleSave()}
+                  onClick={() => handleSaveUserData()}
                   disabled={register}
                 >
                   Save Now
