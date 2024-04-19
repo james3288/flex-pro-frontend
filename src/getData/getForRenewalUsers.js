@@ -110,6 +110,13 @@ const getForRenewalUsers = async () => {
           false
         );
 
+        // trainers,
+        // "trainer-remaining-days",
+        // trainerRemainingDays,
+        // session_days,
+        // extendedTrainerRemainingDays,
+        // false
+
         return {
           ...user,
           trainerRemainingDays: getTrainersRemainingDays,
@@ -123,7 +130,7 @@ const getForRenewalUsers = async () => {
         }; // If imgpath is null, use default image
       })
     );
-
+    console.log("hi", newUser);
     return newUser;
   } catch (error) {
     console.error("Error fetching users:", error);

@@ -30,17 +30,22 @@ const TrainerRemainingDays = ({
     fetchData();
   }, [trainerRemainingDays, session_days, extendedTrainer]);
 
+  //false means whole number of days
+  const FREE_TRAINER_DAYS_LEFT = personalTrainerDaysLeft(
+    trainers,
+    "trainer-remaining-days",
+    trainerRemainingDays,
+    session_days,
+    extendedTrainerRemainingDays,
+    false
+  );
+
   return (
     <h4 style={{ fontSize: "20px" }}>
       {" "}
-      {personalTrainerDaysLeft(
-        trainers,
-        "trainer-remaining-days",
-        trainerRemainingDays,
-        session_days,
-        extendedTrainerRemainingDays,
-        true
-      )}
+      {FREE_TRAINER_DAYS_LEFT === "N/A"
+        ? "N/A"
+        : formatTime(FREE_TRAINER_DAYS_LEFT, "days-hours")}
       {/* {extendedTrainerRemainingDays !== null
         ? extendedTrainerRemainingDays < 3
           ? personalTrainerDaysLeft(

@@ -34,7 +34,7 @@ const RenewalUsers = ({
   const [counter, setCounter] = useState(0);
   const [extendedTrainer, setExtendedTrainer] = useState([]);
   const [extendedSubscript, setExtendedSubscript] = useState([]);
-
+  const [totalFreeTrainerLeft, setTotalFreeTrainerLeft] = useState(0);
   // get the remaining days
   const getRemainingDays = async () => {
     setRemaining(await remainingDays(date_subscribed, per, user_id));
@@ -242,7 +242,7 @@ const RenewalUsers = ({
             <h5>Free Personal Trainer:</h5>
 
             <h4 style={{ color: "pink" }}>
-              {trainers} (
+              {trainers?.toUpperCase()} - (
               {personalTrainerDaysLeft(
                 trainers,
                 "remaining-days",
@@ -293,12 +293,14 @@ const RenewalUsers = ({
             ))}
 
             {/* TRAINER REMAINING DAYS */}
-            <h5>Trainer Remaning Days:</h5>
+            <h5>Extended Trainer Remaning Days:</h5>
             <TrainerRemainingDays
               trainerRemainingDays={trainerRemainingDays}
               session_days={session_days}
               extendedTrainer={extendedTrainer}
               trainers={trainers}
+              totalFreeTrainerLeft={totalFreeTrainerLeft}
+              setTotalFreeTrainerLeft={setTotalFreeTrainerLeft}
             />
 
             {/* <h4>
@@ -347,7 +349,7 @@ const RenewalUsers = ({
                 data-target="#addTrainerModal"
                 data-whatever="@mdo"
               >
-                Main Personal Trainer
+                Free Personal Trainer
               </button>
               <button
                 className="btn btn-success"
