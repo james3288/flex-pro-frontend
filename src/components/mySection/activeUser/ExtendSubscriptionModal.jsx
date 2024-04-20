@@ -30,7 +30,6 @@ const ExtendSubscriptionModal = ({ id, modalTitle, userSubscriptionId }) => {
   useEffect(() => {
     const getSpecificExtendSub = async () => {
       let data = await getSpecificExtendedSubscription(userSubscriptionId);
-      console.log("specific Sub", data);
       setExtendedSubscription(data);
 
       refTrainingSession.current.value = data?.extended_session_day;
@@ -85,7 +84,6 @@ const ExtendSubscriptionModal = ({ id, modalTitle, userSubscriptionId }) => {
 
   const handleUpdate = () => {
     // NOTE: userSubscriptionId = extendedSubscriptionId
-    console.log(state);
     if (state.subscriptionId == 0) {
       return;
     } else if (userSubscriptionId == 0) {

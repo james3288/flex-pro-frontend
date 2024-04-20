@@ -30,8 +30,6 @@ const MyActiveUser = () => {
 
   if (error) return "An error has occurred: " + error.message;
 
-  console.log("activeUser", data);
-
   return (
     <>
       <div className="container-fluid content-margin c-col-scrollbar">

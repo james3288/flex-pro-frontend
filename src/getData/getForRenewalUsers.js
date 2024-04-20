@@ -130,7 +130,7 @@ const getForRenewalUsers = async () => {
         }; // If imgpath is null, use default image
       })
     );
-    console.log("hi", newUser);
+    
     return newUser;
   } catch (error) {
     console.error("Error fetching users:", error);

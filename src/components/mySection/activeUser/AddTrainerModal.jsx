@@ -10,6 +10,7 @@ import getSpecificExtendedTrainer from "../../../getData/getSpecificExtendedTrai
 import updateExtendedTrainer from "./updateExtendedTrainer";
 import FormatDate from "../../../others/FormatDate";
 import FormatDateISO from "../../../others/FormatDateISO";
+import getSpecificUserSubscription from "../../../getData/getSpecificUserSubscription";
 const AddTrainerModal = ({
   id,
   userSubscriptionId,
@@ -20,6 +21,7 @@ const AddTrainerModal = ({
   const refTrainingSession = useRef(0);
   const [trainers, setTrainers] = useState([]);
   const [extendedTrainer, setExtendedTrainer] = useState({});
+  const [freeTrainer, setFreeTrainer] = useState({});
 
   useEffect(() => {
     const getTrainers = async () => {
@@ -32,14 +34,83 @@ const AddTrainerModal = ({
   }, []);
 
   useEffect(() => {
-    const getSpecificExtendedTr = async () => {
-      let data = await getSpecificExtendedTrainer(extendedTrainerId);
+    if (
+      modalTitle === "Extend Personal Trainers" ||
+      modalTitle === "Update Extended Trainer"
+    ) {
+      const getSpecificExtendedTr = async () => {
+        let data = await getSpecificExtendedTrainer(extendedTrainerId);
+        // setExtendedSubscription(data);
+        setExtendedTrainer(data);
+
+        let date_extend = new Date(data?.date_extend);
+
+        dispatch({
+          type: "CHANGE_INPUT",
+          payload: {
+            name: "trainersName",
+            value: data?.trainer?.id,
+          },
+        });
+
+        dispatch({
+          type: "CHANGE_INPUT",
+          payload: {
+            name: "session_days",
+            value: data?.extended_session_day,
+          },
+        });
+
+        dispatch({
+          type: "CHANGE_INPUT",
+          payload: {
+            name: "trainer_date_started",
+            value: FormatDateISO(date_extend),
+          },
+        });
+      };
+
+      const clearExntededTr = async () => {
+        dispatch({
+          type: "CHANGE_INPUT",
+          payload: {
+            name: "trainersName",
+            value: 0,
+          },
+        });
+
+        dispatch({
+          type: "CHANGE_INPUT",
+          payload: {
+            name: "session_days",
+            value: 0,
+          },
+        });
+
+        dispatch({
+          type: "CHANGE_INPUT",
+          payload: {
+            name: "trainer_date_started",
+            value: null,
+          },
+        });
+      };
+
+      modalTitle === "Extend Personal Trainers" && clearExntededTr();
+      modalTitle === "Update Extended Trainer" && getSpecificExtendedTr();
+    }
+
+    //: clearExntededTr();
+  }, [extendedTrainerId]);
+
+  useEffect(() => {
+    const getSpecificUserSubscriptions = async () => {
+      let data = await getSpecificUserSubscription(userSubscriptionId);
+
       // setExtendedSubscription(data);
-      setExtendedTrainer(data);
+      setFreeTrainer(data);
 
-      let date_extend = new Date(data?.date_extend);
-
-      console.log(FormatDateISO(date_extend));
+      let trainer_date_started = new Date(data?.trainer_date_started);
 
       dispatch({
         type: "CHANGE_INPUT",
@@ -53,7 +124,7 @@ const AddTrainerModal = ({
         type: "CHANGE_INPUT",
         payload: {
           name: "session_days",
-          value: data?.extended_session_day,
+          value: data?.session_days,
         },
       });
 
@@ -61,12 +132,12 @@ const AddTrainerModal = ({
         type: "CHANGE_INPUT",
         payload: {
           name: "trainer_date_started",
-          value: FormatDateISO(date_extend),
+          value: FormatDateISO(trainer_date_started),
         },
       });
     };
 
-    const clearExntededTr = async () => {
+    const clear = async () => {
       dispatch({
         type: "CHANGE_INPUT",
         payload: {
@@ -92,12 +163,10 @@ const AddTrainerModal = ({
       });
     };
 
-    console.log("modaltitle", modalTitle);
-    modalTitle === "Extend Personal Trainers" && clearExntededTr();
-    modalTitle === "Update Extended Trainer" && getSpecificExtendedTr();
+    clear();
 
-    //: clearExntededTr();
-  }, [extendedTrainerId]);
+    getSpecificUserSubscriptions();
+  }, [userSubscriptionId]);
 
   const handleChange = (e) => {
     dispatch({

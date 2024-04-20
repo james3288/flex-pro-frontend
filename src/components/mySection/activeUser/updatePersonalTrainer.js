@@ -13,7 +13,7 @@ const updatePersonalTrainer = async (formData) => {
       formData,
       config
     );
-    console.log(response.data);
+
     // Refresh the page
     window.location.reload();
   } catch (error) {

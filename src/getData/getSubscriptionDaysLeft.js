@@ -11,7 +11,6 @@ const getSubscriptionDaysLeft = (
     const dateLogObj1 = new Date(extendedDate);
     dateLogObj1.setDate(dateLogObj1.getDate() + extended_days);
 
-    console.log("date extended:", dateLogObj1);
     return 5;
   };
 
