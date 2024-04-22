@@ -72,8 +72,19 @@ const MyUserImageRegSection = ({
   const handleSave = async () => {
     let id1 = 0;
     if (formDone === true && capture === true) {
-      axios
-        .post("http://127.0.0.1:8000/api/save_users/", formData)
+      // axios
+      //   .post("http://127.0.0.1:8000/api/save_users/", formData)
+      //   .then(function (response) {
+      //     id1 = response.data.id;
+      //     console.log(id1);
+      //   })
+      //   .catch(function (error) {
+      //     console.log(error);
+      //     return;
+      //   });
+
+      instance
+        .post(`/api/save_users/`, formData)
         .then(function (response) {
           id1 = response.data.id;
           console.log(id1);
@@ -88,8 +99,8 @@ const MyUserImageRegSection = ({
         const base64Image = await convertToBase64(url);
         const datas = { image: base64Image, id: id1 };
 
-        axios
-          .post("http://127.0.0.1:8000/api/save_image/", datas)
+        instance
+          .post(`/api/save_image/`, datas)
           .then(function (response) {
             console.log(response);
             setCount(0);
@@ -100,7 +111,7 @@ const MyUserImageRegSection = ({
             console.log(error);
             return;
           });
-      }, 1000);
+      }, 3000);
     } else {
       setCount((prev) => prev + 1);
     }
@@ -141,7 +152,7 @@ const MyUserImageRegSection = ({
   };
 
   const handleSaveUserData = async () => {
-    if (formDone === true && capture === true) {
+    if (formDone === true && capture === true && url != null) {
       // console.log("state", state);
       // console.log("formdata", formData);
       // const result = instance
@@ -318,14 +329,17 @@ const MyUserImageRegSection = ({
                 <button className="btn btn-danger" onClick={refreshCapture}>
                   Refresh
                 </button>
-                <button
-                  className="btn btn-success"
-                  // onClick={() => handleSave()}
-                  onClick={() => handleSaveUserData()}
-                  disabled={register}
-                >
-                  Save Now
-                </button>
+
+                {formDone && (
+                  <button
+                    className="btn btn-success"
+                    // onClick={() => handleSave()}
+                    onClick={() => handleSaveUserData()}
+                    disabled={register}
+                  >
+                    Save Now
+                  </button>
+                )}
               </div>
             </div>
           </div>

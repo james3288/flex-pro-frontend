@@ -74,10 +74,15 @@ const DashboardPage = ({
     //   return; // Exit the function if contact number IOE is empty
     // }
 
-    param === 1 ? scrollToBottom() : scrollToTop();
-    param === 1 && setInputError("");
+    // param === 1 ? scrollToBottom() : scrollToTop();
+    // param === 1 && setInputError("");
 
-    setFormDone(true);
+    if (param === 1) {
+      scrollToBottom();
+      setFormDone(true);
+    }
+
+    // setFormDone(true);
   };
 
   if (page === "dashboard") {

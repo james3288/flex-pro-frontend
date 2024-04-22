@@ -27,7 +27,7 @@ const FaceScanner = ({
   const [flexProUser, setFlexProUser] = React.useState([]);
   const [timeInStatus, setTimeInStatus] = React.useState(false);
 
-  const numberOfDetection = 20;
+  const numberOfDetection = 5;
 
   let count = 0;
   const videoRef = React.useRef(null);
