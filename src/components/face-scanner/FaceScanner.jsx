@@ -9,6 +9,7 @@ import remainingDays from "../../others/GetRemainingDays";
 import getExtendedSubscription from "../../getData/getExtendedSubscription";
 import getSubscriptionDaysLeft from "../../getData/getSubscriptionDaysLeft";
 import getExtendedTrainer from "../../getData/getExtendedTrainer";
+import LoadingEffect from "../mySection/loadingEffect/LoadingEffect";
 
 const FaceScanner = ({
   playNow,
@@ -26,7 +27,7 @@ const FaceScanner = ({
   const [captureVideo, setCaptureVideo] = React.useState(false);
   const [flexProUser, setFlexProUser] = React.useState([]);
   const [timeInStatus, setTimeInStatus] = React.useState(false);
-
+  const [waiting, setWaiting] = React.useState(false);
   const numberOfDetection = 5;
 
   let count = 0;
@@ -109,7 +110,6 @@ const FaceScanner = ({
   };
 
   const fetchImage = async (label) => {
-    console.log(label);
     try {
       const response = await instance.get(
         `/media/images/${label}/${label}.png`,
@@ -203,6 +203,9 @@ const FaceScanner = ({
       .post("/api/save_time_record/", timeRecordData)
       .then(function (response) {
         console.log("successfully saved..");
+
+        setTimeInStatus(true);
+        setIsOnGoing("on-going");
       })
       .catch(function (error) {
         console.log(error);
@@ -214,8 +217,8 @@ const FaceScanner = ({
     const labeledFaceDescriptors = await Promise.all(
       flexProUser.map(async (label) => {
         const descriptions = [];
-        console.log(label.flex_pro_user.id);
-        const imgBlob = await fetchImage(`${label?.flex_pro_user.id}`);
+
+        const imgBlob = await fetchImage(`${label.flex_pro_user?.id}`);
         const img = await faceapi.bufferToImage(imgBlob); // Convert Blob to Image
 
         // for (let i = 1; i <= 2; i++) {
@@ -238,8 +241,10 @@ const FaceScanner = ({
 
         if (detections) {
           descriptions.push(detections.descriptor);
+
+          // console.log("agoy", label.flex_pro_user?.name);
           return new faceapi.LabeledFaceDescriptors(
-            label.flex_pro_user.name,
+            label.flex_pro_user?.name,
             descriptions
           );
         }
@@ -247,11 +252,15 @@ const FaceScanner = ({
       })
     );
 
-    return labeledFaceDescriptors;
+    setWaiting(true);
+    // console.log(labeledFaceDescriptors.filter((item) => item != undefined));
+    console.log(labeledFaceDescriptors);
+    return labeledFaceDescriptors.filter((item) => item != undefined);
   }
 
   const handleVideoOnPlay = async () => {
     const labeledFaceDescriptors = await getLabeledFaceDescriptions();
+
     const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.4);
 
     setInterval(async () => {
@@ -286,28 +295,28 @@ const FaceScanner = ({
         //  COUNT UPTO numberOfDetection TO FIND OUT THAT YOU
         results.forEach((result, i) => {
           flexProUser.forEach(async (label) => {
-            if (result.label === label.flex_pro_user.name) {
+            if (result.label === label.flex_pro_user?.name) {
               count = count + 1;
             }
 
             // user has been found successfully
             if (
               count >= numberOfDetection &&
-              result.label === label.flex_pro_user.name
+              result.label === label.flex_pro_user?.name
             ) {
-              setUserId(label.flex_pro_user.id);
-              setUserFound(label.flex_pro_user.name);
+              setUserId(label.flex_pro_user?.id);
+              setUserFound(label.flex_pro_user?.name);
               await closeWebcam();
               count = 0;
 
               // check if user have subscription
               const get_userStatus = await fetchUserStatus(
-                label.flex_pro_user.id
+                label.flex_pro_user?.id
               );
 
               // check if user have already login
               const isAlreadyLogin = await checkIfAlreadyIn(
-                label.flex_pro_user.id
+                label.flex_pro_user?.id
               );
 
               if (isAlreadyLogin?.length > 0) {
@@ -319,35 +328,65 @@ const FaceScanner = ({
 
               // og wala pa ka login
               let timeRecordData = {};
-              get_userStatus.map((userStatus) => {
-                const user_id = userStatus.usersubscription.flexprouser;
+              // get_userStatus.map((userStatus) => {
+              //   const user_id = userStatus.usersubscription.flexprouser;
 
-                if (
-                  userStatus.status === "on-going" &&
-                  timeInStatus === false
-                ) {
-                  // insert to time record table
-                  timeRecordData = {
-                    id: userStatus.usersubscription.id,
-                    time_in: new Date(),
-                    time_out: new Date(1990, 0, 1, 0, 0),
-                  };
-                  setTimeInStatus(true);
-                  console.log(timeRecordData);
-                  setIsOnGoing("on-going");
-                  // console.log("userStatus", userStatus);
+              //   if (
+              //     userStatus.status === "on-going" &&
+              //     timeInStatus === false
+              //   ) {
+              //     // insert to time record table
+              //     timeRecordData = {
+              //       id: userStatus.usersubscription?.id,
+              //       time_in: new Date(),
+              //       time_out: new Date(1990, 0, 1, 0, 0),
+              //     };
+              //     setTimeInStatus(true);
+              //     console.log(timeRecordData);
+              //     setIsOnGoing("on-going");
+              //     // console.log("userStatus", userStatus);
 
-                  setTrainers(() => userStatus);
+              //     setTrainers(() => userStatus);
 
-                  return;
-                }
-              });
+              //     return;
+              //   }
+              // });
 
-              // if expired
-              get_userStatus.length === 0 && timeInStatus === false
-                ? setIsOnGoing("expired")
-                : await handleSaveTimeRecords(timeRecordData);
-              // setIsOnGoing("expired");
+              const getUserStatus = async () => {
+                let record = null;
+                get_userStatus.map((userStatus) => {
+                  if (userStatus.status === "on-going") {
+                    record = {
+                      id: userStatus.usersubscription?.id,
+                      time_in: new Date(),
+                      time_out: new Date(1990, 0, 1, 0, 0),
+                    };
+
+                    setTrainers(() => userStatus);
+                  }
+                });
+
+                return record;
+              };
+
+              const userStatusResult = await getUserStatus();
+
+              if (userStatusResult != null) {
+                await handleSaveTimeRecords(userStatusResult);
+
+                // setTimeInStatus(true);
+                // setIsOnGoing("on-going");
+              } else {
+                setIsOnGoing("expired");
+              }
+
+              // // if expired
+              // get_userStatus.length === 0 && timeInStatus === false
+              //   ? setIsOnGoing("expired")
+              //   : await handleSaveTimeRecords(timeRecordData);
+              // // setIsOnGoing("expired");
+              // return;
+
               return;
             }
           });
@@ -372,6 +411,14 @@ const FaceScanner = ({
     <>
       <div>
         <div style={{ textAlign: "center" }}>
+          {waiting === false && (
+            // <h3 style={{ color: "orange" }}>Face initializing...</h3>
+            <>
+              <LoadingEffect />
+              <h3 style={{ color: "gray" }}>Wait for a seconds...</h3>
+            </>
+          )}
+
           {captureVideo && modelsLoaded ? (
             <button onClick={closeWebcam} className="btn btn-danger c-btn">
               Close Webcam
