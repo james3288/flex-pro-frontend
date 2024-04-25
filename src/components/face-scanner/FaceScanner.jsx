@@ -28,7 +28,8 @@ const FaceScanner = ({
   const [flexProUser, setFlexProUser] = React.useState([]);
   const [timeInStatus, setTimeInStatus] = React.useState(false);
   const [waiting, setWaiting] = React.useState(false);
-  const numberOfDetection = 5;
+  const [savedTimeRecord, setSavedTimeRecord] = React.useState(false);
+  const numberOfDetection = 3;
 
   let count = 0;
   const videoRef = React.useRef(null);
@@ -202,14 +203,16 @@ const FaceScanner = ({
     instance
       .post("/api/save_time_record/", timeRecordData)
       .then(function (response) {
-        console.log("successfully saved..");
+        console.log(response.status);
 
         setTimeInStatus(true);
         setIsOnGoing("on-going");
+
+        return true;
       })
       .catch(function (error) {
         console.log(error);
-        return;
+        return false;
       });
   };
 
@@ -283,6 +286,7 @@ const FaceScanner = ({
           .withFaceLandmarks()
           .withFaceExpressions()
           .withFaceDescriptors();
+
         const resizedDetections = faceapi.resizeResults(
           detections,
           displaySize
@@ -314,11 +318,12 @@ const FaceScanner = ({
                 label.flex_pro_user?.id
               );
 
-              // check if user have already login
+              // already login function
               const isAlreadyLogin = await checkIfAlreadyIn(
                 label.flex_pro_user?.id
               );
 
+              // check if already login
               if (isAlreadyLogin?.length > 0) {
                 setIsLogin = true;
                 setIsOnGoing("already-login");
@@ -327,31 +332,6 @@ const FaceScanner = ({
               }
 
               // og wala pa ka login
-              let timeRecordData = {};
-              // get_userStatus.map((userStatus) => {
-              //   const user_id = userStatus.usersubscription.flexprouser;
-
-              //   if (
-              //     userStatus.status === "on-going" &&
-              //     timeInStatus === false
-              //   ) {
-              //     // insert to time record table
-              //     timeRecordData = {
-              //       id: userStatus.usersubscription?.id,
-              //       time_in: new Date(),
-              //       time_out: new Date(1990, 0, 1, 0, 0),
-              //     };
-              //     setTimeInStatus(true);
-              //     console.log(timeRecordData);
-              //     setIsOnGoing("on-going");
-              //     // console.log("userStatus", userStatus);
-
-              //     setTrainers(() => userStatus);
-
-              //     return;
-              //   }
-              // });
-
               const getUserStatus = async () => {
                 let record = null;
                 get_userStatus.map((userStatus) => {
@@ -365,17 +345,15 @@ const FaceScanner = ({
                     setTrainers(() => userStatus);
                   }
                 });
-
                 return record;
               };
 
               const userStatusResult = await getUserStatus();
 
-              if (userStatusResult != null) {
-                await handleSaveTimeRecords(userStatusResult);
-
-                // setTimeInStatus(true);
-                // setIsOnGoing("on-going");
+              if (userStatusResult != null && savedTimeRecord === false) {
+                const saved = await handleSaveTimeRecords(userStatusResult);
+                setSavedTimeRecord(saved);
+                return;
               } else {
                 setIsOnGoing("expired");
               }
@@ -398,7 +376,7 @@ const FaceScanner = ({
           drawBox.draw(canvasRef.current);
         });
       }
-    }, 100);
+    }, 500);
   };
 
   const handleVideoLoadedMetadata = async () => {

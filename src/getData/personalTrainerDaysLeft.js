@@ -74,7 +74,7 @@ const personalTrainerDaysLeft = (
         ? "N/A"
         : TRDAYS <= 0 // if free training days is less than 0 it means expired
         ? "Free Training Expired"
-        : `${TRDAYS} out of ${session_days} free day's left`; // if free training days is greater than 0
+        : `${TRDAYS} ${TRDAYS > 1 ? "days" : "day"} left`; // if free training days is greater than 0
 
     return result;
   }
