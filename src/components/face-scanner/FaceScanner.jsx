@@ -30,6 +30,7 @@ const FaceScanner = ({
   const [waiting, setWaiting] = React.useState(false);
   const [savedTimeRecord, setSavedTimeRecord] = React.useState(false);
   const numberOfDetection = 3;
+  const refreshMinutes = 120;
 
   let count = 0;
   const videoRef = React.useRef(null);
@@ -57,6 +58,7 @@ const FaceScanner = ({
         faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL),
       ]).then(setModelsLoaded(true));
     };
+
     loadModels();
 
     const startVideo = async () => {
@@ -261,6 +263,7 @@ const FaceScanner = ({
     return labeledFaceDescriptors.filter((item) => item != undefined);
   }
 
+  let myRefresher = 0;
   const handleVideoOnPlay = async () => {
     const labeledFaceDescriptors = await getLabeledFaceDescriptions();
 
@@ -377,6 +380,14 @@ const FaceScanner = ({
         });
       }
     }, 500);
+
+    setInterval(async () => {
+      myRefresher += 1;
+
+      if (myRefresher > refreshMinutes) {
+        window.location.reload();
+      }
+    }, 1000);
   };
 
   const handleVideoLoadedMetadata = async () => {
