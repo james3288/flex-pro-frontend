@@ -174,4 +174,52 @@
       font-size: 30px;
     }
   }
+
+  .custom-modal-dialog {
+    background: rgb(245, 238, 240);
+    .user-id-row {
+      padding: 10px;
+
+      .existing-user {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+
+        h5 {
+          color: rgb(60, 60, 60);
+        }
+        h3 {
+          color: green;
+        }
+
+        .existing-user-result {
+          display: flex;
+          gap: 10px;
+          justify-content: center;
+          align-items: center;
+
+          .existing-user-result-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid yellowgreen;
+            object-fit: cover;
+          }
+        }
+      }
+    }
+    .numpad-col {
+      margin-bottom: 20px;
+      .numpad {
+        font-size: 3vh;
+        text-align: center;
+        border-radius: 10px;
+        width: 100%;
+        height: 100%;
+        font-weight: 800;
+        color: rgb(255, 255, 255);
+      }
+    }
+  }
 }

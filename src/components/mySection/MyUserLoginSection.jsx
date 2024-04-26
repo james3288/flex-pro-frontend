@@ -6,6 +6,7 @@ import { NavLink } from "react-router-dom";
 import getImagePath from "../../getData/getImagePath";
 import loadImageData from "../../getData/loadImageData";
 import FormatDate from "../../others/FormatDate";
+import UserLoginModal from "../modals/UserLoginModal";
 
 const MyUserLoginSection = () => {
   const [play, setPlay] = useState(false);
@@ -45,6 +46,8 @@ const MyUserLoginSection = () => {
     // trainer
   }, [userId]);
 
+  const showUserIdModal = () => {};
+
   return (
     <>
       <div className="container content-margin">
@@ -79,6 +82,15 @@ const MyUserLoginSection = () => {
                     disabled={disableBtn}
                   >
                     Face Recognition
+                  </button>
+                  <button
+                    className="btn btn-success enabled"
+                    // onClick={handlePlayClick}
+                    disabled={disableBtn}
+                    data-toggle="modal"
+                    data-target=".bd-example-modal-lg"
+                  >
+                    Login User ID
                   </button>
                   {/* <button className="btn btn-success">QR Code</button> */}
                   <form action="">
@@ -239,6 +251,8 @@ const MyUserLoginSection = () => {
 
           {/* end scan result section */}
         </div>
+
+        <UserLoginModal />
       </div>
     </>
   );

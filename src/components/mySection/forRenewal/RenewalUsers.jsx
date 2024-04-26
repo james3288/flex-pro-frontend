@@ -35,6 +35,7 @@ const RenewalUsers = ({
   const [extendedTrainer, setExtendedTrainer] = useState([]);
   const [extendedSubscript, setExtendedSubscript] = useState([]);
   const [totalFreeTrainerLeft, setTotalFreeTrainerLeft] = useState(0);
+  
   // get the remaining days
   const getRemainingDays = async () => {
     setRemaining(await remainingDays(date_subscribed, per, user_id));
