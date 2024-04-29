@@ -111,6 +111,7 @@ const MyUserLoginSection = () => {
 
           {/* scan result section */}
 
+          {/* USER ID HAS BEEN FOUND */}
           {userId > 0 && isOnGoing === "on-going" ? (
             <div className="col-lg-12 col-xs-12">
               <>
@@ -171,7 +172,8 @@ const MyUserLoginSection = () => {
                 </div>
               </>
             </div>
-          ) : isOnGoing === "expired" ? (
+          ) : // EITHER EXPIRED OR NOT REGISTERED YET
+          isOnGoing === "expired" ? (
             <div className="col-lg-12 col-xs-12">
               <div className="dashboard-col">
                 <span>
@@ -201,7 +203,8 @@ const MyUserLoginSection = () => {
                 </div>
               </div>
             </div>
-          ) : isOnGoing === "already-login" ? (
+          ) : // ALREADY LOGIN
+          isOnGoing === "already-login" ? (
             <div className="col-lg-12 col-xs-12">
               <div className="dashboard-col">
                 <span>
@@ -252,7 +255,13 @@ const MyUserLoginSection = () => {
           {/* end scan result section */}
         </div>
 
-        <UserLoginModal />
+        <UserLoginModal
+          setUserId={setUserId}
+          setIsOnGoing={setIsOnGoing}
+          setIsLogin={setIsLogin}
+          setTrainers={setTrainers}
+          setUserFound={setUserFound}
+        />
       </div>
     </>
   );

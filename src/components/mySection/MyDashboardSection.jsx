@@ -35,6 +35,7 @@ const MyDashboardSection = () => {
   const [refresher, setRefresher] = useState(false);
   const [refresher2, setRefresher2] = useState(false);
   const [refresher3, setRefresher3] = useState(false);
+  const [noOfActiveUsers, setNoOfActiveUsers] = useState(0);
 
   const getImagePath = async (id) => {
     try {
@@ -80,7 +81,7 @@ const MyDashboardSection = () => {
       const users = response.data;
 
       const newUser = await Promise.all(
-        users.map(async (user) => {
+        users.slice(0, 5).map(async (user) => {
           // Call getImagePath asynchronously for each user
           const imgpath = await getImagePath(
             user.usersubscription.flexprouser.id
@@ -139,7 +140,7 @@ const MyDashboardSection = () => {
       const users = response.data;
 
       const newUser = await Promise.all(
-        users.map(async (user) => {
+        users.slice(0, 5).map(async (user) => {
           // Call getImagePath asynchronously for each user
 
           const imageDataUrl = await loadImageData(user.image1);
@@ -163,8 +164,10 @@ const MyDashboardSection = () => {
       const response = await instance.get(`/api/user_all_status/`);
       const users = response.data;
 
+      setNoOfActiveUsers(users.length);
+
       const newUser = await Promise.all(
-        users.map(async (user) => {
+        users.slice(0, 5).map(async (user) => {
           // Call getImagePath asynchronously for each user
           const imgpath = await getImagePath(
             user.usersubscription.flexprouser.id
@@ -195,7 +198,7 @@ const MyDashboardSection = () => {
         })
       );
 
-      setActiveUsers(() => newUser);
+      setActiveUsers(() => newUser.slice(0, 5));
     } catch (error) {
       console.error("Error fetching users:", error);
     }
@@ -284,11 +287,11 @@ const MyDashboardSection = () => {
               <span>ACTIVE USER</span>
 
               <h1>
-                {activeUsers?.length}{" "}
-                <strong> {activeUsers?.length > 1 ? "USERS" : "USER"}</strong>
+                {noOfActiveUsers}{" "}
+                <strong> {noOfActiveUsers > 1 ? "USERS" : "USER"}</strong>
               </h1>
 
-              {activeUsers?.length > 0 ? "" : <LoadingEffect />}
+              {noOfActiveUsers > 0 ? "" : <LoadingEffect />}
 
               <div className="scrollable-list-of-user">
                 {activeUsers?.slice(0, 5).map((user) => (

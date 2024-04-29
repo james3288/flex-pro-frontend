@@ -2,11 +2,24 @@ import React, { useEffect, useState } from "react";
 import NumpadButton from "./NumpadButton";
 import getActiveUsers from "../../getData/getActiveUsers";
 import remainingDays from "../../others/GetRemainingDays";
+import GetUserStatus from "../../getData/getUserStatus";
+import CheckIfAlreadyIn from "../../getData/checkIfAlreadyLogin";
+import PostSaveTimeRecords from "../../postData/postSaveTimeRecords";
+import LoadingEffect from "../mySection/loadingEffect/LoadingEffect";
 
-const UserLoginModal = () => {
+const UserLoginModal = ({
+  setUserId,
+  setIsOnGoing,
+  setIsLogin,
+  setTrainers,
+  setUserFound,
+}) => {
   const [numpadResult, setNumpadResult] = useState("");
   const [activeUser, setActiveUser] = useState(null);
   const [rDays, setRDays] = useState(null);
+  const [savedTimeRecord, setSavedTimeRecord] = useState(false);
+  const [timeInStatus, setTimeInStatus] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const buttonStyle = "btn btn-success";
 
@@ -28,12 +41,68 @@ const UserLoginModal = () => {
   };
 
   const handleEnterOnClick = async (id) => {
+    setIsLoading(true);
     const user = await get_active_user();
 
     const newUser = user.filter((u) => u.usersubscription.flexprouser.id == id);
     setActiveUser(newUser);
 
     console.log(newUser);
+    setIsLoading(false);
+  };
+
+  const handleLoginOnclick = async () => {
+    setUserId(activeUser[0]?.usersubscription.flexprouser.id);
+    setUserFound(activeUser[0]?.usersubscription.flexprouser?.name);
+
+    // check if user have subscription
+    const get_userStatus = await GetUserStatus(
+      activeUser[0]?.usersubscription.flexprouser.id
+    );
+
+    // already login function
+    const isAlreadyLogin = await CheckIfAlreadyIn(
+      activeUser[0]?.usersubscription.flexprouser.id
+    );
+
+    // check if already login
+    if (isAlreadyLogin?.length > 0) {
+      setIsLogin(true);
+      setIsOnGoing("already-login");
+      return;
+    }
+
+    // og wala pa ka login
+    const getUserStatus = async () => {
+      let record = null;
+      get_userStatus.map((userStatus) => {
+        if (userStatus.status === "on-going") {
+          record = {
+            id: userStatus.usersubscription?.id,
+            time_in: new Date(),
+            time_out: new Date(1990, 0, 1, 0, 0),
+          };
+
+          setTrainers(() => userStatus);
+        }
+      });
+      return record;
+    };
+
+    const userStatusResult = await getUserStatus();
+
+    if (userStatusResult != null && savedTimeRecord === false) {
+      console.log(userStatusResult);
+      const saved = await PostSaveTimeRecords(
+        userStatusResult,
+        setTimeInStatus,
+        setIsOnGoing
+      );
+      setSavedTimeRecord(saved);
+      return;
+    } else {
+      setIsOnGoing("expired");
+    }
   };
 
   useEffect(() => {
@@ -91,6 +160,7 @@ const UserLoginModal = () => {
               </div>
 
               <div className="col-8 existing-user">
+                {isLoading && <LoadingEffect />}
                 {activeUser?.length > 0 ? (
                   <>
                     <h5>Check if it's you?</h5>
@@ -114,7 +184,13 @@ const UserLoginModal = () => {
                           }
                         </h5>
                         <div>
-                          <button className="btn btn-success">LOGIN</button>{" "}
+                          <button
+                            className="btn btn-success"
+                            data-dismiss="modal"
+                            onClick={handleLoginOnclick}
+                          >
+                            LOGIN
+                          </button>{" "}
                           <button
                             className="btn btn-danger"
                             onClick={handleClearOnClick}
