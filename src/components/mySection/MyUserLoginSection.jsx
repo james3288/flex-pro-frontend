@@ -96,6 +96,7 @@ const MyUserLoginSection = () => {
                   <form action="">
                     <button
                       className="btn btn-danger"
+                      style={{ zIndex: "9999" }}
                       //onClick={handleStopClick}
                     >
                       Refresh

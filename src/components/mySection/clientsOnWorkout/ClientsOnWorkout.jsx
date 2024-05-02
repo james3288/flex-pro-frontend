@@ -122,7 +122,7 @@ const ClientsOnWorkout = ({
             )}
 
             <h3 style={{ color: "yellowgreen" }}>{subscription}</h3>
-            {extendedSubscriptions.map((extended) => (
+            {extendedSubscriptions?.map((extended) => (
               <p style={{ color: "yellowgreen" }}>
                 {" "}
                 - {extended.subscription.gym_rate_desc} / extend{" "}

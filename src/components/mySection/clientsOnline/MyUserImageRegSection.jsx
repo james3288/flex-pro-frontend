@@ -51,7 +51,7 @@ const MyUserImageRegSection = ({
 
   // React.useEffect(() => {}, [formDone]);
 
-  const convertToBase64 = (imageSrc) => {
+  const convertToBase64 = async (imageSrc) => {
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.crossOrigin = "Anonymous";
