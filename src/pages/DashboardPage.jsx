@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import MyDashboardSection from "../components/mySection/MyDashboardSection";
-import MyUserRegistrationSection from "../components/mySection/myUserRegistrationSection";
+import MyUserRegistrationSection from "./../components/mySection/MyUserRegistrationSection";
 import MyUserImageRegSection from "../components/mySection/clientsOnline/MyUserImageRegSection";
 import MyUserLoginSection from "../components/mySection/MyUserLoginSection";
 // import MySubscriptionPlan from "../components/mySection/MySubscriptionPlan";
