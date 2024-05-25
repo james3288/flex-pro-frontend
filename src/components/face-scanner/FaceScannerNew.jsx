@@ -9,6 +9,8 @@ import remainingDays from "../../others/GetRemainingDays";
 import getExtendedSubscription from "../../getData/getExtendedSubscription";
 import getSubscriptionDaysLeft from "../../getData/getSubscriptionDaysLeft";
 import getExtendedTrainer from "../../getData/getExtendedTrainer";
+import { useUserStore } from "../../store/useUserStore";
+
 const FaceScannerNew = ({
   playNow,
   stopNow,
@@ -39,6 +41,9 @@ const FaceScannerNew = ({
   const canvasRef = React.useRef(null);
   const videoHeight = 480;
   const videoWidth = 640;
+
+  const cSetUser = useUserStore((state) => state.setUser);
+  const cUser = useUserStore((state) => state.user);
 
   const loadModels = async () => {
     const MODEL_URL = window.location.origin + "/models";
@@ -288,6 +293,8 @@ const FaceScannerNew = ({
               result.label === label.usersubscription?.flexprouser?.name
             ) {
               setUserId(label.usersubscription.flexprouser?.id);
+              cSetUser(label.usersubscription.flexprouser);
+
               console.log("user has been found");
               count = 0;
               loginstatus = true;
@@ -317,6 +324,7 @@ const FaceScannerNew = ({
                 time_out: new Date(1990, 0, 1, 0, 0),
               };
               setTrainers(() => userStatus);
+              cSetUser(userStatus);
             }
           });
           return record;
@@ -329,6 +337,7 @@ const FaceScannerNew = ({
         if (isAlreadyLogin?.length > 0) {
           loginstatus = false;
           setIsOnGoing("already-login");
+          
           return;
           //to be continue here sa balay hehehe
         }

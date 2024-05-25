@@ -10,6 +10,7 @@ import getExtendedSubscription from "../../getData/getExtendedSubscription";
 import getSubscriptionDaysLeft from "../../getData/getSubscriptionDaysLeft";
 import getExtendedTrainer from "../../getData/getExtendedTrainer";
 import LoadingEffect from "../mySection/loadingEffect/LoadingEffect";
+import { useUserStore } from "../../store/useUserStore";
 
 const FaceScanner = ({
   playNow,
@@ -22,6 +23,7 @@ const FaceScanner = ({
   isOnGoing,
   setIsLogin,
   setTrainers,
+  setcSubscription,
 }) => {
   const [modelsLoaded, setModelsLoaded] = React.useState(false);
   const [captureVideo, setCaptureVideo] = React.useState(false);
@@ -37,6 +39,8 @@ const FaceScanner = ({
   const canvasRef = React.useRef(null);
   const videoHeight = 480;
   const videoWidth = 640;
+
+  const setcUser = useUserStore((state) => state.setUser);
 
   React.useEffect(() => {
     // flexProUser
@@ -136,6 +140,7 @@ const FaceScanner = ({
 
   const fetchUserStatus = async (id) => {
     try {
+      console.log("user id", id);
       const response = await instance.get(`/api/user_status/${id}`);
       const users = response.data;
 
@@ -311,8 +316,11 @@ const FaceScanner = ({
               count >= numberOfDetection &&
               result.label === label.flex_pro_user?.name
             ) {
+              console.log("naunsa naman ni");
               setUserId(label.flex_pro_user?.id);
+              setcSubscription(label.flex_pro_user?.id);
               setUserFound(label.flex_pro_user?.name);
+
               await closeWebcam();
               count = 0;
 
@@ -356,6 +364,7 @@ const FaceScanner = ({
               if (userStatusResult != null && savedTimeRecord === false) {
                 const saved = await handleSaveTimeRecords(userStatusResult);
                 setSavedTimeRecord(saved);
+
                 return;
               } else {
                 setIsOnGoing("expired");

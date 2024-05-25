@@ -118,13 +118,13 @@ function ClientsOnline({
                   {yearValidation === 1990 ? "--:--" : timeOutString}
                 </strong>
               </p>
-              <NavLink
+              {/* <NavLink
                 className="btn btn-warning logout"
                 onClick={() => handleLogout(timeIn)}
                 to={"/"}
               >
                 Logout
-              </NavLink>
+              </NavLink> */}
             </div>
 
             <p

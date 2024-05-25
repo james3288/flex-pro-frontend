@@ -11,6 +11,9 @@ import {
   INITIAL_STATE,
   clientsOnWorkOutReducer,
 } from "../../reducers/clientsOnWorkOutReducer";
+import getUsersOnlineByDate from "../../getData/getUserOnlineByDate";
+import remainingDays from "../../others/GetRemainingDays";
+import ClientsOnWorkoutNew from "./clientsOnWorkout/ClientsOnWorkoutNew";
 
 const MyCLientsOnWorkout = () => {
   const [date, setDate] = useState(getFormattedDate());
@@ -27,10 +30,12 @@ const MyCLientsOnWorkout = () => {
   // }, [search]);
 
   let value = false;
-  const queryKey = useMemo(() => ["onWorkoutData"], []);
+
+  // const queryKey = useMemo(() => ["onWorkoutData"], []);
+  const queryKey = ["onWorkoutData"];
   const { isPending, error, data } = useQuery({
     queryKey,
-    queryFn: () => getUsersOnline(),
+    queryFn: () => getUsersOnlineByDate(date),
     refetchInterval: 1000,
   });
 
@@ -51,7 +56,7 @@ const MyCLientsOnWorkout = () => {
       </div>
     );
 
-  if (error) return <NoDataFound />;
+  if (error) return <NoDataFound caption="No Data has been found..." />;
 
   const data1 = data?.filter((user) => user?.date_log.includes(date));
 
@@ -127,24 +132,25 @@ const MyCLientsOnWorkout = () => {
             {value === false ? (
               state.name === "" ? ( // IF search is empty
                 data1?.map((online) => (
-                  <ClientsOnWorkout
-                    key={online.id}
-                    id={online.id}
-                    user_id={online.usersubscription.flexprouser.id}
-                    name={online.usersubscription.flexprouser.name}
-                    subscription={
-                      online.usersubscription.subscription.gym_rate_desc
-                    }
-                    timeIn={online.time_in}
-                    timeOut={online.time_out}
-                    date_subscribed={online.usersubscription.date_subscribed}
-                    date_log={online.date_log}
-                    blobPix={online.image}
-                    per={online.usersubscription.subscription.per.per}
-                    setTriggerLogout={setTriggerLogout}
-                    extendedSubDays={online.extendedSubDays}
-                    extendedSubscriptions={online.extendedSubscriptions}
-                  />
+                  // <ClientsOnWorkout
+                  //   key={online.id}
+                  //   id={online.id}
+                  //   user_id={online.usersubscription.flexprouser.id}
+                  //   name={online.usersubscription.flexprouser.name}
+                  //   subscription={
+                  //     online.usersubscription.subscription.gym_rate_desc
+                  //   }
+                  //   timeIn={online.time_in}
+                  //   timeOut={online.time_out}
+                  //   date_subscribed={online.usersubscription.date_subscribed}
+                  //   date_log={online.date_log}
+                  //   blobPix={online.image}
+                  //   per={online.usersubscription.subscription.per.per}
+                  //   setTriggerLogout={setTriggerLogout}
+                  //   extendedSubDays={online.extendedSubDays}
+                  //   extendedSubscriptions={online.extendedSubscriptions}
+                  // />
+                  <ClientsOnWorkoutNew online={online} key={online.id} />
                 ))
               ) : (
                 newData?.map((online) => (
@@ -165,6 +171,7 @@ const MyCLientsOnWorkout = () => {
                     setTriggerLogout={setTriggerLogout}
                     extendedSubDays={online.extendedSubDays}
                     extendedSubscriptions={online.extendedSubscriptions}
+                    subscription_id={online.usersubscription.subscription.id}
                   />
                 ))
               )

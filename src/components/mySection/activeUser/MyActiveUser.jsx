@@ -36,7 +36,7 @@ const MyActiveUser = () => {
         <div className="row">
           <div className="form-floating title">
             <h1>
-              FOR <span>ACTIVE</span> USERS
+              {data?.length} <span>ACTIVE</span> USERS
             </h1>
           </div>
         </div>

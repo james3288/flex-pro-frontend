@@ -8,6 +8,9 @@ import ReactTimeAgo from "react-time-ago";
 import remainingDays from "../../../others/GetRemainingDays";
 import formatTime from "../../../others/ReadableFormatTime";
 import UserLogout from "../clientsOnline/userLogout";
+import getExtendedSubscription from "../../../getData/getExtendedSubscription";
+import getSubscriptionDaysLeft from "../../../getData/getSubscriptionDaysLeft";
+import FormatDate from "../../../others/FormatDate";
 
 const ClientsOnWorkout = ({
   id,
@@ -23,6 +26,7 @@ const ClientsOnWorkout = ({
   setTriggerLogout,
   extendedSubDays,
   extendedSubscriptions,
+  subscription_id,
 }) => {
   const time_in = formatTimeToString(timeIn);
   const time_out = formatTimeToString(timeOut);
@@ -33,9 +37,16 @@ const ClientsOnWorkout = ({
   const [remaining, setRemaining] = useState(0);
   const [counter, setCounter] = useState(0);
   const [tempTimeOut, setTempTimeOut] = useState(Date());
+  const [extendedSubscript, setExtendedSubscript] = useState([]);
+
   // get the remaining days
   const getRemainingDays = async () => {
-    setRemaining(await remainingDays(date_subscribed, per));
+    setRemaining(await remainingDays(date_subscribed, per, user_id));
+  };
+
+  const extendedSubscription = async () => {
+    const data = await getExtendedSubscription(subscription_id);
+    setExtendedSubscript(data);
   };
 
   const formatDateOnly = (dateLog) => {
@@ -51,6 +62,7 @@ const ClientsOnWorkout = ({
     const intervalId = setInterval(() => {
       if (formatTime(remaining, "minutes-left") < 0) {
         // setRefresher2(true);
+        extendedSubscription();
 
         clearInterval(intervalId);
       } else {
@@ -72,6 +84,15 @@ const ClientsOnWorkout = ({
     setTempTimeOut(formatTimeToString(Date()));
 
     console.log(result);
+  };
+
+  const remainingDaysLeft = () => {
+    return getSubscriptionDaysLeft(
+      remaining,
+      extendedSubscript,
+      date_subscribed,
+      false
+    );
   };
 
   return (
@@ -138,9 +159,11 @@ const ClientsOnWorkout = ({
               ) : (
                 formatTime(remaining, "all")
               )} */}
-              {extendedSubDays < 0
-                ? "Expired"
-                : extendedSubDays + " day/s left"}
+
+              {/* {extendedSubDays < 0
+                ? remainingDaysLeft()
+                : extendedSubDays + " day/s left"} */}
+              {remainingDaysLeft()}
             </h5>
           </div>
 

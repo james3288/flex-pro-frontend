@@ -1,5 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import getUsers from "../../../getData/getUsers";
 import Users from "./Users";
 import UsersModal from "./usersModal";
@@ -9,6 +15,7 @@ import LoadingEffect from "../loadingEffect/LoadingEffect";
 import NoDataFound from "../noDataFound/NoDataFound";
 
 const MyUsers = () => {
+  const [isPending2, startTransition] = useTransition();
   const searchRef = useRef();
   const [selectedUser, setSelectedUser] = useState();
   const [filterData, setFilterData] = useState([]);
@@ -42,15 +49,17 @@ const MyUsers = () => {
   console.log(data);
 
   const handleOnChange = async (e) => {
-    setFilterData(() =>
-      data.filter(
-        (row) =>
-          row.flex_pro_user.name &&
-          row.flex_pro_user.name
-            .toLowerCase()
-            .includes(e.target.value.toLowerCase())
-      )
-    );
+    startTransition(() => {
+      setFilterData(() =>
+        data.filter(
+          (row) =>
+            row.flex_pro_user.name &&
+            row.flex_pro_user.name
+              .toLowerCase()
+              .includes(e.target.value.toLowerCase())
+        )
+      );
+    });
 
     setCounter((prev) => prev + 1);
   };

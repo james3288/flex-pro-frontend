@@ -22,6 +22,8 @@ import getForRenewalUsers from "../../getData/getForRenewalUsers";
 import getSubscriptionDaysLeft from "../../getData/getSubscriptionDaysLeft";
 import getExtendedSubscription from "../../getData/getExtendedSubscription";
 import LoadingEffect from "./loadingEffect/LoadingEffect";
+import getNoActiveUsers from "../../getData/getNoActiveUsers";
+import getNoOnlineUsers from "../../getData/getNoOnlineUsers";
 
 const MyDashboardSection = () => {
   const [flexProUsers, setFlexProUsers] = useState([]);
@@ -31,6 +33,7 @@ const MyDashboardSection = () => {
   const [triggerLogout, setTriggerLogout] = useState(false);
   const [counter, setCounter] = useState(0);
   const [noOnlineUser, setNoOnlineUser] = useState(0);
+  const [noActiveUsers, setNoActiveUsers] = useState(0);
   const [noRenewalUser, setNoRenewalUser] = useState(0);
   const [refresher, setRefresher] = useState(false);
   const [refresher2, setRefresher2] = useState(false);
@@ -77,7 +80,7 @@ const MyDashboardSection = () => {
 
   const getUsersOnline = async () => {
     try {
-      const response = await instance.get(`/api/user_online/`);
+      const response = await instance.get(`/api/user_online_top5/`);
       const users = response.data;
 
       const newUser = await Promise.all(
@@ -161,7 +164,7 @@ const MyDashboardSection = () => {
 
   const getActiveUsers = async () => {
     try {
-      const response = await instance.get(`/api/user_all_status/`);
+      const response = await instance.get(`/api/user_all_status_top5/`);
       const users = response.data;
 
       setNoOfActiveUsers(users.length);
@@ -204,23 +207,59 @@ const MyDashboardSection = () => {
     }
   };
 
-  const getNoOnlineUser = async () => {
-    try {
-      const response = await instance.get(`/api/no_user_online/`);
-      const users = response.data;
-      setNoOnlineUser(users.length);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-  };
+  // const getNoOnlineUser = async () => {
+  //   try {
+  //     const response = await instance.get(`/api/no_user_online/`);
+  //     const users = response.data;
+  //     setNoOnlineUser(users.length);
+  //   } catch (error) {
+  //     console.error("Error fetching users:", error);
+  //   }
+  // };
+
+  // const getNoActiveUsers = async () => {
+  //   try {
+  //     const response = await instance.get(`/api/user_all_status/`);
+  //     const users = response.data;
+  //     setNoActiveUsers(users.length);
+  //   } catch (error) {
+  //     console.error("Error fetching users:", error);
+  //   }
+  // };
 
   // for online users
   useEffect(() => {
     getUsersOnline();
   }, [triggerLogout]);
 
+  // GET NO OF ONLINE USERS
   useEffect(() => {
-    getNoOnlineUser();
+    const fetchNoOnlineUsers = async () => {
+      try {
+        const noOnlineUsers = await getNoOnlineUsers();
+
+        setNoOnlineUser(noOnlineUsers);
+      } catch (error) {
+        console.error("Error fetching inactive users:", error);
+      }
+    };
+
+    fetchNoOnlineUsers();
+  }, []);
+
+  // GET NO OF ACTIVE USERS
+  useEffect(() => {
+    const fetchNoActiveUsers = async () => {
+      try {
+        const noActiveUsers = await getNoActiveUsers();
+
+        setNoActiveUsers(noActiveUsers);
+      } catch (error) {
+        console.error("Error fetching inactive users:", error);
+      }
+    };
+
+    fetchNoActiveUsers();
   }, []);
 
   // for registered users
@@ -287,11 +326,11 @@ const MyDashboardSection = () => {
               <span>ACTIVE USER</span>
 
               <h1>
-                {noOfActiveUsers}{" "}
-                <strong> {noOfActiveUsers > 1 ? "USERS" : "USER"}</strong>
+                {noActiveUsers}{" "}
+                <strong> {noActiveUsers > 1 ? "USERS" : "USER"}</strong>
               </h1>
 
-              {noOfActiveUsers > 0 ? "" : <LoadingEffect />}
+              {noActiveUsers > 0 ? "" : <LoadingEffect />}
 
               <div className="scrollable-list-of-user">
                 {activeUsers?.slice(0, 5).map((user) => (

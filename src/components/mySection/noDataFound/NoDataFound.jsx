@@ -1,7 +1,7 @@
 import React from "react";
 import LoadingEffect from "../loadingEffect/LoadingEffect";
 
-const NoDataFound = () => {
+const NoDataFound = ({caption}) => {
   const errorStyle = {
     padding: "20px",
     borderRadius: "10px",
@@ -13,9 +13,7 @@ const NoDataFound = () => {
       <div className="row">
         <div className="col-lg-12">
           <LoadingEffect />
-          <h3 style={{ color: "white" }}>
-            There is something wrong with your data...
-          </h3>
+          <h3 style={{ color: "white" }}>{caption}</h3>
         </div>
       </div>
     </div>

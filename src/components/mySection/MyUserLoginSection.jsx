@@ -8,6 +8,7 @@ import loadImageData from "../../getData/loadImageData";
 import FormatDate from "../../others/FormatDate";
 import UserLoginModal from "../modals/UserLoginModal";
 import FaceScannerNew from "../face-scanner/FaceScannerNew";
+import { useUserStore } from "../../store/useUserStore";
 
 const MyUserLoginSection = () => {
   const [play, setPlay] = useState(false);
@@ -19,6 +20,7 @@ const MyUserLoginSection = () => {
   const [isOnGoing, setIsOnGoing] = useState();
   const [trainers, setTrainers] = useState();
   const [isLogin, setIsLogin] = useState(false);
+  const cUser = useUserStore((state) => state.user);
 
   const handlePlayClick = () => {
     setPlay(() => !play);
@@ -48,7 +50,6 @@ const MyUserLoginSection = () => {
       setUserFoundWithImage(newImgData);
     };
     userWithImg();
-
     // trainer
   }, [userId]);
 
@@ -183,7 +184,8 @@ const MyUserLoginSection = () => {
                   <div className="personal-trainer">
                     <h5>Subscription Remaining Days:</h5>
                     <h3 style={{ color: "yellowgreen" }}>
-                      {trainers?.extendedSubDays} day/s
+                      {/* {trainers?.extendedSubDays} day/s  */}
+                      {cUser?.extendedSubDays} day/s
                     </h3>
                   </div>
                   <div className="personal-trainer">
@@ -201,7 +203,9 @@ const MyUserLoginSection = () => {
                     Back to Dashboard
                   </NavLink> */}
                   {/* <form action=""> */}
-                    <button className="btn btn-success" onClick={handleRefresh}>PROCEED</button>
+                  <button className="btn btn-success" onClick={handleRefresh}>
+                    PROCEED
+                  </button>
                   {/* </form> */}
                 </div>
               </>
@@ -272,44 +276,14 @@ const MyUserLoginSection = () => {
                   </div>
                 </div>
               </div>
-              <div className="dashboard-col">
-                <div className="personal-trainer">
-                  <h5>Free Personal Trainer:</h5>
-                  {/* <h3>
-                      Jeoseph Bejec - <strong>CARDIO EXPERT</strong>
-                    </h3> */}
-
-                  <h3>
-                    {trainers?.usersubscription?.trainer?.name} -{" "}
-                    <strong>
-                      {trainers?.usersubscription?.trainer?.position}
-                    </strong>
-                  </h3>
-                </div>
-
-                <div className="personal-trainer">
-                  <h5>Subscription Remaining Days:</h5>
-                  <h3 style={{ color: "yellowgreen" }}>
-                    {trainers?.extendedSubDays} day/s
-                  </h3>
-                </div>
-                <div className="personal-trainer">
-                  <h5>Extended Trainer:</h5>
-                  {trainers?.extendedTrainer?.map((extended) => (
-                    <h6 style={{ color: "yellowgreen" }} key={extended?.id}>
-                      {extended.trainer?.name} -{" "}
-                      {FormatDate(extended?.date_extend)}
-                    </h6>
-                  ))}
-                </div>
-              </div>
+             
               <div class="back-to-dashboard">
                 {/* <NavLink className="btn btn-danger" to={"/"}>
                     Back to Dashboard
                   </NavLink> */}
                 {/* <form action=""> */}
                 <button className="btn btn-success" onClick={handleRefresh}>
-                 PROCEED
+                  PROCEED
                 </button>
                 {/* </form> */}
               </div>
