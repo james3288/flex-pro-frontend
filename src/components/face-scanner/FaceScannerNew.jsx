@@ -43,7 +43,13 @@ const FaceScannerNew = ({
   const videoWidth = 640;
 
   const cSetUser = useUserStore((state) => state.setUser);
+  const cSetTrainerRemainingDays = useUserStore(
+    (state) => state.setTrainerRemainingDays
+  );
+  const cSetSessionDays = useUserStore((state) => state.setSessionDays);
+
   const cUser = useUserStore((state) => state.user);
+  const cSetExtendedTrainer = useUserStore((state) => state.setExtendedTrainer);
 
   const loadModels = async () => {
     const MODEL_URL = window.location.origin + "/models";
@@ -231,6 +237,16 @@ const FaceScannerNew = ({
       });
   };
 
+  const extendedT = async (userSubscriptionId) => {
+    try {
+      const data = await getExtendedTrainer(userSubscriptionId);
+      cSetExtendedTrainer(data);
+    } catch (error) {
+      console.error("Error in fetchData:", error);
+    }
+  };
+
+  // LOAD MODELS & USERS
   useEffect(() => {
     const loadFaceModels = async () => {
       await loadModels();
@@ -294,6 +310,9 @@ const FaceScannerNew = ({
             ) {
               setUserId(label.usersubscription.flexprouser?.id);
               cSetUser(label.usersubscription.flexprouser);
+              cSetTrainerRemainingDays(label.trainersRemainingDays);
+              cSetSessionDays(label.usersubscription.session_days);
+              extendedT(label.usersubscription.id);
 
               console.log("user has been found");
               count = 0;
@@ -337,7 +356,7 @@ const FaceScannerNew = ({
         if (isAlreadyLogin?.length > 0) {
           loginstatus = false;
           setIsOnGoing("already-login");
-          
+
           return;
           //to be continue here sa balay hehehe
         }

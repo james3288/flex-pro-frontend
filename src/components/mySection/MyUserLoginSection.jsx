@@ -9,6 +9,9 @@ import FormatDate from "../../others/FormatDate";
 import UserLoginModal from "../modals/UserLoginModal";
 import FaceScannerNew from "../face-scanner/FaceScannerNew";
 import { useUserStore } from "../../store/useUserStore";
+import personalTrainerDaysLeft from "../../getData/personalTrainerDaysLeft";
+import getExtendedTrainer from "../../getData/getExtendedTrainer";
+import TrainerRemainingDays from "./forRenewal/TrainerRemainingDays";
 
 const MyUserLoginSection = () => {
   const [play, setPlay] = useState(false);
@@ -21,6 +24,13 @@ const MyUserLoginSection = () => {
   const [trainers, setTrainers] = useState();
   const [isLogin, setIsLogin] = useState(false);
   const cUser = useUserStore((state) => state.user);
+  const cTrainersRemainingDays = useUserStore(
+    (state) => state.trainersRemainingDays
+  );
+  const cSessionDays = useUserStore((state) => state.sessionDays);
+  // const cSetExtendedTrainer = useUserStore((state) => state.setExtendedTrainer);
+  const cExtendedTrainer = useUserStore((state) => state.extendedTrainer);
+  const [totalFreeTrainerLeft, setTotalFreeTrainerLeft] = useState(0);
 
   const handlePlayClick = () => {
     setPlay(() => !play);
@@ -49,7 +59,9 @@ const MyUserLoginSection = () => {
       let newImgData = { ...imgData, image: imageDataUrl };
       setUserFoundWithImage(newImgData);
     };
+
     userWithImg();
+
     // trainer
   }, [userId]);
 
@@ -177,6 +189,15 @@ const MyUserLoginSection = () => {
                       {trainers.usersubscription?.trainer?.name} -{" "}
                       <strong>
                         {trainers.usersubscription?.trainer?.position}
+                      </strong>{" "}
+                      <br />
+                      <strong style={{ color: "orange" }}>
+                        {personalTrainerDaysLeft(
+                          trainers.usersubscription?.trainer?.name,
+                          "remaining-days",
+                          cTrainersRemainingDays,
+                          cSessionDays
+                        )}
                       </strong>
                     </h3>
                   </div>
@@ -196,6 +217,16 @@ const MyUserLoginSection = () => {
                         {FormatDate(extended?.date_extend)}
                       </h6>
                     ))}
+                    <div className="trainerRemainingDays">
+                      <TrainerRemainingDays
+                        trainerRemainingDays={cTrainersRemainingDays}
+                        session_days={cSessionDays}
+                        extendedTrainer={cExtendedTrainer}
+                        trainers={trainers.usersubscription?.trainer?.name}
+                        totalFreeTrainerLeft={totalFreeTrainerLeft}
+                        setTotalFreeTrainerLeft={setTotalFreeTrainerLeft}
+                      />
+                    </div>
                   </div>
                 </div>
                 <div class="back-to-dashboard">
@@ -276,7 +307,7 @@ const MyUserLoginSection = () => {
                   </div>
                 </div>
               </div>
-             
+
               <div class="back-to-dashboard">
                 {/* <NavLink className="btn btn-danger" to={"/"}>
                     Back to Dashboard

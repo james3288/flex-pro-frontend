@@ -41,11 +41,14 @@ const TrainerRemainingDays = ({
   );
 
   return (
-    <h4 style={{ fontSize: "20px" }}>
+    <h4 style={{ fontSize: "20px", color: "orange" }}>
       {" "}
       {FREE_TRAINER_DAYS_LEFT === "N/A"
         ? "N/A"
-        : formatTime(FREE_TRAINER_DAYS_LEFT, "days-hours")}
+        : // : formatTime(FREE_TRAINER_DAYS_LEFT, "days-hours-minutes") ===
+          //   "0 day, 0 hour, 0 minute"
+          // ? "Expired"
+          formatTime(FREE_TRAINER_DAYS_LEFT, "days-hours-minutes")}
       {/* {extendedTrainerRemainingDays !== null
         ? extendedTrainerRemainingDays < 3
           ? personalTrainerDaysLeft(

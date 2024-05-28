@@ -21,6 +21,10 @@ const formatTime = (milliseconds, option) => {
     return minutes;
   } else if (option === "days-hours") {
     return `${days} ${days > 1 ? "days" : "day"}, ${hours} hours`;
+  } else if (option === "days-hours-minutes") {
+    return `${days} ${days > 1 ? "days" : "day"}, ${hours} ${
+      hours > 1 ? "hours" : "hour"
+    }, ${minutes} ${minutes > 1 ? "minutes" : "minute"}`;
   } else if (option === "days-only") {
     return days;
   }

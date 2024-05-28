@@ -35,9 +35,9 @@ const personalTrainerDaysLeft = (
     const trdays = trainerRemainingDays === undefined ? 0 : TRDAYS;
 
     // check sa og ang 3 days nga free expire na ba
-    let totalFreeTrainingDaysLeft = 0;
-    let totalExtendedTrainingDaysLeft = 0;
-    let grandTotalTrainingDaysLeft = 0;
+    var totalFreeTrainingDaysLeft = 0;
+    var totalExtendedTrainingDaysLeft = 0;
+    var grandTotalTrainingDaysLeft = 0;
 
     // if less than 0 it means expire na ang days nga free training
     if (trdays <= 0) {
