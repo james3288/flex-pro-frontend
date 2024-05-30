@@ -295,14 +295,18 @@ const RenewalUsers = ({
 
             {/* TRAINER REMAINING DAYS */}
             <h5>Extended Trainer Remaning Days:</h5>
-            <TrainerRemainingDays
-              trainerRemainingDays={trainerRemainingDays}
-              session_days={session_days}
-              extendedTrainer={extendedTrainer}
-              trainers={trainers}
-              totalFreeTrainerLeft={totalFreeTrainerLeft}
-              setTotalFreeTrainerLeft={setTotalFreeTrainerLeft}
-            />
+            {extendedTrainer?.length > 0 ? (
+              <TrainerRemainingDays
+                trainerRemainingDays={trainerRemainingDays}
+                session_days={session_days}
+                extendedTrainer={extendedTrainer}
+                trainers={trainers}
+                totalFreeTrainerLeft={totalFreeTrainerLeft}
+                setTotalFreeTrainerLeft={setTotalFreeTrainerLeft}
+              />
+            ) : (
+              <h4 style={{ fontSize: "20px", color: "orange" }}>N/A</h4>
+            )}
 
             {/* <h4>
               {" "}

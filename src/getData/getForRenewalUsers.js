@@ -127,10 +127,13 @@ const getForRenewalUsers = async () => {
             extendedTrainerDays === "Expired" ? 0 : extendedTrainerDays,
             "days-only"
           ),
+          extendedTrainerData: getExtendedTrainerData.length,
         }; // If imgpath is null, use default image
       })
     );
-    
+
+    // console.log("HELLOKING", newUser);
+
     return newUser;
   } catch (error) {
     console.error("Error fetching users:", error);

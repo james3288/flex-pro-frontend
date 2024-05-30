@@ -285,7 +285,7 @@ const MyDashboardSection = () => {
       let noOfRenewalUsers = users.filter(
         (user) =>
           (user.extendedSubDays <= 2 ||
-            (user.extendedTrainerDays <= 2 && user.extendedTrainerDays > -1)) &&
+            (user.extendedTrainerDays <= 2 && user.extendedTrainerData > 0)) &&
           user.usersubscription.subscription.gym_rate_desc.toUpperCase() !=
             "DAY PASS"
       );
@@ -428,7 +428,7 @@ const MyDashboardSection = () => {
                   (user) =>
                     (user.extendedSubDays <= 2 ||
                       (user.extendedTrainerDays <= 2 &&
-                        user.extendedTrainerDays > -1)) &&
+                        user.extendedTrainerData > 0)) &&
                     user.usersubscription.subscription.gym_rate_desc.toUpperCase() !=
                       "DAY PASS" && (
                       <ForRenewal
