@@ -1,6 +1,15 @@
 import React from "react";
 import formatTime from "../others/ReadableFormatTime";
 
+
+// Function to add days to a Date object
+
+const timeStampAddDays = (timeStamp,extendedDays,daysonly) => {
+  const timestamp = timeStamp + (extendedDays * 24 * 60 * 60 * 1000);
+  return timestamp < 0 ? "Expired" : daysonly === false ? formatTime(timestamp,"days-hours") : formatTime(timestamp,"days-left")
+}
+
+
 const getSubscriptionDaysLeft = (
   remaining,
   extendedSubscript,
@@ -18,6 +27,7 @@ const getSubscriptionDaysLeft = (
   // initialize  remainingdays to default 0
   let remainingDays = 0;
   let remainingHoursOnly = 0;
+  let extendedSessionDays = 0;
 
   // this is the remaining days of the main subscription
   remainingDays += formatTime(remaining, "days-left");
@@ -25,7 +35,7 @@ const getSubscriptionDaysLeft = (
 
   // extended days for subscriptions
   extendedSubscript?.map((extend, index) => {
-    remainingDays += extend?.extended_session_day;
+    extendedSessionDays += extend?.extended_session_day;
 
     // remainingDays += extendedRangeDays(
     //   extend?.date_extend,
@@ -33,14 +43,16 @@ const getSubscriptionDaysLeft = (
     // );
   });
 
-  return daysOnly === true
-    ? remainingDays
-    : remainingDays < 0
-    ? "Expired"
-    : `${remainingDays} ${
-        remainingDays > 1 ? " days," : "day,"
-      } ${remainingHoursOnly} ${remainingHoursOnly > 1 ? " hours" : " hour"}`;
-  // return remaining < 0 ? "Expired" : remainingDays + " Days";
+  // return daysOnly === true
+  //   ? remainingDays
+  //   : remainingDays < 0
+  //   ? "Expired"
+  //   : `${remainingDays} ${
+  //       remainingDays > 1 ? " days," : "day,"
+  //     } ${remainingHoursOnly} ${remainingHoursOnly > 1 ? " hours" : " hour"}`;
+  // // return remaining < 0 ? "Expired" : remainingDays + " Days";
+
+  return timeStampAddDays(remaining,extendedSessionDays,daysOnly)
 };
 
 export default getSubscriptionDaysLeft;

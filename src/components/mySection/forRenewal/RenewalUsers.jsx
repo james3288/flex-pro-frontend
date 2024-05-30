@@ -67,13 +67,12 @@ const RenewalUsers = ({
       );
 
       if (daysleft === "Expired") {
-        // setRefresher2(true);
-
+        // setRefresher2(true)
         counter == 0 && handleExpired();
-
+        
         clearInterval(intervalId);
       } else {
-        getRemainingDays();
+        getRemainingDays();      
       }
     }, 1000);
 
