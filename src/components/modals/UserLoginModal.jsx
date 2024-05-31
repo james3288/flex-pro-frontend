@@ -6,6 +6,9 @@ import GetUserStatus from "../../getData/getUserStatus";
 import CheckIfAlreadyIn from "../../getData/checkIfAlreadyLogin";
 import PostSaveTimeRecords from "../../postData/postSaveTimeRecords";
 import LoadingEffect from "../mySection/loadingEffect/LoadingEffect";
+import { useUserStore } from "../../store/useUserStore";
+import getExtendedSubscription from "../../getData/getExtendedSubscription";
+import getExtendedTrainer from "../../getData/getExtendedTrainer";
 
 const UserLoginModal = ({
   setUserId,
@@ -22,6 +25,23 @@ const UserLoginModal = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const buttonStyle = "btn btn-success";
+
+  const cSetUser = useUserStore((state) => state.setUser);
+  const cSetTrainerRemainingDays = useUserStore(
+    (state) => state.setTrainerRemainingDays
+  );
+  const cSetSessionDays = useUserStore((state) => state.setSessionDays);
+
+  const cUser = useUserStore((state) => state.user);
+  const cSetExtendedTrainer = useUserStore((state) => state.setExtendedTrainer);
+  const cSetSubscriptionRemainingDays = useUserStore(
+    (state) => state.setSubscriptionRemainingDays
+  );
+  const cSetExtendedSubscription = useUserStore(
+    (state) => state.setExtendedSubscription
+  );
+  const cSetDateSubscribed = useUserStore((state) => state.setDateSubscribed);
+  const cSetLoginUsingId = useUserStore((state) => state.setLoginUsingId);
 
   const handleNumpadOnClick = (e) => {
     setNumpadResult((prev) => prev + e.target.value);
@@ -47,7 +67,7 @@ const UserLoginModal = ({
     const newUser = user.filter((u) => u.usersubscription.flexprouser.id == id);
     setActiveUser(newUser);
 
-    console.log(newUser);
+    console.log("ACTIVE USER", newUser);
     setIsLoading(false);
   };
 
@@ -83,7 +103,7 @@ const UserLoginModal = ({
             time_out: new Date(1990, 0, 1, 0, 0),
           };
 
-          setTrainers(() => userStatus);
+          // setTrainers(() => userStatus);
         }
       });
       return record;
@@ -99,20 +119,73 @@ const UserLoginModal = ({
         setIsOnGoing
       );
       setSavedTimeRecord(saved);
+
       return;
     } else {
       setIsOnGoing("expired");
     }
   };
 
-  useEffect(() => {
-    console.log("active", activeUser);
-  }, [activeUser]);
-
   // get the remaining days
   const getRemainingDays = async (date_subscribed, per, user_id) => {
-    setRDays(await remainingDays(date_subscribed, per, user_id));
+    // setRDays(await remainingDays(date_subscribed, per, user_id));
+
+    cSetSubscriptionRemainingDays(
+      await remainingDays(date_subscribed, per, user_id)
+    );
   };
+
+  const extendedSub = async (subscriptionId) => {
+    try {
+      const data = await getExtendedSubscription(subscriptionId);
+      cSetExtendedSubscription(data);
+    } catch (error) {
+      console.error("Error in fetching Extended Subscription:", error);
+    }
+  };
+
+  const extendedT = async (userSubscriptionId) => {
+    try {
+      const data = await getExtendedTrainer(userSubscriptionId);
+      cSetExtendedTrainer(data);
+    } catch (error) {
+      console.error("Error in fetchData:", error);
+    }
+  };
+
+  // USE EFFECT
+  useEffect(() => {
+    if (activeUser?.length > 0) {
+      console.log("USE EFFECT ACTIVE USER", activeUser[0]);
+      //get remaining subscription
+      getRemainingDays(
+        activeUser[0].usersubscription?.date_subscribed,
+        activeUser[0].usersubscription?.subscription?.per?.per,
+        activeUser[0].usersubscription?.flexprouser?.id
+      );
+
+      // get trainer remaining days
+      cSetTrainerRemainingDays(activeUser[0].trainersRemainingDays);
+
+      // get training session
+      cSetSessionDays(activeUser[0].usersubscription.session_days);
+
+      extendedT(activeUser[0].usersubscription.id);
+
+      // get extended subscription
+      extendedSub(activeUser[0].usersubscription?.id);
+
+      // date subscribe
+      cSetDateSubscribed(activeUser[0].usersubscription?.date_subscribed);
+
+      //set if login using id
+      cSetLoginUsingId(true);
+
+      setTrainers(activeUser[0]);
+    }
+  }, [activeUser]);
+
+  // END USEEFFECT
 
   return (
     <div

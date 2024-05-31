@@ -12,6 +12,7 @@ import { useUserStore } from "../../store/useUserStore";
 import personalTrainerDaysLeft from "../../getData/personalTrainerDaysLeft";
 import getExtendedTrainer from "../../getData/getExtendedTrainer";
 import TrainerRemainingDays from "./forRenewal/TrainerRemainingDays";
+import getSubscriptionDaysLeft from "../../getData/getSubscriptionDaysLeft";
 
 const MyUserLoginSection = () => {
   const [play, setPlay] = useState(false);
@@ -30,6 +31,15 @@ const MyUserLoginSection = () => {
   const cSessionDays = useUserStore((state) => state.sessionDays);
   // const cSetExtendedTrainer = useUserStore((state) => state.setExtendedTrainer);
   const cExtendedTrainer = useUserStore((state) => state.extendedTrainer);
+  const cSubscriptionRemainingDays = useUserStore(
+    (state) => state.subscriptionRemainingDays
+  );
+  const cDateSubscribed = useUserStore((state) => state.dateSubscribed);
+  const cExtendedSubscription = useUserStore(
+    (state) => state.extendedSubscription
+  );
+  const cLoginUsingId = useUserStore((state) => state.loginUsingId);
+
   const [totalFreeTrainerLeft, setTotalFreeTrainerLeft] = useState(0);
 
   const handlePlayClick = () => {
@@ -206,7 +216,15 @@ const MyUserLoginSection = () => {
                     <h5>Subscription Remaining Days:</h5>
                     <h3 style={{ color: "yellowgreen" }}>
                       {/* {trainers?.extendedSubDays} day/s  */}
-                      {cUser?.extendedSubDays} day/s
+                      {/* {cUser?.extendedSubDays} day/s */}
+                      {cLoginUsingId === true
+                        ? getSubscriptionDaysLeft(
+                            cSubscriptionRemainingDays,
+                            cExtendedSubscription,
+                            cDateSubscribed,
+                            false
+                          )
+                        : cUser?.extendedSubDays + " day/s"}
                     </h3>
                   </div>
                   <div className="personal-trainer">

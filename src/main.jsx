@@ -21,6 +21,7 @@ import ActiveUserPage from "./pages/activeUserPage/ActiveUserPage.jsx";
 import UsersPage from "./pages/usersPage/UsersPage.jsx";
 import UserHistoryPage from "./pages/userHistory/UserHistoryPage.jsx";
 import TrainerHistoryPage from "./pages/trainorHistory/trainerHistoryPage.jsx";
+import ReportPage from "./pages/reportPage/ReportPage.jsx";
 
 const queryClient = new QueryClient();
 
@@ -80,6 +81,10 @@ const router = createBrowserRouter([
   {
     path: "/trainer-history",
     element: <TrainerHistoryPage />,
+  },
+  {
+    path: "/reports",
+    element: <ReportPage />,
   },
 ]);
 

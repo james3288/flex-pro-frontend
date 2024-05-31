@@ -113,6 +113,17 @@ function MyHeader({ setIsOpen, setLeftMenuOpen, setOffCanvasMenu }) {
                           ADMIN
                         </a>
                       </li>
+                      <li>
+                        <NavLink
+                          to={`/reports`}
+                          className={({ isActive, isPending }) =>
+                            isActive ? "active" : isPending ? "pending" : ""
+                          }
+                          target="_blank"
+                        >
+                          REPORTS
+                        </NavLink>
+                      </li>
                     </ul>
                   </li>
                   <li>

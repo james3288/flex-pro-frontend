@@ -1,0 +1,21 @@
+.banner {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  button {
+    margin: 0 5px 5px 0;
+  }
+}
+
+.header {
+  .header-col {
+    padding: 15px 5px !important;
+    background: rgb(41, 41, 41);
+    text-align: center;
+    font-weight: bold;
+    border: 1px solid black;
+    color: white;
+    text-transform: uppercase;
+  }
+}

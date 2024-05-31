@@ -373,7 +373,7 @@ const MyDashboardSection = () => {
                 {flexProUsers.map((user) => (
                   // Get the time portion
 
-                  <ClientsOnline
+                  <ClientsOnline  
                     key={user.id}
                     clientName={user.usersubscription.flexprouser.name}
                     // clientName={"KJ"}
