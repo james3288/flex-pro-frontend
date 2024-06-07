@@ -46,7 +46,7 @@ const ReportPage = () => {
           Generate
         </button>
       </div>
-      {cSubscription === "all" ? (
+      {cSubscription === "all" || cSubscription === "free-trainer" ? (
         <div className="row header">
           <div className="col-2 header-col">User</div>
           <div className="col-2 header-col">Date Subscribed</div>

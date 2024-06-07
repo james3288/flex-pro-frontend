@@ -153,20 +153,28 @@ const GenerateReportModal = () => {
                   <option value={0}>-- Select Extended Subscription --</option>
                   <option value="all">All</option>
                   <option value="extended-trainer">Extended Trainer</option>
+                  <option value="free-trainer">Free Trainer</option>
                 </select>
 
                 <br />
                 <span style={{ color: "red" }}>select subscriptions</span>
               </div>
-              <label className="col-form-label">Trainer (optional)</label>
-              <input
-                type="text"
-                className="form-control"
-                id="personal-training-session"
-                name="trainer"
-                onChange={handleChange}
-                value={trainer}
-              />
+              {subscription === "all" ? (
+                ""
+              ) : (
+                <>
+                  <label className="col-form-label">Trainer (optional)</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="personal-training-session"
+                    name="trainer"
+                    onChange={handleChange}
+                    value={trainer}
+                  />
+                </>
+              )}
+
               <label className="col-form-label">Date From:</label>
               <input
                 type="datetime-local"
