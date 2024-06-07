@@ -1,21 +1,48 @@
-.banner {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-
-  button {
-    margin: 0 5px 5px 0;
-  }
+#root {
+  background: white !important;
 }
+.wrapper {
+  background: white !important;
+  height: 100%;
+  padding: 20px 0;
+  .banner {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
 
-.header {
-  .header-col {
-    padding: 15px 5px !important;
-    background: rgb(41, 41, 41);
-    text-align: center;
-    font-weight: bold;
-    border: 1px solid black;
-    color: white;
-    text-transform: uppercase;
+    button {
+      margin: 0 5px 5px 0;
+    }
+  }
+
+  .header {
+    border: 1px solid #bbb;
+    .header-col {
+      padding: 15px 5px !important;
+      background: #bbb;
+      text-align: center;
+      font-weight: bold;
+      color: black;
+      text-transform: uppercase;
+      font-size: 14px;
+    }
+  }
+
+  .body {
+    border: 1px solid #bbb;
+    .body-col {
+      text-align: center;
+      padding: 5px 0 !important;
+      text-transform: uppercase;
+      font-size: 13px;
+    }
+  }
+
+  .total {
+    border: 1px solid #bbb;
+    .total-col {
+      text-align: center;
+      padding: 10px 0;
+    }
   }
 }

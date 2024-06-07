@@ -3,17 +3,21 @@ import { produce } from "immer";
 
 const initialState = {
   reportData: {
-    subscription: "123",
+    subscription: "",
     trainer: "",
-    dateFrom: null,
-    dateTo: null,
+    dateFrom: new Date(),
+    dateTo: new Date(),
   },
+  modalTitle: "",
+  modalId: 0,
+  userSubscriptionReport: [],
+  subscriptionTotalIncome: 0,
+  extendedTrainerReport: [],
+  extendedTrainerTotalSession: 0,
 };
 
 export const useReportStore = create((set) => ({
   ...initialState,
-  modalTitle: "",
-  modalId: 0,
   setModalTitle: (data) => set((state) => ({ modalTitle: data })),
   setModalId: (data) => set((state) => ({ modalId: data })),
   setSubscription: (data) =>
@@ -38,6 +42,36 @@ export const useReportStore = create((set) => ({
     set(
       produce((state) => {
         state.reportData.dateTo = data;
+      })
+    ),
+  // setUserSubscriptionReport: async (data) =>
+  //   set((state) => ({ userSubscriptionReport: data })),
+  setUserSubscriptionReport: async (data) =>
+    set(
+      produce((state) => {
+        state.userSubscriptionReport = data;
+      })
+    ),
+  setSubscriptionTotalIncome: async () =>
+    set((state) => ({
+      subscriptionTotalIncome: state?.userSubscriptionReport.reduce(
+        (total, item) => total + parseFloat(item.rate),
+        0 // Start accumulating from 0
+      ),
+    })),
+  setExtendedTrainerTotalSession: async () =>
+    set((state) => ({
+      extendedTrainerTotalSession: state?.extendedTrainerReport?.reduce(
+        (total1, item) => total1 + parseFloat(item.extended_session_day),
+        0
+      ),
+    })),
+  // setExtendedTrainerReport: async (data) =>
+  //   set((state) => ({ extendedTrainerReport: data })),
+  setExtendedTrainerReport: async (data) =>
+    set(
+      produce((state) => {
+        state.extendedTrainerReport = data;
       })
     ),
 }));

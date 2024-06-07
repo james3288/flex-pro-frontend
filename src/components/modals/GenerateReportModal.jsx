@@ -1,19 +1,35 @@
 import React, { useEffect } from "react";
 import { useReportStore } from "../../store/useReportStore";
 import FormatDateISO from "../../others/FormatDateISO";
+import getUserSubscriptionReport from "../../getData/getUserSubscriptionReport";
+import FormatDate from "../../others/FormatDate";
+import FormatDateOnly from "../../others/FormatDateOnly";
+import getExtendedTrainerReport from "../../getData/getExtendedTrainerReport";
 
 const GenerateReportModal = () => {
   const cModalTitle = useReportStore((state) => state.modalTitle);
   const cModalId = useReportStore((state) => state.modalId);
 
   //setter
-  const { setSubscription, setTrainer, setDateFrom, setDateTo } =
-    useReportStore((state) => ({
-      setSubscription: state.setSubscription,
-      setTrainer: state.setTrainer,
-      setDateFrom: state.setDateFrom,
-      setDateTo: state.setDateTo,
-    }));
+  const {
+    setSubscription,
+    setTrainer,
+    setDateFrom,
+    setDateTo,
+    setUserSubscriptionReport,
+    setSubscriptionTotalIncome,
+    setExtendedTrainerReport,
+    setExtendedTrainerTotalSession,
+  } = useReportStore((state) => ({
+    setSubscription: state.setSubscription,
+    setTrainer: state.setTrainer,
+    setDateFrom: state.setDateFrom,
+    setDateTo: state.setDateTo,
+    setUserSubscriptionReport: state.setUserSubscriptionReport,
+    setSubscriptionTotalIncome: state.setSubscriptionTotalIncome,
+    setExtendedTrainerReport: state.setExtendedTrainerReport,
+    setExtendedTrainerTotalSession: state.setExtendedTrainerTotalSession,
+  }));
 
   //getter
   const { subscription, trainer, dateFrom, dateTo } = useReportStore(
@@ -33,19 +49,74 @@ const GenerateReportModal = () => {
     switch (e.target.name) {
       case "trainer":
         setTrainer(e.target.value);
+        break;
       case "subscription":
+        setUserSubscriptionReport([]);
+        setExtendedTrainerReport([]);
+        setSubscriptionTotalIncome(0);
+        setExtendedTrainerTotalSession(0);
         setSubscription(e.target.value);
+        break;
       case "dateFrom":
         setDateFrom(e.target.value);
-
+        break;
       case "dateTo":
         setDateTo(e.target.value);
+        break;
+      default:
+        break;
     }
   };
 
-  useEffect(() => {
-    console.log(subscription);
-  }, [subscription]);
+  // useEffect(() => {
+  //   console.log(subscription);
+  // }, [subscription]);
+
+  const handleOnSearch = async () => {
+    const dFrom = new Date(dateFrom);
+    const dTo = new Date(dateTo);
+
+    // To include the end date, add one day to toDate
+    dTo.setDate(dTo.getDate() + 1);
+
+    const getDataByAll = async () => {
+      setUserSubscriptionReport(
+        dFrom !== null &&
+          dTo !== null &&
+          (await getUserSubscriptionReport(
+            FormatDateOnly(dFrom),
+            FormatDateOnly(dTo)
+          ))
+      );
+
+      await setSubscriptionTotalIncome();
+      // await getUserSubscriptionReport()
+    };
+
+    const getByExtendedTrainer = async () => {
+      setExtendedTrainerReport(
+        dFrom !== null &&
+          dTo !== null &&
+          (await getExtendedTrainerReport(
+            FormatDateOnly(dFrom),
+            FormatDateOnly(dTo),
+            trainer
+          ))
+      );
+      await setExtendedTrainerTotalSession();
+      // await getUserSubscriptionReport()
+    };
+
+    if (subscription === "all") {
+      getDataByAll();
+    } else if (subscription === "extended-trainer") {
+      getByExtendedTrainer();
+    }
+  };
+
+  // const formatDateTimeLocal = (date) => {
+  //   return new Date(date).toISOString().slice(0, 16);
+  // };
 
   return (
     <>
@@ -81,6 +152,7 @@ const GenerateReportModal = () => {
                 >
                   <option value={0}>-- Select Extended Subscription --</option>
                   <option value="all">All</option>
+                  <option value="extended-trainer">Extended Trainer</option>
                 </select>
 
                 <br />
@@ -103,6 +175,7 @@ const GenerateReportModal = () => {
                 onChange={handleChange}
                 value={dateFrom}
               />
+
               <label className="col-form-label">Date To:</label>
               <input
                 type="datetime-local"
@@ -111,6 +184,9 @@ const GenerateReportModal = () => {
                 onChange={handleChange}
                 value={dateTo}
               />
+              <label className="col-form-label" style={{ color: "red" }}>
+                {dateTo === "" && "please select a valid date"}
+              </label>
             </div>
             <div className="modal-footer">
               <button
@@ -121,7 +197,11 @@ const GenerateReportModal = () => {
                 Close
               </button>
 
-              <button type="button" className="btn btn-primary">
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleOnSearch}
+              >
                 Search
               </button>
             </div>
