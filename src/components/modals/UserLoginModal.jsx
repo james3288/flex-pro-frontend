@@ -64,7 +64,7 @@ const UserLoginModal = ({
     setIsLoading(true);
     const user = await get_active_user();
 
-    const newUser = user.filter((u) => u.usersubscription.flexprouser.id == id);
+    const newUser = user.filter((u) => u.usersubscription.flexprouser?.id == id);
     setActiveUser(newUser);
 
     console.log("ACTIVE USER", newUser);
@@ -72,17 +72,17 @@ const UserLoginModal = ({
   };
 
   const handleLoginOnclick = async () => {
-    setUserId(activeUser[0]?.usersubscription.flexprouser.id);
+    setUserId(activeUser[0]?.usersubscription.flexprouser?.id);
     setUserFound(activeUser[0]?.usersubscription.flexprouser?.name);
 
     // check if user have subscription
     const get_userStatus = await GetUserStatus(
-      activeUser[0]?.usersubscription.flexprouser.id
+      activeUser[0]?.usersubscription.flexprouser?.id
     );
 
     // already login function
     const isAlreadyLogin = await CheckIfAlreadyIn(
-      activeUser[0]?.usersubscription.flexprouser.id
+      activeUser[0]?.usersubscription.flexprouser?.id
     );
 
     // check if already login
@@ -246,9 +246,9 @@ const UserLoginModal = ({
                       <div>
                         <h3>
                           {" "}
-                          {activeUser[0]?.usersubscription.flexprouser.id}
+                          {activeUser[0]?.usersubscription.flexprouser?.id}
                           {" - "}
-                          {activeUser[0]?.usersubscription.flexprouser.name}
+                          {activeUser[0]?.usersubscription.flexprouser?.name}
                         </h3>
                         <h5>
                           {

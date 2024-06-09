@@ -47,8 +47,8 @@ const UsersModal = ({ id, option, name, selectedUsers }) => {
     if (option === "Update") {
       // console.log(selectedUsers);
       refName.current.value = selectedUsers?.flex_pro_user?.name;
-      refWeight.current.value = selectedUsers?.flex_pro_user.weights;
-      refContactNo.current.value = selectedUsers?.flex_pro_user.contact_number;
+      refWeight.current.value = selectedUsers?.flex_pro_user?.weights;
+      refContactNo.current.value = selectedUsers?.flex_pro_user?.contact_number;
       refEmergencyNo.current.value =
         selectedUsers?.flex_pro_user?.contact_number_ioe;
       // refImage.current.value = file;
@@ -60,7 +60,7 @@ const UsersModal = ({ id, option, name, selectedUsers }) => {
         type: "CHANGE_INPUT",
         payload: {
           name: "id",
-          value: selectedUsers?.flex_pro_user.id,
+          value: selectedUsers?.flex_pro_user?.id,
         },
       });
 

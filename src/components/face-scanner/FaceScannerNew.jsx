@@ -123,7 +123,9 @@ const FaceScannerNew = ({
         users.map(async (user) => {
           // Call getImagePath asynchronously for each user
           const imgpath = await getImagePath(
-            user.usersubscription.flexprouser.id
+            user.usersubscription.flexprouser?.id === null
+              ? 0
+              : user.usersubscription.flexprouser?.id
           );
 
           const imageDataUrl = await loadImageData(imgpath.image1);
@@ -299,7 +301,7 @@ const FaceScannerNew = ({
       loginstatus === false &&
         isLogin === false &&
         results.forEach((result, i) => {
-          flexProUser.forEach(async (label) => {
+          flexProUser?.forEach(async (label) => {
             if (result.label === label.usersubscription?.flexprouser?.name) {
               count = count + 1;
             }
@@ -309,7 +311,7 @@ const FaceScannerNew = ({
               result.label === label.usersubscription?.flexprouser?.name
             ) {
               setUserId(label.usersubscription.flexprouser?.id);
-              cSetUser(label.usersubscription.flexprouser);
+              cSetUser(label.usersubscription?.flexprouser);
               cSetTrainerRemainingDays(label.trainersRemainingDays);
               cSetSessionDays(label.usersubscription.session_days);
               extendedT(label.usersubscription.id);
@@ -544,7 +546,7 @@ const FaceScannerNew = ({
       <div>
         {captureVideo ? (
           modelsLoaded ? (
-            flexProUser.length > 0 ? (
+            flexProUser?.length > 0 ? (
               content()
             ) : (
               <LoadingEffect />

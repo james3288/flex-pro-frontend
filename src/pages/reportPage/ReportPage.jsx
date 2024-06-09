@@ -28,6 +28,8 @@ const ReportPage = () => {
 
   const cFreeSessionTotal = useReportStore((state) => state.freeTotalSession);
 
+  const cTotalTrainerRate = useReportStore((state) => state.totalTrainerRate);
+
   const [total, setTotal] = useState(0);
 
   const handleGenerateData = () => {
@@ -56,7 +58,7 @@ const ReportPage = () => {
           <div className="col-2 header-col">Subscription</div>
           <div className="col-2 header-col">Free Trainer</div>
           <div className="col-2 header-col">Rate</div>
-          <div className="col-2 header-col">Per</div>
+          <div className="col-2 header-col">Days/Month</div>
         </div>
       ) : cSubscription === "free-trainer" ? (
         <div className="row header">
@@ -74,7 +76,8 @@ const ReportPage = () => {
           <div className="col-2 header-col">Subscription</div>
           <div className="col-2 header-col">Trainer</div>
           <div className="col-2 header-col">Session days</div>
-          <div className="col-2 header-col">Per</div>
+          <div className="col-1 header-col">PT Rate</div>
+          <div className="col-1 header-col">*</div>
         </div>
       )}
 
@@ -102,7 +105,12 @@ const ReportPage = () => {
               : cExtendedTrainerTotalSession + " DAYS"}
           </h2>
         </div>
-        <div className="col-2 total-col"></div>
+        <div className="col-2 total-col">
+          <h2>
+            {cSubscription === "extended-trainer" &&
+              cTotalTrainerRate.toLocaleString()}
+          </h2>
+        </div>
       </div>
 
       <GenerateReportModal />

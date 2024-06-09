@@ -23,6 +23,7 @@ const GenerateReportModal = () => {
     setExtendedTrainerTotalSession,
     setUserSubscriptionReportByFreeTrainer,
     setFreeTotalSession,
+    setTotalTrainerRate,
   } = useReportStore((state) => ({
     setSubscription: state.setSubscription,
     setTrainer: state.setTrainer,
@@ -35,6 +36,7 @@ const GenerateReportModal = () => {
     setUserSubscriptionReportByFreeTrainer:
       state.setUserSubscriptionReportByFreeTrainer,
     setFreeTotalSession: state.setFreeTotalSession,
+    setTotalTrainerRate: state.setTotalTrainerRate,
   }));
 
   //getter
@@ -63,6 +65,7 @@ const GenerateReportModal = () => {
         setSubscriptionTotalIncome(0);
         setExtendedTrainerTotalSession(0);
         setFreeTotalSession(0);
+        setTotalTrainerRate(0);
         setSubscription(e.target.value);
         break;
       case "dateFrom":
@@ -112,6 +115,7 @@ const GenerateReportModal = () => {
           ))
       );
       await setExtendedTrainerTotalSession();
+      await setTotalTrainerRate();
       // await getUserSubscriptionReport()
     };
 

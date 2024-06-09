@@ -12,7 +12,9 @@ const getActiveUsers = async () => {
       users.map(async (user) => {
         // Call getImagePath asynchronously for each user
         const imgpath = await getImagePath(
-          user.usersubscription.flexprouser.id
+          user.usersubscription.flexprouser?.id === null
+            ? 0
+            : user.usersubscription.flexprouser?.id
         );
 
         // get the remaining days
@@ -30,7 +32,7 @@ const getActiveUsers = async () => {
         );
         //end get trainers remaining days
 
-        const imageDataUrl = await loadImageData(imgpath.image1);
+        const imageDataUrl = await loadImageData(imgpath?.image1);
 
         return {
           ...user,

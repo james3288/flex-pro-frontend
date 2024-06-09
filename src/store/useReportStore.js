@@ -16,6 +16,7 @@ const initialState = {
   extendedTrainerTotalSession: 0,
   freeTotalSession: 0,
   userSubscriptionReportByFreeTrainer: [],
+  totalTrainerRate: 0,
 };
 
 export const useReportStore = create((set) => ({
@@ -89,4 +90,11 @@ export const useReportStore = create((set) => ({
         state.userSubscriptionReportByFreeTrainer = data;
       })
     ),
+  setTotalTrainerRate: async () =>
+    set((state) => ({
+      totalTrainerRate: state?.extendedTrainerReport?.reduce(
+        (total3, item) => total3 + parseFloat(item.trainer_rate),
+        0
+      ),
+    })),
 }));

@@ -87,10 +87,12 @@ const MyDashboardSection = () => {
         users.slice(0, 5).map(async (user) => {
           // Call getImagePath asynchronously for each user
           const imgpath = await getImagePath(
-            user.usersubscription.flexprouser.id
+            user.usersubscription.flexprouser?.id === null
+              ? 0
+              : user.usersubscription.flexprouser?.id
           );
 
-          const imageDataUrl = await loadImageData(imgpath.image1);
+          const imageDataUrl = await loadImageData(imgpath?.image1);
 
           // get trainiers remaining days
           const getTrainersRemainingDays = await remainingDays(
@@ -146,7 +148,7 @@ const MyDashboardSection = () => {
         users.slice(0, 5).map(async (user) => {
           // Call getImagePath asynchronously for each user
 
-          const imageDataUrl = await loadImageData(user.image1);
+          const imageDataUrl = await loadImageData(user?.image1);
 
           return {
             ...user,
@@ -173,7 +175,9 @@ const MyDashboardSection = () => {
         users.slice(0, 5).map(async (user) => {
           // Call getImagePath asynchronously for each user
           const imgpath = await getImagePath(
-            user.usersubscription.flexprouser.id
+            user.usersubscription.flexprouser?.id === null
+              ? 0
+              : user.usersubscription.flexprouser?.id
           );
 
           // get the remaining days
@@ -191,7 +195,7 @@ const MyDashboardSection = () => {
           );
           //end get trainers remaining days
 
-          const imageDataUrl = await loadImageData(imgpath.image1);
+          const imageDataUrl = await loadImageData(imgpath?.image1);
 
           return {
             ...user,
@@ -337,9 +341,9 @@ const MyDashboardSection = () => {
                   <RegisteredUser
                     key={user.id}
                     pix={Pic3}
-                    user_id={user.usersubscription.flexprouser.id}
+                    user_id={user.usersubscription.flexprouser?.id}
                     blobPix={user.image}
-                    registeredName={user.usersubscription.flexprouser.name}
+                    registeredName={user.usersubscription.flexprouser?.name}
                     weights={22}
                     subscription={
                       user.usersubscription.subscription.gym_rate_desc
@@ -370,12 +374,12 @@ const MyDashboardSection = () => {
 
               <div className="scrollable-list-of-user">
                 {flexProUsers?.length > 0 ? "" : <LoadingEffect />}
-                {flexProUsers.map((user) => (
+                {flexProUsers?.map((user) => (
                   // Get the time portion
 
-                  <ClientsOnline  
+                  <ClientsOnline
                     key={user.id}
-                    clientName={user.usersubscription.flexprouser.name}
+                    clientName={user.usersubscription.flexprouser?.name}
                     // clientName={"KJ"}
                     user_online_id={user.id}
                     timeIn={user.time_in}
@@ -385,7 +389,7 @@ const MyDashboardSection = () => {
                     blobPix={user.image}
                     timeAgo={user.time_in}
                     weights={
-                      user.usersubscription.flexprouser.weights
+                      user.usersubscription.flexprouser?.weights
                       // 22
                     }
                     gym_rate_desc={
@@ -434,9 +438,9 @@ const MyDashboardSection = () => {
                       <ForRenewal
                         key={user.id}
                         pix={user.image}
-                        user_id={user.usersubscription.flexprouser.id}
+                        user_id={user.usersubscription.flexprouser?.id}
                         id={user.id}
-                        registeredName={user.usersubscription.flexprouser.name}
+                        registeredName={user.usersubscription.flexprouser?.name}
                         remaining={"0"}
                         subscription={
                           user.usersubscription.subscription.gym_rate_desc
@@ -450,7 +454,7 @@ const MyDashboardSection = () => {
                         extendedSubDays={user.extendedSubDays}
                         extendedTrainerDays={user.extendedTrainerDays}
                         contactNo={
-                          user.usersubscription.flexprouser.contact_number
+                          user.usersubscription.flexprouser?.contact_number
                         }
                       />
                     )

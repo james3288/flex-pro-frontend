@@ -48,12 +48,12 @@ const MyActiveUser = () => {
               <RenewalUsers
                 key={user.id}
                 blobPic={user.image}
-                registeredName={user.usersubscription.flexprouser.name}
+                registeredName={user.usersubscription.flexprouser?.name}
                 date_subscribed={user.usersubscription.date_subscribed}
                 subscription={user.usersubscription.subscription.gym_rate_desc}
                 remainingDays={user.remainingDays}
                 per={user.usersubscription.subscription.per.per}
-                user_id={user.usersubscription.flexprouser.id}
+                user_id={user.usersubscription.flexprouser?.id}
                 id={user.id}
                 trainers={user.usersubscription.trainer?.name}
                 trainerRemainingDays={user?.trainersRemainingDays}
@@ -63,7 +63,7 @@ const MyActiveUser = () => {
                 setModalTitle={setModalTitle}
                 setExtendedSubId={setExtendedSubId}
                 setExtendedTrainerId={setExtendedTrainerId}
-                contactNo={user.usersubscription.flexprouser.contact_number}
+                contactNo={user.usersubscription.flexprouser?.contact_number}
                 trainer_date_started={
                   user.usersubscription.trainer_date_started
                 }

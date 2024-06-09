@@ -19,6 +19,9 @@ const getExtendedTrainerReport = async (dateFrom, dateTo, trainer) => {
         rate: item?.user_subscription.subscription.rate,
         category: "extended_trainer",
         extended_session_day: item?.extended_session_day,
+        rate_per_session: item?.trainer?.rate_per_session,
+        trainer_rate:
+          item?.trainer?.rate_per_session * item?.extended_session_day,
       };
 
       newUser.push(object);

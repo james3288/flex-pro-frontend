@@ -55,10 +55,12 @@ const getForRenewalUsers = async () => {
       users.map(async (user) => {
         // Call getImagePath asynchronously for each user
         const imgpath = await getImagePath(
-          user.usersubscription.flexprouser.id
+          user.usersubscription.flexprouser?.id === null
+            ? 0
+            : user.usersubscription.flexprouser?.id
         );
 
-        const imageDataUrl = await loadImageData(imgpath.image1);
+        const imageDataUrl = await loadImageData(imgpath?.image1);
 
         // get the remaining days
         const getRemainingDays = await remainingDays(

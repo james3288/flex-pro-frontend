@@ -28,6 +28,12 @@ const ByExtendedTrainer = () => {
             {item?.extended_session_day > 1 ? "days" : "day"}
           </div>
         </div>
+        <div className="col-1">
+          <div className="body-col">{item?.rate_per_session}</div>
+        </div>
+        <div className="col-1">
+          <div className="body-col">{item?.trainer_rate?.toLocaleString()}</div>
+        </div>
       </div>
     </>
   ));
