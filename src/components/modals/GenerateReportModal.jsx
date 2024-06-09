@@ -5,6 +5,7 @@ import getUserSubscriptionReport from "../../getData/getUserSubscriptionReport";
 import FormatDate from "../../others/FormatDate";
 import FormatDateOnly from "../../others/FormatDateOnly";
 import getExtendedTrainerReport from "../../getData/getExtendedTrainerReport";
+import getSubscriptionReportByFreeTrainer from "../../getData/getSubscriptionReportByFreeTrainer";
 
 const GenerateReportModal = () => {
   const cModalTitle = useReportStore((state) => state.modalTitle);
@@ -20,6 +21,8 @@ const GenerateReportModal = () => {
     setSubscriptionTotalIncome,
     setExtendedTrainerReport,
     setExtendedTrainerTotalSession,
+    setUserSubscriptionReportByFreeTrainer,
+    setFreeTotalSession,
   } = useReportStore((state) => ({
     setSubscription: state.setSubscription,
     setTrainer: state.setTrainer,
@@ -29,6 +32,9 @@ const GenerateReportModal = () => {
     setSubscriptionTotalIncome: state.setSubscriptionTotalIncome,
     setExtendedTrainerReport: state.setExtendedTrainerReport,
     setExtendedTrainerTotalSession: state.setExtendedTrainerTotalSession,
+    setUserSubscriptionReportByFreeTrainer:
+      state.setUserSubscriptionReportByFreeTrainer,
+    setFreeTotalSession: state.setFreeTotalSession,
   }));
 
   //getter
@@ -53,8 +59,10 @@ const GenerateReportModal = () => {
       case "subscription":
         setUserSubscriptionReport([]);
         setExtendedTrainerReport([]);
+        setUserSubscriptionReportByFreeTrainer([]);
         setSubscriptionTotalIncome(0);
         setExtendedTrainerTotalSession(0);
+        setFreeTotalSession(0);
         setSubscription(e.target.value);
         break;
       case "dateFrom":
@@ -107,10 +115,27 @@ const GenerateReportModal = () => {
       // await getUserSubscriptionReport()
     };
 
+    const getFreeTrainer = async () => {
+      setUserSubscriptionReportByFreeTrainer(
+        dFrom !== null &&
+          dTo !== null &&
+          (await getSubscriptionReportByFreeTrainer(
+            FormatDateOnly(dFrom),
+            FormatDateOnly(dTo),
+            trainer
+          ))
+      );
+
+      await setFreeTotalSession();
+      // await getUserSubscriptionReport()
+    };
+
     if (subscription === "all") {
       getDataByAll();
     } else if (subscription === "extended-trainer") {
       getByExtendedTrainer();
+    } else if (subscription === "free-trainer") {
+      getFreeTrainer();
     }
   };
 

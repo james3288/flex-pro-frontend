@@ -8,6 +8,7 @@ import FormatDateOnly from "../../others/FormatDateOnly";
 import { useState } from "react";
 import ByAll from "./ByAll";
 import ByExtendedTrainer from "./ByExtendedTrainer";
+import ByFreeTrainer from "./ByFreeTrainer";
 const ReportPage = () => {
   const cSetModalTitle = useReportStore((state) => state.setModalTitle);
   const cSetModalId = useReportStore((state) => state.setModalId);
@@ -24,6 +25,8 @@ const ReportPage = () => {
   const cSubscription = useReportStore(
     (state) => state.reportData.subscription
   );
+
+  const cFreeSessionTotal = useReportStore((state) => state.freeTotalSession);
 
   const [total, setTotal] = useState(0);
 
@@ -46,7 +49,7 @@ const ReportPage = () => {
           Generate
         </button>
       </div>
-      {cSubscription === "all" || cSubscription === "free-trainer" ? (
+      {cSubscription === "all" ? (
         <div className="row header">
           <div className="col-2 header-col">User</div>
           <div className="col-2 header-col">Date Subscribed</div>
@@ -54,6 +57,15 @@ const ReportPage = () => {
           <div className="col-2 header-col">Free Trainer</div>
           <div className="col-2 header-col">Rate</div>
           <div className="col-2 header-col">Per</div>
+        </div>
+      ) : cSubscription === "free-trainer" ? (
+        <div className="row header">
+          <div className="col-2 header-col">User</div>
+          <div className="col-2 header-col">Date Subscribed</div>
+          <div className="col-2 header-col">Subscription</div>
+          <div className="col-2 header-col">Free Trainer</div>
+          <div className="col-2 header-col">Free Session Days</div>
+          <div className="col-2 header-col">Subscription Rate</div>
         </div>
       ) : (
         <div className="row header">
@@ -66,35 +78,13 @@ const ReportPage = () => {
         </div>
       )}
 
-      {/* {cUserSubscriptionReport?.map((item) => (
-        <>
-          <div className="row body" key={item?.id}>
-            <div className="col-2">
-              <div className="body-col">{item?.user}</div>
-            </div>
-            <div className="col-2">
-              <div className="body-col">
-                {FormatDateOnly(item?.date_subscribed)}
-                {item?.date_su}
-              </div>
-            </div>
-            <div className="col-2">
-              <div className="body-col">{item?.gym_rate_desc}</div>
-            </div>
-            <div className="col-2">
-              <div className="body-col">{item?.trainer}</div>
-            </div>
-            <div className="col-2">
-              <div className="body-col">{item?.rate?.toLocaleString()}</div>
-            </div>
-            <div className="col-2">
-              <div className="body-col">{item?.category}</div>
-            </div>
-          </div>
-        </>
-      ))} */}
-
-      {cSubscription === "all" ? <ByAll /> : <ByExtendedTrainer />}
+      {cSubscription === "all" ? (
+        <ByAll />
+      ) : cSubscription === "free-trainer" ? (
+        <ByFreeTrainer />
+      ) : (
+        <ByExtendedTrainer />
+      )}
 
       <div className="row total">
         <div className="col-2 total-col"></div>
@@ -107,6 +97,8 @@ const ReportPage = () => {
           <h2>
             {cSubscription === "all"
               ? cSubscriptionTotalIncome.toLocaleString()
+              : cSubscription === "free-trainer"
+              ? cFreeSessionTotal + " DAYS"
               : cExtendedTrainerTotalSession + " DAYS"}
           </h2>
         </div>

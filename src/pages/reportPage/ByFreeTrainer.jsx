@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import { useReportStore } from "../../store/useReportStore";
 import FormatDateOnly from "../../others/FormatDateOnly";
 
-const ByAll = () => {
-  const cUserSubscriptionReport = useReportStore(
-    (state) => state.userSubscriptionReport
+const ByFreeTrainer = () => {
+  const cUserSubscriptionReportByFreeTrainer = useReportStore(
+    (state) => state.userSubscriptionReportByFreeTrainer
   );
 
-  return cUserSubscriptionReport?.map((item) => (
+  return cUserSubscriptionReportByFreeTrainer?.map((item) => (
     <>
       <div className="row body" key={item?.id}>
         <div className="col-2">
@@ -25,14 +25,18 @@ const ByAll = () => {
           <div className="body-col">{item?.trainer}</div>
         </div>
         <div className="col-2">
-          <div className="body-col">{item?.extended_session}</div>
+          <div className="body-col">
+            {" "}
+            {item?.free_session_days}{" "}
+            {item?.free_session_days > 1 ? "days" : "day"}
+          </div>
         </div>
         <div className="col-2">
-          <div className="body-col">{item?.per}</div>
+          <div className="body-col">{item?.rate.toLocaleString()}</div>
         </div>
       </div>
     </>
   ));
 };
 
-export default ByAll;
+export default ByFreeTrainer;

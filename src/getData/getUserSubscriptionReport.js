@@ -3,6 +3,18 @@ import instance from "../others/axiosInstance";
 import { create } from "zustand";
 import getRate from "../others/getRate";
 
+const customizeRateFn = (extended_session) => {
+  if (extended_session <= 7) {
+    return (800 / 7) * extended_session;
+  } else if (extended_session > 7 && extended_session <= 15) {
+    return (1000 / 15) * extended_session;
+  } else if (extended_session > 15 && extended_session <= 30) {
+    return (1500 / 30) * extended_session;
+  } else if (extended_session === 31) {
+    return (1500 / 31) * extended_session;
+  }
+};
+
 const getUserSubscriptionReport = async (dateFrom, dateTo) => {
   try {
     const newUser = [];
@@ -30,6 +42,7 @@ const getUserSubscriptionReport = async (dateFrom, dateTo) => {
             ? item?.subscription.per.per
             : 1 + " " + item?.subscription.per.per,
         category: "subscribed",
+        extended_session: item?.subscription?.rate.toLocaleString(),
       };
       newUser.push(object);
     });
@@ -48,6 +61,9 @@ const getUserSubscriptionReport = async (dateFrom, dateTo) => {
             ? item.extended_session_day + " days (extended)"
             : item.extended_session_day + " day (extended)",
         category: "extended",
+        extended_session: customizeRateFn(
+          item.extended_session_day
+        ).toLocaleString(),
       };
       newUser.push(object);
     });

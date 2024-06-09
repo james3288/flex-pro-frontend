@@ -14,6 +14,8 @@ const initialState = {
   subscriptionTotalIncome: 0,
   extendedTrainerReport: [],
   extendedTrainerTotalSession: 0,
+  freeTotalSession: 0,
+  userSubscriptionReportByFreeTrainer: [],
 };
 
 export const useReportStore = create((set) => ({
@@ -66,12 +68,25 @@ export const useReportStore = create((set) => ({
         0
       ),
     })),
+  setFreeTotalSession: async () =>
+    set((state) => ({
+      freeTotalSession: state?.userSubscriptionReportByFreeTrainer?.reduce(
+        (total2, item) => total2 + parseFloat(item.free_session_days),
+        0
+      ),
+    })),
   // setExtendedTrainerReport: async (data) =>
   //   set((state) => ({ extendedTrainerReport: data })),
   setExtendedTrainerReport: async (data) =>
     set(
       produce((state) => {
         state.extendedTrainerReport = data;
+      })
+    ),
+  setUserSubscriptionReportByFreeTrainer: async (data) =>
+    set(
+      produce((state) => {
+        state.userSubscriptionReportByFreeTrainer = data;
       })
     ),
 }));
