@@ -15,6 +15,7 @@ import getUsersOnlineByDate from "../../getData/getUserOnlineByDate";
 import remainingDays from "../../others/GetRemainingDays";
 import ClientsOnWorkoutNew from "./clientsOnWorkout/ClientsOnWorkoutNew";
 import getDayPassUserOnline from "../../getData/getDayPassUserOnline";
+import ClientsOnWorkoutDayPass from "./clientsOnWorkout/ClientsOnWorkoutDayPass";
 
 const MyCLientsOnWorkout = () => {
   const [date, setDate] = useState(getFormattedDate());
@@ -22,6 +23,7 @@ const MyCLientsOnWorkout = () => {
   const [triggerLogout, setTriggerLogout] = useState(false);
   const [search, setSearch] = useState("");
   const [newData, setNewData] = useState([]);
+  const [newData2, setNewData2] = useState([]);
   const [state, dispatch] = useReducer(clientsOnWorkOutReducer, INITIAL_STATE);
   // useEffect(() => {
   //   const newData = data1.filter((user) =>
@@ -33,19 +35,26 @@ const MyCLientsOnWorkout = () => {
   let value = false;
 
   // const queryKey = useMemo(() => ["onWorkoutData"], []);
-  const queryKey = ["onWorkoutData"];
+  const queryKey = ["onWorkoutData", "dayPassOnWorkOutData"];
   const { isPending, error, data } = useQuery({
     queryKey,
-    queryFn: () => getUsersOnlineByDate(date),
+    queryFn: async () => {
+      const usersOnline = await getUsersOnlineByDate(date);
+      const dayPassUsersOnline = await getDayPassUserOnline(date);
+      return {
+        usersOnline: usersOnline,
+        dayPassUsersOnline: dayPassUsersOnline,
+      };
+    },
     refetchInterval: 1000,
   });
 
-  const queryKey2 = ["dayPassOnWorkOutData"];
-  const { isPending2, error2, data3 } = useQuery({
-    queryKey2,
-    queryFn: () => getDayPassUserOnline(date),
-    refecthInterval: 1000,
-  });
+  // const queryKey2 = ["dayPassOnWorkOutData"];
+  // const { isPending2, error2, data3 } = useQuery({
+  //   queryKey2,
+  //   queryFn: () => getDayPassUserOnline(date),
+  //   refecthInterval: 1000,
+  // });
 
   function getFormattedDate() {
     const currentDate = new Date();
@@ -57,18 +66,24 @@ const MyCLientsOnWorkout = () => {
     return `${year}-${month}-${day}`;
   }
 
-  if (isPending || isPending2)
+  if (isPending)
     return (
       <div id="preloder">
         <div className="loader"></div>
       </div>
     );
 
-  if (error || error2)
-    return <NoDataFound caption="No Data has been found..." />;
+  if (error) return <NoDataFound caption="No Data has been found..." />;
 
-  const data1 = data?.filter((user) => user?.date_log.includes(date));
-  const dayPassData = data3?.filter((user) => user?.date_log.includes(date));
+  const data1 = data?.usersOnline?.filter((user) =>
+    user?.date_log.includes(date)
+  );
+
+  const data3 = data?.dayPassUsersOnline?.filter((user) =>
+    user?.date_log.includes(date)
+  );
+
+  // const dayPassData = data3?.filter((user) => user?.date_log.includes(date));
 
   function handleChange(e) {
     const value = e.target.value;
@@ -87,7 +102,14 @@ const MyCLientsOnWorkout = () => {
         .includes(e.target.value.toLowerCase())
     );
 
+    const newData2 = data3.filter((user) =>
+      user.flexprouserdaypass.name
+        .toLowerCase()
+        .includes(e.target.value.toLowerCase())
+    );
+
     setNewData(newData);
+    setNewData2(newData2);
   };
 
   return (
@@ -139,9 +161,36 @@ const MyCLientsOnWorkout = () => {
 
         <div className="row">
           <div className="c-col-wrapper">
+            {value === false
+              ? state.name === ""
+                ? data3.map((online) => (
+                    <>
+                      <ClientsOnWorkoutDayPass
+                        online={online}
+                        key={online.id}
+                      />
+                    </>
+                  ))
+                : newData2?.map((online) => (
+                    <>
+                      <ClientsOnWorkoutDayPass
+                        online={online}
+                        key={online.id}
+                      />
+                    </>
+                  ))
+              : ""}
+
             {value === false ? (
               state.name === "" ? ( // IF search is empty
                 data1?.map((online) => (
+                  <>
+                    <ClientsOnWorkoutNew online={online} key={online.id} />
+                  </>
+                ))
+              ) : (
+                newData?.map((online) => (
+                  <ClientsOnWorkoutNew online={online} key={online.id} />
                   // <ClientsOnWorkout
                   //   key={online.id}
                   //   id={online.id}
@@ -159,30 +208,8 @@ const MyCLientsOnWorkout = () => {
                   //   setTriggerLogout={setTriggerLogout}
                   //   extendedSubDays={online.extendedSubDays}
                   //   extendedSubscriptions={online.extendedSubscriptions}
+                  //   subscription_id={online.usersubscription.subscription.id}
                   // />
-                  <ClientsOnWorkoutNew online={online} key={online.id} />
-                ))
-              ) : (
-                newData?.map((online) => (
-                  <ClientsOnWorkout
-                    key={online.id}
-                    id={online.id}
-                    user_id={online.usersubscription.flexprouser.id}
-                    name={online.usersubscription.flexprouser.name}
-                    subscription={
-                      online.usersubscription.subscription.gym_rate_desc
-                    }
-                    timeIn={online.time_in}
-                    timeOut={online.time_out}
-                    date_subscribed={online.usersubscription.date_subscribed}
-                    date_log={online.date_log}
-                    blobPix={online.image}
-                    per={online.usersubscription.subscription.per.per}
-                    setTriggerLogout={setTriggerLogout}
-                    extendedSubDays={online.extendedSubDays}
-                    extendedSubscriptions={online.extendedSubscriptions}
-                    subscription_id={online.usersubscription.subscription.id}
-                  />
                 ))
               )
             ) : (

@@ -1,14 +1,16 @@
 import React from "react";
 import formatTime from "../others/ReadableFormatTime";
 
-
 // Function to add days to a Date object
 
-const timeStampAddDays = (timeStamp,extendedDays,daysonly) => {
-  const timestamp = timeStamp + (extendedDays * 24 * 60 * 60 * 1000);
-  return timestamp < 0 ? "Expired" : daysonly === false ? formatTime(timestamp,"days-hours") : formatTime(timestamp,"days-left")
-}
-
+const timeStampAddDays = (timeStamp, extendedDays, daysonly) => {
+  const timestamp = timeStamp + extendedDays * 24 * 60 * 60 * 1000;
+  return timestamp < 0
+    ? "Expired"
+    : daysonly === false
+    ? formatTime(timestamp, "days-hours")
+    : formatTime(timestamp, "days-left");
+};
 
 const getSubscriptionDaysLeft = (
   remaining,
@@ -52,7 +54,7 @@ const getSubscriptionDaysLeft = (
   //     } ${remainingHoursOnly} ${remainingHoursOnly > 1 ? " hours" : " hour"}`;
   // // return remaining < 0 ? "Expired" : remainingDays + " Days";
 
-  return timeStampAddDays(remaining,extendedSessionDays,daysOnly)
+  return timeStampAddDays(remaining, extendedSessionDays, daysOnly);
 };
 
 export default getSubscriptionDaysLeft;
