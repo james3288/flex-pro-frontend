@@ -69,10 +69,10 @@ const RenewalUsers = ({
       if (daysleft === "Expired") {
         // setRefresher2(true)
         counter == 0 && handleExpired();
-        
+
         clearInterval(intervalId);
       } else {
-        getRemainingDays();      
+        getRemainingDays();
       }
     }, 1000);
 
@@ -156,7 +156,7 @@ const RenewalUsers = ({
 
   const context = (
     <>
-      <div className="col-lg-3 col-xs-12">
+      <div className="col-lg-3 col-xs-12" key={id}>
         <div className="c-col">
           <div className="c-col-name">
             <img src={blobPic} alt="" />

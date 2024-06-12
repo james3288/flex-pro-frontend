@@ -58,7 +58,8 @@ const MyDashboardSection = () => {
       return new Promise((resolve, reject) => {
         reader.onloadend = () => {
           resolve(reader.result);
-        };
+        };  
+
         reader.onerror = reject;
         reader.readAsDataURL(response.data);
       });

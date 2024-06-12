@@ -20,9 +20,11 @@ const getTrainors = async () => {
       })
     );
 
+    console.log("hello world", newTrainors);
+
     return newTrainors;
   } catch (error) {
-    console.error("Error fetching users:", error);
+    console.error("Error fetching Trainers:", error);
   }
 };
 
