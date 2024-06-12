@@ -133,6 +133,9 @@ const MyUserLoginSection = () => {
                 >
                   Login User ID
                 </button>
+                <button className="btn btn-success enabled" data-toggle="modal">
+                  Login Daypass
+                </button>
                 {/* <button className="btn btn-success">QR Code</button> */}
                 <form action="">
                   <button

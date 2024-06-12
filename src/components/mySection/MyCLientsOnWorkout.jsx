@@ -14,6 +14,7 @@ import {
 import getUsersOnlineByDate from "../../getData/getUserOnlineByDate";
 import remainingDays from "../../others/GetRemainingDays";
 import ClientsOnWorkoutNew from "./clientsOnWorkout/ClientsOnWorkoutNew";
+import getDayPassUserOnline from "../../getData/getDayPassUserOnline";
 
 const MyCLientsOnWorkout = () => {
   const [date, setDate] = useState(getFormattedDate());
@@ -39,6 +40,13 @@ const MyCLientsOnWorkout = () => {
     refetchInterval: 1000,
   });
 
+  const queryKey2 = ["dayPassOnWorkOutData"];
+  const { isPending2, error2, data3 } = useQuery({
+    queryKey2,
+    queryFn: () => getDayPassUserOnline(date),
+    refecthInterval: 1000,
+  });
+
   function getFormattedDate() {
     const currentDate = new Date();
     const year = currentDate.getFullYear();
@@ -49,16 +57,18 @@ const MyCLientsOnWorkout = () => {
     return `${year}-${month}-${day}`;
   }
 
-  if (isPending)
+  if (isPending || isPending2)
     return (
       <div id="preloder">
         <div className="loader"></div>
       </div>
     );
 
-  if (error) return <NoDataFound caption="No Data has been found..." />;
+  if (error || error2)
+    return <NoDataFound caption="No Data has been found..." />;
 
   const data1 = data?.filter((user) => user?.date_log.includes(date));
+  const dayPassData = data3?.filter((user) => user?.date_log.includes(date));
 
   function handleChange(e) {
     const value = e.target.value;

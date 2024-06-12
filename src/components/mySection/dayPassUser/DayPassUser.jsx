@@ -136,6 +136,16 @@ const DayPassUser = ({ user }) => {
               >
                 Personal Trainer
               </button>
+              <button
+                className="btn btn-danger"
+                style={{
+                  padding: "3px 10px",
+                  marginBottom: "5px",
+                  marginLeft: "5px",
+                }}
+              >
+                Login
+              </button>
             </div>
 
             {/* )} */}
