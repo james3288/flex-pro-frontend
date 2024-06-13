@@ -126,7 +126,7 @@ const ClientsOnWorkoutNew = ({ online }) => {
             {online.usersubscription.subscription.gym_rate_desc}
           </h3>
           {online.extendedSubscriptions?.map((extended) => (
-            <p style={{ color: "yellowgreen" }}>
+            <p style={{ color: "yellowgreen", margin: "0" }}>
               {" "}
               - {extended.subscription.gym_rate_desc} / extend{" "}
               {extended.extended_session_day} day/s

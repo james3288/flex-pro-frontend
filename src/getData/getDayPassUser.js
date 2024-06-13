@@ -1,3 +1,4 @@
+import remainingDays from "../others/GetRemainingDays";
 import instance from "../others/axiosInstance";
 import { useDayPassStore } from "../store/useDayPassStore";
 
@@ -9,9 +10,14 @@ const getDaypassUser = async () => {
     const newUser = await Promise.all(
       users.map(async (user) => {
         // Call getImagePath asynchronously for each user
-
+        const remaining = await remainingDays(
+          user.date_subscribed,
+          "day",
+          user.id
+        );
         return {
           ...user,
+          remaining: remaining,
         }; // If imgpath is null, use default image
       })
     );

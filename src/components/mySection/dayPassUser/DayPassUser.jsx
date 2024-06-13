@@ -5,6 +5,7 @@ import remainingDays from "../../../others/GetRemainingDays";
 import getSubscriptionDaysLeft from "../../../getData/getSubscriptionDaysLeft";
 import DeleteIconSvg from "../../svg/deleteIconSvg";
 import { useDayPassStore } from "../../../store/useDayPassStore";
+import LoadingEffect from "../loadingEffect/LoadingEffect";
 
 const DayPassUser = ({ user }) => {
   const [remaining, setRemaining] = useState(0);
@@ -145,7 +146,16 @@ const DayPassUser = ({ user }) => {
     </>
   );
 
-  return myDaysLeft != "Expired" && context;
+  const subDaysLeft = getSubscriptionDaysLeft(
+    remaining,
+    extendedSubscript,
+    user.date_subscribed,
+    false
+  );
+
+  return subDaysLeft === "0 day, 0 hours"
+    ? ""
+    : subDaysLeft != "Expired" && context;
 };
 
 export default DayPassUser;

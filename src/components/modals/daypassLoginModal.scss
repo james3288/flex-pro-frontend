@@ -1,0 +1,32 @@
+.dp-user-info {
+  display: flex;
+
+  .dp-user-sub {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .dp-user-sub-img img {
+      border-radius: 50%;
+      width: 100px;
+      height: 100px;
+    }
+    .dp-user-sub-info {
+      h3 {
+        color: rgb(3, 195, 3);
+      }
+      h4 {
+        color: darkgreen;
+        font-size: 22px;
+      }
+      p {
+        font-weight: bold;
+        font-size: 18px;
+        span {
+          color: yellowgreen;
+          font-size: 22px;
+        }
+      }
+    }
+  }
+}

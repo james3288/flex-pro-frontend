@@ -13,6 +13,8 @@ import personalTrainerDaysLeft from "../../getData/personalTrainerDaysLeft";
 import getExtendedTrainer from "../../getData/getExtendedTrainer";
 import TrainerRemainingDays from "./forRenewal/TrainerRemainingDays";
 import getSubscriptionDaysLeft from "../../getData/getSubscriptionDaysLeft";
+import { useDayPassStore } from "../../store/useDayPassStore";
+import DayPassLoginModal from "../modals/DayPassLoginModal";
 
 const MyUserLoginSection = () => {
   const [play, setPlay] = useState(false);
@@ -42,6 +44,14 @@ const MyUserLoginSection = () => {
 
   const [totalFreeTrainerLeft, setTotalFreeTrainerLeft] = useState(0);
 
+  //getter
+
+  //setter
+  const { setDayPassUserId, setModalTitle } = useDayPassStore((state) => ({
+    setDayPassUserId: state.setDayPassUserId,
+    setModalTitle: state.setModalTitle,
+  }));
+
   const handlePlayClick = () => {
     setPlay(() => !play);
     setDisableBtn(true);
@@ -55,6 +65,11 @@ const MyUserLoginSection = () => {
   const handleRefresh = () => {
     setUserId(0);
     setIsOnGoing("");
+  };
+
+  const handleDayPassLoginClick = async () => {
+    await setDayPassUserId("daypass-login-modal");
+    await setModalTitle("Daypass Login");
   };
 
   // useEffect(() => {
@@ -133,7 +148,12 @@ const MyUserLoginSection = () => {
                 >
                   Login User ID
                 </button>
-                <button className="btn btn-success enabled" data-toggle="modal">
+                <button
+                  className="btn btn-success enabled"
+                  data-toggle="modal"
+                  data-target="#daypass-login-modal"
+                  onClick={handleDayPassLoginClick}
+                >
                   Login Daypass
                 </button>
                 {/* <button className="btn btn-success">QR Code</button> */}
@@ -367,6 +387,8 @@ const MyUserLoginSection = () => {
           setUserFound={setUserFound}
         />
       </div>
+
+      <DayPassLoginModal />
     </>
   );
 };
