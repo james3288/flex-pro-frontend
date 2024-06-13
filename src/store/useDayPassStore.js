@@ -1,6 +1,7 @@
 import { produce } from "immer";
 import { create } from "zustand";
 import getTrainors from "../getData/getTrainors";
+import getDayPassUserOnline2 from "../getData/getDayPassUserOnline2";
 
 const initialState = {
   dayPassUser: [],
@@ -14,6 +15,9 @@ const initialState = {
     trainingDateStarted: null,
   },
   dayPassId: 0,
+  dayPassUserOnline: [],
+  isLogin: false,
+  dayPassName: "",
 };
 
 export const useDayPassStore = create((set) => ({
@@ -55,11 +59,31 @@ export const useDayPassStore = create((set) => ({
         state.dayPassId = data;
       })
     ),
+  setIsLogin: async (data) =>
+    set(
+      produce((state) => {
+        state.isLogin = data;
+      })
+    ),
+  setDayPassName: async (data) =>
+    set(
+      produce((state) => {
+        state.dayPassName = data;
+      })
+    ),
   setTrainors: async () => {
     const data = await getTrainors();
     set(
       produce((state) => {
         state.trainors = data;
+      })
+    );
+  },
+  setDayPassUserOnline: async (id) => {
+    const data = await getDayPassUserOnline2(id);
+    set(
+      produce((state) => {
+        state.dayPassUserOnline = data;
       })
     );
   },

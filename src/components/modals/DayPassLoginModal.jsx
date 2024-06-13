@@ -4,22 +4,31 @@ import { useDayPassStore } from "../../store/useDayPassStore";
 import "./daypassLoginModal.scss";
 import getDaypassUser from "./../../../src/getData/getDayPassUser";
 import DpUserInfo from "./DpUserInfo";
+import PostSaveTimeRecords from "../../postData/postSaveTimeRecords";
+import postDayPassTimeRecords from "../../postData/postDayPassTimeRecords";
+import FormatDate from "../../others/FormatDate";
+import FormatDateOnly from "../../others/FormatDateOnly";
+
 const DayPassLoginModal = () => {
   const [myDayPassUsers, setMyDayPassUsers] = useState([]);
 
   //setter
-  const { setDayPassUser } = useDayPassStore((state) => ({
-    setDayPassUser: state.setDayPassUser,
-  }));
+  const { setDayPassUser, setDayPassUserOnline, setIsLogin, setDayPassName } =
+    useDayPassStore((state) => ({
+      setDayPassUser: state.setDayPassUser,
+      setDayPassUserOnline: state.setDayPassUserOnline,
+      setIsLogin: state.setIsLogin,
+      setDayPassName: state.setDayPassName,
+    }));
 
   //getter
-  const { dayPassUserId, modalTitle, dayPassUser } = useDayPassStore(
-    (state) => ({
+  const { dayPassUserId, modalTitle, dayPassUser, dayPassUserOnline } =
+    useDayPassStore((state) => ({
       dayPassUserId: state.dayPassUserId,
       modalTitle: state.modalTitle,
       dayPassUser: state.dayPassUser,
-    })
-  );
+      dayPassUserOnline: state.dayPassUserOnline,
+    }));
 
   useEffect(() => {
     const listOfDaypassUser = async () => {
@@ -29,12 +38,34 @@ const DayPassLoginModal = () => {
     listOfDaypassUser();
   }, []);
 
-  useEffect(() => {
-    console.log(myDayPassUsers);
-  }, [myDayPassUsers]);
-
   const onChangeDaypassUser = (e) => {
     setMyDayPassUsers(dayPassUser.filter((user) => user.id == e.target.value));
+    setDayPassUserOnline(e.target.value);
+  };
+
+  const handleLoginOnclick = async () => {
+    // const data = new FormData();
+    const dayPassUserId = myDayPassUsers[0];
+
+    const dayPassUserOnline1990 = dayPassUserOnline.filter(
+      (user) => FormatDateOnly(user.time_out) === "1990-01-01"
+    );
+
+    if (dayPassUserOnline1990.length === 0) {
+      const data = {
+        dayPassId: dayPassUserId.id,
+        time_in: new Date(),
+        time_out: new Date(1990, 0, 1, 0, 0),
+      };
+
+      postDayPassTimeRecords(data);
+      setMyDayPassUsers([]);
+    } else {
+      console.log("nag login pani xa karon");
+      setIsLogin(true);
+      setMyDayPassUsers([]);
+      setDayPassName(dayPassUserOnline1990[0]?.flexprouserdaypass.name);
+    }
   };
 
   return (
@@ -69,7 +100,7 @@ const DayPassLoginModal = () => {
                   name="daypassUserName"
                   onChange={onChangeDaypassUser}
                 >
-                  <option value={0}>--- Select Trainer ---</option>
+                  <option value={0}>--- Select User ---</option>
                   {dayPassUser?.map(
                     (user) =>
                       user?.remaining > -1 && (
@@ -104,7 +135,12 @@ const DayPassLoginModal = () => {
                 Close
               </button>
               {myDayPassUsers?.length > 0 && (
-                <button type="button" className="btn btn-danger">
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={handleLoginOnclick}
+                  data-dismiss="modal"
+                >
                   Daypass Login
                 </button>
               )}

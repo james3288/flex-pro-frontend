@@ -15,6 +15,8 @@ import TrainerRemainingDays from "./forRenewal/TrainerRemainingDays";
 import getSubscriptionDaysLeft from "../../getData/getSubscriptionDaysLeft";
 import { useDayPassStore } from "../../store/useDayPassStore";
 import DayPassLoginModal from "../modals/DayPassLoginModal";
+import Pic from "./../../../src/assets/img/dummy.png";
+import ExclamationSvg from "./../svg/exclamationSvg";
 
 const MyUserLoginSection = () => {
   const [play, setPlay] = useState(false);
@@ -45,12 +47,17 @@ const MyUserLoginSection = () => {
   const [totalFreeTrainerLeft, setTotalFreeTrainerLeft] = useState(0);
 
   //getter
-
+  const { isLogin: islogin2, dayPassName } = useDayPassStore((state) => ({
+    isLogin: state.isLogin,
+    dayPassName: state.dayPassName,
+  }));
   //setter
   const { setDayPassUserId, setModalTitle } = useDayPassStore((state) => ({
     setDayPassUserId: state.setDayPassUserId,
     setModalTitle: state.setModalTitle,
   }));
+
+  const setIsLogin2 = useDayPassStore((state) => state.setIsLogin);
 
   const handlePlayClick = () => {
     setPlay(() => !play);
@@ -65,6 +72,7 @@ const MyUserLoginSection = () => {
   const handleRefresh = () => {
     setUserId(0);
     setIsOnGoing("");
+    setIsLogin2(false);
   };
 
   const handleDayPassLoginClick = async () => {
@@ -353,6 +361,37 @@ const MyUserLoginSection = () => {
                 {/* <NavLink className="btn btn-danger" to={"/"}>
                     Back to Dashboard
                   </NavLink> */}
+                {/* <form action=""> */}
+                <button className="btn btn-success" onClick={handleRefresh}>
+                  PROCEED
+                </button>
+                {/* </form> */}
+              </div>
+            </div>
+          ) : islogin2 === true ? (
+            <div className="col-lg-6 col-xs-12">
+              <div className="dashboard-col">
+                <span>
+                  <strong>LOGIN</strong> STATUS
+                </span>
+
+                <div className="scan-profile-wrapper">
+                  <img src={Pic} alt="" className="scan-profile" />
+                  <div className="scan-profile-name">
+                    <h5 style={{ color: "orange" }}>
+                      <strong style={{ color: "white" }}>
+                        <ExclamationSvg /> {dayPassName}
+                      </strong>{" "}
+                      has already login!
+                    </h5>
+                  </div>
+                </div>
+              </div>
+
+              <div class="back-to-dashboard">
+                {/* <NavLink className="btn btn-danger" to={"/"}>
+                  Back to Dashboard
+                </NavLink> */}
                 {/* <form action=""> */}
                 <button className="btn btn-success" onClick={handleRefresh}>
                   PROCEED

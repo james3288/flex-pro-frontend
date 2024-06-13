@@ -1,11 +1,9 @@
-import React from "react";
+
 import instance from "../others/axiosInstance";
 
-const getDayPassUserOnline = async (dateLog) => {
+const getDayPassUserOnline2 = async (id) => {
   try {
-    const response = await instance.get(
-      `/api/daypass_user_online_by_date/${dateLog}`
-    );
+    const response = await instance.get(`/api/daypass_user_online/${id}`);
     const users = response.data;
 
     const newUser = await Promise.all(
@@ -22,4 +20,4 @@ const getDayPassUserOnline = async (dateLog) => {
   }
 };
 
-export default getDayPassUserOnline;
+export default getDayPassUserOnline2;

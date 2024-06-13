@@ -64,7 +64,9 @@ const UserLoginModal = ({
     setIsLoading(true);
     const user = await get_active_user();
 
-    const newUser = user.filter((u) => u.usersubscription.flexprouser?.id == id);
+    const newUser = user.filter(
+      (u) => u.usersubscription.flexprouser?.id == id
+    );
     setActiveUser(newUser);
 
     console.log("ACTIVE USER", newUser);
