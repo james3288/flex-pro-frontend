@@ -15,11 +15,14 @@ const RegisteredUser = ({
   setRefresher,
   trainers,
   trainersRemainingDays,
+  sub_session_days,
 }) => {
   const [remaining, setRemaining] = useState(0);
   // get the remaining days
   const getRemainingDays = async () => {
-    setRemaining(await remainingDays(date_subscribed, per));
+    setRemaining(
+      await remainingDays(date_subscribed, per, 0, sub_session_days)
+    );
   };
 
   useEffect(() => {

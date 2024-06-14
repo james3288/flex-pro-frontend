@@ -133,7 +133,9 @@ const FaceScannerNew = ({
           // get the remaining days
           const getRemainingDays = await remainingDays(
             user.usersubscription.date_subscribed,
-            user.usersubscription.subscription.per.per
+            user.usersubscription.subscription.per.per,
+            0,
+            user.usersubscription.sub_session_days
           );
 
           const getExtendedSubscriptionDays = await extendedSub(

@@ -114,7 +114,9 @@ const MyDashboardSection = () => {
           // get the remaining days
           const getRemainingDays = await remainingDays(
             user.usersubscription.date_subscribed,
-            user.usersubscription.subscription.per.per
+            user.usersubscription.subscription.per.per,
+            0,
+            user.usersubscription.sub_session_days
           );
 
           const getExtendedSubscriptionDays = await extendedSub(
@@ -379,6 +381,7 @@ const MyDashboardSection = () => {
                     setRefresher={setRefresher3}
                     trainers={user.usersubscription.trainer?.name}
                     trainersRemainingDays={user.trainersRemainingDays}
+                    sub_session_days={user.usersubscription.sub_session_days}
                   />
                 ))}
               </div>
@@ -445,6 +448,7 @@ const MyDashboardSection = () => {
                     trainersRemainingDays={user.trainersRemainingDays}
                     extendedSubDays={user?.extendedSubDays}
                     extendedSubscriptions={user?.extendedSubscriptions}
+                    sub_session_days={user?.usersubscription.sub_session_days}
                   />
                 ))}
               </div>
@@ -495,6 +499,9 @@ const MyDashboardSection = () => {
                         extendedTrainerDays={user.extendedTrainerDays}
                         contactNo={
                           user.usersubscription.flexprouser?.contact_number
+                        }
+                        sub_session_days={
+                          user.usersubscription.sub_session_days
                         }
                       />
                     )

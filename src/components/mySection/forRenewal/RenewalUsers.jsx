@@ -29,6 +29,7 @@ const RenewalUsers = ({
   contactNo,
   trainer_date_started,
   packages_details,
+  sub_session_days,
 }) => {
   const [remaining, setRemaining] = useState(0);
   const [counter, setCounter] = useState(0);
@@ -38,7 +39,10 @@ const RenewalUsers = ({
 
   // get the remaining days
   const getRemainingDays = async () => {
-    setRemaining(await remainingDays(date_subscribed, per, user_id));
+    const setSubSessionDays = sub_session_days === 0 ? 1 : sub_session_days;
+    setRemaining(
+      await remainingDays(date_subscribed, per, user_id, setSubSessionDays)
+    );
   };
 
   // function for expired subscription

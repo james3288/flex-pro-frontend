@@ -19,6 +19,7 @@ const ForRenewal = ({
   trainers,
   extendedSubDays,
   extendedTrainerDays,
+  sub_session_days,
 }) => {
   const dateLogObj = new Date(date_log);
   const dateLogObj1 = new Date(date_log);

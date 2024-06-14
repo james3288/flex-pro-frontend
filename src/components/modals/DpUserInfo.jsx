@@ -35,7 +35,7 @@ const DpUserInfo = ({ user }) => {
 
   useEffect(() => {
     setRemainingHours(subDaysLeft);
-    setPersonalTrainer(user?.personal_trainer.name);
+    setPersonalTrainer(user?.personal_trainer?.name);
   }, [remaining]);
 
   return (

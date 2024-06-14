@@ -123,7 +123,9 @@ const ClientsOnWorkoutDayPass = ({ online }) => {
           <h5 style={{ color: "orange" }}>
             {/* {remaining < 0 ? "Expired" : remaining} */}
             {/* {formatTime(remaining, "all")} */}
-            {remainingDaysLeft()}
+            {remainingDaysLeft() === "0 day, 0 hours" && remaining < 0
+              ? "Expired" 
+              : remainingDaysLeft()}
           </h5>
         </div>
 

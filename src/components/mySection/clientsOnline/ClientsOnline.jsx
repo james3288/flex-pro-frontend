@@ -28,6 +28,7 @@ function ClientsOnline({
   trainersRemainingDays,
   extendedSubDays,
   extendedSubscriptions,
+  sub_session_days,
 }) {
   // Parse the timestamp
   const timeInObj = new Date(timeIn);
@@ -37,7 +38,7 @@ function ClientsOnline({
   const [remaining, setRemaining] = useState(0);
   // get the remaining days
   const getRemainingDays = async () => {
-    setRemaining(await remainingDays(date_log, per));
+    setRemaining(await remainingDays(date_log, per, 0, sub_session_days));
   };
 
   // Get the time portion

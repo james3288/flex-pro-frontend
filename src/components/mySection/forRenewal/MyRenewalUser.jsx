@@ -77,6 +77,7 @@ const MyRenewalUser = () => {
                       trainer_date_started={
                         user.usersubscription.trainer_date_started
                       }
+                      sub_session_days={user.usersubscription.sub_session_days}
                     />
                   </>
                 )

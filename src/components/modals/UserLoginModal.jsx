@@ -129,11 +129,16 @@ const UserLoginModal = ({
   };
 
   // get the remaining days
-  const getRemainingDays = async (date_subscribed, per, user_id) => {
+  const getRemainingDays = async (
+    date_subscribed,
+    per,
+    user_id,
+    sub_session_days
+  ) => {
     // setRDays(await remainingDays(date_subscribed, per, user_id));
 
     cSetSubscriptionRemainingDays(
-      await remainingDays(date_subscribed, per, user_id)
+      await remainingDays(date_subscribed, per, user_id, sub_session_days)
     );
   };
 
@@ -163,7 +168,8 @@ const UserLoginModal = ({
       getRemainingDays(
         activeUser[0].usersubscription?.date_subscribed,
         activeUser[0].usersubscription?.subscription?.per?.per,
-        activeUser[0].usersubscription?.flexprouser?.id
+        activeUser[0].usersubscription?.flexprouser?.id,
+        activeUser[0].usersubscription?.sub_session_days
       );
 
       // get trainer remaining days

@@ -28,7 +28,8 @@ const ClientsOnWorkoutNew = ({ online }) => {
       await remainingDays(
         online.usersubscription.date_subscribed,
         online.usersubscription.subscription.per.per,
-        online.usersubscription.flexprouser.id
+        online.usersubscription.flexprouser.id,
+        online.usersubscription.sub_session_days
       )
     );
   };

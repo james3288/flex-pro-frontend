@@ -129,6 +129,7 @@ const MyActiveUser = () => {
                 packages_details={
                   user.usersubscription.subscription.packages_details
                 }
+                sub_session_days={user?.usersubscription.sub_session_days}
               />
             ))}
 

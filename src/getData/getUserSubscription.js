@@ -33,7 +33,9 @@ const getUserSubscription = async (id) => {
         // get the remaining days
         const getRemainingDays = await remainingDays(
           user.date_subscribed,
-          user.subscription.per.per
+          user.subscription.per.per,
+          0,
+          user.sub_session_days
         );
 
         const getExtendedSubscriptionDays = await extendedSub(user.id);

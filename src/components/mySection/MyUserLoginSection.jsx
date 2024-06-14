@@ -252,6 +252,7 @@ const MyUserLoginSection = () => {
                           cTrainersRemainingDays,
                           cSessionDays
                         )}
+                        
                       </strong>
                     </h3>
                   </div>
