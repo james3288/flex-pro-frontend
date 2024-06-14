@@ -4,14 +4,26 @@ import { create } from "zustand";
 import getRate from "../others/getRate";
 
 const customizeRateFn = (extended_session) => {
-  if (extended_session <= 7) {
-    return (800 / 7) * extended_session;
-  } else if (extended_session > 7 && extended_session <= 15) {
-    return (1000 / 15) * extended_session;
-  } else if (extended_session > 15 && extended_session <= 30) {
-    return (1500 / 30) * extended_session;
-  } else if (extended_session === 31) {
-    return (1500 / 31) * extended_session;
+  const setExtendedSession = extended_session === 0 ? 1 : extended_session;
+
+  if (setExtendedSession <= 7) {
+    return (800 / 7) * setExtendedSession;
+  } else if (setExtendedSession > 7 && setExtendedSession <= 15) {
+    return (1000 / 15) * setExtendedSession;
+  } else if (setExtendedSession > 15 && setExtendedSession <= 30) {
+    return (1500 / 30) * setExtendedSession;
+  } else if (setExtendedSession === 31) {
+    return (1500 / 31) * setExtendedSession;
+  }
+};
+
+const ifPlural = (days, per) => {
+  if (days > 1 && per === "day") {
+    return days + " days";
+  } else if (days <= 1 && per === "day") {
+    return "day";
+  } else {
+    return per;
   }
 };
 
@@ -44,12 +56,15 @@ const getUserSubscriptionReport = async (dateFrom, dateTo) => {
         gym_rate_desc: item.subscription.gym_rate_desc,
         trainer: item?.trainer?.name,
         rate: item?.subscription?.rate,
-        per:
-          item?.subscription.per.per === "day"
-            ? item?.subscription.per.per
-            : 1 + " " + item?.subscription.per.per,
+        per: ifPlural(item?.sub_session_days, item?.subscription.per.per),
+        // item?.subscription.per.per === "day"
+        //   ? item?.sub_session_days + " " + item?.subscription.per.per
+        //   : 1 + " " + item?.subscription.per.per,
         category: "subscribed",
-        extended_session: item?.subscription?.rate.toLocaleString(),
+        extended_session:
+          item?.subscription.per.per === "day"
+            ? customizeRateFn(item.sub_session_days).toLocaleString()
+            : item?.subscription?.rate.toLocaleString(),
       };
       newUser.push(object);
     });

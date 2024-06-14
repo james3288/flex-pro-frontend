@@ -66,7 +66,7 @@ const ReportPage = () => {
           <div className="col-2 header-col">Date Subscribed</div>
           <div className="col-2 header-col">Subscription</div>
           <div className="col-2 header-col">Free Trainer</div>
-          <div className="col-2 header-col">Free Session Days</div>
+          <div className="col-2 header-col">Trainer Session Days</div>
           <div className="col-2 header-col">Subscription Rate</div>
         </div>
       ) : (
