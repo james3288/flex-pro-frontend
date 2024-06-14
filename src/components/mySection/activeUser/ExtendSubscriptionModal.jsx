@@ -137,7 +137,7 @@ const ExtendSubscriptionModal = ({ id, modalTitle, userSubscriptionId }) => {
                   }
                 >
                   <option value={0}>-- Select Extended Subscription --</option>
-                  {subscription.map((subs) => (
+                  {subscription?.map((subs) => (
                     <option key={subs?.id} value={subs?.id}>
                       {subs?.gym_rate_desc} /{" "}
                       {subs?.rate.toLocaleString("en-US")} per {subs?.per.per}

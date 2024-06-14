@@ -14,10 +14,14 @@ const initialState = {
     trainer_id: 0,
     trainingDateStarted: null,
   },
+
   dayPassId: 0,
   dayPassUserOnline: [],
   isLogin: false,
+  isAlreadyLogin: false,
   dayPassName: "",
+  remainingHours: "",
+  personalTrainer: "",
 };
 
 export const useDayPassStore = create((set) => ({
@@ -65,10 +69,28 @@ export const useDayPassStore = create((set) => ({
         state.isLogin = data;
       })
     ),
+  setIsAlreadyLogin: async (data) =>
+    set(
+      produce((state) => {
+        state.isAlreadyLogin = data;
+      })
+    ),
   setDayPassName: async (data) =>
     set(
       produce((state) => {
         state.dayPassName = data;
+      })
+    ),
+  setRemainingHours: async (data) =>
+    set(
+      produce((state) => {
+        state.remainingHours = data;
+      })
+    ),
+  setPersonalTrainer: async (data) =>
+    set(
+      produce((state) => {
+        state.personalTrainer = data;
       })
     ),
   setTrainors: async () => {

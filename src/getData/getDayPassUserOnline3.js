@@ -1,43 +1,38 @@
 import remainingDays from "../others/GetRemainingDays";
 import instance from "../others/axiosInstance";
-import { useDayPassStore } from "../store/useDayPassStore";
 import getSubscriptionDaysLeft from "./getSubscriptionDaysLeft";
 
-const getDaypassUser = async () => {
+const getDayPassUserOnline3 = async () => {
   try {
-    const response = await instance.get(`/api/get_daypass_user/`);
+    const response = await instance.get(`/api/daypass_user_online2`);
     const users = response.data;
 
     const newUser = await Promise.all(
       users.map(async (user) => {
-        // Call getImagePath asynchronously for each user
         const remaining = await remainingDays(
-          user.date_subscribed,
+          user.flexprouserdaypass.date_subscribed,
           "day",
-          user.id
+          user.flexprouserdaypass.id
         );
 
         const subDaysLeft = getSubscriptionDaysLeft(
           remaining,
           [],
-          user.date_subscribed,
+          user.flexprouserdaypass.date_subscribed,
           false
         );
 
         return {
           ...user,
-          remaining: remaining,
           remainingHours: subDaysLeft,
         }; // If imgpath is null, use default image
       })
     );
 
-    // console.log("activeUsers", newUser);
-    console.log("hehehe", newUser);
     return newUser;
   } catch (error) {
-    console.error("Error fetching day pass users:", error);
+    console.error("Error fetching users:", error);
   }
 };
 
-export default getDaypassUser;
+export default getDayPassUserOnline3;

@@ -13,13 +13,19 @@ const DayPassLoginModal = () => {
   const [myDayPassUsers, setMyDayPassUsers] = useState([]);
 
   //setter
-  const { setDayPassUser, setDayPassUserOnline, setIsLogin, setDayPassName } =
-    useDayPassStore((state) => ({
-      setDayPassUser: state.setDayPassUser,
-      setDayPassUserOnline: state.setDayPassUserOnline,
-      setIsLogin: state.setIsLogin,
-      setDayPassName: state.setDayPassName,
-    }));
+  const {
+    setDayPassUser,
+    setDayPassUserOnline,
+    setIsLogin,
+    setDayPassName,
+    setIsAlreadyLogin,
+  } = useDayPassStore((state) => ({
+    setDayPassUser: state.setDayPassUser,
+    setDayPassUserOnline: state.setDayPassUserOnline,
+    setIsLogin: state.setIsLogin,
+    setDayPassName: state.setDayPassName,
+    setIsAlreadyLogin: state.setIsAlreadyLogin,
+  }));
 
   //getter
   const { dayPassUserId, modalTitle, dayPassUser, dayPassUserOnline } =
@@ -60,9 +66,12 @@ const DayPassLoginModal = () => {
 
       postDayPassTimeRecords(data);
       setMyDayPassUsers([]);
+      setIsLogin(true);
+      setDayPassName(myDayPassUsers[0].name);
+      
     } else {
       console.log("nag login pani xa karon");
-      setIsLogin(true);
+      setIsAlreadyLogin(true);
       setMyDayPassUsers([]);
       setDayPassName(dayPassUserOnline1990[0]?.flexprouserdaypass.name);
     }

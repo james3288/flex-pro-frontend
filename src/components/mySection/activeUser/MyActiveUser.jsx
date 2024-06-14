@@ -10,6 +10,7 @@ import getDaypassUser from "../../../getData/getDayPassUser";
 import DayPassUser from "../dayPassUser/DayPassUser";
 import DayPassAddTrainerModal from "../../modals/DayPassAddTrainerModal";
 import RemoveModal from "../../modals/RemoveModal";
+import getDayPassUserOnline from "../../../getData/getDayPassUserOnline";
 
 const MyActiveUser = () => {
   const [userSubscriptionId, setUserSubscriptionId] = useState(0);
@@ -17,40 +18,68 @@ const MyActiveUser = () => {
   const [extendedTrainerId, setExtendedTrainerId] = useState(0);
   const [modalTitle, setModalTitle] = useState();
 
-  const queryKey = ["forActiveUser"];
-  const queryKey2 = ["forDayPassUser"];
+  const queryKey = ["forActiveUser", "forDayPassUser"];
+  const { isPending, error, data } = useQuery({
+    queryKey,
+    queryFn: async () => {
+      const activeUser = await getActiveUser();
+      const dayPassUser = await getDaypassUser();
 
-  const {
-    isLoading: isPending1,
-    error: error1,
-    data: data1,
-  } = useQuery({
-    queryKey: queryKey,
-    queryFn: getActiveUser,
-    // refetchInterval: 1000, // Uncomment if needed
+      return {
+        data1: activeUser,
+        data2: dayPassUser,
+      };
+    },
+    refetchInterval: 1000,
   });
 
-  const {
-    isLoading: isPending2,
-    error: error2,
-    data: data2,
-  } = useQuery({
-    queryKey: queryKey2,
-    queryFn: getDaypassUser,
-    // refetchInterval: 1000, // Uncomment if needed
-  });
-
-  if (isPending1 || isPending2) {
+  if (isPending)
     return (
       <div id="preloder">
         <div className="loader"></div>
       </div>
     );
-  }
 
-  if (error1 || error2) {
-    return <div>Error: {error1?.message || error2?.message}</div>;
-  }
+  if (error) return <NoDataFound caption="No Data has been found..." />;
+
+  const countDayPassActive = data.data2?.filter(
+    (user) => user.remainingHours != "Expired"
+  );
+
+  // const queryKey = ["forActiveUser"];
+  // const queryKey2 = ["forDayPassUser"];
+
+  // const {
+  //   isLoading: isPending1,
+  //   error: error1,
+  //   data: data1,
+  // } = useQuery({
+  //   queryKey: queryKey,
+  //   queryFn: getActiveUser,
+  //   // refetchInterval: 1000, // Uncomment if needed
+  // });
+
+  // const {
+  //   isLoading: isPending2,
+  //   error: error2,
+  //   data: data2,
+  // } = useQuery({
+  //   queryKey: queryKey2,
+  //   queryFn: getDaypassUser,
+  //   // refetchInterval: 1000, // Uncomment if needed
+  // });
+
+  // if (isPending1 || isPending2) {
+  //   return (
+  //     <div id="preloder">
+  //       <div className="loader"></div>
+  //     </div>
+  //   );
+  // }
+
+  // if (error1 || error2) {
+  //   return <div>Error: {error1?.message || error2?.message}</div>;
+  // }
 
   return (
     <>
@@ -58,13 +87,14 @@ const MyActiveUser = () => {
         <div className="row">
           <div className="form-floating title">
             <h1>
-              {data1?.length} <span>ACTIVE</span> USERS
+              {data.data1?.length + countDayPassActive?.length}{" "}
+              <span>ACTIVE</span> USERS
             </h1>
           </div>
         </div>
         <div className="row">
           <div className="c-col-wrapper">
-            {data2?.map((user) => (
+            {data.data2?.map((user) => (
               <DayPassUser
                 user={user}
                 setUserSubscriptionId={setUserSubscriptionId}
@@ -72,7 +102,7 @@ const MyActiveUser = () => {
               />
             ))}
 
-            {data1.map((user) => (
+            {data.data1?.map((user) => (
               // user.remainingDays <= 2 ||
               <RenewalUsers
                 key={user.id}

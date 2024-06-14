@@ -240,7 +240,7 @@ const AddTrainerModal = ({
                   <option value="month">John Mayer</option>
                   <option value="year">Jeoseph Bejec</option> */}
                   <option value={0}>--- Select Trainer ---</option>
-                  {trainers.map((trainer) => (
+                  {trainers?.map((trainer) => (
                     <option key={trainer?.id} value={trainer?.id}>
                       {trainer?.name}
                     </option>

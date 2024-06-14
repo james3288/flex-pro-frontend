@@ -27,7 +27,14 @@ const getUserSubscriptionReport = async (dateFrom, dateTo) => {
     const response2 = await instance.get(
       `/api/get_extended_subscription_report/?dateFrom=${dateFrom}&dateTo=${dateTo}`
     );
+
     const data2 = await response2.data;
+
+    const response3 = await instance.get(
+      `/api/get_daypass_subscription_report/?dateFrom=${dateFrom}&dateTo=${dateTo}`
+    );
+
+    const data3 = await response3.data;
 
     data?.forEach((item) => {
       const object = {
@@ -64,6 +71,22 @@ const getUserSubscriptionReport = async (dateFrom, dateTo) => {
         extended_session: customizeRateFn(
           item.extended_session_day
         ).toLocaleString(),
+      };
+      newUser.push(object);
+    });
+
+    data3?.forEach((item) => {
+      const object = {
+        id: $`ex-{item.id}`,
+        user: item.name,
+        date_subscribed: item.date_subscribed,
+        gym_rate_desc: item.subscription.gym_rate_desc,
+        trainer: item.personal_trainer?.name,
+        // rate: item.user_subscription.subscription.rate,
+        rate: item.subscription.rate,
+        per: "day",
+        category: "",
+        extended_session: item.subscription.rate,
       };
       newUser.push(object);
     });

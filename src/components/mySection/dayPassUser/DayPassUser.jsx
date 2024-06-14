@@ -56,6 +56,8 @@ const DayPassUser = ({ user }) => {
       }
     }, 1000);
 
+    
+
     // Clean up the interval when the component sunmounts
     return () => clearInterval(intervalId);
   }, [remaining]);

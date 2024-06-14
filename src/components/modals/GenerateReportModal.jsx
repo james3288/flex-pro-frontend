@@ -181,7 +181,9 @@ const GenerateReportModal = () => {
                 >
                   <option value={0}>-- Select Extended Subscription --</option>
                   <option value="all">All</option>
-                  <option value="extended-trainer">Extended Trainer</option>
+                  <option value="extended-trainer">
+                    Extended Trainer/Personal Trainer
+                  </option>
                   <option value="free-trainer">Free Trainer</option>
                 </select>
 

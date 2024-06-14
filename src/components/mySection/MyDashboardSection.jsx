@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Pic1 from "../../assets/img/team/team-1.jpg";
 import Pic2 from "../../assets/img/team/team-2.jpg";
 import Pic3 from "../../assets/img/team/team-3.jpg";
+import Pic from "../../assets/img/dummy.png";
 
 import OwlCarousel from "react-owl-carousel";
 import "owl.carousel/dist/assets/owl.carousel.css";
@@ -24,6 +25,11 @@ import getExtendedSubscription from "../../getData/getExtendedSubscription";
 import LoadingEffect from "./loadingEffect/LoadingEffect";
 import getNoActiveUsers from "../../getData/getNoActiveUsers";
 import getNoOnlineUsers from "../../getData/getNoOnlineUsers";
+import getDaypassUser from "../../getData/getDayPassUser";
+import getDayPassUserOnline2 from "../../getData/getDayPassUserOnline2";
+import getDayPassUserOnline3 from "../../getData/getDayPassUserOnline3";
+import FormatDateOnly from "../../others/FormatDateOnly";
+import DayPassClientsOnline from "./clientsOnline/DayPassClientsOnline";
 
 const MyDashboardSection = () => {
   const [flexProUsers, setFlexProUsers] = useState([]);
@@ -39,6 +45,8 @@ const MyDashboardSection = () => {
   const [refresher2, setRefresher2] = useState(false);
   const [refresher3, setRefresher3] = useState(false);
   const [noOfActiveUsers, setNoOfActiveUsers] = useState(0);
+  const [dayPassActive, setDayPassActive] = useState([]);
+  const [dayPassOnline, setDayPassOnline] = useState([]);
 
   const getImagePath = async (id) => {
     try {
@@ -58,7 +66,7 @@ const MyDashboardSection = () => {
       return new Promise((resolve, reject) => {
         reader.onloadend = () => {
           resolve(reader.result);
-        };  
+        };
 
         reader.onerror = reject;
         reader.readAsDataURL(response.data);
@@ -212,6 +220,14 @@ const MyDashboardSection = () => {
     }
   };
 
+  const getDayPassActive = async () => {
+    setDayPassActive(await getDaypassUser());
+  };
+
+  const getDayPassOnline = async () => {
+    setDayPassOnline(await getDayPassUserOnline3());
+  };
+
   // const getNoOnlineUser = async () => {
   //   try {
   //     const response = await instance.get(`/api/no_user_online/`);
@@ -274,6 +290,8 @@ const MyDashboardSection = () => {
 
   useEffect(() => {
     getActiveUsers();
+    getDayPassActive();
+    getDayPassOnline();
     // setActiveUsers(async () => await getActiveUsers());
   }, []);
 
@@ -319,6 +337,7 @@ const MyDashboardSection = () => {
     console.log("refresher3");
     setRefresher(false);
   }, [refresher3]);
+
   return (
     <>
       {/* <!-- Dashboard container--> */}
@@ -331,8 +350,14 @@ const MyDashboardSection = () => {
               <span>ACTIVE USER</span>
 
               <h1>
-                {noActiveUsers}{" "}
-                <strong> {noActiveUsers > 1 ? "USERS" : "USER"}</strong>
+                {noActiveUsers +
+                  dayPassActive?.filter(
+                    (user) => user.remainingHours != "Expired"
+                  ).length}{" "}
+                <strong>
+                  {" "}
+                  {noActiveUsers > 1 ? "USERS" : "USER"} {}
+                </strong>
               </h1>
 
               {noActiveUsers > 0 ? "" : <LoadingEffect />}
@@ -369,11 +394,25 @@ const MyDashboardSection = () => {
             <div className="dashboard-col">
               <span>CLIENTS ON WORKOUT</span>
               <h1>
-                <strong> {noOnlineUser}</strong>{" "}
+                <strong>
+                  {" "}
+                  {noOnlineUser +
+                    dayPassOnline?.filter(
+                      (user) => FormatDateOnly(user.time_out) === "1990-01-01"
+                    ).length}
+                </strong>{" "}
                 {noOnlineUser > 1 ? "USERS" : "USER"}
               </h1>
 
               <div className="scrollable-list-of-user">
+                {dayPassOnline
+                  ?.filter(
+                    (user) => FormatDateOnly(user.time_out) === "1990-01-01"
+                  )
+                  ?.map((user) => (
+                    <DayPassClientsOnline user={user} />
+                  ))}
+
                 {flexProUsers?.length > 0 ? "" : <LoadingEffect />}
                 {flexProUsers?.map((user) => (
                   // Get the time portion

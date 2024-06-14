@@ -17,6 +17,7 @@ import { useDayPassStore } from "../../store/useDayPassStore";
 import DayPassLoginModal from "../modals/DayPassLoginModal";
 import Pic from "./../../../src/assets/img/dummy.png";
 import ExclamationSvg from "./../svg/exclamationSvg";
+import CheckCircleFillSvg from "./../svg/checkCircleFillSvg";
 
 const MyUserLoginSection = () => {
   const [play, setPlay] = useState(false);
@@ -47,15 +48,26 @@ const MyUserLoginSection = () => {
   const [totalFreeTrainerLeft, setTotalFreeTrainerLeft] = useState(0);
 
   //getter
-  const { isLogin: islogin2, dayPassName } = useDayPassStore((state) => ({
+  const {
+    isLogin: islogin2,
+    dayPassName,
+    isAlreadyLogin,
+    remainingHours,
+    personalTrainer,
+  } = useDayPassStore((state) => ({
     isLogin: state.isLogin,
     dayPassName: state.dayPassName,
+    isAlreadyLogin: state.isAlreadyLogin,
+    remainingHours: state.remainingHours,
+    personalTrainer: state.personalTrainer,
   }));
   //setter
-  const { setDayPassUserId, setModalTitle } = useDayPassStore((state) => ({
-    setDayPassUserId: state.setDayPassUserId,
-    setModalTitle: state.setModalTitle,
-  }));
+  const { setDayPassUserId, setModalTitle, setIsAlreadyLogin } =
+    useDayPassStore((state) => ({
+      setDayPassUserId: state.setDayPassUserId,
+      setModalTitle: state.setModalTitle,
+      setIsAlreadyLogin: state.setIsAlreadyLogin,
+    }));
 
   const setIsLogin2 = useDayPassStore((state) => state.setIsLogin);
 
@@ -72,6 +84,7 @@ const MyUserLoginSection = () => {
   const handleRefresh = () => {
     setUserId(0);
     setIsOnGoing("");
+    setIsAlreadyLogin(false);
     setIsLogin2(false);
   };
 
@@ -368,7 +381,8 @@ const MyUserLoginSection = () => {
                 {/* </form> */}
               </div>
             </div>
-          ) : islogin2 === true ? (
+          ) : // DAYPASS USER HERE
+          isAlreadyLogin === true ? (
             <div className="col-lg-6 col-xs-12">
               <div className="dashboard-col">
                 <span>
@@ -398,6 +412,48 @@ const MyUserLoginSection = () => {
                 </button>
                 {/* </form> */}
               </div>
+            </div>
+          ) : islogin2 === true ? (
+            <div className="col-lg-6 col-xs-12">
+              <>
+                <div className="dashboard-col">
+                  <span>
+                    <strong>LOGIN</strong> STATUS
+                  </span>
+                  <div className="scan-profile-wrapper">
+                    <img src={Pic} alt="" className="scan-profile" />
+                    <div className="scan-profile-name">
+                      <h3 style={{ color: "yellowgreen" }}>
+                        YOU ARE LOGIN AS:
+                      </h3>
+                      <h5 style={{ color: "white" }}>
+                        <CheckCircleFillSvg />
+                        {dayPassName}
+                      </h5>
+                    </div>
+                  </div>
+                </div>
+                <div className="dashboard-col">
+                  <div className="personal-trainer">
+                    <h5>Subscription Remaining Days:</h5>
+                    <h3 style={{ color: "yellowgreen" }}>{remainingHours}</h3>
+                  </div>
+                  <div className="personal-trainer">
+                    <h5>Personal Trainer:</h5>
+                    <h3>{personalTrainer}</h3>
+                  </div>
+                </div>
+                <div class="back-to-dashboard">
+                  {/* <NavLink className="btn btn-danger" to={"/"}>
+                  Back to Dashboard
+                </NavLink> */}
+                  {/* <form action=""> */}
+                  <button className="btn btn-success" onClick={handleRefresh}>
+                    PROCEED
+                  </button>
+                  {/* </form> */}
+                </div>
+              </>
             </div>
           ) : (
             <div className="col-lg-6 col-xs-12">

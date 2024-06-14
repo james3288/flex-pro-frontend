@@ -163,7 +163,7 @@ const MyCLientsOnWorkout = () => {
           <div className="c-col-wrapper">
             {value === false
               ? state.name === ""
-                ? data3.map((online) => (
+                ? data3?.map((online) => (
                     <>
                       <ClientsOnWorkoutDayPass
                         online={online}
