@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 
 const ListOfSubscriptions = ({ plan, option, per }) => {
-  console.log(plan);
+
   return (
     <>
       <div className={option ? "col-lg-4 col-md-6" : "col-lg-9 col-md-12"}>

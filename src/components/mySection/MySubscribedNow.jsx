@@ -2,12 +2,16 @@ import React, { useEffect, useState, useRef } from "react";
 import ListOfSubscriptions from "./Subscriptions/ListOfSubscriptions";
 import { NavLink, useLocation } from "react-router-dom";
 import instance from "../../others/axiosInstance";
+import SessionDaysField from "../subScribeNowComponents/SessionDaysField";
 
 const MySubscribedNow = () => {
   const [planNow, setPlanNow] = useState([]);
   const location = useLocation();
+
   const [searchField, setSearchField] = useState("");
   const [trainerField, setTrainerField] = useState("");
+  const [sessionDays, setSessionDays] = useState();
+
   const [flexProUsers, setFlexProUsers] = useState([]);
   const [flexProTrainers, setFlexProTrainers] = useState([]);
   const [searchOutput, setSearchOutput] = useState([]);
@@ -17,7 +21,9 @@ const MySubscribedNow = () => {
     subscription_id: 0,
     date_subscribed: new Date(),
     trainer_id: 0,
+    sub_session_days: 0,
   });
+
   const [registered, setRegistered] = useState(false);
   const [alreadySubscribed, setAlreadySubscribed] = useState(false);
   const [myImage, setMyImage] = useState(null);
@@ -282,6 +288,15 @@ const MySubscribedNow = () => {
                 </div>
                 <div className="row search-users">
                   <div className="col-lg-12">
+                    {planNow.per.per === "day" && (
+                      <SessionDaysField
+                        per={planNow.per.per}
+                        sessionDays={sessionDays}
+                        setSessionDays={setSessionDays}
+                        setSubscriptionData={setSubscriptionData}
+                      />
+                    )}
+
                     <input
                       type="text"
                       placeholder="Search User Here..."
@@ -293,6 +308,7 @@ const MySubscribedNow = () => {
                       placeholder="Search Trainor Here..."
                       onChange={(e) => setTrainerField(e.target.value)}
                     />
+
                     <div className="list-of-user">
                       {searchField != "" ? (
                         <ul className="list-group">
