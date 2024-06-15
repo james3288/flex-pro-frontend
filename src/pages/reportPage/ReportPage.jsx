@@ -72,7 +72,7 @@ const ReportPage = () => {
       ) : (
         <div className="row header">
           <div className="col-2 header-col">User</div>
-          <div className="col-2 header-col">Date Extended</div>
+          <div className="col-2 header-col">Date Extend Started</div>
           <div className="col-2 header-col">Subscription</div>
           <div className="col-2 header-col">Trainer</div>
           <div className="col-2 header-col">Session days</div>

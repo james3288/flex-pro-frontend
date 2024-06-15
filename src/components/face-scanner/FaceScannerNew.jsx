@@ -50,6 +50,9 @@ const FaceScannerNew = ({
 
   const cUser = useUserStore((state) => state.user);
   const cSetExtendedTrainer = useUserStore((state) => state.setExtendedTrainer);
+  const cSetSubscriptionRemainingDays = useUserStore(
+    (state) => state.setSubscriptionRemainingDays
+  );
 
   const loadModels = async () => {
     const MODEL_URL = window.location.origin + "/models";
@@ -147,7 +150,7 @@ const FaceScannerNew = ({
             getRemainingDays,
             getExtendedSubscriptionDays,
             user.usersubscription.date_subscribed,
-            true
+            false
           );
 
           const extendedTrainer = await getExtendedTrainer(
@@ -317,7 +320,7 @@ const FaceScannerNew = ({
               cSetTrainerRemainingDays(label.trainersRemainingDays);
               cSetSessionDays(label.usersubscription.session_days);
               extendedT(label.usersubscription.id);
-
+              
               console.log("user has been found");
               count = 0;
               loginstatus = true;
