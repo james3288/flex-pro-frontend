@@ -239,12 +239,12 @@ const MyUserLoginSection = () => {
                       Jeoseph Bejec - <strong>CARDIO EXPERT</strong>
                     </h3> */}
 
-                    <h3>
+                    <p style={{ fontSize: "24px" }}>
                       {trainers.usersubscription?.trainer?.name} -{" "}
                       <strong>
                         {trainers.usersubscription?.trainer?.position}
-                      </strong>{" "}
-                      <br />
+                      </strong>
+                      {" - "}
                       <strong style={{ color: "orange" }}>
                         {personalTrainerDaysLeft(
                           trainers.usersubscription?.trainer?.name,
@@ -252,14 +252,13 @@ const MyUserLoginSection = () => {
                           cTrainersRemainingDays,
                           cSessionDays
                         )}
-                        
                       </strong>
-                    </h3>
+                    </p>
                   </div>
 
                   <div className="personal-trainer">
                     <h5>Subscription Remaining Days:</h5>
-                    <h3 style={{ color: "yellowgreen" }}>
+                    <p style={{ color: "yellowgreen", fontSize: "24px" }}>
                       {/* {trainers?.extendedSubDays} day/s  */}
                       {/* {cUser?.extendedSubDays} day/s */}
                       {cLoginUsingId === true
@@ -270,16 +269,25 @@ const MyUserLoginSection = () => {
                             false
                           )
                         : cUser?.extendedSubDays + " day/s"}
-                    </h3>
+                    </p>
                   </div>
                   <div className="personal-trainer">
                     <h5>Extended Trainer:</h5>
                     {trainers?.extendedTrainer?.map((extended) => (
-                      <h6 style={{ color: "yellowgreen" }} key={extended?.id}>
+                      <p
+                        style={{
+                          color: "orange",
+                          fontSize: "20px",
+                          padding: 0,
+                          margin: 0,
+                        }}
+                        key={extended?.id}
+                      >
                         {extended.trainer?.name} -{" "}
                         {FormatDate(extended?.date_extend)}
-                      </h6>
+                      </p>
                     ))}
+                    <br />
                     <div className="trainerRemainingDays">
                       <TrainerRemainingDays
                         trainerRemainingDays={cTrainersRemainingDays}

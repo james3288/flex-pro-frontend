@@ -41,7 +41,7 @@ const TrainerRemainingDays = ({
   );
 
   return (
-    <h4 style={{ fontSize: "20px", color: "orange" }}>
+    <p style={{ fontSize: "24px", color: "yellowgreen" }}>
       {" "}
       {FREE_TRAINER_DAYS_LEFT === "N/A"
         ? "N/A"
@@ -60,7 +60,7 @@ const TrainerRemainingDays = ({
             )
           : `(${formatTime(extendedTrainerRemainingDays, "days-hours")})`
         : "Loading..."} */}
-    </h4>
+    </p>
   );
 };
 

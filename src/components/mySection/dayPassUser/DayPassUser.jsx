@@ -56,8 +56,6 @@ const DayPassUser = ({ user }) => {
       }
     }, 1000);
 
-    
-
     // Clean up the interval when the component sunmounts
     return () => clearInterval(intervalId);
   }, [remaining]);
@@ -155,9 +153,7 @@ const DayPassUser = ({ user }) => {
     false
   );
 
-  return subDaysLeft === "0 day, 0 hours"
-    ? ""
-    : subDaysLeft != "Expired" && context;
+  return subDaysLeft === "Expired" ? "" : subDaysLeft != "Expired" && context;
 };
 
 export default DayPassUser;

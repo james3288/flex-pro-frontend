@@ -4,17 +4,12 @@ const LoadingEffect = ({ color }) => {
   return (
     <>
       <div
-        className={"spinner-border text-warning"}
-        style={{ width: "3rem", height: "3rem" }}
+        className="spinner-border spinner-border-sm text-warning"
         role="status"
       >
         <span className="sr-only">Loading...</span>
       </div>
-      <div
-        className="spinner-grow text-warning"
-        style={{ width: "3rem", height: "3rem" }}
-        role="status"
-      >
+      <div className="spinner-grow spinner-grow-sm text-warning" role="status">
         <span className="sr-only">Loading...</span>
       </div>
     </>

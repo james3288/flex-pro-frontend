@@ -68,7 +68,6 @@ const DayPassLoginModal = () => {
       setMyDayPassUsers([]);
       setIsLogin(true);
       setDayPassName(myDayPassUsers[0].name);
-      
     } else {
       console.log("nag login pani xa karon");
       setIsAlreadyLogin(true);
@@ -146,7 +145,7 @@ const DayPassLoginModal = () => {
               {myDayPassUsers?.length > 0 && (
                 <button
                   type="button"
-                  className="btn btn-danger"
+                  className="btn btn-primary"
                   onClick={handleLoginOnclick}
                   data-dismiss="modal"
                 >
