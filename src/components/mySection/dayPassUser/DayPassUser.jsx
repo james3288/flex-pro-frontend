@@ -32,7 +32,7 @@ const DayPassUser = ({ user }) => {
 
   // get the remaining days
   const getRemainingDays = async () => {
-    setRemaining(await remainingDays(user.date_subscribed, "day", user.id));
+    setRemaining(await remainingDays(user?.date_subscribed, "day", user.id));
   };
 
   // checked expired subscription and set from on-going to expired
@@ -41,7 +41,7 @@ const DayPassUser = ({ user }) => {
       let daysleft = getSubscriptionDaysLeft(
         remaining,
         extendedSubscript,
-        user.date_subscribed,
+        user?.date_subscribed,
         false
       );
 
@@ -64,41 +64,41 @@ const DayPassUser = ({ user }) => {
   const handleAddPersonalTrainers = () => {
     setModalTitle("Update Personal Trainer");
     setDayPassUserId("add-daypass-trainer");
-    setDayPassId(user.id);
+    setDayPassId(user?.id);
   };
 
   const handleRemoveTrainer = () => {
     setRemoveModalTitle("Remove Personal Trainer");
     setRemoveModalId("remove-daypass-trainer");
-    setDayPassId(user.id);
+    setDayPassId(user?.id);
   };
 
   const context = (
     <>
-      <div className="col-lg-3 col-xs-12" key={user.id}>
+      <div className="col-lg-3 col-xs-12" key={user?.id}>
         <div className="c-col">
           <div className="c-col-name">
             <img src={pic} alt="" />
             <div className="col-name">
               <h4>
-                <span style={{ color: "yellowgreen" }}>ID:{user.id}</span>{" "}
-                {user.name}
+                <span style={{ color: "yellowgreen" }}>ID:{user?.id}</span>{" "}
+                {user?.name}
               </h4>
             </div>
           </div>
           <div className="c-col-time-in-out">
             <h5>DATE SUBSCRIBED</h5>
-            <h4>{FormatDate(user.date_subscribed)}</h4>
+            <h4>{FormatDate(user?.date_subscribed)}</h4>
 
             {/* MAIN SUBSCRIPTION */}
-            <h3>{user.subscription.gym_rate_desc}</h3>
+            <h3>{user?.subscription?.gym_rate_desc}</h3>
 
             <h5>Remaining Hours:</h5>
             <h4 style={{ fontSize: "20px" }}>
               {getSubscriptionDaysLeft(
                 remaining,
                 extendedSubscript,
-                user.date_subscribed,
+                user?.date_subscribed,
                 false
               )}
             </h4>
@@ -149,7 +149,7 @@ const DayPassUser = ({ user }) => {
   const subDaysLeft = getSubscriptionDaysLeft(
     remaining,
     extendedSubscript,
-    user.date_subscribed,
+    user?.date_subscribed,
     false
   );
 

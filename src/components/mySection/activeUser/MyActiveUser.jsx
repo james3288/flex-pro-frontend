@@ -87,14 +87,14 @@ const MyActiveUser = () => {
         <div className="row">
           <div className="form-floating title">
             <h1>
-              {data.data1?.length + countDayPassActive?.length}{" "}
+              {data?.data1?.length + countDayPassActive?.length}{" "}
               <span>ACTIVE</span> USERS
             </h1>
           </div>
         </div>
         <div className="row">
           <div className="c-col-wrapper">
-            {data.data2?.map((user) => (
+            {data?.data2?.map((user) => (
               <DayPassUser
                 user={user}
                 setUserSubscriptionId={setUserSubscriptionId}
@@ -102,7 +102,7 @@ const MyActiveUser = () => {
               />
             ))}
 
-            {data.data1?.map((user) => (
+            {data?.data1?.map((user) => (
               // user.remainingDays <= 2 ||
               <RenewalUsers
                 key={user.id}
