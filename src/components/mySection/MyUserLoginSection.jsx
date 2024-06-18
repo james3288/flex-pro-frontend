@@ -268,7 +268,7 @@ const MyUserLoginSection = () => {
                             cDateSubscribed,
                             false
                           )
-                        : cUser?.extendedSubDays + " day/s"}
+                        : cUser?.extendedSubDays}
                     </p>
                   </div>
                   <div className="personal-trainer">

@@ -73,6 +73,7 @@ const UserLoginModal = ({
     setIsLoading(false);
   };
 
+  //== LOGIN FUNCTION
   const handleLoginOnclick = async () => {
     setUserId(activeUser[0]?.usersubscription.flexprouser?.id);
     setUserFound(activeUser[0]?.usersubscription.flexprouser?.name);
@@ -113,7 +114,12 @@ const UserLoginModal = ({
 
     const userStatusResult = await getUserStatus();
 
-    if (userStatusResult != null && savedTimeRecord === false) {
+    console.log(savedTimeRecord);
+
+    if (
+      userStatusResult != null &&
+      (savedTimeRecord === false || savedTimeRecord === undefined)
+    ) {
       console.log(userStatusResult);
       const saved = await PostSaveTimeRecords(
         userStatusResult,
@@ -127,6 +133,7 @@ const UserLoginModal = ({
       setIsOnGoing("expired");
     }
   };
+  //== END LOGIN FUNCTION
 
   // get the remaining days
   const getRemainingDays = async (
