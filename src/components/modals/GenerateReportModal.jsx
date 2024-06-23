@@ -24,6 +24,8 @@ const GenerateReportModal = () => {
     setUserSubscriptionReportByFreeTrainer,
     setFreeTotalSession,
     setTotalTrainerRate,
+    setSelectSubscription,
+    setListOfSubscription,
   } = useReportStore((state) => ({
     setSubscription: state.setSubscription,
     setTrainer: state.setTrainer,
@@ -37,22 +39,32 @@ const GenerateReportModal = () => {
       state.setUserSubscriptionReportByFreeTrainer,
     setFreeTotalSession: state.setFreeTotalSession,
     setTotalTrainerRate: state.setTotalTrainerRate,
+    setSelectSubscription: state.setSelectSubscription,
+    setListOfSubscription: state.setListOfSubscription,
   }));
 
   //getter
-  const { subscription, trainer, dateFrom, dateTo } = useReportStore(
-    (state) => ({
-      subscription: state.reportData.subscription,
-      trainer: state.reportData.trainer,
-      dateFrom: state.reportData.dateFrom,
-      dateTo: state.reportData.dateTo,
-    })
-  );
+  const {
+    subscription,
+    trainer,
+    dateFrom,
+    dateTo,
+    selectSubscription,
+    listOfSubscription,
+  } = useReportStore((state) => ({
+    subscription: state.reportData.subscription,
+    trainer: state.reportData.trainer,
+    dateFrom: state.reportData.dateFrom,
+    dateTo: state.reportData.dateTo,
+    selectSubscription: state.reportData.selectSubscription,
+    listOfSubscription: state.listOfSubscription,
+  }));
 
   // const cSubscription = useReportStore(
   //   (state) => state.reportData.subscription
   // );
 
+  // HANDLE ON CHANGE
   const handleChange = (e) => {
     switch (e.target.name) {
       case "trainer":
@@ -67,22 +79,31 @@ const GenerateReportModal = () => {
         setFreeTotalSession(0);
         setTotalTrainerRate(0);
         setSubscription(e.target.value);
+        setListOfSubscription();
+
         break;
+
       case "dateFrom":
         setDateFrom(e.target.value);
         break;
+
       case "dateTo":
         setDateTo(e.target.value);
+
+      case "selectSubscription":
+        setSelectSubscription(e.target.value);
         break;
+
       default:
         break;
     }
   };
 
   // useEffect(() => {
-  //   console.log(subscription);
-  // }, [subscription]);
+  //   console.log(listOfSubscription);
+  // }, [listOfSubscription]);
 
+  // ON SEARCH
   const handleOnSearch = async () => {
     const dFrom = new Date(dateFrom);
     const dTo = new Date(dateTo);
@@ -96,7 +117,8 @@ const GenerateReportModal = () => {
           dTo !== null &&
           (await getUserSubscriptionReport(
             FormatDateOnly(dFrom),
-            FormatDateOnly(dTo)
+            FormatDateOnly(dTo),
+            selectSubscription
           ))
       );
 
@@ -172,14 +194,14 @@ const GenerateReportModal = () => {
               </button>
             </div>
             <div className="modal-body">
-              <label className="col-form-label">Subscription</label>
+              <label className="col-form-label">Category</label>
               <div>
                 <select
                   className="mySelect"
                   name="subscription"
                   onChange={handleChange}
                 >
-                  <option value={0}>-- Select Extended Subscription --</option>
+                  <option value={0}>---- Select Category ----</option>
                   <option value="all">All</option>
                   <option value="extended-trainer">
                     Extended Trainer/Personal Trainer
@@ -191,7 +213,26 @@ const GenerateReportModal = () => {
                 <span style={{ color: "red" }}>select subscriptions</span>
               </div>
               {subscription === "all" ? (
-                ""
+                // add subscription fields here
+                <>
+                  <label className="col-form-label">Subscription</label>
+                  <div>
+                    <select
+                      className="mySelect"
+                      name="selectSubscription"
+                      onChange={handleChange}
+                    >
+                      <option value={""}>-- Select Subscription --</option>
+                      {listOfSubscription?.map((subscription) => (
+                        <option
+                          value={subscription?.gym_rate_desc?.toLowerCase()}
+                        >
+                          {subscription?.gym_rate_desc}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </>
               ) : (
                 <>
                   <label className="col-form-label">Trainer (optional)</label>

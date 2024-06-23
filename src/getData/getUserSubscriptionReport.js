@@ -27,21 +27,24 @@ const ifPlural = (days, per) => {
   }
 };
 
-const getUserSubscriptionReport = async (dateFrom, dateTo) => {
+const getUserSubscriptionReport = async (dateFrom, dateTo, gym_rate_desc) => {
   try {
     const newUser = [];
 
+    // get user subscription by date range and gym rate desc
     const response = await instance.get(
-      `/api/get_user_subscription_report/?dateFrom=${dateFrom}&dateTo=${dateTo}`
+      `/api/get_user_subscription_report/?dateFrom=${dateFrom}&dateTo=${dateTo}&gym_rate_desc=${gym_rate_desc}`
     );
     const data = await response.data;
 
+    // get extended subscription by date range
     const response2 = await instance.get(
       `/api/get_extended_subscription_report/?dateFrom=${dateFrom}&dateTo=${dateTo}`
     );
 
     const data2 = await response2.data;
 
+    // get daypass subscription by date range
     const response3 = await instance.get(
       `/api/get_daypass_subscription_report/?dateFrom=${dateFrom}&dateTo=${dateTo}`
     );
@@ -116,7 +119,13 @@ const getUserSubscriptionReport = async (dateFrom, dateTo) => {
     //   return userDate >= fromDate && userDate <= toDate;
     // });
 
-    const sortedUsers = newUser.sort((a, b) => {
+    // filter by subscription
+    const filterBySubscription = newUser.filter((user) =>
+      user.gym_rate_desc.toLowerCase().includes(gym_rate_desc.toLowerCase())
+    );
+
+    // sort by date
+    const sortedUsers = filterBySubscription.sort((a, b) => {
       const dateA = new Date(a.date_subscribed);
       const dateB = new Date(b.date_subscribed);
       return dateB - dateA;

@@ -1,9 +1,11 @@
 import { create } from "zustand";
 import { produce } from "immer";
+import getSubscriptions from "../getData/getSubscriptions";
 
 const initialState = {
   reportData: {
     subscription: "",
+    selectSubscription: "223",
     trainer: "",
     dateFrom: new Date(),
     dateTo: new Date(),
@@ -17,6 +19,7 @@ const initialState = {
   freeTotalSession: 0,
   userSubscriptionReportByFreeTrainer: [],
   totalTrainerRate: 0,
+  listOfSubscription: [],
 };
 
 export const useReportStore = create((set) => ({
@@ -27,6 +30,12 @@ export const useReportStore = create((set) => ({
     set(
       produce((state) => {
         state.reportData.subscription = data;
+      })
+    ),
+  setSelectSubscription: (data) =>
+    set(
+      produce((state) => {
+        state.reportData.selectSubscription = data;
       })
     ),
   setTrainer: (data) =>
@@ -59,7 +68,7 @@ export const useReportStore = create((set) => ({
     set((state) => ({
       subscriptionTotalIncome: state?.userSubscriptionReport.reduce(
         (total, item) => total + parseFloat(item.rate),
-        0 // Start accumulating from 0
+        0.0 // Start accumulating from 0
       ),
     })),
   setExtendedTrainerTotalSession: async () =>
@@ -90,6 +99,14 @@ export const useReportStore = create((set) => ({
         state.userSubscriptionReportByFreeTrainer = data;
       })
     ),
+  setListOfSubscription: async (data) => {
+    const subscriptions = await getSubscriptions();
+    set(
+      produce((state) => {
+        state.listOfSubscription = subscriptions;
+      })
+    );
+  },
   setTotalTrainerRate: async () =>
     set((state) => ({
       totalTrainerRate: state?.extendedTrainerReport?.reduce(
