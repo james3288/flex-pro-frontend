@@ -67,10 +67,11 @@ export const useReportStore = create((set) => ({
   setSubscriptionTotalIncome: async () =>
     set((state) => ({
       subscriptionTotalIncome: state?.userSubscriptionReport.reduce(
-        (total, item) => total + parseFloat(item.rate),
+        (total, item) => total + parseFloat(item.extended_session),
         0.0 // Start accumulating from 0
       ),
     })),
+
   setExtendedTrainerTotalSession: async () =>
     set((state) => ({
       extendedTrainerTotalSession: state?.extendedTrainerReport?.reduce(

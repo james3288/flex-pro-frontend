@@ -70,6 +70,7 @@ const GenerateReportModal = () => {
       case "trainer":
         setTrainer(e.target.value);
         break;
+
       case "subscription":
         setUserSubscriptionReport([]);
         setExtendedTrainerReport([]);
@@ -89,9 +90,11 @@ const GenerateReportModal = () => {
 
       case "dateTo":
         setDateTo(e.target.value);
+        break;
 
       case "selectSubscription":
         setSelectSubscription(e.target.value);
+        console.log(e.target.value);
         break;
 
       default:
@@ -100,7 +103,7 @@ const GenerateReportModal = () => {
   };
 
   // useEffect(() => {
-  //   console.log(listOfSubscription);
+  //   console.log(dateFrom, dateTo, selectSubscription);
   // }, [listOfSubscription]);
 
   // ON SEARCH
@@ -225,6 +228,7 @@ const GenerateReportModal = () => {
                       <option value={""}>-- Select Subscription --</option>
                       {listOfSubscription?.map((subscription) => (
                         <option
+                          key={subscription.id}
                           value={subscription?.gym_rate_desc?.toLowerCase()}
                         >
                           {subscription?.gym_rate_desc}

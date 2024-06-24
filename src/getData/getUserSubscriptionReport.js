@@ -2,6 +2,7 @@ import React from "react";
 import instance from "../others/axiosInstance";
 import { create } from "zustand";
 import getRate from "../others/getRate";
+import { useReportStore } from "../store/useReportStore";
 
 const customizeRateFn = (extended_session) => {
   const setExtendedSession = extended_session === 0 ? 1 : extended_session;
@@ -66,8 +67,8 @@ const getUserSubscriptionReport = async (dateFrom, dateTo, gym_rate_desc) => {
         category: "subscribed",
         extended_session:
           item?.subscription.per.per === "day"
-            ? customizeRateFn(item.sub_session_days).toLocaleString()
-            : item?.subscription?.rate.toLocaleString(),
+            ? customizeRateFn(item.sub_session_days)
+            : item?.subscription?.rate,
       };
       newUser.push(object);
     });
@@ -86,9 +87,7 @@ const getUserSubscriptionReport = async (dateFrom, dateTo, gym_rate_desc) => {
             ? item.extended_session_day + " days (extended)"
             : item.extended_session_day + " day (extended)",
         category: "extended",
-        extended_session: customizeRateFn(
-          item.extended_session_day
-        ).toLocaleString(),
+        extended_session: customizeRateFn(item.extended_session_day),
       };
       newUser.push(object);
     });
@@ -131,6 +130,7 @@ const getUserSubscriptionReport = async (dateFrom, dateTo, gym_rate_desc) => {
       return dateB - dateA;
     });
 
+    console.log(sortedUsers);
     return sortedUsers;
   } catch (error) {
     console.error("Error in fetching User Subscription Report:", error);

@@ -25,7 +25,9 @@ const ByAll = () => {
           <div className="body-col">{item?.trainer}</div>
         </div>
         <div className="col-2">
-          <div className="body-col">{item?.extended_session}</div>
+          <div className="body-col">
+            {item?.extended_session.toLocaleString()}
+          </div>
         </div>
         <div className="col-2">
           <div className="body-col">{item?.per}</div>

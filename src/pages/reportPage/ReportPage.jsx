@@ -99,7 +99,7 @@ const ReportPage = () => {
         <div className="col-2 total-col">
           <h2>
             {cSubscription === "all"
-              ? cSubscriptionTotalIncome.toLocaleString()
+              ? cSubscriptionTotalIncome?.toLocaleString()
               : cSubscription === "free-trainer"
               ? cFreeSessionTotal + " DAYS"
               : cExtendedTrainerTotalSession + " DAYS"}
