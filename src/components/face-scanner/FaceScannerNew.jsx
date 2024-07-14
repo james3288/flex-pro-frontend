@@ -169,7 +169,7 @@ const FaceScannerNew = ({
         })
       );
 
-      console.log("userStatus", newUser);
+      // console.log("userStatus", newUser);
       return newUser;
     } catch (error) {
       console.error("Error fetching data:", error);

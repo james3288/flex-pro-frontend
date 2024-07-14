@@ -98,7 +98,7 @@ const PdfGenerator = ({ user }) => {
 
   useEffect(() => {
     setDateNow(new Date());
-    console.log(user?.image);
+    // console.log(user?.image);
   }, []);
 
   return (
