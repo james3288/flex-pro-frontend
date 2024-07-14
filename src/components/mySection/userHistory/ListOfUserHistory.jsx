@@ -1,8 +1,11 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import FormatDate from "../../../others/FormatDate";
 import UserHistory from "./UserHistory";
 import { UserHistoryContext } from "../../../context/UserHistoryContext";
 import LoadingEffect from "../loadingEffect/LoadingEffect";
+import remainingDays from "../../../others/GetRemainingDays";
+import getExtendedSubscription from "../../../getData/getExtendedSubscription";
+import getSubscriptionDaysLeft from "../../../getData/getSubscriptionDaysLeft";
 
 const ListOfUserHistory = () => {
   const { userSubscriptionDatas, userHistoryDatas } =
@@ -11,6 +14,8 @@ const ListOfUserHistory = () => {
   const result = userSubscriptionDatas?.userSubscriptionData?.map((user2) => {
     return (
       <>
+        {/* USER NAME */}
+        <h3 style={{ color: "white" }}>{user2?.flexprouser.name}</h3>
         <div key={user2.id}>
           {userSubscriptionDatas.error ||
           userSubscriptionDatas.pending ||
@@ -50,10 +55,10 @@ const ListOfUserHistory = () => {
                 {/* DAYS LEFT */}
                 <h4 style={{ color: "gray" }}>Subscription Days Left:</h4>
                 <h5 style={{ color: "yellowgreen" }}>
-                  {" "}
-                  {user2?.extendedSubDays < 0
+                  {/* {user2?.extendedSubDays < 0
                     ? "Expired"
-                    : user2?.extendedSubDays + " Day/s"}
+                    : user2?.extendedSubDays + " Day/s"} */}
+                  {user2?.extendedSubDays}
                 </h5>
               </div>
 

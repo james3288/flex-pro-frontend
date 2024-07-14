@@ -45,7 +45,7 @@ const getUserSubscription = async (id) => {
           getRemainingDays,
           getExtendedSubscriptionDays,
           user.date_subscribed,
-          true
+          false
         );
 
         const extendedTrainer = await getExtendedTrainer(user.id);
