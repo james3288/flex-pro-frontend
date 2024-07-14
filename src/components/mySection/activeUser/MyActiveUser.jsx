@@ -96,6 +96,7 @@ const MyActiveUser = () => {
           <div className="c-col-wrapper">
             {data?.data2?.map((user) => (
               <DayPassUser
+                key={user.id}
                 user={user}
                 setUserSubscriptionId={setUserSubscriptionId}
                 setModalTitle={setModalTitle}

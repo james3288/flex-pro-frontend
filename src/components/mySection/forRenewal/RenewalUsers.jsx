@@ -36,7 +36,9 @@ const RenewalUsers = ({
   const [extendedTrainer, setExtendedTrainer] = useState([]);
   const [extendedSubscript, setExtendedSubscript] = useState([]);
   const [totalFreeTrainerLeft, setTotalFreeTrainerLeft] = useState(0);
+  const [countIfExpired, setCountIfExpired] = useState(0);
 
+  let n = 0;
   // get the remaining days
   const getRemainingDays = async () => {
     const setSubSessionDays = sub_session_days === 0 ? 1 : sub_session_days;
@@ -70,14 +72,15 @@ const RenewalUsers = ({
         false
       );
 
-      if (daysleft === "Expired") {
-        // setRefresher2(true)
-        counter == 0 && handleExpired();
-
-        clearInterval(intervalId);
-      } else {
-        getRemainingDays();
-      }
+      setTimeout(async () => {
+        if (daysleft === "Expired") {
+          // setRefresher2(true)
+          counter == 0 && handleExpired();
+          clearInterval(intervalId);
+        } else {
+          getRemainingDays();
+        }
+      }, 1000);
     }, 1000);
 
     // Clean up the interval when the component sunmounts
@@ -160,7 +163,7 @@ const RenewalUsers = ({
 
   const context = (
     <>
-      <div className="col-lg-3 col-xs-12" key={id}>
+      <div className="col-lg-3 col-xs-12">
         <div className="c-col">
           <div className="c-col-name">
             <img src={blobPic} alt="" />
@@ -175,7 +178,7 @@ const RenewalUsers = ({
               </p>
             </div>
           </div>
-          <div className="c-col-time-in-out">
+          <div className="c-col-time-in-out" key={id}>
             <h5>DATE SUBSCRIBED</h5>
             <h4>{FormatDate(date_subscribed)}</h4>
 

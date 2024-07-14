@@ -13,7 +13,7 @@ const MyLeftSideMenu = ({
   };
 
   useEffect(() => {
-    console.log(leftMenuOpen);
+    // console.log(leftMenuOpen);
   }, [leftMenuOpen]);
 
   const activeItems = (isActive, isPending) => {

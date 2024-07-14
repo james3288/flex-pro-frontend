@@ -27,6 +27,11 @@ const formatTime = (milliseconds, option) => {
     }, ${minutes} ${minutes > 1 ? "minutes" : "minute"}`;
   } else if (option === "days-only") {
     return days;
+  } else if (option === "days-hours-minutes-seconds") {
+    return `${days} ${days > 1 ? "days" : "day"}, ${hours} 
+    ${hours > 1 ? "hours" : "hour"}, 
+    ${minutes} ${minutes > 1 ? "minutes" : "minute"},
+    ${seconds} ${seconds > 1 ? "seconds" : "second"}`;
   }
 };
 

@@ -20,7 +20,7 @@ const getTrainors = async () => {
       })
     );
 
-    console.log("hello world", newTrainors);
+    // console.log("hello world", newTrainors);
 
     return newTrainors;
   } catch (error) {

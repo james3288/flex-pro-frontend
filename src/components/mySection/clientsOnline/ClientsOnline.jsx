@@ -6,6 +6,8 @@ import axios from "axios";
 import YearValidation from "../../../others/YearValidation";
 import formatTime from "../../../others/ReadableFormatTime";
 import remainingDays from "../../../others/GetRemainingDays";
+import getSubscriptionDaysLeft from "../../../getData/getSubscriptionDaysLeft";
+import getExtendedSubscription from "../../../getData/getExtendedSubscription";
 
 function ClientsOnline({
   user_online_id,
@@ -29,16 +31,25 @@ function ClientsOnline({
   extendedSubDays,
   extendedSubscriptions,
   sub_session_days,
+  subscriptionId,
 }) {
   // Parse the timestamp
   const timeInObj = new Date(timeIn);
   const timeOutObj = new Date(timeOut);
   const [remainingDays2, setRemainingDays2] = useState();
+  const [extendedSubscript, setExtendedSubscript] = useState([]);
 
   const [remaining, setRemaining] = useState(0);
   // get the remaining days
   const getRemainingDays = async () => {
-    setRemaining(await remainingDays(date_log, per, 0, sub_session_days));
+    setRemaining(
+      await remainingDays(
+        date_log,
+        per,
+        0,
+        sub_session_days === 0 ? 1 : sub_session_days
+      )
+    );
   };
 
   // Get the time portion
@@ -77,11 +88,25 @@ function ClientsOnline({
       });
   };
 
+  // get extended subscription
+  useEffect(() => {
+    const extendedSub = async () => {
+      try {
+        const data = await getExtendedSubscription(subscriptionId);
+        setExtendedSubscript(data);
+      } catch (error) {
+        console.error("Error in fetching Extended Subscription:", error);
+      }
+    };
+
+    extendedSub();
+  }, [subscriptionId]);
+
   useEffect(() => {
     const intervalId = setInterval(() => {
       if (formatTime(remaining, "minutes-left") < 0) {
         setRefresher2(true);
-        console.log("ayonn2...");
+        // console.log("ayonn2...");
         clearInterval(intervalId);
       } else {
         getRemainingDays();
@@ -160,7 +185,13 @@ function ClientsOnline({
                 lineHeight: "20px",
               }}
             >
-              <strong>{extendedSubDays} day/s left</strong>
+              {/* <strong>{extendedSubDays} day/s left</strong> */}
+              {getSubscriptionDaysLeft(
+                remaining,
+                extendedSubscript,
+                date_log,
+                false
+              )}
             </p>
 
             {/* {remaining >= 0 ? (

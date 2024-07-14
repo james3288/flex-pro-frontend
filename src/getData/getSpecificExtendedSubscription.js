@@ -2,12 +2,16 @@ import instance from "../others/axiosInstance";
 
 const getSpecificExtendedSubscription = async (id) => {
   try {
-    const response = await instance.get(
-      `/api/get_specific_extended_subscription/${id}`
-    );
-    const specificExtendedSubscription = await response.data;
+    if (id == 0) {
+      return null;
+    } else {
+      const response = await instance.get(
+        `/api/get_specific_extended_subscription/${id}`
+      );
+      const specificExtendedSubscription = await response.data;
 
-    return specificExtendedSubscription;
+      return specificExtendedSubscription;
+    }
   } catch (error) {
     console.error("Error fetching extendedSubscription:", error);
   }

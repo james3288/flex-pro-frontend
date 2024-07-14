@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import formatTime from "../../../others/ReadableFormatTime";
 import instance from "../../../others/axiosInstance";
 import FormatDate from "../../../others/FormatDate";
+import getExtendedSubscription from "../../../getData/getExtendedSubscription";
+import getSubscriptionDaysLeft from "../../../getData/getSubscriptionDaysLeft";
+import remainingDays from "../../../others/GetRemainingDays";
 
 const ForRenewal = ({
   pix,
   registeredName,
-  remaining,
   user_id,
   contactNo,
   id,
@@ -20,10 +22,14 @@ const ForRenewal = ({
   extendedSubDays,
   extendedTrainerDays,
   sub_session_days,
+  subscriptionId,
 }) => {
   const dateLogObj = new Date(date_log);
   const dateLogObj1 = new Date(date_log);
   const [remainingDays1, setRemainingDays1] = useState();
+  const [extendedSubscript, setExtendedSubscript] = useState([]);
+  const [remaining, setRemaining] = useState(0);
+
   const now = new Date();
 
   if (per === "month") {
@@ -34,14 +40,36 @@ const ForRenewal = ({
     dateLogObj1.setFullYear(dateLogObj1.getFullYear() + 1); // add 1 year
   }
 
-  const daysConsume = now.getTime() - dateLogObj.getTime();
-  const subDays = dateLogObj1.getTime() - dateLogObj.getTime();
-  var remainingDays = subDays - daysConsume;
+  // const daysConsume = now.getTime() - dateLogObj.getTime();
+  // const subDays = dateLogObj1.getTime() - dateLogObj.getTime();
+  // var remainingDays = subDays - daysConsume;
+
+  // get the remaining days
+  const getRemainingDays = async () => {
+    const setSubSessionDays = sub_session_days === 0 ? 1 : sub_session_days;
+    setRemaining(
+      await remainingDays(date_log, per, user_id, setSubSessionDays)
+    );
+  };
+
+  // get extended subscription
+  useEffect(() => {
+    const extendedSub = async () => {
+      try {
+        const data = await getExtendedSubscription(subscriptionId);
+        setExtendedSubscript(data);
+      } catch (error) {
+        console.error("Error in fetching Extended Subscription:", error);
+      }
+    };
+
+    extendedSub();
+  }, [subscriptionId]);
 
   useEffect(() => {
-    const daysleft = formatTime(remainingDays, "days-left");
-    const hoursleft = formatTime(remainingDays, "hours-left");
-    const minutesleft = formatTime(remainingDays, "minutes-left");
+    // const daysleft = formatTime(remainingDays, "days-left");
+    // const hoursleft = formatTime(remainingDays, "hours-left");
+    // const minutesleft = formatTime(remainingDays, "minutes-left");
 
     const intervalId = setInterval(() => {
       // if (daysleft <= 0 && hoursleft <= 0 && minutesleft <= 0) {
@@ -62,13 +90,14 @@ const ForRenewal = ({
         // refresh once
         setRefresher(true);
       } else {
-        setRemainingDays1(remainingDays);
+        // setRemainingDays1(remainingDays);
+        getRemainingDays();
       }
     }, 1000);
 
     // Clean up the interval when the component sunmounts
     return () => clearInterval(intervalId);
-  }, [remainingDays1]);
+  }, [remainingDays1, remaining]);
 
   return (
     <>
@@ -106,10 +135,15 @@ const ForRenewal = ({
               </p>
               <p style={{ lineHeight: "16px" }}>
                 <strong>
-                  {" "}
                   {/* {formatTime(remainingDays1, "days-hours")} */}
-                  {extendedSubDays + " day/s left"}
-                </strong>{" "}
+                  {/* {extendedSubDays + " day/s left"} */}
+                  {getSubscriptionDaysLeft(
+                    remaining,
+                    extendedSubscript,
+                    date_log,
+                    false
+                  )}
+                </strong>
               </p>
               <p>Personal Trainer Days:</p>
 

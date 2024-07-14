@@ -6,12 +6,16 @@ import React, {
   useState,
   useTransition,
 } from "react";
-import getUsers from "../../../getData/getUsers";
+// import getUsers from "../../../getData/getUsers";
+import getUsers from "../../../getdata/getusers";
+
 import Users from "./Users";
 import UsersModal from "./usersModal";
 import DeleteUserModal from "./DeleteUserModal";
 import UserContractModal from "./UserContractModal";
+// import LoadingEffect from "../loadingEffect/LoadingEffect";
 import LoadingEffect from "../loadingEffect/LoadingEffect";
+
 import NoDataFound from "../noDataFound/NoDataFound";
 
 const MyUsers = () => {
@@ -46,7 +50,7 @@ const MyUsers = () => {
   //     </div>
   //   );
 
-  console.log(data);
+  // console.log(data);
 
   const handleOnChange = async (e) => {
     startTransition(() => {

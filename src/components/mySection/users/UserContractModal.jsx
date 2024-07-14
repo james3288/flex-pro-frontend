@@ -2,7 +2,7 @@ import React from "react";
 import PdfGenerator from "../../PDF/PdfGenerator";
 
 const UserContractModal = ({ id, user }) => {
-  console.log(id, user);
+  // console.log(id, user);
   return (
     <div
       className="modal fade"

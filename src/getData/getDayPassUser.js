@@ -33,7 +33,7 @@ const getDaypassUser = async () => {
     );
 
     // console.log("activeUsers", newUser);
-    console.log("hehehe", newUser);
+    // console.log("hehehe", newUser);
     return newUser;
   } catch (error) {
     console.error("Error fetching day pass users:", error);

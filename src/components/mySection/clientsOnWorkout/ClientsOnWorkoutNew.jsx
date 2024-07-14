@@ -29,7 +29,9 @@ const ClientsOnWorkoutNew = ({ online }) => {
         online.usersubscription.date_subscribed,
         online.usersubscription.subscription.per.per,
         online.usersubscription.flexprouser.id,
-        online.usersubscription.sub_session_days
+        online.usersubscription.sub_session_days === 0
+          ? 1
+          : online.usersubscription.sub_session_days
       )
     );
   };

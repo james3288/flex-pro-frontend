@@ -145,7 +145,12 @@ const UserLoginModal = ({
     // setRDays(await remainingDays(date_subscribed, per, user_id));
 
     cSetSubscriptionRemainingDays(
-      await remainingDays(date_subscribed, per, user_id, sub_session_days)
+      await remainingDays(
+        date_subscribed,
+        per,
+        user_id,
+        sub_session_days === 0 ? 1 : sub_session_days
+      )
     );
   };
 
@@ -170,7 +175,7 @@ const UserLoginModal = ({
   // USE EFFECT
   useEffect(() => {
     if (activeUser?.length > 0) {
-      console.log("USE EFFECT ACTIVE USER", activeUser[0]);
+      // console.log("USE EFFECT ACTIVE USER", activeUser[0]);
       //get remaining subscription
       getRemainingDays(
         activeUser[0].usersubscription?.date_subscribed,

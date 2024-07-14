@@ -327,7 +327,7 @@ const MyDashboardSection = () => {
   // refresher2
   useEffect(() => {
     getUsersOnline();
-    console.log("refresher2");
+    // console.log("refresher2");
     setRefresher(false);
   }, [refresher2]);
 
@@ -336,7 +336,7 @@ const MyDashboardSection = () => {
     getActiveUsers();
     // setActiveUsers(async () => await getActiveUsers());
 
-    console.log("refresher3");
+    // console.log("refresher3");
     setRefresher(false);
   }, [refresher3]);
 
@@ -449,6 +449,7 @@ const MyDashboardSection = () => {
                     extendedSubDays={user?.extendedSubDays}
                     extendedSubscriptions={user?.extendedSubscriptions}
                     sub_session_days={user?.usersubscription.sub_session_days}
+                    subscriptionId={user?.usersubscription.id}
                   />
                 ))}
               </div>
@@ -485,7 +486,6 @@ const MyDashboardSection = () => {
                         user_id={user.usersubscription.flexprouser?.id}
                         id={user.id}
                         registeredName={user.usersubscription.flexprouser?.name}
-                        remaining={"0"}
                         subscription={
                           user.usersubscription.subscription.gym_rate_desc
                         }
@@ -503,6 +503,7 @@ const MyDashboardSection = () => {
                         sub_session_days={
                           user.usersubscription.sub_session_days
                         }
+                        subscriptionId={user?.usersubscription?.id}
                       />
                     )
                 )}

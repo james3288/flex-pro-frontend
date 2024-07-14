@@ -75,7 +75,7 @@ const DayPassUser = ({ user }) => {
 
   const context = (
     <>
-      <div className="col-lg-3 col-xs-12" key={user?.id}>
+      <div className="col-lg-3 col-xs-12">
         <div className="c-col">
           <div className="c-col-name">
             <img src={pic} alt="" />

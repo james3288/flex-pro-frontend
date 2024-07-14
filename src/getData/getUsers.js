@@ -21,7 +21,7 @@ const getUsers = async () => {
       })
     );
 
-    console.log("users", newUser);
+    // console.log("users", newUser);
     return newUser;
   } catch (error) {
     console.error("Error fetching users:", error);

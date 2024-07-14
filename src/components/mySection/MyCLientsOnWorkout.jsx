@@ -56,6 +56,8 @@ const MyCLientsOnWorkout = () => {
   //   refecthInterval: 1000,
   // });
 
+  console.log(newData);
+
   function getFormattedDate() {
     const currentDate = new Date();
     const year = currentDate.getFullYear();

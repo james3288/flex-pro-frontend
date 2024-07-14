@@ -138,7 +138,9 @@ const FaceScannerNew = ({
             user.usersubscription.date_subscribed,
             user.usersubscription.subscription.per.per,
             0,
-            user.usersubscription.sub_session_days
+            user.usersubscription.sub_session_days === 0
+              ? 1
+              : user.usersubscription.sub_session_days
           );
 
           const getExtendedSubscriptionDays = await extendedSub(
@@ -192,7 +194,7 @@ const FaceScannerNew = ({
     const labeledFaceDescriptors = await Promise.all(
       flexProUser?.map(async (label) => {
         const descriptions = [];
-        console.log(label.usersubscription?.flexprouser?.id);
+        // console.log(label.usersubscription?.flexprouser?.id);
         const imgBlob = await fetchImage(
           `${label.usersubscription?.flexprouser?.id}`
         );
@@ -223,7 +225,7 @@ const FaceScannerNew = ({
     );
     setWaiting(true);
     // console.log(labeledFaceDescriptors.filter((item) => item != undefined));
-    console.log(labeledFaceDescriptors);
+    // console.log(labeledFaceDescriptors);
     return labeledFaceDescriptors.filter((item) => item != undefined);
   }
 
@@ -320,7 +322,7 @@ const FaceScannerNew = ({
               cSetTrainerRemainingDays(label.trainersRemainingDays);
               cSetSessionDays(label.usersubscription.session_days);
               extendedT(label.usersubscription.id);
-              
+
               console.log("user has been found");
               count = 0;
               loginstatus = true;
@@ -370,7 +372,7 @@ const FaceScannerNew = ({
 
         const userStatusResult = await getUserStatus();
         if (userStatusResult != null && savedTimeRecord === false) {
-          console.log("wow", loginstatus);
+          // console.log("wow", loginstatus);
           loginstatus = false;
           const saved = await handleSaveTimeRecords(userStatusResult);
           setIsOnGoing("on-going");

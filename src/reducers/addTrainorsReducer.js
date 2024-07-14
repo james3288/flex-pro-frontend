@@ -7,7 +7,7 @@ export const INITIAL_STATE = {
 export const addTrainorReducer = (state, action) => {
   switch (action.type) {
     case "CHANGE_INPUT":
-      console.log("sdfdsf", state.trainer_date_started);
+      // console.log("sdfdsf", state.trainer_date_started);
       return {
         ...state,
         [action.payload.name]: action.payload.value,
