@@ -57,7 +57,7 @@ const ClientsOnWorkoutNew = ({ online }) => {
     //   setRefresher((prev) => prev + 1);
     //   setTempTimeOut(formatTimeToString(Date()));
 
-    console.log(result);
+    console.log("logout result:", result);
   };
 
   const onlineOfflineClass = () => {

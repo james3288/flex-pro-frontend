@@ -33,6 +33,7 @@ const MyUserLoginSection = () => {
   const cTrainersRemainingDays = useUserStore(
     (state) => state.trainersRemainingDays
   );
+
   const cSessionDays = useUserStore((state) => state.sessionDays);
   // const cSetExtendedTrainer = useUserStore((state) => state.setExtendedTrainer);
   const cExtendedTrainer = useUserStore((state) => state.extendedTrainer);
@@ -240,14 +241,15 @@ const MyUserLoginSection = () => {
                     </h3> */}
 
                     <p style={{ fontSize: "24px" }}>
-                      {trainers.usersubscription?.trainer?.name} -{" "}
+                      {/* original: trainers */}
+                      {cUser?.usersubscription?.trainer?.name} -{" "}
                       <strong>
-                        {trainers.usersubscription?.trainer?.position}
+                        {cUser?.usersubscription?.trainer?.position}
                       </strong>
                       {" - "}
                       <strong style={{ color: "orange" }}>
                         {personalTrainerDaysLeft(
-                          trainers.usersubscription?.trainer?.name,
+                          cUser?.usersubscription?.trainer?.name,
                           "remaining-days",
                           cTrainersRemainingDays,
                           cSessionDays
@@ -273,7 +275,8 @@ const MyUserLoginSection = () => {
                   </div>
                   <div className="personal-trainer">
                     <h5>Extended Trainer:</h5>
-                    {trainers?.extendedTrainer?.map((extended) => (
+                    {/* original: trainers */}
+                    {cUser?.extendedTrainer?.map((extended) => (
                       <p
                         style={{
                           color: "orange",
@@ -293,7 +296,7 @@ const MyUserLoginSection = () => {
                         trainerRemainingDays={cTrainersRemainingDays}
                         session_days={cSessionDays}
                         extendedTrainer={cExtendedTrainer}
-                        trainers={trainers.usersubscription?.trainer?.name}
+                        trainers={cUser?.usersubscription?.trainer?.name}
                         totalFreeTrainerLeft={totalFreeTrainerLeft}
                         setTotalFreeTrainerLeft={setTotalFreeTrainerLeft}
                       />

@@ -233,7 +233,7 @@ const FaceScannerNew = ({
     instance
       .post("/api/save_time_record/", timeRecordData)
       .then(function (response) {
-        console.log(response.status);
+        console.log("status:", response.status);
 
         setTimeInStatus(true);
         setIsOnGoing("on-going");
@@ -304,7 +304,7 @@ const FaceScannerNew = ({
       const results = resizedDetections.map((d) => {
         return faceMatcher.findBestMatch(d.descriptor);
       });
-      //  COUNT UPTO numberOfDetection TO FIND OUT THAT YOU
+      //  COUNT UPTO numberOfDetection TO FIND OUT THAT THIS USER IS YOU
       loginstatus === false &&
         isLogin === false &&
         results.forEach((result, i) => {
@@ -323,7 +323,10 @@ const FaceScannerNew = ({
               cSetSessionDays(label.usersubscription.session_days);
               extendedT(label.usersubscription.id);
 
-              console.log("user has been found");
+              console.log(
+                label.usersubscription?.flexprouser?.name +
+                  " user has been found"
+              );
               count = 0;
               loginstatus = true;
               getUserId = label.usersubscription?.flexprouser?.id;
@@ -340,19 +343,24 @@ const FaceScannerNew = ({
 
       if (loginstatus === true) {
         // check if user have subscription
+        console.log(getUserId);
         const get_userStatus = await fetchUserStatus(getUserId);
+
         // // og wala pa ka login
+        // get the user status
         const getUserStatus = async () => {
           let record = null;
           get_userStatus.map((userStatus) => {
             if (userStatus.status === "on-going") {
+              // store user record
               record = {
                 id: userStatus.usersubscription?.id,
                 time_in: new Date(),
                 time_out: new Date(1990, 0, 1, 0, 0),
               };
-              setTrainers(() => userStatus);
-              cSetUser(userStatus);
+
+              setTrainers(() => userStatus); // old set but don't remove
+              cSetUser(userStatus); // new set
             }
           });
           return record;
