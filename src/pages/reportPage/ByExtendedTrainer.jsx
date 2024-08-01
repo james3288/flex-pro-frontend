@@ -7,13 +7,16 @@ const ByExtendedTrainer = () => {
     (state) => state.extendedTrainerReport
   );
 
-  return cExtendedTrainerReport?.map((item) => (
+  return cExtendedTrainerReport?.map((item, index) => (
     <>
       <div className="row body" key={item?.id}>
+        <div className="col-1">
+          <div className="body-col">{index + 1}</div>
+        </div>
         <div className="col-2">
           <div className="body-col">{item?.user}</div>
         </div>
-        <div className="col-2">
+        <div className="col-1">
           <div className="body-col">{FormatDateOnly(item?.date_extend)}</div>
         </div>
         <div className="col-2">

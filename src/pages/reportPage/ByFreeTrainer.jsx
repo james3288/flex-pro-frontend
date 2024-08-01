@@ -7,9 +7,12 @@ const ByFreeTrainer = () => {
     (state) => state.userSubscriptionReportByFreeTrainer
   );
 
-  return cUserSubscriptionReportByFreeTrainer?.map((item) => (
+  return cUserSubscriptionReportByFreeTrainer?.map((item, index) => (
     <>
       <div className="row body" key={item?.id}>
+        <div className="col-1">
+          <div className="body-col">{index + 1}</div>
+        </div>
         <div className="col-2">
           <div className="body-col">{item?.user}</div>
         </div>
@@ -24,7 +27,7 @@ const ByFreeTrainer = () => {
         <div className="col-2">
           <div className="body-col">{item?.trainer}</div>
         </div>
-        <div className="col-2">
+        <div className="col-1">
           <div className="body-col">
             {" "}
             {item?.free_session_days}{" "}

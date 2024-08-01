@@ -53,26 +53,29 @@ const ReportPage = () => {
       </div>
       {cSubscription === "all" ? (
         <div className="row header">
+          <div className="col-1 header-col">#</div>
           <div className="col-2 header-col">User</div>
           <div className="col-2 header-col">Date Subscribed</div>
           <div className="col-2 header-col">Subscription</div>
           <div className="col-2 header-col">Free Trainer</div>
-          <div className="col-2 header-col">Rate</div>
+          <div className="col-1 header-col">Rate</div>
           <div className="col-2 header-col">Days/Month</div>
         </div>
       ) : cSubscription === "free-trainer" ? (
         <div className="row header">
+          <div className="col-1 header-col">#</div>
           <div className="col-2 header-col">User</div>
           <div className="col-2 header-col">Date Subscribed</div>
           <div className="col-2 header-col">Subscription</div>
           <div className="col-2 header-col">Free Trainer</div>
-          <div className="col-2 header-col">Trainer Session Days</div>
+          <div className="col-1 header-col">Trainer Session Days</div>
           <div className="col-2 header-col">Subscription Rate</div>
         </div>
       ) : (
         <div className="row header">
+          <div className="col-1 header-col">#</div>
           <div className="col-2 header-col">User</div>
-          <div className="col-2 header-col">Date Extend Started</div>
+          <div className="col-1 header-col">Date Extend Started</div>
           <div className="col-2 header-col">Subscription</div>
           <div className="col-2 header-col">Trainer</div>
           <div className="col-2 header-col">Session days</div>
@@ -90,7 +93,8 @@ const ReportPage = () => {
       )}
 
       <div className="row total">
-        <div className="col-2 total-col"></div>
+        <div className="col-1 total-col"></div>
+        <div className="col-1 total-col"></div>
         <div className="col-2 total-col"></div>
         <div className="col-2 total-col"></div>
         <div className="col-2 total-col">
