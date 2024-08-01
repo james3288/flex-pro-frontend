@@ -259,19 +259,19 @@ const MyUserLoginSection = () => {
                   </div>
 
                   <div className="personal-trainer">
-                    <h5>Subscription Remaining Days:</h5>
-                    <p style={{ color: "yellowgreen", fontSize: "24px" }}>
-                      {/* {trainers?.extendedSubDays} day/s  */}
-                      {/* {cUser?.extendedSubDays} day/s */}
-                      {cLoginUsingId === true
+                    {/* <h5>Subscription Remaining Days:</h5> */}
+                    {/* <p style={{ color: "yellowgreen", fontSize: "24px" }}> */}
+                    {/* {trainers?.extendedSubDays} day/s  */}
+                    {/* {cUser?.extendedSubDays} day/s */}
+                    {/* {cLoginUsingId === true
                         ? getSubscriptionDaysLeft(
                             cSubscriptionRemainingDays,
                             cExtendedSubscription,
                             cDateSubscribed,
                             false
                           )
-                        : cUser?.extendedSubDays}
-                    </p>
+                        : cUser?.extendedSubDays} */}
+                    {/* </p> */}
                   </div>
                   <div className="personal-trainer">
                     <h5>Extended Trainer:</h5>
