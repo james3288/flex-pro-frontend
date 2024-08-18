@@ -2,11 +2,15 @@ import instance from "../others/axiosInstance";
 import remainingDays from "../others/GetRemainingDays";
 
 // { dateFrom, dateTo, trainer, user }
-const getExtendedTrainer = async (dateFrom, dateTo, user_id) => {
+const getExtendedTrainer = async (user_id) => {
   try {
+    const dateTo = new Date();
+    const dateFrom = new Date(2024, 1, 1);
+    const formattedDateFrom = dateFrom.toISOString().split("T")[0];
+    const formattedDateTo = dateTo.toISOString().split("T")[0];
     // const response = await instance.get(`/api/get_extended_trainer/${id}`);
     const response = await instance.get(
-      `/api/get_extended_trainer_report2/?dateFrom=${dateFrom}&dateTo=${dateTo}&user_id=${user_id}`
+      `/api/get_extended_trainer_report2/?dateFrom=${formattedDateFrom}&dateTo=${formattedDateTo}&user_id=${user_id}`
     );
     const extendedTrainer = await response.data;
 

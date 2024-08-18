@@ -91,17 +91,8 @@ const RenewalUsers = ({
   // get extended trainer
   useEffect(() => {
     const extended = async () => {
-      const dateTo = new Date();
-      const dateFrom = new Date(2024, 1, 1);
-      const formattedDateFrom = dateFrom.toISOString().split("T")[0];
-      const formattedDateTo = dateTo.toISOString().split("T")[0];
-
       try {
-        const data = await getExtendedTrainer(
-          formattedDateFrom,
-          formattedDateTo,
-          user_id
-        );
+        const data = await getExtendedTrainer(user_id);
 
         setExtendedTrainer(data);
       } catch (error) {
