@@ -316,7 +316,7 @@ const MyUserLoginSection = () => {
               </>
             </div>
           ) : // EITHER EXPIRED OR NOT REGISTERED YET
-          isOnGoing === "expired2" ? (
+          isOnGoing === "expired2" || isOnGoing === "expired" ? (
             <div className="col-lg-6 col-xs-12">
               <div className="dashboard-col">
                 <span>

@@ -19,7 +19,7 @@ const MyActiveUser = () => {
   const [modalTitle, setModalTitle] = useState();
 
   const queryKey = ["forActiveUser", "forDayPassUser"];
-  const { isPending, error, data } = useQuery({
+  const { isPending, error, data, fetchStatus } = useQuery({
     queryKey,
     queryFn: async () => {
       const activeUser = await getActiveUser();

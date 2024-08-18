@@ -65,7 +65,7 @@ const FaceScannerNew = ({
     ]).then(setModelsLoaded(true));
   };
 
-  // start video here
+  // function for starting video
   const startVideo = async () => {
     setCaptureVideo(true);
     await navigator.mediaDevices
@@ -81,7 +81,7 @@ const FaceScannerNew = ({
       });
   };
 
-  // close webcome h ere
+  // function for closing webcam
   const closeWebcam = async () => {
     console.log("pls wait");
     await videoRef.current.pause();
@@ -420,102 +420,6 @@ const FaceScannerNew = ({
 
   const handleVideoOnPlay = async () => {
     setIsLogin2(true);
-    // const labeledFaceDescriptors = await getLabeledFaceDescriptions();
-    // const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.4);
-    // // let loginstatus = false;
-    // let getUserId = 0;
-    // setInterval(async () => {
-    //   console.log("loginstatus", loginstatus);
-    //   if (canvasRef && canvasRef.current) {
-    //     canvasRef.current.innerHTML = faceapi.createCanvasFromMedia(
-    //       videoRef.current
-    //     );
-    //     const displaySize = {
-    //       width: videoWidth,
-    //       height: videoHeight,
-    //     };
-    //     faceapi.matchDimensions(canvasRef.current, displaySize);
-    //     const detections = await faceapi
-    //       .detectAllFaces(
-    //         videoRef.current,
-    //         new faceapi.TinyFaceDetectorOptions()
-    //       )
-    //       .withFaceLandmarks()
-    //       .withFaceExpressions()
-    //       .withFaceDescriptors();
-    //     const resizedDetections = faceapi.resizeResults(
-    //       detections,
-    //       displaySize
-    //     );
-    //     const results = resizedDetections.map((d) => {
-    //       return faceMatcher.findBestMatch(d.descriptor);
-    //     });
-    //     //  COUNT UPTO numberOfDetection TO FIND OUT THAT YOU
-    //     loginstatus === false &&
-    //       isLogin === false &&
-    //       results.forEach((result, i) => {
-    //         flexProUser.forEach(async (label) => {
-    //           if (result.label === label.usersubscription?.flexprouser?.name) {
-    //             count = count + 1;
-    //           }
-    //           // user has been found successfully
-    //           if (
-    //             count >= numberOfDetection &&
-    //             result.label === label.usersubscription?.flexprouser?.name
-    //           ) {
-    //             setUserId(label.usersubscription.flexprouser?.id);
-    //             console.log("user has been found");
-    //             loginstatus = true;
-    //             getUserId = label.usersubscription?.flexprouser?.id;
-    //             return;
-    //           }
-    //         });
-    //         const box = resizedDetections[i].detection.box;
-    //         const drawBox = new faceapi.draw.DrawBox(box, {
-    //           label: result,
-    //         });
-    //         drawBox.draw(canvasRef.current);
-    //       });
-    //     // console.log(loginstatus);
-    //     if (loginstatus === true) {
-    //       // check if user have subscription
-    //       const get_userStatus = await fetchUserStatus(getUserId);
-    //       // // og wala pa ka login
-    //       const getUserStatus = async () => {
-    //         let record = null;
-    //         get_userStatus.map((userStatus) => {
-    //           if (userStatus.status === "on-going") {
-    //             record = {
-    //               id: userStatus.usersubscription?.id,
-    //               time_in: new Date(),
-    //               time_out: new Date(1990, 0, 1, 0, 0),
-    //             };
-    //             setTrainers(() => userStatus);
-    //           }
-    //         });
-    //         return record;
-    //       };
-    //       const userStatusResult = await getUserStatus();
-    //       if (userStatusResult != null && savedTimeRecord === false) {
-    //         // const saved = await handleSaveTimeRecords(userStatusResult);
-    //         setIsOnGoing("on-going");
-    //         setTimeInStatus(true);
-    //         isLogin === false && setIsLogin(true);
-    //         // setIsLogin(true);
-    //         // setIsLogin2(true);
-    //         // setSavedTimeRecord(true);
-    //       } else {
-    //         setIsOnGoing("expired");
-    //       }
-    //     }
-    //   }
-    // }, 1000);
-    // setInterval(async () => {
-    //   myRefresher += 1;
-    //   if (myRefresher > refreshMinutes) {
-    //     window.location.reload();
-    //   }
-    // }, 1000);
   };
 
   const handleVideoLoadedMetadata = async () => {
