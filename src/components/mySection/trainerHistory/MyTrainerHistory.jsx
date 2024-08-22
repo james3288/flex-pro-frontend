@@ -108,12 +108,13 @@ const MyTrainerHistory = () => {
               <TrainerHistory userSub={userSub} key={userSub.id} />
             ))}
           </div> */}
+          <h2 style={{ color: "orange" }}>{id}</h2>
           <br />
           <div className="row">
             <div className="col-lg-6">
               <div className="team-title">
                 <div className="section-title">
-                  <h2>EXTENDED TRAINER HISTORY</h2>
+                  <h2>PERSONAL TRAINING HISTORY</h2>
                 </div>
               </div>
             </div>
