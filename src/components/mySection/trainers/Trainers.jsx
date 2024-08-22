@@ -39,7 +39,7 @@ const Trainers = ({
           </a> */}
           <NavLink
             className="btn btn-primary ts-button"
-            to={`/trainer-history/?q=${trainer_id}`}
+            to={`/trainer-history/?q=${trainor.name}`}
             style={{ color: "white" }}
           >
             History
