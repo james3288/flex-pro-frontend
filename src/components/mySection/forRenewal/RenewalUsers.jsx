@@ -298,7 +298,7 @@ const RenewalUsers = ({
                         data-whatever="@mdo"
                         onClick={() => handleUpdateExtendedTrainer(extended.id)}
                       >
-                        {extended.user_subscription.id} -{" "}
+                        {/* {extended.user_subscription.id} -{" "} */}{" "}
                         {extended.trainer.name} ({extended.extended_session_day}{" "}
                         days) - {FormatDate(extended.date_extend)}
                         <br />

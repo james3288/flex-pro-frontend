@@ -11,11 +11,12 @@ import getExtendedSubscription from "../../../getData/getExtendedSubscription";
 import UserLogout from "../clientsOnline/userLogout";
 import { useLogoutStore } from "../../../store/useLogoutStore";
 import LoadingEffect from "../loadingEffect/LoadingEffect";
+import LogoutButton from "./LogoutButton";
 
 const ClientsOnWorkoutNew = ({ online }) => {
   const [remaining, setRemaining] = useState(0);
   const [extendedSubscript, setExtendedSubscript] = useState([]);
-
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
   const yearValidation = YearValidation(online.time_out);
   const dateObj = new Date(online.date_log);
   const timestamp = dateObj.getTime(); // Convert Date object to timestamp in milliseconds
@@ -24,16 +25,17 @@ const ClientsOnWorkoutNew = ({ online }) => {
 
   // get the remaining days
   const getRemainingDays = async () => {
-    setRemaining(
-      await remainingDays(
-        online.usersubscription.date_subscribed,
-        online.usersubscription.subscription.per.per,
-        online.usersubscription.flexprouser.id,
-        online.usersubscription.sub_session_days === 0
-          ? 1
-          : online.usersubscription.sub_session_days
-      )
+    const rd = await remainingDays(
+      online.usersubscription.date_subscribed,
+      online.usersubscription.subscription.per.per,
+      online.usersubscription.flexprouser.id,
+      online.usersubscription.sub_session_days === 0
+        ? 1
+        : online.usersubscription.sub_session_days
     );
+
+    console.log(rd);
+    setRemaining(rd);
   };
 
   const extendedSub = async () => {
@@ -52,23 +54,33 @@ const ClientsOnWorkoutNew = ({ online }) => {
     return () => clearInterval(intervalId);
   }, []); // Add dependencies as needed
 
-  const handleLogout = async () => {
-    const result = await UserLogout(online.time_in, online.id);
-    //   setRefresher((prev) => prev + 1);
-    //   setTempTimeOut(formatTimeToString(Date()));
+  useEffect(() => {
+    console.log(isButtonLoading);
+  }, [isButtonLoading]);
 
-    console.log("logout result:", result);
-  };
+  // //handles logout events
+  // const handleLogout = async () => {
+  //   setIsButtonLoading(true);
+  //   const result = await UserLogout(online.time_in, online.id);
+  //   //   setRefresher((prev) => prev + 1);
+  //   //   setTempTimeOut(formatTimeToString(Date()));
+  //   setIsButtonLoading(false);
 
+  //   console.log("logout result:", result);
+  // };
+
+  // online/offline class
   const onlineOfflineClass = () => {
     return yearValidation === 1990 ? "online" : "offline";
   };
-
+  //online/offline button class
   const onlineOfflineBtnClass = () => {
     return remainingDaysLeft() === "Expired" && yearValidation === 1990
       ? "btn btn-danger"
       : "btn btn-warning";
   };
+
+  //expired class
   const expiredStyle = () => {
     return remainingDaysLeft() === "Expired" && yearValidation === 1990
       ? { border: "2px solid red" }
@@ -143,11 +155,18 @@ const ClientsOnWorkoutNew = ({ online }) => {
           </h5>
         </div>
 
-        {yearValidation === 1990 && (
+        {/* {yearValidation === 1990 && isButtonLoading === false && (
           <button className={onlineOfflineBtnClass()} onClick={handleLogout}>
             Logout
           </button>
-        )}
+        )} */}
+
+        <LogoutButton
+          onlineOfflineBtnClass={onlineOfflineBtnClass()}
+          id={online.id}
+          time_in={online.time_in}
+          yearValidation={yearValidation}
+        />
       </div>
     </div>
   );

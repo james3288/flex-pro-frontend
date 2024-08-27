@@ -84,7 +84,7 @@ const MyTrainerHistory = () => {
   // }
 
   // console.log("trainerHistory", data.data1);
-  console.log("trainerExtendedHistory", data.data2);
+  // console.log("trainerExtendedHistory", data.data2);
 
   return (
     <>

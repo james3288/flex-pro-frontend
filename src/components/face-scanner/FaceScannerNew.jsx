@@ -321,7 +321,9 @@ const FaceScannerNew = ({
               // cSetUser(label.usersubscription?.flexprouser);
               cSetTrainerRemainingDays(label.trainersRemainingDays);
               cSetSessionDays(label.usersubscription.session_days);
-              extendedT(label.usersubscription.id);
+              extendedT(label?.usersubscription?.flexprouser?.id);
+
+              console.log(label);
 
               console.log(
                 label.usersubscription?.flexprouser?.name +

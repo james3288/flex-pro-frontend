@@ -30,6 +30,7 @@ const MyUserLoginSection = () => {
   const [trainers, setTrainers] = useState();
   const [isLogin, setIsLogin] = useState(false);
   const cUser = useUserStore((state) => state.user);
+
   const cTrainersRemainingDays = useUserStore(
     (state) => state.trainersRemainingDays
   );
@@ -275,7 +276,7 @@ const MyUserLoginSection = () => {
                   </div>
                   <div className="personal-trainer">
                     <h5>Extended Trainer:</h5>
-                    {/* original: trainers */}
+                    {/* original: trainers 
                     {cUser?.extendedTrainer?.map((extended) => (
                       <p
                         style={{
@@ -288,6 +289,21 @@ const MyUserLoginSection = () => {
                       >
                         {extended.trainer?.name} -{" "}
                         {FormatDate(extended?.date_extend)}
+                      </p>
+                    ))}*/}
+                    {cExtendedTrainer?.map((extended) => (
+                      <p
+                        style={{
+                          color: "orange",
+                          fontSize: "20px",
+                          padding: 0,
+                          margin: 0,
+                        }}
+                        key={extended?.id}
+                      >
+                        {extended?.trainer?.name} -{" "}
+                        {FormatDate(extended?.date_extend)} (
+                        {extended?.extended_session_day} day/s)
                       </p>
                     ))}
                     <br />
