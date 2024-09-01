@@ -34,13 +34,17 @@ const getUserSubscriptionReport = async (dateFrom, dateTo, gym_rate_desc) => {
 
     // get user subscription by date range and gym rate desc
     const response = await instance.get(
-      `/api/get_user_subscription_report/?dateFrom=${dateFrom}&dateTo=${dateTo}&gym_rate_desc=${gym_rate_desc}`
+      `/api/get_user_subscription_report/?dateFrom=${dateFrom}&dateTo=${dateTo}&gym_rate_desc=${encodeURIComponent(
+        gym_rate_desc
+      )}`
     );
     const data = await response.data;
 
     // get extended subscription by date range
     const response2 = await instance.get(
-      `/api/get_extended_subscription_report/?dateFrom=${dateFrom}&dateTo=${dateTo}`
+      `/api/get_extended_subscription_report/?dateFrom=${dateFrom}&dateTo=${dateTo}&gym_rate_desc=${encodeURIComponent(
+        gym_rate_desc
+      )}`
     );
 
     const data2 = await response2.data;
@@ -78,7 +82,7 @@ const getUserSubscriptionReport = async (dateFrom, dateTo, gym_rate_desc) => {
         id: $`ex-{item.id}`,
         user: item.user_subscription.flexprouser.name,
         date_subscribed: item.date_extend,
-        gym_rate_desc: item.user_subscription.subscription.gym_rate_desc,
+        gym_rate_desc: item.subscription.gym_rate_desc,
         trainer: null,
         // rate: item.user_subscription.subscription.rate,
         rate: getRate("day", item.extended_session_day),
