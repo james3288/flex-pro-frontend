@@ -5,6 +5,8 @@ import remainingDays from "../others/GetRemainingDays";
 const getExtendedTrainer = async (user_id) => {
   try {
     const dateTo = new Date();
+    dateTo.setDate(dateTo.getDate() + 1);
+
     const dateFrom = new Date(2024, 1, 1);
     const formattedDateFrom = dateFrom.toISOString().split("T")[0];
     const formattedDateTo = dateTo.toISOString().split("T")[0];
