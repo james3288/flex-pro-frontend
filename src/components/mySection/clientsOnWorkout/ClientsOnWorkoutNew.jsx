@@ -34,7 +34,7 @@ const ClientsOnWorkoutNew = ({ online }) => {
         : online.usersubscription.sub_session_days
     );
 
-    console.log(rd);
+    // console.log(rd);
     setRemaining(rd);
   };
 

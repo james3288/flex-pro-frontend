@@ -9,6 +9,7 @@ import LoadingEffect from "../mySection/loadingEffect/LoadingEffect";
 import { useUserStore } from "../../store/useUserStore";
 import getExtendedSubscription from "../../getData/getExtendedSubscription";
 import getExtendedTrainer from "../../getData/getExtendedTrainer";
+import getActiveAndInactiveUsers from "../../getData/getActiveAndInactiveUsers";
 
 const UserLoginModal = ({
   setUserId,
@@ -62,7 +63,7 @@ const UserLoginModal = ({
 
   const handleEnterOnClick = async (id) => {
     setIsLoading(true);
-    const user = await get_active_user();
+    const user = await getActiveAndInactiveUsers(); //get_active_user();
 
     const newUser = user.filter(
       (u) => u.usersubscription.flexprouser?.id == id
@@ -99,7 +100,10 @@ const UserLoginModal = ({
     const getUserStatus = async () => {
       let record = null;
       get_userStatus.map((userStatus) => {
-        if (userStatus.status === "on-going") {
+        if (
+          userStatus.status === "on-going" ||
+          userStatus.status === "expired"
+        ) {
           record = {
             id: userStatus.usersubscription?.id,
             time_in: new Date(),
@@ -107,14 +111,15 @@ const UserLoginModal = ({
           };
 
           // setTrainers(() => userStatus);
+
+          setTrainers(() => userStatus); // old set but don't remove
+          cSetUser(userStatus); // new set
         }
       });
       return record;
     };
 
     const userStatusResult = await getUserStatus();
-
-    console.log(savedTimeRecord);
 
     if (
       userStatusResult != null &&
@@ -126,6 +131,8 @@ const UserLoginModal = ({
         setTimeInStatus,
         setIsOnGoing
       );
+
+      setIsOnGoing("on-going");
       setSavedTimeRecord(saved);
 
       return;

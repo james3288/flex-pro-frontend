@@ -10,7 +10,7 @@ const getExtendedTrainer = async (user_id) => {
     const dateFrom = new Date(2024, 1, 1);
     const formattedDateFrom = dateFrom.toISOString().split("T")[0];
     const formattedDateTo = dateTo.toISOString().split("T")[0];
-    // const response = await instance.get(`/api/get_extended_trainer/${id}`);
+
     const response = await instance.get(
       `/api/get_extended_trainer_report2/?dateFrom=${formattedDateFrom}&dateTo=${formattedDateTo}&user_id=${user_id}`
     );

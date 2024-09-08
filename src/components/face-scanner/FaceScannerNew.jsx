@@ -10,6 +10,7 @@ import getExtendedSubscription from "../../getData/getExtendedSubscription";
 import getSubscriptionDaysLeft from "../../getData/getSubscriptionDaysLeft";
 import getExtendedTrainer from "../../getData/getExtendedTrainer";
 import { useUserStore } from "../../store/useUserStore";
+import getActiveAndInactiveUsers from "../../getData/getActiveAndInactiveUsers";
 
 const FaceScannerNew = ({
   playNow,
@@ -23,6 +24,7 @@ const FaceScannerNew = ({
   setIsLogin,
   setTrainers,
   isLogin,
+  setIsExpired,
 }) => {
   const [modelsLoaded, setModelsLoaded] = React.useState(false);
   const [captureVideo, setCaptureVideo] = React.useState(false);
@@ -194,7 +196,8 @@ const FaceScannerNew = ({
     const labeledFaceDescriptors = await Promise.all(
       flexProUser?.map(async (label) => {
         const descriptions = [];
-        // console.log(label.usersubscription?.flexprouser?.id);
+
+        // Load the image from the server
         const imgBlob = await fetchImage(
           `${label.usersubscription?.flexprouser?.id}`
         );
@@ -229,14 +232,14 @@ const FaceScannerNew = ({
     return labeledFaceDescriptors.filter((item) => item != undefined);
   }
 
-  const handleSaveTimeRecords = async (timeRecordData) => {
+  const handleSaveTimeRecords = async (timeRecordData, status) => {
     instance
       .post("/api/save_time_record/", timeRecordData)
       .then(function (response) {
         console.log("status:", response.status);
 
         setTimeInStatus(true);
-        setIsOnGoing("on-going");
+        // setIsOnGoing(status);
 
         return true;
       })
@@ -267,9 +270,9 @@ const FaceScannerNew = ({
     };
 
     const loadUser = async () => {
-      const users = await getActiveUsers();
+      const users = await getActiveAndInactiveUsers(); //getActiveUsers();
       setFlexProUser(users);
-      loadStartVideo();
+      await loadStartVideo();
     };
 
     loadFaceModels();
@@ -335,7 +338,6 @@ const FaceScannerNew = ({
               //return;
             }
           });
-
           const box = resizedDetections[i].detection.box;
           const drawBox = new faceapi.draw.DrawBox(box, {
             label: result,
@@ -343,17 +345,23 @@ const FaceScannerNew = ({
           drawBox.draw(canvasRef.current);
         });
 
+      // console.log(count);
+
       if (loginstatus === true) {
         // check if user have subscription
-        console.log(getUserId);
+        // console.log(getUserId);
         const get_userStatus = await fetchUserStatus(getUserId);
 
         // // og wala pa ka login
         // get the user status
         const getUserStatus = async () => {
           let record = null;
+
           get_userStatus.map((userStatus) => {
-            if (userStatus.status === "on-going") {
+            if (
+              userStatus.status === "on-going" ||
+              userStatus.status === "expired"
+            ) {
               // store user record
               record = {
                 id: userStatus.usersubscription?.id,
@@ -373,26 +381,39 @@ const FaceScannerNew = ({
 
         // check if already login
         if (isAlreadyLogin?.length > 0) {
+          // if naka login na diri ra taman
           loginstatus = false;
-          setIsOnGoing("already-login");
 
+          setIsOnGoing("already-login");
           return;
-          //to be continue here sa balay hehehe
         }
 
         const userStatusResult = await getUserStatus();
         if (userStatusResult != null && savedTimeRecord === false) {
           // console.log("wow", loginstatus);
           loginstatus = false;
-          const saved = await handleSaveTimeRecords(userStatusResult);
+          const saved = await handleSaveTimeRecords(
+            userStatusResult,
+            "on-going"
+          );
+
           setIsOnGoing("on-going");
           setTimeInStatus(true);
           setIsLogin(true);
           // setIsLogin(true);
           // setIsLogin2(true);
+          setIsExpired(cUser.status);
           setSavedTimeRecord(saved);
         } else {
+          loginstatus = false;
+          const saved = await handleSaveTimeRecords(
+            userStatusResult,
+            "expired"
+          );
           setIsOnGoing("expired");
+          setTimeInStatus(false);
+          setIsExpired(cUser.status);
+          setSavedTimeRecord(saved);
         }
       }
     }
