@@ -9,7 +9,7 @@ import postDayPassTimeRecords from "../../postData/postDayPassTimeRecords";
 import FormatDate from "../../others/FormatDate";
 import FormatDateOnly from "../../others/FormatDateOnly";
 
-const DayPassLoginModal = () => {
+const DayPassLoginModal = ({ setIsOnGoing, setDayPassLogin }) => {
   const [myDayPassUsers, setMyDayPassUsers] = useState([]);
 
   //setter
@@ -19,12 +19,14 @@ const DayPassLoginModal = () => {
     setIsLogin,
     setDayPassName,
     setIsAlreadyLogin,
+    setSubscriptionName,
   } = useDayPassStore((state) => ({
     setDayPassUser: state.setDayPassUser,
     setDayPassUserOnline: state.setDayPassUserOnline,
     setIsLogin: state.setIsLogin,
     setDayPassName: state.setDayPassName,
     setIsAlreadyLogin: state.setIsAlreadyLogin,
+    setSubscriptionName: state.setSubscriptionName,
   }));
 
   //getter
@@ -65,12 +67,21 @@ const DayPassLoginModal = () => {
       };
 
       postDayPassTimeRecords(data);
-      setMyDayPassUsers([]);
+
+      console.log(myDayPassUsers[0]?.subscription?.gym_rate_desc);
+
       setIsLogin(true);
       setDayPassName(myDayPassUsers[0].name);
+      setIsOnGoing("on-going");
+      setDayPassLogin(true);
+      setSubscriptionName(myDayPassUsers[0]?.subscription?.gym_rate_desc);
+      setMyDayPassUsers([]);
     } else {
       console.log("nag login pani xa karon");
+      setDayPassLogin(true);
+      setIsOnGoing("already-login");
       setIsAlreadyLogin(true);
+      setSubscriptionName(myDayPassUsers[0]?.subscription?.gym_rate_desc);
       setMyDayPassUsers([]);
       setDayPassName(dayPassUserOnline1990[0]?.flexprouserdaypass.name);
     }
@@ -130,7 +141,9 @@ const DayPassLoginModal = () => {
             <div className="modal-body">
               <div className="dp-user-info">
                 {myDayPassUsers.length > 0 &&
-                  myDayPassUsers.map((user) => <DpUserInfo user={user} />)}
+                  myDayPassUsers.map((user) => (
+                    <DpUserInfo user={user} key={user.id} />
+                  ))}
               </div>
             </div>
 

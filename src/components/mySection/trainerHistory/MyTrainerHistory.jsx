@@ -46,6 +46,8 @@ const MyTrainerHistory = () => {
 
   const dateTo = new Date();
   const dateFrom = new Date(2024, 1, 1);
+  dateTo.setDate(dateTo.getDate() + 1);
+
   const formattedDateFrom = dateFrom.toISOString().split("T")[0];
   const formattedDateTo = dateTo.toISOString().split("T")[0];
 

@@ -14,7 +14,6 @@ const initialState = {
     trainer_id: 0,
     trainingDateStarted: null,
   },
-
   dayPassId: 0,
   dayPassUserOnline: [],
   isLogin: false,
@@ -22,6 +21,7 @@ const initialState = {
   dayPassName: "",
   remainingHours: "",
   personalTrainer: "",
+  subscriptionName: "",
 };
 
 export const useDayPassStore = create((set) => ({
@@ -38,7 +38,12 @@ export const useDayPassStore = create((set) => ({
         state.modalTitle = data;
       })
     ),
-
+  setSubscriptionName: async (data) =>
+    set(
+      produce((state) => {
+        state.subscriptionName = data;
+      })
+    ),
   setRemoveModalTitle: async (data) =>
     set(
       produce((state) => {

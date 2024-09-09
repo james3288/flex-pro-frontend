@@ -37,7 +37,7 @@ const LoginMessageAlert = (props) => {
                 style={{
                   color:
                     props.isOnGoing === "already-login"
-                      ? "orange"
+                      ? "#be256a"
                       : "yellowgreen",
                 }}
               >

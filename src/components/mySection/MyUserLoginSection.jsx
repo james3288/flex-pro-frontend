@@ -20,6 +20,7 @@ import ExclamationSvg from "./../svg/exclamationSvg";
 import CheckCircleFillSvg from "./../svg/checkCircleFillSvg";
 import LoadingEffect from "./loadingEffect/LoadingEffect";
 import LoginMessageAlert from "../LoginMessageAlert/LoginMessageAlert";
+import LoginMessageAlertDayPass from "../LoginMessageAlert/LoginMessageAlertDayPass";
 
 const MyUserLoginSection = () => {
   const [play, setPlay] = useState(false);
@@ -33,6 +34,7 @@ const MyUserLoginSection = () => {
   const [trainers, setTrainers] = useState();
   const [isLogin, setIsLogin] = useState(false);
   const cUser = useUserStore((state) => state.user);
+  const [dayPassLogin, setDayPassLogin] = useState(false);
 
   const cTrainersRemainingDays = useUserStore(
     (state) => state.trainersRemainingDays
@@ -59,12 +61,14 @@ const MyUserLoginSection = () => {
     isAlreadyLogin,
     remainingHours,
     personalTrainer,
+    subscriptionName,
   } = useDayPassStore((state) => ({
     isLogin: state.isLogin,
     dayPassName: state.dayPassName,
     isAlreadyLogin: state.isAlreadyLogin,
     remainingHours: state.remainingHours,
     personalTrainer: state.personalTrainer,
+    subscriptionName: state.subscriptionName,
   }));
   //setter
   const { setDayPassUserId, setModalTitle, setIsAlreadyLogin } =
@@ -128,6 +132,17 @@ const MyUserLoginSection = () => {
     setTotalFreeTrainerLeft: setTotalFreeTrainerLeft,
     handleRefresh: handleRefresh,
     isOnGoing: isOnGoing,
+  };
+
+  // daypass props
+  const daypassProps = {
+    pic: Pic,
+    isOnGoing: isOnGoing,
+    dayPassName: dayPassName,
+    personalTrainer: personalTrainer,
+    handleRefresh: handleRefresh,
+    remainingHours: remainingHours,
+    subscriptionName: subscriptionName,
   };
 
   return (
@@ -217,10 +232,28 @@ const MyUserLoginSection = () => {
 
           {/* IF USER ID HAS BEEN FOUND AND NOT LOGIN YET*/}
           {isOnGoing === "on-going" && userId > 0 ? (
-            <LoginMessageAlert {...props} message={"Successfully login"} />
+            <LoginMessageAlert {...props} message={"Successfully login!"} />
           ) : // IF USER HAS ALREADY LOGIN
-          isOnGoing === "already-login" ? (
-            <LoginMessageAlert {...props} message={"You already login"} />
+          isOnGoing === "already-login" && dayPassLogin === false ? (
+            <LoginMessageAlert
+              {...props}
+              message={"You are currently logged in!"}
+            />
+          ) : isOnGoing === "on-going" &&
+            dayPassLogin === true &&
+            isAlreadyLogin === false ? (
+            <LoginMessageAlertDayPass
+              {...daypassProps}
+              message="Daypass successfully login!"
+            />
+          ) : // DAYPASS ALREADY LOGIN
+          isOnGoing === "already-login" &&
+            dayPassLogin === true &&
+            isAlreadyLogin === true ? (
+            <LoginMessageAlertDayPass
+              {...daypassProps}
+              message={"You are currently logged in!"}
+            />
           ) : (
             // DEFAULT
             <div className="col-lg-6 col-xs-12">
@@ -250,7 +283,10 @@ const MyUserLoginSection = () => {
         />
       </div>
 
-      <DayPassLoginModal />
+      <DayPassLoginModal
+        setIsOnGoing={setIsOnGoing}
+        setDayPassLogin={setDayPassLogin}
+      />
     </>
   );
 };
