@@ -2,7 +2,7 @@ import instance from "../others/axiosInstance";
 import remainingDays from "../others/GetRemainingDays";
 
 // { dateFrom, dateTo, trainer, user }
-const getExtendedTrainer = async (user_id) => {
+const getExtendedTrainerForUserHistory = async (user_subscription_id) => {
   try {
     const dateTo = new Date();
     dateTo.setDate(dateTo.getDate() + 1);
@@ -12,7 +12,7 @@ const getExtendedTrainer = async (user_id) => {
     const formattedDateTo = dateTo.toISOString().split("T")[0];
 
     const response = await instance.get(
-      `/api/get_extended_trainer_report2/?dateFrom=${formattedDateFrom}&dateTo=${formattedDateTo}&user_id=${user_id}`
+      `/api/get_extended_trainer/${user_subscription_id}`
     );
     const extendedTrainer = await response.data;
 
@@ -44,4 +44,4 @@ const getExtendedTrainer = async (user_id) => {
   }
 };
 
-export default getExtendedTrainer;
+export default getExtendedTrainerForUserHistory;

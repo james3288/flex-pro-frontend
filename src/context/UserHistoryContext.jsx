@@ -2,7 +2,6 @@ import { createContext, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import getUserHistory from "../getData/getUserHistory";
 import getUserSubscription from "../getData/getUserSubscription";
-import getExtendedTrainer from "../getData/getExtendedTrainer";
 
 export const UserHistoryContext = createContext();
 
@@ -17,7 +16,7 @@ export const UserHistoryProvider = ({ children, id }) => {
     data: data,
   } = useQuery({
     queryKey,
-    queryFn: () => getUserSubscription(id),
+    queryFn: async () => await getUserSubscription(id),
     // refetchInterval: 1000,
   });
 
@@ -27,19 +26,19 @@ export const UserHistoryProvider = ({ children, id }) => {
     data: data2,
   } = useQuery({
     queryKey2,
-    queryFn: () => getUserHistory(id),
+    queryFn: async () => await getUserHistory(id),
     // refetchInterval: 1000,
   });
 
-  const {
-    isLoading: extendedTrainerPending,
-    error: extendedTrainerError,
-    data: data3,
-  } = useQuery({
-    queryKey3,
-    queryFn: () => getExtendedTrainer(id),
-    // refetchInterval: 1000,
-  });
+  // const {
+  //   isLoading: extendedTrainerPending,
+  //   error: extendedTrainerError,
+  //   data: data3,
+  // } = useQuery({
+  //   queryKey3,
+  //   queryFn: () => getExtendedTrainer(id),
+  //   // refetchInterval: 1000,
+  // });
 
   const userSubscriptionDatas = {
     userSubscriptionData: data,
@@ -53,15 +52,15 @@ export const UserHistoryProvider = ({ children, id }) => {
     error: userHistoryError,
   };
 
-  const extendedTrainerDatas = {
-    extendedTrainerData: data3,
-    pending: extendedTrainerPending,
-    error: extendedTrainerError,
-  };
+  // const extendedTrainerDatas = {
+  //   extendedTrainerData: data3,
+  //   pending: extendedTrainerPending,
+  //   error: extendedTrainerError,
+  // };
 
   return (
     <UserHistoryContext.Provider
-      value={{ userSubscriptionDatas, userHistoryDatas, extendedTrainerDatas }}
+      value={{ userSubscriptionDatas, userHistoryDatas }}
     >
       {children}
     </UserHistoryContext.Provider>
