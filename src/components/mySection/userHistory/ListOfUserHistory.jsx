@@ -8,8 +8,10 @@ import getExtendedSubscription from "../../../getData/getExtendedSubscription";
 import getSubscriptionDaysLeft from "../../../getData/getSubscriptionDaysLeft";
 
 const ListOfUserHistory = () => {
-  const { userSubscriptionDatas, userHistoryDatas } =
+  const { userSubscriptionDatas, userHistoryDatas, extendedTrainerDatas } =
     useContext(UserHistoryContext);
+
+  console.log(userSubscriptionDatas);
 
   const result = userSubscriptionDatas?.userSubscriptionData?.map((user2) => {
     return (
@@ -71,11 +73,16 @@ const ListOfUserHistory = () => {
                 <h4 style={{ color: "gray", marginTop: "15px" }}>
                   Extended Trainers:
                 </h4>
-                {user2?.extendedTrainer?.map((trainer) => (
+                {/* {user2?.extendedTrainer?.map((trainer) => (
                   <h5 key={trainer.id} style={{ color: "pink" }}>
                     {trainer.trainer?.name}
                   </h5>
+                ))} */}
+
+                {extendedTrainerDatas?.extendedTrainerData?.map((extended) => (
+                  <h5>{}</h5>
                 ))}
+
                 {/* <h5 style={{ color: "pink" }}>JUAN DELA CRUZ</h5>
 <h5 style={{ color: "pink" }}>LUFFY D. MONKEY</h5> */}
               </div>

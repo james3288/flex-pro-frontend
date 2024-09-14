@@ -4,6 +4,7 @@ import remainingDays from "../others/GetRemainingDays";
 // { dateFrom, dateTo, trainer, user }
 const getExtendedTrainer = async (user_id) => {
   try {
+    console.log(user_id);
     const dateTo = new Date();
     dateTo.setDate(dateTo.getDate() + 1);
 

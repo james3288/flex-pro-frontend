@@ -108,7 +108,9 @@ const MySubscribedNow = () => {
 
   const checkIfAlreadySubscribed = async (id) => {
     try {
-      const response = await instance.get(`/api/user_status/${id}`);
+      const response = await instance.get(
+        `/api/user_status_for_adding_subscripton/${id}`
+      );
       const users = response.data;
 
       return users;

@@ -179,6 +179,7 @@ const FaceScannerNew = ({
     }
   };
 
+  // check if already in function
   const checkIfAlreadyIn = async (user_id) => {
     try {
       const response = await instance.get(
@@ -232,6 +233,7 @@ const FaceScannerNew = ({
     return labeledFaceDescriptors.filter((item) => item != undefined);
   }
 
+  // save time record functions
   const handleSaveTimeRecords = async (timeRecordData, status) => {
     instance
       .post("/api/save_time_record/", timeRecordData)
@@ -345,15 +347,13 @@ const FaceScannerNew = ({
           drawBox.draw(canvasRef.current);
         });
 
-      // console.log(count);
-
+      // check if user have subscription
       if (loginstatus === true) {
-        // check if user have subscription
-        // console.log(getUserId);
-        const get_userStatus = await fetchUserStatus(getUserId);
+        // has user subscription: true
 
-        // // og wala pa ka login
-        // get the user status
+        const get_userStatus = await fetchUserStatus(getUserId); // fetch and initialize user status from db
+
+        // get user status function
         const getUserStatus = async () => {
           let record = null;
 
@@ -376,19 +376,21 @@ const FaceScannerNew = ({
           return record;
         };
 
+        // get user status if expired or on-going
+        const userStatusResult = await getUserStatus();
+
         // already login function
         const isAlreadyLogin = await checkIfAlreadyIn(getUserId);
 
-        // check if already login
+        // check if user has already login
         if (isAlreadyLogin?.length > 0) {
-          // if naka login na diri ra taman
           loginstatus = false;
 
           setIsOnGoing("already-login");
           return;
-        }
+        } // if naka login na diri ra taman
 
-        const userStatusResult = await getUserStatus();
+        // proceed here og wala pa ka login
         if (userStatusResult != null && savedTimeRecord === false) {
           // console.log("wow", loginstatus);
           loginstatus = false;
