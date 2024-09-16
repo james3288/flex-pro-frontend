@@ -80,12 +80,14 @@ const LoginMessageAlert = (props) => {
           <div className="personal-trainer">
             <h5>Extended Trainer:</h5>
 
-            {props.cExtendedTrainer?.map((extended) => (
-              <p style={style1} key={extended?.id}>
-                {extended?.trainer?.name} - {FormatDate(extended?.date_extend)}{" "}
-                ({extended?.extended_session_day} day/s)
-              </p>
-            ))}
+            {props.cExtendedTrainer?.length > 0 &&
+              props.cExtendedTrainer?.map((extended) => (
+                <p style={style1} key={extended?.id}>
+                  {extended?.trainer?.name} -{" "}
+                  {FormatDate(extended?.date_extend)} (
+                  {extended?.extended_session_day} day/s)
+                </p>
+              ))}
             <br />
             <div className="trainerRemainingDays">
               <TrainerRemainingDays
