@@ -17,12 +17,12 @@ const getActiveAndInactiveUsers = async () => {
             : user.usersubscription.flexprouser?.id
         );
 
-        // get the remaining days
-        const getRemainingDays = await remainingDays(
-          user.usersubscription.date_subscribed,
-          user.usersubscription.subscription.per.per
-        );
-        // end get the reamining days
+        // // get the remaining days
+        // const getRemainingDays = await remainingDays(
+        //   user.usersubscription.date_subscribed,
+        //   user.usersubscription.subscription.per.per
+        // );
+        // // end get the reamining days
 
         // get free trainiers remaining days
         const getTrainersRemainingDays = await remainingDays(

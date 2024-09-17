@@ -159,17 +159,6 @@ const MyUserLoginSection = () => {
               <div className="camera-wrapper">
                 {/* <FaceScanner playNow={play} /> */}
                 {play && (
-                  // <FaceScanner
-                  //   playNow={play}
-                  //   stopNow={stop}
-                  //   setPlay={setPlay}
-                  //   setUserId={setUserId}
-                  //   setUserFound={setUserFound}
-                  //   setIsOnGoing={setIsOnGoing}
-                  //   isOnGoing={isOnGoing}
-                  //   setIsLogin={setIsLogin}
-                  //   setTrainers={setTrainers}
-                  // />
                   <FaceScannerNew
                     playNow={play}
                     stopNow={stop}
@@ -190,15 +179,17 @@ const MyUserLoginSection = () => {
                   className="btn btn-success enabled"
                   onClick={handlePlayClick}
                   disabled={disableBtn}
+                  style={{ zIndex: "9999" }}
                 >
                   Face Recognition
                 </button>
                 <button
                   className="btn btn-success enabled"
                   // onClick={handlePlayClick}
-                  disabled={disableBtn}
+                  // disabled={disableBtn}
                   data-toggle="modal"
                   data-target=".bd-example-modal-lg"
+                  style={{ zIndex: "9999" }}
                 >
                   Login User ID
                 </button>
@@ -207,14 +198,14 @@ const MyUserLoginSection = () => {
                   data-toggle="modal"
                   data-target="#daypass-login-modal"
                   onClick={handleDayPassLoginClick}
+                  style={{ zIndex: "9999" }}
                 >
                   Login Daypass
                 </button>
                 {/* <button className="btn btn-success">QR Code</button> */}
-                <form action="">
+                <form action="" style={{ zIndex: "9999" }}>
                   <button
                     className="btn btn-danger"
-                    style={{ zIndex: "9999" }}
                     //onClick={handleStopClick}
                   >
                     Refresh
