@@ -73,6 +73,8 @@ const getUserSubscriptionReport = async (dateFrom, dateTo, gym_rate_desc) => {
           item?.subscription.per.per === "day"
             ? customizeRateFn(item.sub_session_days)
             : item?.subscription?.rate,
+        promo_option: "",
+        promo_rate: 0,
       };
       newUser.push(object);
     });
@@ -88,10 +90,16 @@ const getUserSubscriptionReport = async (dateFrom, dateTo, gym_rate_desc) => {
         rate: getRate("day", item.extended_session_day),
         per:
           item.extended_session_day > 1
-            ? item.extended_session_day + " days (extended)"
-            : item.extended_session_day + " day (extended)",
+            ? item.extended_session_day +
+              ` days (extended${item?.options === "promo" ? " - P" : ""})`
+            : item.extended_session_day + ` day (extended - PROMO)`,
         category: "extended",
-        extended_session: customizeRateFn(item.extended_session_day),
+        extended_session:
+          item?.options === "promo"
+            ? item?.promo_rate
+            : customizeRateFn(item.extended_session_day),
+        promo_option: item?.options,
+        promo_rate: item?.promo_rate,
       };
       newUser.push(object);
     });
@@ -108,6 +116,8 @@ const getUserSubscriptionReport = async (dateFrom, dateTo, gym_rate_desc) => {
         per: "day",
         category: "",
         extended_session: item.subscription.rate,
+        promo_option: "",
+        promo_rate: 0,
       };
       newUser.push(object);
     });

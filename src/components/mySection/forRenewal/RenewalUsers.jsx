@@ -204,7 +204,8 @@ const RenewalUsers = ({
                     onClick={() => handleUpdateExtendSubscriptions(ex.id)}
                   >
                     - {ex?.subscription.gym_rate_desc} /{" extend "}
-                    {ex?.extended_session_day} {" days"}
+                    {ex?.extended_session_day} {" days"}{" "}
+                    {ex?.options && "- (Promo)"}
                   </a>{" "}
                   <a
                     className="removeExtendedSubs"

@@ -1,104 +1,22 @@
-import { useEffect, useReducer, useRef, useState } from "react";
-import getSubscriptions from "../../../getData/getSubscriptions";
-import {
-  INITIAL_STATE,
-  extendSubscriptionReducer,
-} from "../../../reducers/extendSubscriptionReducer";
-import extendNewSubscription from "./extendNewSubscription";
-import updateExtendSubscription from "./updateExtendSubscription";
-import getExtendedSubscription from "../../../getData/getExtendedSubscription";
-import getSpecificExtendedSubscription from "../../../getData/getSpecificExtendedSubscription";
+import { useEffect, useState } from "react";
+import useExtendSubscriptionModal from "../../../hooks/useExtendSubscriptionModal";
 
 const ExtendSubscriptionModal = ({ id, modalTitle, userSubscriptionId }) => {
-  const [subscription, setSubscription] = useState([]);
-  const [extendedSubcription, setExtendedSubscription] = useState({});
+  const {
+    subscription,
+    extendedSubcription,
+    refTrainingSession,
+    refPromoRate,
+    refOption,
+    state,
+    handleChange,
+    handleSave,
+    handleUpdate,
+  } = useExtendSubscriptionModal((userSubscriptionId = { userSubscriptionId }));
 
-  const [state, dispatch] = useReducer(
-    extendSubscriptionReducer,
-    INITIAL_STATE
-  );
-  const refTrainingSession = useRef(null);
-
-  useEffect(() => {
-    const getsubscript = async () => {
-      let data = await getSubscriptions();
-      setSubscription(data);
-    };
-    getsubscript();
-  }, [userSubscriptionId]);
-
-  useEffect(() => {
-    const getSpecificExtendSub = async () => {
-      let data = await getSpecificExtendedSubscription(userSubscriptionId);
-      setExtendedSubscription(data);
-
-      refTrainingSession.current.value = data?.extended_session_day;
-
-      // userSubscriptionId: 0,
-      // subscriptionId: 0,
-      // session_days: 0,
-
-      dispatch({
-        type: "CHANGE_INPUT",
-        payload: {
-          name: "subscriptionId",
-          value: data?.subscription?.id,
-        },
-      });
-
-      dispatch({
-        type: "CHANGE_INPUT",
-        payload: {
-          name: "session_days",
-          value: data?.extended_session_day,
-        },
-      });
-    };
-
-    getSpecificExtendSub();
-  }, [userSubscriptionId]);
-
-  const handleChange = (e) => {
-    dispatch({
-      type: "CHANGE_INPUT",
-      payload: { name: e.target.name, value: e.target.value },
-    });
-  };
-
-  const handleSave = () => {
-    if (state.subscriptionId == 0) {
-      return;
-    } else if (userSubscriptionId == 0) {
-      return;
-    } else if (state.session_days == 0) {
-      return;
-    }
-
-    const updateData = new FormData();
-    updateData.append("userSubscriptionId", userSubscriptionId);
-    updateData.append("subscriptionId", state.subscriptionId);
-    updateData.append("session_days", state.session_days);
-
-    extendNewSubscription(updateData);
-  };
-
-  const handleUpdate = () => {
-    // NOTE: userSubscriptionId = extendedSubscriptionId
-    if (state.subscriptionId == 0) {
-      return;
-    } else if (userSubscriptionId == 0) {
-      return;
-    } else if (state.session_days == 0) {
-      return;
-    }
-
-    const updateData = new FormData();
-    updateData.append("extendedSubscriptionId", userSubscriptionId);
-    updateData.append("subscriptionId", state.subscriptionId);
-    updateData.append("session_days", state.session_days);
-
-    updateExtendSubscription(updateData);
-  };
+  function errorMessage(errorMsg) {
+    return <span style={{ color: "red" }}>{errorMsg}</span>;
+  }
 
   return (
     <>
@@ -144,29 +62,53 @@ const ExtendSubscriptionModal = ({ id, modalTitle, userSubscriptionId }) => {
                     </option>
                   ))}
                 </select>
-
-                <br />
-                {state.subscriptionId == 0 && (
-                  <span style={{ color: "red" }}>select trainers</span>
-                )}
+                {state.subscriptionId == 0 &&
+                  errorMessage("You must select a subscription first..")}
               </div>
+              {/* extended days inputbox */}
               <label className="col-form-label">Extended (days):</label>
-              <input
-                type="text"
-                className="form-control"
-                id="personal-training-session"
-                name="session_days"
-                onChange={handleChange}
-                ref={refTrainingSession}
-              />
-              {state.session_days == "" ? (
-                <span style={{ color: "red" }}>Fill session days</span>
-              ) : (
-                isNaN(state.session_days) && (
-                  <span style={{ color: "red" }}>input must day/s</span>
-                )
-              )}
+              <div>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="personal-training-session"
+                  name="session_days"
+                  onChange={handleChange}
+                  ref={refTrainingSession}
+                />
+                {isNaN(state.session_days) &&
+                  errorMessage("extended days must be numeric...")}
+              </div>
+              <label className="col-form-label">Promo options:</label>
+              <div>
+                <select
+                  className="mySelect"
+                  name="promo_option"
+                  onChange={handleChange}
+                  id={"status"}
+                  value={state?.promo_option}
+                >
+                  <option value={""}>-- Select Options --</option>
+                  <option value={"promo"}>Promo</option>
+                </select>
+              </div>
+
+              {/* promo rate inputbox */}
+              <label className="col-form-label">Promo rate:</label>
+              <div>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="promo_rate"
+                  onChange={handleChange}
+                  disabled={state.promo_option == "" ? true : false}
+                  ref={refPromoRate}
+                />
+                {isNaN(state.promo_rate) &&
+                  errorMessage("promo rate must be numeric...")}
+              </div>
             </div>
+
             <div className="modal-footer">
               <button
                 type="button"
@@ -199,5 +141,4 @@ const ExtendSubscriptionModal = ({ id, modalTitle, userSubscriptionId }) => {
     </>
   );
 };
-
 export default ExtendSubscriptionModal;

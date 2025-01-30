@@ -1,7 +1,7 @@
 import instance from "../../../others/axiosInstance";
 
 // LOGOUT FUNCTION
-const UserLogout = async (timeIn, user_online_id, setTriggerLogout) => {
+const UserLogout = async (timeIn, user_online_id) => {
   console.log(user_online_id);
   const logout_date = new Date();
 
@@ -11,8 +11,9 @@ const UserLogout = async (timeIn, user_online_id, setTriggerLogout) => {
       time_out: logout_date,
     })
     .then((response) => {
-      console.log("logout successful:", response.data);
-      setTriggerLogout((prev) => !prev);
+      console.log("logout successfully:", response.data);
+      return response.data;
+      // setTriggerLogout((prev) => !prev);
       // Optionally, you can update your state or perform additional actions
     })
     .catch((error) => {

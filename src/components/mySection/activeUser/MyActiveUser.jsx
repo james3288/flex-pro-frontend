@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import React, { useMemo, useState } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import getActiveUser from "../../../getData/getActiveUsers";
 import formatTime from "../../../others/ReadableFormatTime";
 import RenewalUsers from "../forRenewal/RenewalUsers";
@@ -11,6 +11,11 @@ import DayPassUser from "../dayPassUser/DayPassUser";
 import DayPassAddTrainerModal from "../../modals/DayPassAddTrainerModal";
 import RemoveModal from "../../modals/RemoveModal";
 import getDayPassUserOnline from "../../../getData/getDayPassUserOnline";
+import {
+  ExtendedSubscriptionContext,
+  ExtendedSubscriptionProvider,
+} from "../../../context/ExtendedSubscriptionContext";
+import ExtendSubscriptionModal2 from "../../modals/ExtendSubscriptionModal2";
 
 const MyActiveUser = () => {
   const [userSubscriptionId, setUserSubscriptionId] = useState(0);
@@ -142,11 +147,13 @@ const MyActiveUser = () => {
               modalTitle={modalTitle}
               extendedTrainerId={extendedTrainerId}
             />
+
             <ExtendSubscriptionModal
               id={"extendSubscriptionModal"}
               userSubscriptionId={userSubscriptionId}
               modalTitle={modalTitle}
             />
+
             <RemoveExtendedSub
               id={"removeExtendedSubModal"}
               extendedSubId={extendedSubId}

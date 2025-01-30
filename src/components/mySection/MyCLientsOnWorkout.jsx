@@ -1,118 +1,33 @@
-import React, { useEffect, useMemo, useReducer, useRef, useState } from "react";
-
-import ClientsOnWorkout from "./clientsOnWorkout/ClientsOnWorkout";
-import { useQuery } from "@tanstack/react-query";
-import instance from "../../others/axiosInstance";
-import getUsersOnline from "../../getData/getUserOnline";
-import YearValidation from "../../others/YearValidation";
-import FormatDate from "../../others/FormatDate";
-import NoDataFound from "./noDataFound/NoDataFound";
-import {
-  INITIAL_STATE,
-  clientsOnWorkOutReducer,
-} from "../../reducers/clientsOnWorkOutReducer";
-import getUsersOnlineByDate from "../../getData/getUserOnlineByDate";
-import remainingDays from "../../others/GetRemainingDays";
+import React from "react";
 import ClientsOnWorkoutNew from "./clientsOnWorkout/ClientsOnWorkoutNew";
-import getDayPassUserOnline from "../../getData/getDayPassUserOnline";
 import ClientsOnWorkoutDayPass from "./clientsOnWorkout/ClientsOnWorkoutDayPass";
+import useClientsOnWorkout from "../../hooks/useClientsOnWorkout";
 
 const MyCLientsOnWorkout = () => {
-  const [date, setDate] = useState(getFormattedDate());
-  const [data2, setData2] = useState([]);
-  const [triggerLogout, setTriggerLogout] = useState(false);
-  const [search, setSearch] = useState("");
-  const [newData, setNewData] = useState([]);
-  const [newData2, setNewData2] = useState([]);
-  const [state, dispatch] = useReducer(clientsOnWorkOutReducer, INITIAL_STATE);
-  // useEffect(() => {
-  //   const newData = data1.filter((user) =>
-  //     user.usersubscription.flexprouser.name.toLowerCase().includes(search)
-  //   );
-  //   console.log(newData);
-  // }, [search]);
+  const {
+    date,
+    data1,
+    data3,
+    newData,
+    newData2,
+    state,
+    isPending,
+    error,
+    handleChange,
+    handleSearchOnWorkout,
+    isLoading,
+  } = useClientsOnWorkout();
 
   let value = false;
 
-  // const queryKey = useMemo(() => ["onWorkoutData"], []);
-  const queryKey = ["onWorkoutData", "dayPassOnWorkOutData"];
-  const { isPending, error, data } = useQuery({
-    queryKey,
-    queryFn: async () => {
-      const usersOnline = await getUsersOnlineByDate(date);
-      const dayPassUsersOnline = await getDayPassUserOnline(date);
-      return {
-        usersOnline: usersOnline,
-        dayPassUsersOnline: dayPassUsersOnline,
-      };
-    },
-    refetchInterval: 1000,
-  });
-
-  // const queryKey2 = ["dayPassOnWorkOutData"];
-  // const { isPending2, error2, data3 } = useQuery({
-  //   queryKey2,
-  //   queryFn: () => getDayPassUserOnline(date),
-  //   refecthInterval: 1000,
-  // });
-
-  // console.log(newData);
-
-  function getFormattedDate() {
-    const currentDate = new Date();
-    const year = currentDate.getFullYear();
-    let month = currentDate.getMonth() + 1;
-    month = month < 10 ? "0" + month : month;
-    let day = currentDate.getDate();
-    day = day < 10 ? "0" + day : day;
-    return `${year}-${month}-${day}`;
-  }
-
-  if (isPending)
+  if (isLoading)
     return (
-      <div id="preloder">
-        <div className="loader"></div>
-      </div>
+      <>
+        <div id="preloder">
+          <div className="loader"></div>
+        </div>
+      </>
     );
-
-  if (error) return <NoDataFound caption="No Data has been found..." />;
-
-  const data1 = data?.usersOnline?.filter((user) =>
-    user?.date_log.includes(date)
-  );
-
-  const data3 = data?.dayPassUsersOnline?.filter((user) =>
-    user?.date_log.includes(date)
-  );
-
-  // const dayPassData = data3?.filter((user) => user?.date_log.includes(date));
-
-  function handleChange(e) {
-    const value = e.target.value;
-    setDate(value); // Update state with the new value
-  }
-
-  const handleSearchOnWorkout = (e) => {
-    dispatch({
-      type: "CHANGE_INPUT",
-      payload: { name: e.target.name, value: e.target.value },
-    });
-
-    const newData = data1.filter((user) =>
-      user.usersubscription.flexprouser.name
-        .toLowerCase()
-        .includes(e.target.value.toLowerCase())
-    );
-
-    const newData2 = data3.filter((user) =>
-      user.flexprouserdaypass.name
-        .toLowerCase()
-        .includes(e.target.value.toLowerCase())
-    );
-
-    setNewData(newData);
-    setNewData2(newData2);
-  };
 
   return (
     <>

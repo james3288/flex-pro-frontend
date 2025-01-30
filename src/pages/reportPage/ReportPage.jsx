@@ -9,26 +9,39 @@ import { useState } from "react";
 import ByAll from "./ByAll";
 import ByExtendedTrainer from "./ByExtendedTrainer";
 import ByFreeTrainer from "./ByFreeTrainer";
+import getter from "../../getter/getter";
 const ReportPage = () => {
-  const cSetModalTitle = useReportStore((state) => state.setModalTitle);
-  const cSetModalId = useReportStore((state) => state.setModalId);
-  const cUserSubscriptionReport = useReportStore(
-    (state) => state.userSubscriptionReport
-  );
-  const cSubscriptionTotalIncome = useReportStore(
-    (state) => state.subscriptionTotalIncome
-  );
+  // const cSetModalTitle = useReportStore((state) => state.setModalTitle);
+  // const cSetModalId = useReportStore((state) => state.setModalId);
 
-  const cExtendedTrainerTotalSession = useReportStore(
-    (state) => state.extendedTrainerTotalSession
-  );
-  const cSubscription = useReportStore(
-    (state) => state.reportData.subscription
-  );
+  // const cUserSubscriptionReport = useReportStore(
+  //   (state) => state.userSubscriptionReport
+  // );
+  // const cSubscriptionTotalIncome = useReportStore(
+  //   (state) => state.subscriptionTotalIncome
+  // );
 
-  const cFreeSessionTotal = useReportStore((state) => state.freeTotalSession);
+  // const cSubscription = useReportStore(
+  //   (state) => state.reportData.subscription
+  // );
 
-  const cTotalTrainerRate = useReportStore((state) => state.totalTrainerRate);
+  // const cExtendedTrainerTotalSession = useReportStore(
+  //   (state) => state.extendedTrainerTotalSession
+  // );
+
+  // const cFreeSessionTotal = useReportStore((state) => state.freeTotalSession);
+
+  // const cTotalTrainerRate = useReportStore((state) => state.totalTrainerRate);
+
+  const {
+    cFreeSessionTotal,
+    cTotalTrainerRate,
+    cExtendedTrainerTotalSession,
+    cSubscription,
+    cSubscriptionTotalIncome,
+    cSetModalTitle,
+    cSetModalId,
+  } = getter();
 
   const [total, setTotal] = useState(0);
 

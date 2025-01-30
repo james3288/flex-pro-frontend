@@ -94,7 +94,7 @@ const GenerateReportModal = () => {
 
       case "selectSubscription":
         setSelectSubscription(e.target.value);
-        console.log(e.target.value);
+        // console.log(e.target.value);
         break;
 
       default:

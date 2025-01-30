@@ -3,15 +3,13 @@ import YearValidation from "../../../others/YearValidation";
 import FormatDate from "../../../others/FormatDate";
 import ReactTimeAgo from "react-time-ago";
 import formatTimeToString from "../../../others/formatTimeToString";
-import { useQuery } from "@tanstack/react-query";
 import getSubscriptionDaysLeft from "../../../getData/getSubscriptionDaysLeft";
 import remainingDays from "../../../others/GetRemainingDays";
-import formatTime from "../../../others/ReadableFormatTime";
 import getExtendedSubscription from "../../../getData/getExtendedSubscription";
-import UserLogout from "../clientsOnline/userLogout";
 import { useLogoutStore } from "../../../store/useLogoutStore";
-import LoadingEffect from "../loadingEffect/LoadingEffect";
 import LogoutButton from "./LogoutButton";
+import useRemainingDaysLeft from "../../../hooks/useRemainingDaysLeft";
+import LoadingEffect from "../loadingEffect/LoadingEffect";
 
 const ClientsOnWorkoutNew = ({ online }) => {
   const [remaining, setRemaining] = useState(0);
@@ -23,51 +21,51 @@ const ClientsOnWorkoutNew = ({ online }) => {
 
   const trigger = useLogoutStore((state) => state.trigger);
 
-  // get the remaining days
-  const getRemainingDays = async () => {
-    const rd = await remainingDays(
+  const { data, error, isPending, isLoading, remainingDaysLeft } =
+    useRemainingDaysLeft(
       online.usersubscription.date_subscribed,
       online.usersubscription.subscription.per.per,
       online.usersubscription.flexprouser.id,
-      online.usersubscription.sub_session_days === 0
-        ? 1
-        : online.usersubscription.sub_session_days
+      online.usersubscription.sub_session_days,
+      online.usersubscription.id
     );
 
-    // console.log(rd);
-    setRemaining(rd);
-  };
+  console.log(isLoading);
 
-  const extendedSub = async () => {
-    const data = await getExtendedSubscription(online.usersubscription.id);
-    setExtendedSubscript(data);
-  };
+  // // get the remaining days
+  // const getRemainingDays = async () => {
+  //   const rd = await remainingDays(
+  //     online.usersubscription.date_subscribed,
+  //     online.usersubscription.subscription.per.per,
+  //     online.usersubscription.flexprouser.id,
+  //     online.usersubscription.sub_session_days === 0
+  //       ? 1
+  //       : online.usersubscription.sub_session_days
+  //   );
 
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      // Your code to be executed every 1000ms
-      getRemainingDays();
-      extendedSub();
-    }, 1000);
+  //   // console.log(rd);
+  //   setRemaining(rd);
+  // };
 
-    // Cleanup function to clear the interval when the component unmounts
-    return () => clearInterval(intervalId);
-  }, []); // Add dependencies as needed
+  // const extendedSub = async () => {
+  //   const data = await getExtendedSubscription(online.usersubscription.id);
+  //   setExtendedSubscript(data);
+  // };
+
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     // Your code to be executed every 1000ms
+  //     getRemainingDays();
+  //     extendedSub();
+  //   }, 1000);
+
+  //   // Cleanup function to clear the interval when the component unmounts
+  //   return () => clearInterval(intervalId);
+  // }, []); // Add dependencies as needed
 
   useEffect(() => {
     console.log(isButtonLoading);
   }, [isButtonLoading]);
-
-  // //handles logout events
-  // const handleLogout = async () => {
-  //   setIsButtonLoading(true);
-  //   const result = await UserLogout(online.time_in, online.id);
-  //   //   setRefresher((prev) => prev + 1);
-  //   //   setTempTimeOut(formatTimeToString(Date()));
-  //   setIsButtonLoading(false);
-
-  //   console.log("logout result:", result);
-  // };
 
   // online/offline class
   const onlineOfflineClass = () => {
@@ -87,14 +85,14 @@ const ClientsOnWorkoutNew = ({ online }) => {
       : { border: "0px solid black" };
   };
 
-  const remainingDaysLeft = () => {
-    return getSubscriptionDaysLeft(
-      remaining,
-      extendedSubscript,
-      online.usersubscription.date_subscribed,
-      false
-    );
-  };
+  // const remainingDaysLeft = () => {
+  //   return getSubscriptionDaysLeft(
+  //     remaining,
+  //     extendedSubscript,
+  //     online.usersubscription.date_subscribed,
+  //     false
+  //   );
+  // };
 
   return (
     <div className="col-lg-3 col-xs-12">
@@ -148,18 +146,11 @@ const ClientsOnWorkoutNew = ({ online }) => {
             </p>
           ))}
           <h5>Remaining Days:</h5>
-          <h5 style={{ color: "orange" }}>
-            {remainingDaysLeft() === "0 day, 0 hours"
-              ? "initializing..."
-              : remainingDaysLeft()}
-          </h5>
+          <RemainingDaysComponent
+            remainingDaysLeft={remainingDaysLeft}
+            isLoading={isLoading}
+          />
         </div>
-
-        {/* {yearValidation === 1990 && isButtonLoading === false && (
-          <button className={onlineOfflineBtnClass()} onClick={handleLogout}>
-            Logout
-          </button>
-        )} */}
 
         <LogoutButton
           onlineOfflineBtnClass={onlineOfflineBtnClass()}
@@ -169,6 +160,18 @@ const ClientsOnWorkoutNew = ({ online }) => {
         />
       </div>
     </div>
+  );
+};
+
+const RemainingDaysComponent = ({ remainingDaysLeft, isLoading }) => {
+  return isLoading ? (
+    <LoadingEffect />
+  ) : (
+    <h5 style={{ color: "orange" }}>
+      {remainingDaysLeft() === "0 day, 0 hours"
+        ? "initializing..."
+        : remainingDaysLeft()}
+    </h5>
   );
 };
 

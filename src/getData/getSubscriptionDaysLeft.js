@@ -8,7 +8,7 @@ const timeStampAddDays = (timeStamp, extendedDays, daysonly) => {
   return timestamp < 0
     ? "Expired"
     : daysonly === false
-    ? formatTime(timestamp, "days-hours-minutes")
+    ? formatTime(timestamp, "days-hours-minutes-seconds")
     : formatTime(timestamp, "days-left");
 };
 

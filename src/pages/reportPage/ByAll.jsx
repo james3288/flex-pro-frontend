@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { useReportStore } from "../../store/useReportStore";
 import FormatDateOnly from "../../others/FormatDateOnly";
+import getter from "../../getter/getter";
 
 const ByAll = () => {
-  const cUserSubscriptionReport = useReportStore(
-    (state) => state.userSubscriptionReport
-  );
+  // const cUserSubscriptionReport = useReportStore(
+  //   (state) => state.userSubscriptionReport
+  // );
+
+  const { cUserSubscriptionReport } = getter();
 
   return cUserSubscriptionReport?.map((item, index) => (
     <>
@@ -28,9 +31,7 @@ const ByAll = () => {
           <div className="body-col">{item?.trainer}</div>
         </div>
         <div className="col-1">
-          <div className="body-col">
-            {item?.extended_session.toLocaleString()}
-          </div>
+          <div className="body-col">{item?.extended_session}</div>
         </div>
         <div className="col-2">
           <div className="body-col">{item?.per}</div>
