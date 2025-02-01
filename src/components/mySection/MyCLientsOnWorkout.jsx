@@ -1,33 +1,46 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ClientsOnWorkoutNew from "./clientsOnWorkout/ClientsOnWorkoutNew";
 import ClientsOnWorkoutDayPass from "./clientsOnWorkout/ClientsOnWorkoutDayPass";
 import useClientsOnWorkout from "../../hooks/useClientsOnWorkout";
+import useDebounce from "../../hooks/useDebounce";
+import useClientsOnWorkout2 from "../../hooks/useClientsOnWorkout2";
+import LoadingEffect from "./loadingEffect/LoadingEffect";
 
 const MyCLientsOnWorkout = () => {
+  // const {
+  //   date,
+  //   data1,
+  //   data3,
+  //   newData,
+  //   newData2,
+  //   state,
+  //   isPending,
+  //   error,
+  //   handleChange,
+  //   handleSearchOnWorkout,
+  //   isLoading,
+  // } = useClientsOnWorkout();
+
+  // let value = false;
+
+  // if (isLoading)
+  //   return (
+  //     <>
+  //       <div id="preloder">
+  //         <div className="loader"></div>
+  //       </div>
+  //     </>
+  //   );
+
   const {
     date,
-    data1,
-    data3,
-    newData,
-    newData2,
-    state,
-    isPending,
-    error,
-    handleChange,
     handleSearchOnWorkout,
-    isLoading,
-  } = useClientsOnWorkout();
+    handleDateChange,
+    onlineUsers,
+    debounceValue,
+  } = useClientsOnWorkout2();
 
-  let value = false;
-
-  if (isLoading)
-    return (
-      <>
-        <div id="preloder">
-          <div className="loader"></div>
-        </div>
-      </>
-    );
+  console.log(onlineUsers);
 
   return (
     <>
@@ -39,7 +52,7 @@ const MyCLientsOnWorkout = () => {
               className="form-control"
               id="floatingTurnoverDate"
               name="turnover_date"
-              onChange={handleChange}
+              onChange={handleDateChange}
               defaultValue={date}
             />
           </div>
@@ -78,6 +91,15 @@ const MyCLientsOnWorkout = () => {
 
         <div className="row">
           <div className="c-col-wrapper">
+            {onlineUsers?.length > 0 ? (
+              onlineUsers?.map((online) => (
+                <ClientsOnWorkoutNew online={online} key={online.id} />
+              ))
+            ) : (
+              <LoadingEffect />
+            )}
+          </div>
+          {/* <div className="c-col-wrapper">
             {value === false
               ? state.name === ""
                 ? data3?.map((online) => (
@@ -132,7 +154,7 @@ const MyCLientsOnWorkout = () => {
             ) : (
               <h1>hello world 123</h1>
             )}
-          </div>
+          </div> */}
         </div>
       </div>
     </>
