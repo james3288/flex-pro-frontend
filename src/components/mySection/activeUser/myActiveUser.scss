@@ -1,0 +1,17 @@
+.searchbox {
+  width: 100%;
+  //   background-color: red;
+  padding: 5px;
+  display: flex;
+  justify-content: center;
+}
+
+.searchbox input {
+  border: none;
+  padding: 5px 20px;
+  width: 30%;
+  border-radius: 5px;
+  background-color: rgb(18, 17, 17);
+  color: white;
+  font-size: large;
+}

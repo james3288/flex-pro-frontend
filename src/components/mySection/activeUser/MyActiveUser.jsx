@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import React, { useContext, useMemo, useState } from "react";
+import React, { useState } from "react";
 import getActiveUser from "../../../getData/getActiveUsers";
-import formatTime from "../../../others/ReadableFormatTime";
 import RenewalUsers from "../forRenewal/RenewalUsers";
 import AddTrainerModal from "./AddTrainerModal";
 import ExtendSubscriptionModal from "./ExtendSubscriptionModal";
@@ -10,18 +9,17 @@ import getDaypassUser from "../../../getData/getDayPassUser";
 import DayPassUser from "../dayPassUser/DayPassUser";
 import DayPassAddTrainerModal from "../../modals/DayPassAddTrainerModal";
 import RemoveModal from "../../modals/RemoveModal";
-import getDayPassUserOnline from "../../../getData/getDayPassUserOnline";
-import {
-  ExtendedSubscriptionContext,
-  ExtendedSubscriptionProvider,
-} from "../../../context/ExtendedSubscriptionContext";
-import ExtendSubscriptionModal2 from "../../modals/ExtendSubscriptionModal2";
+import "./myActiveUser.scss";
+import SearchIconSvg from "../../svg/SearchIconSvg";
+import useDebounce from "../../../hooks/useDebounce";
 
 const MyActiveUser = () => {
   const [userSubscriptionId, setUserSubscriptionId] = useState(0);
   const [extendedSubId, setExtendedSubId] = useState(0);
   const [extendedTrainerId, setExtendedTrainerId] = useState(0);
   const [modalTitle, setModalTitle] = useState();
+
+  const [search, setSearch] = useState("");
 
   const queryKey = ["forActiveUser", "forDayPassUser"];
   const { isPending, error, data, fetchStatus } = useQuery({
@@ -38,6 +36,20 @@ const MyActiveUser = () => {
     refetchInterval: 1000,
   });
 
+  const handleOnChange = (e) => {
+    setSearch(e.target.value);
+  };
+
+  // const debounceValue = useDebounce(search);
+
+  // const onlineUsers = data?.data1.filter((user) =>
+  //   user.usersubscription.flexprouser.name
+  //     .toLowerCase()
+  //     .includes(debounceValue.toLowerCase())
+  // );
+
+  // console.log(onlineUsers);
+
   if (isPending)
     return (
       <div id="preloder">
@@ -51,41 +63,6 @@ const MyActiveUser = () => {
     (user) => user.remainingHours != "Expired"
   );
 
-  // const queryKey = ["forActiveUser"];
-  // const queryKey2 = ["forDayPassUser"];
-
-  // const {
-  //   isLoading: isPending1,
-  //   error: error1,
-  //   data: data1,
-  // } = useQuery({
-  //   queryKey: queryKey,
-  //   queryFn: getActiveUser,
-  //   // refetchInterval: 1000, // Uncomment if needed
-  // });
-
-  // const {
-  //   isLoading: isPending2,
-  //   error: error2,
-  //   data: data2,
-  // } = useQuery({
-  //   queryKey: queryKey2,
-  //   queryFn: getDaypassUser,
-  //   // refetchInterval: 1000, // Uncomment if needed
-  // });
-
-  // if (isPending1 || isPending2) {
-  //   return (
-  //     <div id="preloder">
-  //       <div className="loader"></div>
-  //     </div>
-  //   );
-  // }
-
-  // if (error1 || error2) {
-  //   return <div>Error: {error1?.message || error2?.message}</div>;
-  // }
-
   return (
     <>
       <div className="container-fluid content-margin c-col-scrollbar">
@@ -95,6 +72,16 @@ const MyActiveUser = () => {
               {data?.data1?.length + countDayPassActive?.length}{" "}
               <span>ACTIVE</span> USERS
             </h1>
+          </div>
+        </div>
+        <div className="row">
+          <div className="searchbox">
+            <input
+              type="text"
+              placeholder="search here..."
+              onChange={handleOnChange}
+            />
+            <SearchIconSvg />
           </div>
         </div>
         <div className="row">
