@@ -37,6 +37,7 @@ const MyCLientsOnWorkout = () => {
     handleSearchOnWorkout,
     handleDateChange,
     onlineUsers,
+    onlineDayPassUsers,
     debounceValue,
   } = useClientsOnWorkout2();
 
@@ -91,14 +92,20 @@ const MyCLientsOnWorkout = () => {
 
         <div className="row">
           <div className="c-col-wrapper">
-            {onlineUsers?.length > 0 ? (
-              onlineUsers?.map((online) => (
-                <ClientsOnWorkoutNew online={online} key={online.id} />
-              ))
-            ) : (
-              <LoadingEffect />
-            )}
+            <>
+              {/* DAYPASS USERS */}
+              {onlineDayPassUsers?.length > 0 &&
+                onlineDayPassUsers?.map((online) => (
+                  <ClientsOnWorkoutDayPass online={online} key={online.id} />
+                ))}
+              {/* SUBSCRIBED USERS */}
+              {onlineUsers?.length > 0 &&
+                onlineUsers?.map((online) => (
+                  <ClientsOnWorkoutNew online={online} key={online.id} />
+                ))}
+            </>
           </div>
+
           {/* <div className="c-col-wrapper">
             {value === false
               ? state.name === ""

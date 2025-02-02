@@ -48,11 +48,18 @@ const useClientsOnWorkout2 = () => {
       .includes(debounceValue.toLowerCase())
   );
 
+  const onlineDayPassUsers = data?.dayPassUsersOnline.filter((user) =>
+    user.flexprouserdaypass.name
+      .toLowerCase()
+      .includes(debounceValue.toLowerCase())
+  );
+
   return {
     date,
     handleSearchOnWorkout,
     handleDateChange,
     onlineUsers,
+    onlineDayPassUsers,
     isLoading,
     isPending,
     debounceValue,
