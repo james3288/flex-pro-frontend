@@ -33,7 +33,7 @@ const MyActiveUser = () => {
         data2: dayPassUser,
       };
     },
-    refetchInterval: 1000,
+    // refetchInterval: 1000,
   });
 
   const handleOnChange = (e) => {
@@ -74,7 +74,7 @@ const MyActiveUser = () => {
             </h1>
           </div>
         </div>
-        <div className="row">
+        {/* <div className="row">
           <div className="searchbox">
             <input
               type="text"
@@ -83,7 +83,7 @@ const MyActiveUser = () => {
             />
             <SearchIconSvg />
           </div>
-        </div>
+        </div> */}
         <div className="row">
           <div className="c-col-wrapper">
             {data?.data2?.map((user) => (

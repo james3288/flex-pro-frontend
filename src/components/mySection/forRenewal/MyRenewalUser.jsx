@@ -19,7 +19,7 @@ const MyRenewalUser = () => {
   const { isPending, error, data } = useQuery({
     queryKey,
     queryFn: () => getForRenewalUsers(),
-    // refetchInterval: 1000,
+    refetchInterval: 1000,
   });
 
   if (isPending)

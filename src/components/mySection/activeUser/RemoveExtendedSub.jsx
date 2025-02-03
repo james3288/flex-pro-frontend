@@ -8,14 +8,12 @@ const RemoveExtendedSub = ({
   modalTitle,
   extendedTrainerId,
 }) => {
-  
-
   const handleDeleteExtendedSub = () => {
+    console.log(extendedSubId);
     deleteExtendedSub(extendedSubId);
   };
 
   const handleDeleteExtendedTrainer = () => {
-
     deleteExtendedTrainer(extendedTrainerId);
   };
 
