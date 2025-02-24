@@ -1,8 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import getExtendedSubscription from "../../../getData/getExtendedSubscription";
 import RemainingDaysLeftComponent from "./RemainingDaysLeftComponent";
 import SubscriptionComponents from "./SubscriptionComponents";
 import PersonalTrainerComponents from "./PersonalTrainerComponents";
+import {
+  extendSubscriptionReducer,
+  INITIAL_STATE,
+} from "../../../reducers/extendSubscriptionReducer";
 
 const RenewalUsers = ({
   blobPic,
@@ -29,6 +33,11 @@ const RenewalUsers = ({
 
   let n = 0;
 
+  const [state, dispatch] = useReducer(
+    extendSubscriptionReducer,
+    INITIAL_STATE
+  );
+
   // get extended subscription
   useEffect(() => {
     const extendedSub = async () => {
@@ -45,6 +54,10 @@ const RenewalUsers = ({
 
   // HANDLE EXTEND SUBSCRIPTIONS MODAL
   const handleExtendSubscriptions = () => {
+    dispatch({
+      type: "CLEAR",
+    });
+
     setModalTitle("Extend Subscriptions");
     setUserSubscriptionId(subscriptionId);
   };
@@ -121,6 +134,5 @@ const RenewalUsers = ({
 
   return CardContext;
 };
-
 
 export default RenewalUsers;

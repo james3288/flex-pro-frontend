@@ -40,18 +40,6 @@ const MyUsers = () => {
       </div>
     );
 
-  // if (error)
-  //   return (
-  //     <div className="">
-  //       <div>
-  //         <LoadingEffect />
-  //         <h1>{error.message}</h1>
-  //       </div>
-  //     </div>
-  //   );
-
-  // console.log(data);
-
   const handleOnChange = async (e) => {
     startTransition(() => {
       setFilterData(() =>
@@ -162,16 +150,6 @@ const MyUsers = () => {
       />
 
       <UserContractModal id={"userContractModal"} user={selectedUser} />
-
-      {/* <TrainersModal
-        id={"usersModal"}
-        option={"Update"}
-        selectedTrainer={selectedUser}
-      /> */}
-      {/* <DeleteTrainerModal
-        id={"deleteUsersModal"}
-        trainer_id={selectedUser?.id}
-      /> */}
     </>
   );
 };

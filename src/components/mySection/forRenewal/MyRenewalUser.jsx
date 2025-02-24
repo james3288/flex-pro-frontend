@@ -7,6 +7,7 @@ import getTrainerRemainingDays from "../../../getData/getTrainerRemainingDays";
 import AddTrainerModal from "../activeUser/AddTrainerModal";
 import ExtendSubscriptionModal from "../activeUser/ExtendSubscriptionModal";
 import RemoveExtendedSub from "../activeUser/RemoveExtendedSub";
+import ExtendSubscriptionModal2 from "../activeUser/ExtendSubscriptionModal2";
 
 const MyRenewalUser = () => {
   let value = false;
@@ -89,7 +90,12 @@ const MyRenewalUser = () => {
               modalTitle={modalTitle}
               extendedTrainerId={extendedTrainerId}
             />
-            <ExtendSubscriptionModal
+            {/* <ExtendSubscriptionModal
+              id={"extendSubscriptionModal"}
+              userSubscriptionId={userSubscriptionId}
+              modalTitle={modalTitle}
+            /> */}
+            <ExtendSubscriptionModal2
               id={"extendSubscriptionModal"}
               userSubscriptionId={userSubscriptionId}
               modalTitle={modalTitle}

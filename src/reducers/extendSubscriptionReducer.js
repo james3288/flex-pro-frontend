@@ -14,9 +14,6 @@ export const extendSubscriptionReducer = (state, action) => {
         [action.payload.name]: action.payload.value,
       };
 
-    default:
-      return state;
-
     case "CLEAR":
       return {
         ...state,
@@ -26,5 +23,8 @@ export const extendSubscriptionReducer = (state, action) => {
         promo_option: null,
         promo_rate: 0,
       };
+
+    default:
+      return state;
   }
 };

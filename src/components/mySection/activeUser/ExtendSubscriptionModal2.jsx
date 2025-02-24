@@ -1,24 +1,4 @@
-import { useEffect, useState } from "react";
-import useExtendSubscriptionModal from "../../../hooks/useExtendSubscriptionModal";
-
-const ExtendSubscriptionModal = ({ id, modalTitle, userSubscriptionId }) => {
-  const {
-    subscription,
-    extendedSubcription,
-    refTrainingSession,
-    refPromoRate,
-    refOption,
-    state,
-    promoRateEnable,
-    handleChange,
-    handleSave,
-    handleUpdate,
-  } = useExtendSubscriptionModal((userSubscriptionId = { userSubscriptionId }));
-
-  function errorMessage(errorMsg) {
-    return <span style={{ color: "red" }}>{errorMsg}</span>;
-  }
-
+const ExtendSubscriptionModal2 = ({ id, modalTitle, userSubscriptionId }) => {
   return (
     <>
       <div
@@ -46,27 +26,9 @@ const ExtendSubscriptionModal = ({ id, modalTitle, userSubscriptionId }) => {
             <div className="modal-body">
               <label className="col-form-label">Subscription</label>
               <div>
-                <select
-                  className="mySelect"
-                  name="subscriptionId"
-                  onChange={handleChange}
-                  value={
-                    // extendedSubcription?.user_subscription?.subscription?.id
-                    state.subscriptionId === undefined
-                      ? "0"
-                      : state.subscriptionId
-                  }
-                >
+                <select className="mySelect" name="subscriptionId">
                   <option value={0}>-- Select Extended Subscription --</option>
-                  {subscription?.map((subs) => (
-                    <option key={subs?.id} value={subs?.id}>
-                      {subs?.gym_rate_desc} /{" "}
-                      {subs?.rate.toLocaleString("en-US")} per {subs?.per.per}
-                    </option>
-                  ))}
                 </select>
-                {state.subscriptionId == 0 &&
-                  errorMessage("You must select a subscription first..")}
               </div>
               {/* extended days inputbox */}
               <label className="col-form-label">Extended (days):</label>
@@ -76,23 +38,11 @@ const ExtendSubscriptionModal = ({ id, modalTitle, userSubscriptionId }) => {
                   className="form-control"
                   id="personal-training-session"
                   name="session_days"
-                  onChange={handleChange}
-                  ref={refTrainingSession}
                 />
-                {isNaN(state.session_days) &&
-                  errorMessage("extended days must be numeric...")}
               </div>
               <label className="col-form-label">Promo options:</label>
               <div>
-                <select
-                  className="mySelect"
-                  name="promo_option"
-                  onChange={handleChange}
-                  id={"status"}
-                  value={
-                    state?.promo_option === undefined ? "" : state?.promo_option
-                  }
-                >
+                <select className="mySelect" name="promo_option" id={"status"}>
                   <option value={""}>-- Select Options --</option>
                   <option value={"promo"}>Promo</option>
                 </select>
@@ -101,16 +51,7 @@ const ExtendSubscriptionModal = ({ id, modalTitle, userSubscriptionId }) => {
               {/* promo rate inputbox */}
               <label className="col-form-label">Promo rate:</label>
               <div>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="promo_rate"
-                  onChange={handleChange}
-                  disabled={promoRateEnable}
-                  ref={refPromoRate}
-                />
-                {isNaN(state.promo_rate) &&
-                  errorMessage("promo rate must be numeric...")}
+                <input type="text" className="form-control" name="promo_rate" />
               </div>
             </div>
 
@@ -126,7 +67,7 @@ const ExtendSubscriptionModal = ({ id, modalTitle, userSubscriptionId }) => {
                 <button
                   type="button"
                   className="btn btn-primary"
-                  onClick={handleSave}
+                  // onClick={handleSave}
                 >
                   Save changes
                 </button>
@@ -134,7 +75,7 @@ const ExtendSubscriptionModal = ({ id, modalTitle, userSubscriptionId }) => {
                 <button
                   type="button"
                   className="btn btn-primary"
-                  onClick={handleUpdate}
+                  // onClick={handleUpdate}
                 >
                   Update changes
                 </button>
@@ -146,4 +87,4 @@ const ExtendSubscriptionModal = ({ id, modalTitle, userSubscriptionId }) => {
     </>
   );
 };
-export default ExtendSubscriptionModal;
+export default ExtendSubscriptionModal2;
