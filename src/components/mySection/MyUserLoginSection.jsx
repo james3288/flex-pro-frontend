@@ -21,6 +21,8 @@ import CheckCircleFillSvg from "./../svg/checkCircleFillSvg";
 import LoadingEffect from "./loadingEffect/LoadingEffect";
 import LoginMessageAlert from "../LoginMessageAlert/LoginMessageAlert";
 import LoginMessageAlertDayPass from "../LoginMessageAlert/LoginMessageAlertDayPass";
+import useRemainingDaysLeft from "../../hooks/useRemainingDaysLeft";
+import RemainingDaysLeftComponent from "./forRenewal/RemainingDaysLeftComponent";
 
 const MyUserLoginSection = () => {
   const [play, setPlay] = useState(false);
@@ -35,6 +37,7 @@ const MyUserLoginSection = () => {
   const [isLogin, setIsLogin] = useState(false);
   const cUser = useUserStore((state) => state.user);
   const [dayPassLogin, setDayPassLogin] = useState(false);
+  const [subscriptionRecord, setSubscriptionRecord] = useState({});
 
   const cTrainersRemainingDays = useUserStore(
     (state) => state.trainersRemainingDays
@@ -132,6 +135,7 @@ const MyUserLoginSection = () => {
     setTotalFreeTrainerLeft: setTotalFreeTrainerLeft,
     handleRefresh: handleRefresh,
     isOnGoing: isOnGoing,
+    subscriptionRecord: subscriptionRecord,
   };
 
   // daypass props
@@ -171,6 +175,7 @@ const MyUserLoginSection = () => {
                     setTrainers={setTrainers}
                     isLogin={isLogin}
                     setIsExpired={setIsExpired}
+                    setSubscriptionRecord={setSubscriptionRecord}
                   />
                 )}
               </div>
@@ -223,7 +228,9 @@ const MyUserLoginSection = () => {
 
           {/* IF USER ID HAS BEEN FOUND AND NOT LOGIN YET*/}
           {isOnGoing === "on-going" && userId > 0 ? (
-            <LoginMessageAlert {...props} message={"Successfully login!"} />
+            <>
+              <LoginMessageAlert {...props} message={"Successfully login!"} />
+            </>
           ) : // IF USER HAS ALREADY LOGIN
           isOnGoing === "already-login" && dayPassLogin === false ? (
             <LoginMessageAlert
@@ -271,6 +278,7 @@ const MyUserLoginSection = () => {
           setIsLogin={setIsLogin}
           setTrainers={setTrainers}
           setUserFound={setUserFound}
+          setSubscriptionRecord={setSubscriptionRecord}
         />
       </div>
 

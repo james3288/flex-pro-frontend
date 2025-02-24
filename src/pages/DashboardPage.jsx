@@ -121,7 +121,11 @@ const DashboardPage = ({
   }
 
   if (page === "userLogin") {
-    content = <MyUserLoginSection />;
+    content = (
+      <QueryClientProvider client={queryClient}>
+        <MyUserLoginSection />
+      </QueryClientProvider>
+    );
   }
 
   if (page === "subcriptionPlan") {

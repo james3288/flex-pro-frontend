@@ -17,6 +17,7 @@ const UserLoginModal = ({
   setIsLogin,
   setTrainers,
   setUserFound,
+  setSubscriptionRecord,
 }) => {
   const [numpadResult, setNumpadResult] = useState("");
   const [activeUser, setActiveUser] = useState(null);
@@ -93,6 +94,7 @@ const UserLoginModal = ({
     if (isAlreadyLogin?.length > 0) {
       setIsLogin(true);
       setIsOnGoing("already-login");
+      setSubscriptionRecord(userStatusResult);
       return;
     }
 
@@ -108,6 +110,11 @@ const UserLoginModal = ({
             id: userStatus.usersubscription?.id,
             time_in: new Date(),
             time_out: new Date(1990, 0, 1, 0, 0),
+            date_subscribed: userStatus.usersubscription?.date_subscribed,
+            per: userStatus.usersubscription?.subscription?.per?.per,
+            flexProUserId: userStatus?.usersubscription?.flexprouser?.id,
+            session_days: userStatus?.usersubscription?.session_days,
+            userSubscriptionId: userStatus?.usersubscription?.id,
           };
 
           // setTrainers(() => userStatus);
@@ -125,7 +132,7 @@ const UserLoginModal = ({
       userStatusResult != null &&
       (savedTimeRecord === false || savedTimeRecord === undefined)
     ) {
-      console.log(userStatusResult);
+     
       const saved = await PostSaveTimeRecords(
         userStatusResult,
         setTimeInStatus,
@@ -135,9 +142,14 @@ const UserLoginModal = ({
       setIsOnGoing("on-going");
       setSavedTimeRecord(saved);
 
+      // get specific user subscription data to be use in getting remaining days
+      // in login status
+      setSubscriptionRecord(userStatusResult);
+
       return;
     } else {
       setIsOnGoing("expired");
+      setSubscriptionRecord(userStatusResult);
     }
   };
   //== END LOGIN FUNCTION

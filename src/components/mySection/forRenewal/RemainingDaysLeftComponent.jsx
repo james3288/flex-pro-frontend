@@ -9,6 +9,7 @@ const RemainingDaysLeftComponent = ({
   session_days,
   subscriptionId,
   id,
+  fontColor,
 }) => {
   // function for expired subscription
   const handleExpired = async () => {
@@ -55,7 +56,7 @@ const RemainingDaysLeftComponent = ({
   return (
     <>
       <h5>Subscription Remaining Days:</h5>
-      <h4 style={{ fontSize: "20px" }}>{result}</h4>
+      <h4 style={{ fontSize: "20px", color: fontColor }}>{result}</h4>
     </>
   );
 };

@@ -25,6 +25,7 @@ const FaceScannerNew = ({
   setTrainers,
   isLogin,
   setIsExpired,
+  setSubscriptionRecord,
 }) => {
   const [modelsLoaded, setModelsLoaded] = React.useState(false);
   const [captureVideo, setCaptureVideo] = React.useState(false);
@@ -367,6 +368,11 @@ const FaceScannerNew = ({
                 id: userStatus.usersubscription?.id,
                 time_in: new Date(),
                 time_out: new Date(1990, 0, 1, 0, 0),
+                date_subscribed: userStatus.usersubscription?.date_subscribed,
+                per: userStatus.usersubscription?.subscription?.per?.per,
+                flexProUserId: userStatus?.usersubscription?.flexprouser?.id,
+                session_days: userStatus?.usersubscription?.session_days,
+                userSubscriptionId: userStatus?.usersubscription?.id,
               };
 
               setTrainers(() => userStatus); // old set but don't remove
@@ -387,6 +393,7 @@ const FaceScannerNew = ({
           loginstatus = false;
 
           setIsOnGoing("already-login");
+          setSubscriptionRecord(userStatusResult);
           return;
         } // if naka login na diri ra taman
 
@@ -406,6 +413,7 @@ const FaceScannerNew = ({
           // setIsLogin2(true);
           setIsExpired(cUser.status);
           setSavedTimeRecord(saved);
+          setSubscriptionRecord(userStatusResult);
         } else {
           loginstatus = false;
           const saved = await handleSaveTimeRecords(
@@ -416,6 +424,7 @@ const FaceScannerNew = ({
           setTimeInStatus(false);
           setIsExpired(cUser.status);
           setSavedTimeRecord(saved);
+          setSubscriptionRecord(userStatusResult);
         }
       }
     }

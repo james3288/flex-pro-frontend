@@ -4,6 +4,7 @@ import personalTrainerDaysLeft from "../../getData/personalTrainerDaysLeft";
 import CheckCircleFillSvg from "../svg/checkCircleFillSvg";
 import FormatDate from "../../others/FormatDate";
 import ExclamationSvg from "../svg/exclamationSvg";
+import useRemainingDaysLeft from "../../hooks/useRemainingDaysLeft";
 
 const style1 = {
   color: "orange",
@@ -118,19 +119,57 @@ const LoginMessageAlert = (props) => {
               </p>
             )}
           </div>
+          <div className="personal-trainer">
+            <div style={{ color: "white !important" }}>
+              {
+                <RemainingDaysLeftComponent
+                  date_subscribed={props.subscriptionRecord?.date_subscribed}
+                  per={props.subscriptionRecord?.per}
+                  user_id={props.subscriptionRecord?.flexProUserId}
+                  session_days={props.subscriptionRecord?.session_days}
+                  subscriptionId={props.subscriptionRecord?.userSubscriptionId}
+                  fontColor={"orange"}
+                />
+              }
+            </div>
+          </div>
         </div>
-        <div class="back-to-dashboard">
-          {/* <NavLink className="btn btn-danger" to={"/"}>
-          Back to Dashboard
-        </NavLink> */}
-          {/* <form action=""> */}
+        <div class="back-to-dashboard">   
           <button className="btn btn-success" onClick={props.handleRefresh}>
             PROCEED
           </button>
-          {/* </form> */}
+       
         </div>
       </>
     </div>
+  );
+};
+
+const RemainingDaysLeftComponent = ({
+  date_subscribed,
+  per,
+  user_id,
+  session_days,
+  subscriptionId,
+  fontColor,
+}) => {
+  // function for expired subscription
+
+  const { remainingDaysLeft } = useRemainingDaysLeft(
+    date_subscribed,
+    per,
+    user_id,
+    session_days,
+    subscriptionId
+  );
+
+  const result = remainingDaysLeft();
+
+  return (
+    <>
+      <h5>Subscription Remaining Days:</h5>
+      <h4 style={{ fontSize: "20px", color: fontColor }}>{result}</h4>
+    </>
   );
 };
 
