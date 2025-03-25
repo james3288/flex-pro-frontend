@@ -42,7 +42,7 @@ const getActiveAndInactiveUsers = async () => {
       })
     );
 
-    // console.log("activeUsers", newUser);
+    console.log("activeUsers", newUser);
 
     return newUser;
   } catch (error) {

@@ -71,7 +71,7 @@ const UserLoginModal = ({
     );
     setActiveUser(newUser);
 
-    console.log("ACTIVE USER", newUser);
+    // console.log("ACTIVE USER", newUser);
     setIsLoading(false);
   };
 
@@ -85,20 +85,7 @@ const UserLoginModal = ({
       activeUser[0]?.usersubscription.flexprouser?.id
     );
 
-    // already login function
-    const isAlreadyLogin = await CheckIfAlreadyIn(
-      activeUser[0]?.usersubscription.flexprouser?.id
-    );
-
-    // check if already login
-    if (isAlreadyLogin?.length > 0) {
-      setIsLogin(true);
-      setIsOnGoing("already-login");
-      setSubscriptionRecord(userStatusResult);
-      return;
-    }
-
-    // og wala pa ka login
+    // GET USER STATUS FUNCTION
     const getUserStatus = async () => {
       let record = null;
       get_userStatus.map((userStatus) => {
@@ -115,6 +102,7 @@ const UserLoginModal = ({
             flexProUserId: userStatus?.usersubscription?.flexprouser?.id,
             session_days: userStatus?.usersubscription?.session_days,
             userSubscriptionId: userStatus?.usersubscription?.id,
+            sub_session_days: userStatus?.usersubscription?.sub_session_days,
           };
 
           // setTrainers(() => userStatus);
@@ -128,11 +116,27 @@ const UserLoginModal = ({
 
     const userStatusResult = await getUserStatus();
 
+    // already login function
+    const isAlreadyLogin = await CheckIfAlreadyIn(
+      activeUser[0]?.usersubscription.flexprouser?.id
+    );
+
+    // check if already login
+    if (isAlreadyLogin?.length > 0) {
+      setIsLogin(true);
+      setIsOnGoing("already-login");
+      // setSubscriptionRecord(userStatusResult);
+
+      // const userStatusResult = await getUserStatus();
+      setSubscriptionRecord(userStatusResult);
+      return;
+    }
+
+    // og wala pa ka login
     if (
       userStatusResult != null &&
       (savedTimeRecord === false || savedTimeRecord === undefined)
     ) {
-     
       const saved = await PostSaveTimeRecords(
         userStatusResult,
         setTimeInStatus,
@@ -148,6 +152,7 @@ const UserLoginModal = ({
 
       return;
     } else {
+      const userStatusResult = await getUserStatus();
       setIsOnGoing("expired");
       setSubscriptionRecord(userStatusResult);
     }

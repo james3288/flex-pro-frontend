@@ -20,6 +20,7 @@ const style2 = {
 };
 
 const LoginMessageAlert = (props) => {
+ 
   return (
     <div className="col-lg-6 col-xs-12">
       <>
@@ -103,7 +104,7 @@ const LoginMessageAlert = (props) => {
           </div>
 
           <div className="personal-trainer">
-            <h5>Subscription Status:</h5>
+            {/* <h5>Subscription Status:</h5>
             <h2
               style={{
                 color: props.cUser.status === "expired" ? "red" : "orange",
@@ -111,13 +112,13 @@ const LoginMessageAlert = (props) => {
               }}
             >
               {props.cUser.status}
-            </h2>
-            {props.cUser.status === "expired" && (
+            </h2> */}
+            {/* {props.cUser.status === "expired" && (
               <p style={style1}>
                 kindly contact the attendant to extend your subscription, thank
                 you.
               </p>
-            )}
+            )} */}
           </div>
           <div className="personal-trainer">
             <div style={{ color: "white !important" }}>
@@ -126,7 +127,7 @@ const LoginMessageAlert = (props) => {
                   date_subscribed={props.subscriptionRecord?.date_subscribed}
                   per={props.subscriptionRecord?.per}
                   user_id={props.subscriptionRecord?.flexProUserId}
-                  session_days={props.subscriptionRecord?.session_days}
+                  session_days={props.subscriptionRecord?.sub_session_days}
                   subscriptionId={props.subscriptionRecord?.userSubscriptionId}
                   fontColor={"orange"}
                 />
@@ -134,11 +135,10 @@ const LoginMessageAlert = (props) => {
             </div>
           </div>
         </div>
-        <div class="back-to-dashboard">   
+        <div class="back-to-dashboard">
           <button className="btn btn-success" onClick={props.handleRefresh}>
             PROCEED
           </button>
-       
         </div>
       </>
     </div>
@@ -163,6 +163,7 @@ const RemainingDaysLeftComponent = ({
     subscriptionId
   );
 
+  console.log(date_subscribed, per, user_id, session_days, subscriptionId);
   const result = remainingDaysLeft();
 
   return (

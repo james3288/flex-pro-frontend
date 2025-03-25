@@ -373,6 +373,8 @@ const FaceScannerNew = ({
                 flexProUserId: userStatus?.usersubscription?.flexprouser?.id,
                 session_days: userStatus?.usersubscription?.session_days,
                 userSubscriptionId: userStatus?.usersubscription?.id,
+                sub_session_days:
+                  userStatus?.usersubscription?.sub_session_days,
               };
 
               setTrainers(() => userStatus); // old set but don't remove

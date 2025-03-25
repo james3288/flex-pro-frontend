@@ -12,6 +12,7 @@ import RemoveModal from "../../modals/RemoveModal";
 import "./myActiveUser.scss";
 import SearchIconSvg from "../../svg/SearchIconSvg";
 import useDebounce from "../../../hooks/useDebounce";
+import useRemainingDaysLeft from "../../../hooks/useRemainingDaysLeft";
 
 const MyActiveUser = () => {
   const [userSubscriptionId, setUserSubscriptionId] = useState(0);
@@ -62,6 +63,10 @@ const MyActiveUser = () => {
   const countDayPassActive = data.data2?.filter(
     (user) => user.remainingHours != "Expired"
   );
+
+  // const ex = data?.data1?.filter((x) => x.remainingDaysStatus != "Expired");
+
+  // console.log(ex);
 
   return (
     <>
