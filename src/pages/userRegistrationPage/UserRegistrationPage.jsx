@@ -1,9 +1,8 @@
-import React, { useReducer, useState } from "react";
+import { useReducer, useState } from "react";
 import DashboardPage from "../DashboardPage";
-import MyHeader from "../../components/myHeader/MyHeader";
+
 import "./userRegistrationPage.scss";
 
-import MyLeftSideMenu from "../../components/myLeftSideMenu/MyLeftSideMenu";
 import {
   INITIAL_STATE,
   registrationFormReducer,
@@ -20,29 +19,10 @@ const UserRegistrationPage = () => {
     folder: "http://localhost:5173/",
   });
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [leftMenuOpen, setLeftMenuOpen] = useState(false);
-  const [offCanvasMenu, setOffCanvasMenu] = useState(true);
   const [state, dispatch] = useReducer(registrationFormReducer, INITIAL_STATE);
 
   return (
     <>
-      {/* left side menu */}
-      <MyLeftSideMenu
-        setLeftMenuOpen={setLeftMenuOpen}
-        leftMenuOpen={leftMenuOpen}
-        offCanvasMenu={offCanvasMenu}
-        setOffCanvasMenu={setOffCanvasMenu}
-      />
-
-      {/* Header */}
-      <MyHeader
-        setIsOpen={setIsOpen}
-        setLeftMenuOpen={setLeftMenuOpen}
-        setOffCanvasMenu={setOffCanvasMenu}
-      />
-      {/* End Header */}
-      {/* page user registration */}
       <DashboardPage
         dashboardBg="userRegistration"
         page="userRegistration"
