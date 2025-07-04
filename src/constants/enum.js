@@ -1,0 +1,16 @@
+export const PageName = Object.freeze({
+  DASHBOARD: "dashboard",
+  USER_REGISTRATION: "userRegistration",
+  USER_IMAGE_REGISTRATION: "userImageRegistration",
+  USER_IMAGE_REGISTRATION_NEW: "userImageRegistrationNew",
+  USER_LOGIN: "userLogin",
+  SUBSCRIPTION_PLAN: "subscriptionPlan",
+  SUBSCRIBE_NOW: "subscribeNow",
+  CLIENTS_ON_WORKOUT: "clientsOnWorkout",
+  FOR_RENEWAL_USER: "forRenewalUser",
+  TRAINOR: "trainor",
+  ACTIVE_USER: "active-user",
+  USERS_PAGE: "usersPage",
+  USER_HISTORY: "userHistory",
+  TRAINOR_HISTORY_PAGE: "trainerHistoryPage",
+});

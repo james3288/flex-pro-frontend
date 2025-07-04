@@ -1,35 +1,34 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import Cameras from "../../cameras/Cameras";
-import { useState, useRef } from "react";
 import axios from "axios";
 import instance from "../../../others/axiosInstance";
 import { NavLink } from "react-router-dom";
+import useFormRegistrationStore from "../../../store/useFormRegistrationStore";
+import CaptureIcon from "../../svg/captureIcon";
+import { calcLength } from "framer-motion";
 
-const MyUserImageRegSection = ({
-  formData,
-  setFormData,
-  formDone,
-  inputError,
-  state,
-  dispatch,
-}) => {
+const MyUserImageRegSection = ({ formDone, inputError }) => {
   const webcamRef = useRef(null);
   const [url, setUrl] = useState(null);
   const [webcamActive, setWebcamActive] = useState(true);
-  const [id, setId] = useState(0);
   const [capture, setCapture] = useState(false);
   const [register, setRegister] = useState(false);
   const [count, setCount] = useState(0);
   const [msg, setMsg] = useState("");
 
-  const capturePhoto = React.useCallback(async () => {
+  // Get formData from Zustand store
+  const { formData } = useFormRegistrationStore();
+
+  const capturePhoto = useCallback(() => {
     const imageSrc = webcamRef.current.getScreenshot();
     setCapture(true);
     setUrl(imageSrc);
-  }, [webcamRef]);
+  }, []);
 
   useEffect(() => {
-    console.log("registered");
+    if (register) {
+      console.log("registered");
+    }
   }, [register]);
 
   const refreshCapture = () => {
@@ -45,15 +44,12 @@ const MyUserImageRegSection = ({
     let stream = webcamRef.current.stream;
     const tracks = stream.getTracks();
     tracks.forEach((track) => track.stop());
-
     setWebcamActive(false);
   };
 
-  // React.useEffect(() => {}, [formDone]);
-
   const convertToBase64 = async (imageSrc) => {
     return new Promise((resolve, reject) => {
-      const img = new Image();
+      const img = new window.Image();
       img.crossOrigin = "Anonymous";
       img.onload = () => {
         const canvas = document.createElement("canvas");
@@ -69,128 +65,41 @@ const MyUserImageRegSection = ({
     });
   };
 
-  const handleSave = async () => {
-    let id1 = 0;
-    if (formDone === true && capture === true) {
-      // axios
-      //   .post("http://127.0.0.1:8000/api/save_users/", formData)
-      //   .then(function (response) {
-      //     id1 = response.data.id;
-      //     console.log(id1);
-      //   })
-      //   .catch(function (error) {
-      //     console.log(error);
-      //     return;
-      //   });
-
-      instance
-        .post(`/api/save_users/`, formData)
-        .then(function (response) {
-          id1 = response.data.id;
-          console.log(id1);
-        })
-        .catch(function (error) {
-          console.log(error);
-          return;
-        });
-
-      setTimeout(async () => {
-        // Convert the image data to Base64
-        const base64Image = await convertToBase64(url);
-        const datas = { image: base64Image, id: id1 };
-
-        instance
-          .post(`/api/save_image/`, datas)
-          .then(function (response) {
-            console.log(response);
-            setCount(0);
-
-            setRegister(true);
-          })
-          .catch(function (error) {
-            console.log(error);
-            return;
-          });
-      }, 3000);
-    } else {
-      setCount((prev) => prev + 1);
+  // Save user info using formData from Zustand
+  const saveUserInfo = async () => {
+    try {
+      console.log(formData);
+      const response = await instance.post("/api/save_users/", formData);
+      return response.data.id;
+    } catch (error) {
+      console.log(error);
+      return 0;
     }
   };
 
-  const saveUserInfo = async () => {
-    const result = await instance
-      .post("/api/save_users/", state)
-      .then(function (response) {
-        return response.data.id;
-      })
-      .catch(function (error) {
-        console.log(error);
-        return 0;
-      });
-
-    return result;
-  };
-
-  // return true or false
+  // Save user image using the returned user id
   const saveUserImage = async (id) => {
-    // Convert the image data to Base64
-    const base64Image = await convertToBase64(url);
-    const datas = { image: base64Image, id: id };
-
-    const result = await instance
-      .post("/api/save_image/", datas)
-      .then(function (response) {
-        console.log(response);
-        return true;
-      })
-      .catch(function (error) {
-        console.log(error);
-        return false;
-      });
-
-    return result;
+    try {
+      const base64Image = await convertToBase64(url);
+      const datas = { image: base64Image, id: id };
+      await instance.post("/api/save_image/", datas);
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
   };
 
+  // Main save handler
   const handleSaveUserData = async () => {
-    if (formDone === true && capture === true && url != null) {
-      // console.log("state", state);
-      // console.log("formdata", formData);
-      // const result = instance
-      //   .post("/api/save_users/", state)
-      //   .then(function (response) {
-      //     id1 = response.data.id;
-      //     console.log(id1);
-      //     return id1;
-      //   })
-      //   .catch(function (error) {
-      //     console.log(error);
-      //     return;
-      //   });
-
-      // setTimeout(async () => {
-      //   // Convert the image data to Base64
-      //   const base64Image = await convertToBase64(url); };
-      //   instance
-      //   const datas = { image: base64Image, id: saveuserinfo
-      //     .post("/api/save_image/", datas)
-      //     .then(function (response) {
-      //       console.log(response);
-      //       setCount(0);
-      //       setRegister(true);
-      //     })
-      //     .catch(function (error) {
-      //       console.log(error);
-      //       return;
-      //     });
-      // }, 1000);
-
+    alert("Button clicked!");
+    if (capture === true && url != null) {
       const saveuserinfo = await saveUserInfo();
 
       if (saveuserinfo > 0) {
         const saveuserimage = await saveUserImage(saveuserinfo);
 
-        // if userinfo successfully registered, next is saving image
-        if (saveuserimage == true) {
+        if (saveuserimage === true) {
           setCount(0);
           setRegister(true);
           setMsg("User Successfully Registered");
@@ -198,9 +107,24 @@ const MyUserImageRegSection = ({
       } else {
         setMsg("There is is something wrong with your registration!");
       }
+    } else {
+      setCount((prev) => prev + 1);
     }
   };
 
+  const isFormDataValid = () => {
+    if (!formData) return false;
+    // Check all required fields
+    return (
+      formData.name &&
+      formData.weights &&
+      formData.contact_number &&
+      formData.contact_number_ioe &&
+      Array.isArray(formData.agreements) &&
+      formData.agreements.length > 0 &&
+      url
+    );
+  };
   return (
     <>
       <div className="container" id="userRegistrationId">
@@ -296,18 +220,7 @@ const MyUserImageRegSection = ({
                 CAPTURE <strong>RESULT</strong>
               </span>
               <div className="camera-wrapper">
-                <svg
-                  style={{ color: "gray" }}
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="100"
-                  height="100"
-                  fill="currentColor"
-                  className="bi bi-file-earmark-person-fill"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0m2 5.755V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-.245S4 12 8 12s5 1.755 5 1.755" />
-                </svg>
-
+                <CaptureIcon />
                 {url && <img src={url} alt="Screenshot" className="captured" />}
               </div>
               <div>
@@ -330,16 +243,14 @@ const MyUserImageRegSection = ({
                   Refresh
                 </button>
 
-                {formDone && (
-                  <button
-                    className="btn btn-success"
-                    // onClick={() => handleSave()}
-                    onClick={() => handleSaveUserData()}
-                    disabled={register}
-                  >
-                    Save Now
-                  </button>
-                )}
+                <button
+                  type="button"
+                  className="btn btn-success"
+                  onClick={handleSaveUserData}
+                  disabled={!isFormDataValid() || register}
+                >
+                  Save Now
+                </button>
               </div>
             </div>
           </div>

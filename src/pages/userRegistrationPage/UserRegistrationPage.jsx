@@ -34,17 +34,6 @@ const UserRegistrationPage = () => {
         dispatch={dispatch}
       />
       {/* end user registration */}
-
-      <DashboardPage
-        dashboardBg="userImageRegistration"
-        page="userImageRegistration"
-        formDone={formDone}
-        setFormDone={setFormDone}
-        formData={formData}
-        setFormData={setFormData}
-        state={state}
-        dispatch={dispatch}
-      />
     </>
   );
 };

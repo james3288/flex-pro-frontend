@@ -1,38 +1,22 @@
 import React, { useContext } from "react";
 import { AgreementContext } from "../../../context/UserRegistrationContext";
+import useFormRegistrationStore from "../../../store/useFormRegistrationStore";
 
-const UserRegistrationContract = ({ setFormData, state, dispatch }) => {
+const UserRegistrationContract = () => {
   const { agreementDatas } = useContext(AgreementContext);
+  const { formData, setAgreements } = useFormRegistrationStore();
 
   const handleCheckboxChange = (event) => {
     const agreementId = parseInt(event.target.value);
     const isChecked = event.target.checked;
 
+    let newAgreements;
     if (isChecked) {
-      // setFormData((prevState) => ({
-      //   ...prevState,
-      //   agreements: [...prevState.agreements, agreementId],
-      // }));
-      dispatch({
-        type: "SELECT_OPTION",
-        payload: {
-          name: "agreements",
-          value: [...state.agreements, agreementId],
-        },
-      });
+      newAgreements = [...formData.agreements, agreementId];
     } else {
-      // setFormData((prevState) => ({
-      //   ...prevState,
-      //   agreements: prevState.agreements.filter((id) => id !== agreementId),
-      // }));
-      dispatch({
-        type: "SELECT_OPTION",
-        payload: {
-          name: "agreements",
-          value: state.agreements.filter((id) => id !== agreementId),
-        },
-      });
+      newAgreements = formData.agreements.filter((id) => id !== agreementId);
     }
+    setAgreements(newAgreements);
   };
 
   return (
@@ -47,6 +31,7 @@ const UserRegistrationContract = ({ setFormData, state, dispatch }) => {
             type="checkbox"
             value={agreement?.id}
             className="cbox"
+            checked={formData.agreements.includes(agreement?.id)}
             onChange={handleCheckboxChange}
           />
           <p>{agreement?.agreement_desc}</p>
@@ -77,7 +62,7 @@ const UserRegistrationContract = ({ setFormData, state, dispatch }) => {
           any other member of any services, facilities, equipment of fitness
           gym.
         </p>
-        {state.agreements == 0 && (
+        {formData.agreements.length === 0 && (
           <p style={{ color: "orange", fontStyle: "italic" }}>
             Select an agreement first!
           </p>

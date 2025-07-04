@@ -24,6 +24,9 @@ import ActiveUserPage from "../pages/activeUserPage/ActiveUserPage.jsx";
 // Reports
 import ReportPage from "../pages/reportPage/ReportPage.jsx";
 import MainLayout from "../components/layout/mainLayout.jsx";
+import UserImageRegistrationNewPage from "../pages/userImageRegistrationPage/UserImageRegistrationNewPage.jsx";
+import { PageName } from "../constants/enum.js";
+import DashboardPage from "../pages/DashboardPage.jsx";
 const routes = [
   {
     path: "/",
@@ -40,7 +43,7 @@ const routes = [
     path: "/user-registration",
     element: (
       <MainLayout>
-        <UserRegistrationPage />{" "}
+        <UserRegistrationPage />
       </MainLayout>
     ),
   },
@@ -49,7 +52,11 @@ const routes = [
     element: (
       <>
         <MainLayout>
-          <UserImageRegistrationPage />
+          {/* <UserImageRegistrationPage /> */}
+          <DashboardPage
+            dashboardBg="userImageRegistration"
+            page={PageName.USER_IMAGE_REGISTRATION_NEW}
+          />
         </MainLayout>
       </>
     ),

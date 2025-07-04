@@ -230,25 +230,6 @@ const MyDashboardSection = () => {
     setDayPassOnline(await getDayPassUserOnline3());
   };
 
-  // const getNoOnlineUser = async () => {
-  //   try {
-  //     const response = await instance.get(`/api/no_user_online/`);
-  //     const users = response.data;
-  //     setNoOnlineUser(users.length);
-  //   } catch (error) {
-  //     console.error("Error fetching users:", error);
-  //   }
-  // };
-
-  // const getNoActiveUsers = async () => {
-  //   try {
-  //     const response = await instance.get(`/api/user_all_status/`);
-  //     const users = response.data;
-  //     setNoActiveUsers(users.length);
-  //   } catch (error) {
-  //     console.error("Error fetching users:", error);
-  //   }
-  // };
 
   // for online users
   useEffect(() => {
@@ -296,11 +277,6 @@ const MyDashboardSection = () => {
     getDayPassOnline();
     // setActiveUsers(async () => await getActiveUsers());
   }, []);
-
-  // for renewal users
-  // useEffect(() => {
-  //   getForRenewalUsers();
-  // }, []);
 
   // refresher
   useEffect(() => {
