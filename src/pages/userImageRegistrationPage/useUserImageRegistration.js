@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import instance from "../../others/axiosInstance";
+import useFormRegistrationStore from "../../store/useFormRegistrationStore";
 
 const useUserImageRegistration = () => {
   const webcamRef = useRef(null);
@@ -10,10 +11,8 @@ const useUserImageRegistration = () => {
   const [register, setRegister] = useState(false);
   const [count, setCount] = useState(0);
   const [msg, setMsg] = useState("");
+  const { formData } = useFormRegistrationStore();
 
-  useEffect(() => {
-    console.log("registered");
-  }, [register]);
 
   const capturePhoto = React.useCallback(async () => {
     const imageSrc = webcamRef.current.getScreenshot();
@@ -40,7 +39,7 @@ const useUserImageRegistration = () => {
 
   const convertToBase64 = async (imageSrc) => {
     return new Promise((resolve, reject) => {
-      const img = new Image();
+      const img = new window.Image();
       img.crossOrigin = "Anonymous";
       img.onload = () => {
         const canvas = document.createElement("canvas");
@@ -56,48 +55,41 @@ const useUserImageRegistration = () => {
     });
   };
 
+  // Save user info using formData from Zustand
   const saveUserInfo = async () => {
-    const result = await instance
-      .post("/api/save_users/", state)
-      .then(function (response) {
-        return response.data.id;
-      })
-      .catch(function (error) {
-        console.log(error);
-        return 0;
-      });
-
-    return result;
+    try {
+      console.log(formData);
+      const response = await instance.post("/api/save_users/", formData);
+      return response.data.id;
+    } catch (error) {
+      console.log(error);
+      return 0;
+    }
   };
 
+  // Save user image using the returned user id
   const saveUserImage = async (id) => {
-    // Convert the image data to Base64
-    const base64Image = await convertToBase64(url);
-    const datas = { image: base64Image, id: id };
-
-    const result = await instance
-      .post("/api/save_image/", datas)
-      .then(function (response) {
-        console.log(response);
-        return true;
-      })
-      .catch(function (error) {
-        console.log(error);
-        return false;
-      });
-
-    return result;
+    try {
+      const base64Image = await convertToBase64(url);
+      const datas = { image: base64Image, id: id };
+      await instance.post("/api/save_image/", datas);
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
   };
 
+  // Main save handler
   const handleSaveUserData = async () => {
+    alert("Button clicked!");
     if (capture === true && url != null) {
       const saveuserinfo = await saveUserInfo();
 
       if (saveuserinfo > 0) {
         const saveuserimage = await saveUserImage(saveuserinfo);
 
-        // if userinfo successfully registered, next is saving image
-        if (saveuserimage == true) {
+        if (saveuserimage === true) {
           setCount(0);
           setRegister(true);
           setMsg("User Successfully Registered");
@@ -105,7 +97,23 @@ const useUserImageRegistration = () => {
       } else {
         setMsg("There is is something wrong with your registration!");
       }
+    } else {
+      setCount((prev) => prev + 1);
     }
+  };
+
+  const isFormDataValid = () => {
+    if (!formData) return false;
+    // Check all required fields
+    return (
+      formData.name &&
+      formData.weights &&
+      formData.contact_number &&
+      formData.contact_number_ioe &&
+      Array.isArray(formData.agreements) &&
+      formData.agreements.length > 0 &&
+      url
+    );
   };
   return {
     webcamRef,
@@ -126,6 +134,8 @@ const useUserImageRegistration = () => {
     startMyCamera,
     stopMyCamera,
     convertToBase64,
+    handleSaveUserData,
+    isFormDataValid,
   };
 };
 

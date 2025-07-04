@@ -25,25 +25,15 @@ const UseDashBoard = ({
       break;
     case PageName.USER_REGISTRATION:
       content = (
-        <>
-          <MyUserRegistrationSection
-            formData={formData}
-            setFormData={setFormData}
-            handleFormFilter={handleFormFilter}
-            formDone={formDone}
-            inputError={inputError}
-            state={state}
-            dispatch={dispatch}
-          />
-          {/* <MyUserImageRegSection
-            formData={formData}
-            setFormData={setFormData}
-            formDone={formDone}
-            inputError={inputError}
-            state={state}
-            dispatch={dispatch}
-          /> */}
-        </>
+        <MyUserRegistrationSection
+          formData={formData}
+          setFormData={setFormData}
+          handleFormFilter={handleFormFilter}
+          formDone={formDone}
+          inputError={inputError}
+          state={state}
+          dispatch={dispatch}
+        />
       );
       break;
     case PageName.USER_IMAGE_REGISTRATION_NEW:
