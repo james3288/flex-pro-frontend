@@ -3,8 +3,12 @@ import { PageName } from "../constants/enum";
 import MyDashboardSection from "../components/mySection/MyDashboardSection";
 import MyUserRegistrationSection from "../components/mySection/MyUserRegistrationSection";
 import MyUserImageRegSection from "../components/mySection/clientsOnline/MyUserImageRegSection";
-import UserImageRegistrationNewPage from "../pages/userImageRegistrationPage/UserImageRegistrationNewPage";
-import UserImageRegistrationPage from "../pages/userImageRegistrationPage/UserImageRegistrationPage";
+import MyUserLoginSection from "../components/mySection/MyUserLoginSection";
+import MySubscriptionPlan from "../components/mySection/Subscriptions/MySubscriptionPlan";
+import MySubscribedNow from "../components/mySection/MySubscribedNow";
+import MyCLientsOnWorkout from "../components/mySection/MyCLientsOnWorkout";
+import MyUsers from "../components/mySection/users/MyUsers";
+import MyActiveUser from "../components/mySection/activeUser/MyActiveUser";
 
 const UseDashBoard = ({
   page,
@@ -16,8 +20,7 @@ const UseDashBoard = ({
   dispatch,
 }) => {
   let content;
-  const { inputError, handleFormFilter, scrollToBottom, scrollToTop } =
-    useDashBoardHook({ setFormDone });
+  const { inputError, handleFormFilter } = useDashBoardHook({ setFormDone });
 
   switch (page) {
     case PageName.DASHBOARD:
@@ -39,6 +42,31 @@ const UseDashBoard = ({
     case PageName.USER_IMAGE_REGISTRATION_NEW:
       content = <MyUserImageRegSection />;
       break;
+
+    case PageName.USER_LOGIN:
+      content = <MyUserLoginSection />;
+      break;
+
+    case PageName.SUBSCRIPTION_PLAN:
+      content = <MySubscriptionPlan />;
+      break;
+
+    case PageName.SUBSCRIBE_NOW:
+      content = <MySubscribedNow />;
+      break;
+
+    case PageName.CLIENTS_ON_WORKOUT:
+      content = <MyCLientsOnWorkout />;
+      break;
+
+    case PageName.USERS_PAGE:
+      content = <MyUsers />;
+      break;
+
+    case PageName.ACTIVE_USER:
+      content = <MyActiveUser />; // Placeholder for active user dashboard
+      break;
+
     default:
       content = <div>Default Dashboard</div>;
   }

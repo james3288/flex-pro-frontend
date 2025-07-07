@@ -1,4 +1,5 @@
 // import React, { useState } from "react";
+import { PageName } from "../../constants/enum";
 import DashboardPage from "../DashboardPage";
 // import MyHeader from "../../components/myHeader/MyHeader";
 import "./userLoginPage.scss";
@@ -28,7 +29,7 @@ const UserLoginPage = () => {
         setOffCanvasMenu={setOffCanvasMenu}
       /> */}
       {/* End Header */}
-      <DashboardPage dashboardBg="userLogin" page="userLogin" />
+      <DashboardPage dashboardBg="userLogin" page={PageName.USER_LOGIN} />
     </>
   );
 };

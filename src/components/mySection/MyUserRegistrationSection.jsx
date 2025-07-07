@@ -13,9 +13,9 @@ const MyUserRegistrationSection = ({
   const { formData, setField, setAgreements, resetForm } =
     useFormRegistrationStore();
 
-  useEffect(() => {
-    console.log(inputError);
-  }, [inputError]);
+  // useEffect(() => {
+  //   console.log(inputError);
+  // }, [inputError]);
 
   const handleChange = (e) => {
     setField(e.target.name, e.target.value);

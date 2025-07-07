@@ -20,7 +20,6 @@ const style2 = {
 };
 
 const LoginMessageAlert = (props) => {
- 
   return (
     <div className="col-lg-6 col-xs-12">
       <>
@@ -52,7 +51,7 @@ const LoginMessageAlert = (props) => {
                 ) : (
                   <CheckCircleFillSvg />
                 )}{" "}
-                {props.userFoundWithImage.flex_pro_user?.name}
+                {props.userFoundWithImage?.flex_pro_user?.name}
               </h5>
             </div>
           </div>

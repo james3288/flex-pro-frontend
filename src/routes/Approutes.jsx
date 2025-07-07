@@ -5,7 +5,6 @@ import ErrorPage from "../pages/ErrorPage.jsx";
 
 // User-related pages
 import UserRegistrationPage from "../pages/userRegistrationPage/UserRegistrationPage.jsx";
-import UserImageRegistrationPage from "../pages/userImageRegistrationPage/UserImageRegistrationPage.jsx";
 import UserLoginPage from "../pages/userLoginPage/UserLoginPage.jsx";
 import UserSubscription from "../pages/userSubscriptionPage/UserSubscription.jsx";
 import SubscribedNow from "../pages/subscribedNowPage/SubscribedNow.jsx";
@@ -24,7 +23,6 @@ import ActiveUserPage from "../pages/activeUserPage/ActiveUserPage.jsx";
 // Reports
 import ReportPage from "../pages/reportPage/ReportPage.jsx";
 import MainLayout from "../components/layout/mainLayout.jsx";
-import UserImageRegistrationNewPage from "../pages/userImageRegistrationPage/UserImageRegistrationNewPage.jsx";
 import { PageName } from "../constants/enum.js";
 import DashboardPage from "../pages/DashboardPage.jsx";
 const routes = [
@@ -52,7 +50,6 @@ const routes = [
     element: (
       <>
         <MainLayout>
-          {/* <UserImageRegistrationPage /> */}
           <DashboardPage
             dashboardBg="userImageRegistration"
             page={PageName.USER_IMAGE_REGISTRATION_NEW}
@@ -69,8 +66,9 @@ const routes = [
     path: "/user-subscription",
     element: (
       <>
-        <MainLayout />
-        <UserSubscription />
+        <MainLayout>
+          <UserSubscription />
+        </MainLayout>
       </>
     ),
   },
