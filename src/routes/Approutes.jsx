@@ -49,12 +49,10 @@ const routes = [
     path: "/user-image-registration",
     element: (
       <>
-        <MainLayout>
-          <DashboardPage
-            dashboardBg="userImageRegistration"
-            page={PageName.USER_IMAGE_REGISTRATION_NEW}
-          />
-        </MainLayout>
+        <DashboardPage
+          dashboardBg="userImageRegistration"
+          page={PageName.USER_IMAGE_REGISTRATION_NEW}
+        />
       </>
     ),
   },

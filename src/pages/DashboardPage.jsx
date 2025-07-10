@@ -1,4 +1,3 @@
-
 import UseDashBoard from "../customHooks/useDashBoard";
 
 const DashboardPage = ({
@@ -11,7 +10,6 @@ const DashboardPage = ({
   state,
   dispatch,
 }) => {
-
   return (
     <>
       {/* Hero section */}

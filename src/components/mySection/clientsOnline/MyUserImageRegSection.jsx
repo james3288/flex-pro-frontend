@@ -2,7 +2,7 @@ import Cameras from "../../cameras/Cameras";
 import { NavLink } from "react-router-dom";
 import CaptureIcon from "../../svg/captureIcon";
 import useUserImageRegistration from "../../../pages/userImageRegistrationPage/useUserImageRegistration";
-
+import "../../../pages/userImageRegistrationPage/UserImageRegistrationPage.scss";
 const MyUserImageRegSection = ({ formDone, inputError }) => {
   const {
     webcamRef,
