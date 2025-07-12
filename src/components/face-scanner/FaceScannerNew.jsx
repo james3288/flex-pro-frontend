@@ -11,6 +11,8 @@ import getExtendedTrainer from "../../getData/getExtendedTrainer";
 import { useUserStore } from "../../store/useUserStore";
 import getActiveAndInactiveUsers from "../../getData/getActiveAndInactiveUsers";
 import useFaceScannerNew from "../../customHooks/useFaceScannerNew";
+import useFetchImage from "../../hooks/useFetchImage";
+import useCheckIfAlreadyLogin from "../../hooks/useCheckIfAlreadyLogin";
 
 const FaceScannerNew = ({
   setPlay,
@@ -94,19 +96,6 @@ const FaceScannerNew = ({
     // tracks.forEach((track) => track.stop());
   };
 
-  const fetchImage = async (label) => {
-    try {
-      const response = await instance.get(
-        `/media/images/${label}/${label}.png`,
-        { responseType: "blob" }
-      );
-
-      return await response.data;
-    } catch (error) {
-      console.error("Error fetching image:", error);
-    }
-  };
-
   const extendedSub = async (subscriptionId) => {
     try {
       const data = await getExtendedSubscription(subscriptionId);
@@ -176,29 +165,31 @@ const FaceScannerNew = ({
     }
   };
 
-  // check if already in function
-  const checkIfAlreadyIn = async (user_id) => {
-    try {
-      const response = await instance.get(
-        `/api/user_time_record_get/${user_id}`
-      );
+  // // check if already in function
+  // const checkIfAlreadyIn = async (user_id) => {
+  //   try {
+  //     const response = await instance.get(
+  //       `/api/user_time_record_get/${user_id}`
+  //     );
 
-      return await response.data;
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      return null; // or handle the error appropriately based on your application's needs
-    }
-  };
+  //     return await response.data;
+  //   } catch (error) {
+  //     console.error("Error fetching data:", error);
+  //     return null; // or handle the error appropriately based on your application's needs
+  //   }
+  // };
+  const { checkIfAlreadyIn } = useCheckIfAlreadyLogin();
+  const { fetchImage } = useFetchImage();
 
   async function getLabeledFaceDescriptions() {
     const labeledFaceDescriptors = await Promise.all(
       flexProUser?.map(async (label) => {
         const descriptions = [];
 
-        // Load the image from the server
         const imgBlob = await fetchImage(
           `${label.usersubscription?.flexprouser?.id}`
         );
+
         const img = await faceapi.bufferToImage(imgBlob); // Convert Blob to Image
 
         // Load the face detection model if not already loaded

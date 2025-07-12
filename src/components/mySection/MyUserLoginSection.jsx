@@ -1,153 +1,34 @@
-import React, { useEffect, useState } from "react";
-import FaceScanner from "../face-scanner/FaceScanner";
-import Pic3 from "../../assets/img/team/team-3.jpg";
-import instance from "../../others/axiosInstance";
-import { NavLink } from "react-router-dom";
-import getImagePath from "../../getData/getImagePath";
-import loadImageData from "../../getData/loadImageData";
-import FormatDate from "../../others/FormatDate";
 import UserLoginModal from "../modals/UserLoginModal";
 import FaceScannerNew from "../face-scanner/FaceScannerNew";
-import { useUserStore } from "../../store/useUserStore";
-import personalTrainerDaysLeft from "../../getData/personalTrainerDaysLeft";
-import getExtendedTrainer from "../../getData/getExtendedTrainer";
-import TrainerRemainingDays from "./forRenewal/TrainerRemainingDays";
-import getSubscriptionDaysLeft from "../../getData/getSubscriptionDaysLeft";
-import { useDayPassStore } from "../../store/useDayPassStore";
 import DayPassLoginModal from "../modals/DayPassLoginModal";
-import Pic from "./../../../src/assets/img/dummy.png";
-import ExclamationSvg from "./../svg/exclamationSvg";
-import CheckCircleFillSvg from "./../svg/checkCircleFillSvg";
-import LoadingEffect from "./loadingEffect/LoadingEffect";
 import LoginMessageAlert from "../LoginMessageAlert/LoginMessageAlert";
 import LoginMessageAlertDayPass from "../LoginMessageAlert/LoginMessageAlertDayPass";
-import useRemainingDaysLeft from "../../hooks/useRemainingDaysLeft";
-import RemainingDaysLeftComponent from "./forRenewal/RemainingDaysLeftComponent";
+import useMyUserLoginSection from "./users/hooks/useMyUserLoginSection";
 
 const MyUserLoginSection = () => {
-  const [play, setPlay] = useState(false);
-  const [stop, setStop] = useState(false);
-  const [disableBtn, setDisableBtn] = useState(false);
-  const [userId, setUserId] = useState(0);
-  const [userFoundWithImage, setUserFoundWithImage] = useState();
-  const [userFound, setUserFound] = useState();
-  const [isOnGoing, setIsOnGoing] = useState();
-  const [isExpired, setIsExpired] = useState();
-  const [trainers, setTrainers] = useState();
-  const [isLogin, setIsLogin] = useState(false);
-  const cUser = useUserStore((state) => state.user);
-  const [dayPassLogin, setDayPassLogin] = useState(false);
-  const [subscriptionRecord, setSubscriptionRecord] = useState({});
-
-  const cTrainersRemainingDays = useUserStore(
-    (state) => state.trainersRemainingDays
-  );
-
-  const cSessionDays = useUserStore((state) => state.sessionDays);
-  // const cSetExtendedTrainer = useUserStore((state) => state.setExtendedTrainer);
-  const cExtendedTrainer = useUserStore((state) => state.extendedTrainer);
-  const cSubscriptionRemainingDays = useUserStore(
-    (state) => state.subscriptionRemainingDays
-  );
-  const cDateSubscribed = useUserStore((state) => state.dateSubscribed);
-  const cExtendedSubscription = useUserStore(
-    (state) => state.extendedSubscription
-  );
-  const cLoginUsingId = useUserStore((state) => state.loginUsingId);
-
-  const [totalFreeTrainerLeft, setTotalFreeTrainerLeft] = useState(0);
-
-  //getter
   const {
-    isLogin: islogin2,
-    dayPassName,
+    setPlay,
+    setUserId,
+    setUserFound,
+    setIsOnGoing,
+    setIsLogin,
+    setTrainers,
+    setIsExpired,
+    setSubscriptionRecord,
+    handlePlayClick,
+    handleDayPassLoginClick,
+    setDayPassLogin,
+    disableBtn,
+    play,
+    stop,
+    isLogin,
+    isOnGoing,
+    props,
+    userId,
+    dayPassLogin,
     isAlreadyLogin,
-    remainingHours,
-    personalTrainer,
-    subscriptionName,
-  } = useDayPassStore((state) => ({
-    isLogin: state.isLogin,
-    dayPassName: state.dayPassName,
-    isAlreadyLogin: state.isAlreadyLogin,
-    remainingHours: state.remainingHours,
-    personalTrainer: state.personalTrainer,
-    subscriptionName: state.subscriptionName,
-  }));
-  //setter
-  const { setDayPassUserId, setModalTitle, setIsAlreadyLogin } =
-    useDayPassStore((state) => ({
-      setDayPassUserId: state.setDayPassUserId,
-      setModalTitle: state.setModalTitle,
-      setIsAlreadyLogin: state.setIsAlreadyLogin,
-    }));
-
-  const setIsLogin2 = useDayPassStore((state) => state.setIsLogin);
-
-  const handlePlayClick = () => {
-    setPlay(() => !play);
-    setDisableBtn(true);
-  };
-
-  const handleStopClick = () => {
-    // setPlay(() => !play);
-    setStop(() => !stop);
-  };
-
-  const handleRefresh = () => {
-    setUserId(0);
-    setIsOnGoing("");
-    setIsAlreadyLogin(false);
-    setIsLogin2(false);
-  };
-
-  const handleDayPassLoginClick = async () => {
-    await setDayPassUserId("daypass-login-modal");
-    await setModalTitle("Daypass Login");
-  };
-
-  // useEffect(() => {
-  //   console.log(play);
-  // }, [play, stop, userId]);
-
-  useEffect(() => {
-    const userWithImg = async () => {
-      let imgData = await getImagePath(userId);
-
-      const imageDataUrl = await loadImageData(imgData?.image1);
-      let newImgData = { ...imgData, image: imageDataUrl };
-      setUserFoundWithImage(newImgData);
-    };
-
-    userWithImg();
-
-    // trainer
-  }, [userId]);
-
-  // props
-  const props = {
-    userFoundWithImage: userFoundWithImage,
-    cUser: cUser,
-    cTrainersRemainingDays: cTrainersRemainingDays,
-    cSessionDays: cSessionDays,
-    cExtendedTrainer: cExtendedTrainer,
-    cDateSubscribed: cDateSubscribed,
-    totalFreeTrainerLeft: totalFreeTrainerLeft,
-    setTotalFreeTrainerLeft: setTotalFreeTrainerLeft,
-    handleRefresh: handleRefresh,
-    isOnGoing: isOnGoing,
-    subscriptionRecord: subscriptionRecord,
-  };
-
-  // daypass props
-  const daypassProps = {
-    pic: Pic,
-    isOnGoing: isOnGoing,
-    dayPassName: dayPassName,
-    personalTrainer: personalTrainer,
-    handleRefresh: handleRefresh,
-    remainingHours: remainingHours,
-    subscriptionName: subscriptionName,
-  };
+    daypassProps,
+  } = useMyUserLoginSection();
 
   return (
     <>
