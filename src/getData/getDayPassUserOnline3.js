@@ -1,3 +1,4 @@
+import FormatDateOnly from "../others/FormatDateOnly";
 import remainingDays from "../others/GetRemainingDays";
 import instance from "../others/axiosInstance";
 import getSubscriptionDaysLeft from "./getSubscriptionDaysLeft";
@@ -8,7 +9,7 @@ const getDayPassUserOnline3 = async () => {
     const users = response.data;
 
     const newUser = await Promise.all(
-      users.map(async (user) => {
+      users?.map(async (user) => {
         const remaining = await remainingDays(
           user.flexprouserdaypass.date_subscribed,
           "day",
@@ -29,7 +30,11 @@ const getDayPassUserOnline3 = async () => {
       })
     );
 
-    return newUser;
+    return newUser?.filter(
+      (x) =>
+        FormatDateOnly(x.time_out) === "1990-01-01" &&
+        x.remainingHours != "Expired"
+    );
   } catch (error) {
     console.error("Error fetching users:", error);
   }

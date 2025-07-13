@@ -89,14 +89,14 @@ const MyUserLoginSection = () => {
                   Login Daypass
                 </button>
                 {/* <button className="btn btn-success">QR Code</button> */}
-                <form action="" style={{ zIndex: "9999" }}>
+                {/* <form action="" style={{ zIndex: "9999" }}>
                   <button
                     className="btn btn-danger"
                     //onClick={handleStopClick}
                   >
                     Refresh
                   </button>
-                </form>
+                </form> */}
               </div>
             </div>
             {/* ) : (

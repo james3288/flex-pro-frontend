@@ -9,7 +9,8 @@ import MySubscribedNow from "../components/mySection/MySubscribedNow";
 import MyCLientsOnWorkout from "../components/mySection/MyCLientsOnWorkout";
 import MyUsers from "../components/mySection/users/MyUsers";
 import MyActiveUser from "../components/mySection/activeUser/MyActiveUser";
-
+import MyUserHistory from "../components/mySection/userHistory/MyUserHistory";
+import MyRenewalUser from "../components/mySection/forRenewal/MyRenewalUser";
 const UseDashBoard = ({
   page,
   formDone,
@@ -66,7 +67,12 @@ const UseDashBoard = ({
     case PageName.ACTIVE_USER:
       content = <MyActiveUser />; // Placeholder for active user dashboard
       break;
-
+    case PageName.USER_HISTORY:
+      content = <MyUserHistory />;
+      break;
+    case PageName.FOR_RENEWAL_USER:
+      content = <MyRenewalUser />;
+      break;
     default:
       content = <div>Default Dashboard</div>;
   }

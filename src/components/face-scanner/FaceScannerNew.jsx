@@ -13,6 +13,7 @@ import getActiveAndInactiveUsers from "../../getData/getActiveAndInactiveUsers";
 import useFaceScannerNew from "../../customHooks/useFaceScannerNew";
 import useFetchImage from "../../hooks/useFetchImage";
 import useCheckIfAlreadyLogin from "../../hooks/useCheckIfAlreadyLogin";
+import useFetchUserStatus from "../../hooks/useFetchUserStatus";
 
 const FaceScannerNew = ({
   setPlay,
@@ -96,88 +97,76 @@ const FaceScannerNew = ({
     // tracks.forEach((track) => track.stop());
   };
 
-  const extendedSub = async (subscriptionId) => {
-    try {
-      const data = await getExtendedSubscription(subscriptionId);
-      return await data;
-    } catch (error) {
-      console.error("Error in fetching Extended Subscription:", error);
-    }
-  };
-
-  const fetchUserStatus = async (id) => {
-    try {
-      const response = await instance.get(`/api/user_status/${id}`);
-      const users = response.data;
-
-      const newUser = await Promise.all(
-        users.map(async (user) => {
-          // Call getImagePath asynchronously for each user
-          const imgpath = await getImagePath(
-            user.usersubscription.flexprouser?.id === null
-              ? 0
-              : user.usersubscription.flexprouser?.id
-          );
-
-          const imageDataUrl = await loadImageData(imgpath.image1);
-
-          // get the remaining days
-          const getRemainingDays = await remainingDays(
-            user.usersubscription.date_subscribed,
-            user.usersubscription.subscription.per.per,
-            0,
-            user.usersubscription.sub_session_days === 0
-              ? 1
-              : user.usersubscription.sub_session_days
-          );
-
-          const getExtendedSubscriptionDays = await extendedSub(
-            user.usersubscription.id
-          );
-
-          // get extended subscription days left and main subscription days
-          const extendedSubDays = getSubscriptionDaysLeft(
-            getRemainingDays,
-            getExtendedSubscriptionDays,
-            user.usersubscription.date_subscribed,
-            false
-          );
-
-          const extendedTrainer = await getExtendedTrainer(
-            user.usersubscription.id
-          );
-
-          return {
-            ...user,
-            image: imageDataUrl || "/media/image/default.jpg",
-            extendedSubDays: extendedSubDays,
-            extendedSubscriptions: getExtendedSubscriptionDays,
-            extendedTrainer: extendedTrainer,
-          }; // If imgpath is null, use default image
-        })
-      );
-
-      // console.log("userStatus", newUser);
-      return newUser;
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      return null; // or handle the error appropriately based on your application's needs
-    }
-  };
-
-  // // check if already in function
-  // const checkIfAlreadyIn = async (user_id) => {
+  // const extendedSub = async (subscriptionId) => {
   //   try {
-  //     const response = await instance.get(
-  //       `/api/user_time_record_get/${user_id}`
+  //     const data = await getExtendedSubscription(subscriptionId);
+  //     return await data;
+  //   } catch (error) {
+  //     console.error("Error in fetching Extended Subscription:", error);
+  //   }
+  // };
+
+  // const fetchUserStatus = async (id) => {
+  //   try {
+  //     const response = await instance.get(`/api/user_status/${id}`);
+  //     const users = response.data;
+
+  //     const newUser = await Promise.all(
+  //       users.map(async (user) => {
+  //         // Call getImagePath asynchronously for each user
+  //         const imgpath = await getImagePath(
+  //           user.usersubscription.flexprouser?.id === null
+  //             ? 0
+  //             : user.usersubscription.flexprouser?.id
+  //         );
+
+  //         const imageDataUrl = await loadImageData(imgpath.image1);
+
+  //         // get the remaining days
+  //         const getRemainingDays = await remainingDays(
+  //           user.usersubscription.date_subscribed,
+  //           user.usersubscription.subscription.per.per,
+  //           0,
+  //           user.usersubscription.sub_session_days === 0
+  //             ? 1
+  //             : user.usersubscription.sub_session_days
+  //         );
+
+  //         const getExtendedSubscriptionDays = await extendedSub(
+  //           user.usersubscription.id
+  //         );
+
+  //         // get extended subscription days left and main subscription days
+  //         const extendedSubDays = getSubscriptionDaysLeft(
+  //           getRemainingDays,
+  //           getExtendedSubscriptionDays,
+  //           user.usersubscription.date_subscribed,
+  //           false
+  //         );
+
+  //         const extendedTrainer = await getExtendedTrainer(
+  //           user.usersubscription.id
+  //         );
+
+  //         return {
+  //           ...user,
+  //           image: imageDataUrl || "/media/image/default.jpg",
+  //           extendedSubDays: extendedSubDays,
+  //           extendedSubscriptions: getExtendedSubscriptionDays,
+  //           extendedTrainer: extendedTrainer,
+  //         }; // If imgpath is null, use default image
+  //       })
   //     );
 
-  //     return await response.data;
+  //     // console.log("userStatus", newUser);
+  //     return newUser;
   //   } catch (error) {
   //     console.error("Error fetching data:", error);
   //     return null; // or handle the error appropriately based on your application's needs
   //   }
   // };
+
+  const { fetchUserStatus } = useFetchUserStatus();
   const { checkIfAlreadyIn } = useCheckIfAlreadyLogin();
   const { fetchImage } = useFetchImage();
 
@@ -185,11 +174,10 @@ const FaceScannerNew = ({
     const labeledFaceDescriptors = await Promise.all(
       flexProUser?.map(async (label) => {
         const descriptions = [];
+        const flexProUserName = label.usersubscription?.flexprouser?.name;
+        const flexProUserId = label.usersubscription?.flexprouser?.id;
 
-        const imgBlob = await fetchImage(
-          `${label.usersubscription?.flexprouser?.id}`
-        );
-
+        const imgBlob = await fetchImage(flexProUserId);
         const img = await faceapi.bufferToImage(imgBlob); // Convert Blob to Image
 
         // Load the face detection model if not already loaded
@@ -206,18 +194,14 @@ const FaceScannerNew = ({
         if (detections) {
           descriptions.push(detections.descriptor);
 
-          // console.log("agoy", label.flexprouser?.name);
           return new faceapi.LabeledFaceDescriptors(
-            label.usersubscription?.flexprouser?.name,
+            flexProUserName,
             descriptions
           );
         }
-        // }
       })
     );
     setWaiting(true);
-    // console.log(labeledFaceDescriptors.filter((item) => item != undefined));
-    // console.log(labeledFaceDescriptors);
     return labeledFaceDescriptors.filter((item) => item != undefined);
   }
 
@@ -239,7 +223,7 @@ const FaceScannerNew = ({
       });
   };
 
-  const extendedT = async (userSubscriptionId) => {
+  const _setExtendedTrainer = async (userSubscriptionId) => {
     try {
       const data = await getExtendedTrainer(userSubscriptionId);
       cSetExtendedTrainer(data);
@@ -297,6 +281,7 @@ const FaceScannerNew = ({
       const results = resizedDetections.map((d) => {
         return faceMatcher.findBestMatch(d.descriptor);
       });
+
       //  COUNT UPTO numberOfDetection TO FIND OUT THAT THIS USER IS YOU
       loginstatus === false &&
         isLogin === false &&
@@ -311,12 +296,9 @@ const FaceScannerNew = ({
               result.label === label.usersubscription?.flexprouser?.name
             ) {
               setUserId(label.usersubscription.flexprouser?.id);
-              // cSetUser(label.usersubscription?.flexprouser);
               cSetTrainerRemainingDays(label.trainersRemainingDays);
               cSetSessionDays(label.usersubscription.session_days);
-              extendedT(label?.usersubscription?.flexprouser?.id);
-
-              console.log(label);
+              _setExtendedTrainer(label?.usersubscription?.flexprouser?.id);
 
               console.log(
                 label.usersubscription?.flexprouser?.name +
@@ -388,7 +370,6 @@ const FaceScannerNew = ({
 
         // proceed here og wala pa ka login
         if (userStatusResult != null && savedTimeRecord === false) {
-          // console.log("wow", loginstatus);
           loginstatus = false;
           const saved = await handleSaveTimeRecords(
             userStatusResult,
@@ -398,8 +379,7 @@ const FaceScannerNew = ({
           setIsOnGoing("on-going");
           setTimeInStatus(true);
           setIsLogin(true);
-          // setIsLogin(true);
-          // setIsLogin2(true);
+
           setIsExpired(cUser.status);
           setSavedTimeRecord(saved);
           setSubscriptionRecord(userStatusResult);
@@ -450,16 +430,6 @@ const FaceScannerNew = ({
       await handleVideoOnPlay();
     }
   };
-
-  // const {
-  //   handleVideoLoadedMetadata,
-  //   captureVideo,
-  //   modelsLoaded,
-  //   flexProUser,
-  //   canvasRef,
-  //   videoRef,
-  //   waiting,
-  // } = useFaceScannerNew();
 
   const content = () => {
     return (

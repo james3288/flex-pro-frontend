@@ -30,253 +30,57 @@ import getDayPassUserOnline2 from "../../getData/getDayPassUserOnline2";
 import getDayPassUserOnline3 from "../../getData/getDayPassUserOnline3";
 import FormatDateOnly from "../../others/FormatDateOnly";
 import DayPassClientsOnline from "./clientsOnline/DayPassClientsOnline";
+import getImagePath from "../../getData/getImagePath";
+import useGetUserOnline from "../../hooks/useGetUserOnline";
+import { useQuery } from "@tanstack/react-query";
+import loadImageData from "../../getData/loadImageData";
+import useGetActiveUsers from "../../hooks/useGetActiveUsers";
 
 const MyDashboardSection = () => {
-  const [flexProUsers, setFlexProUsers] = useState([]);
-  const [registeredUsers, setRegisteredUsers] = useState([]);
   const [forRenewalUsers, setForRenewalUsers] = useState([]);
   const [activeUsers, setActiveUsers] = useState([]);
   const [triggerLogout, setTriggerLogout] = useState(false);
-  const [counter, setCounter] = useState(0);
   const [noOnlineUser, setNoOnlineUser] = useState(0);
-  const [noActiveUsers, setNoActiveUsers] = useState(0);
   const [noRenewalUser, setNoRenewalUser] = useState(0);
   const [refresher, setRefresher] = useState(false);
   const [refresher2, setRefresher2] = useState(false);
   const [refresher3, setRefresher3] = useState(false);
-  const [noOfActiveUsers, setNoOfActiveUsers] = useState(0);
-  const [dayPassActive, setDayPassActive] = useState([]);
-  const [dayPassOnline, setDayPassOnline] = useState([]);
 
-  const getImagePath = async (id) => {
-    try {
-      const response = await instance.get(`/api/get_image_path/${id}`);
-      const imagepath = response.data;
-      return imagepath;
-    } catch (error) {
-      console.error("Error fetching image path:", error);
-      return null;
-    }
-  };
+  const { getUsersOnline } = useGetUserOnline();
+  const { getActiveUsers } = useGetActiveUsers();
 
-  const loadImageData = async (path) => {
-    try {
-      const response = await instance.get(path, { responseType: "blob" });
-      const reader = new FileReader();
-      return new Promise((resolve, reject) => {
-        reader.onloadend = () => {
-          resolve(reader.result);
-        };
+  const queryKey = ["forDashboardDataFetching"];
 
-        reader.onerror = reject;
-        reader.readAsDataURL(response.data);
-      });
-    } catch (error) {
-      console.error("Error fetching image:", error);
-      return null;
-    }
-  };
+  const { isPending, error, data, fetchStatus } = useQuery({
+    queryKey,
+    queryFn: async () => {
+      const [
+        onlineUser,
+        noOfOnline,
+        dayPassOnline,
+        noOfActiveUsers,
+        _activeUsers,
+        renewalUsers,
+      ] = await Promise.all([
+        getUsersOnline(),
+        getNoOnlineUsers(),
+        getDayPassUserOnline3(),
+        getNoActiveUsers(),
+        getActiveUsers(),
+        getForRenewalUsers(),
+      ]);
 
-  // get extended subscription
-  const extendedSub = async (subscriptionId) => {
-    try {
-      const data = await getExtendedSubscription(subscriptionId);
-      return await data;
-    } catch (error) {
-      console.error("Error in fetching Extended Subscription:", error);
-    }
-  };
-
-  const getUsersOnline = async () => {
-    try {
-      const response = await instance.get(`/api/user_online_top5/`);
-      const users = response.data;
-
-      const newUser = await Promise.all(
-        users.slice(0, 5).map(async (user) => {
-          // Call getImagePath asynchronously for each user
-          const imgpath = await getImagePath(
-            user.usersubscription.flexprouser?.id === null
-              ? 0
-              : user.usersubscription.flexprouser?.id
-          );
-
-          const imageDataUrl = await loadImageData(imgpath?.image1);
-
-          // get trainiers remaining days
-          const getTrainersRemainingDays = await remainingDays(
-            user.usersubscription.date_subscribed,
-            "personal_training_day",
-            user.usersubscription.subscription.personal_training_session
-          );
-          //end get trainers remaining days
-
-          // get the remaining days
-          const getRemainingDays = await remainingDays(
-            user.usersubscription.date_subscribed,
-            user.usersubscription.subscription.per.per,
-            0,
-            user.usersubscription.sub_session_days
-          );
-
-          const getExtendedSubscriptionDays = await extendedSub(
-            user.usersubscription.id
-          );
-
-          // get extended subscription days left and main subscription days
-          const extendedSubDays = getSubscriptionDaysLeft(
-            getRemainingDays,
-            getExtendedSubscriptionDays,
-            user.usersubscription.date_subscribed,
-            true
-          );
-
-          return {
-            ...user,
-            trainersRemainingDays: getTrainersRemainingDays,
-            image: imageDataUrl || "/media/image/default.jpg",
-            extendedSubDays: extendedSubDays,
-            extendedSubscriptions: getExtendedSubscriptionDays,
-          }; // If imgpath is null, use default image
-        })
-      );
-
-      // console.log(newUser);
-
-      // newUser.filter(user=> ...)
-      setFlexProUsers(() => newUser.slice(0, 5));
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-  };
-
-  const getRegisteredUsers = async () => {
-    try {
-      const response = await instance.get(`/api/users/`);
-      const users = response.data;
-
-      const newUser = await Promise.all(
-        users.slice(0, 5).map(async (user) => {
-          // Call getImagePath asynchronously for each user
-
-          const imageDataUrl = await loadImageData(user?.image1);
-
-          return {
-            ...user,
-            image: imageDataUrl || "/media/image/default.jpg",
-          }; // If imgpath is null, use default image
-        })
-      );
-
-      // console.log(newUser);
-      setRegisteredUsers(() => newUser.slice(0, 5));
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-  };
-
-  const getActiveUsers = async () => {
-    try {
-      const response = await instance.get(`/api/user_all_status_top5/`);
-      const users = response.data;
-
-      setNoOfActiveUsers(users.length);
-
-      const newUser = await Promise.all(
-        users.slice(0, 5).map(async (user) => {
-          // Call getImagePath asynchronously for each user
-          const imgpath = await getImagePath(
-            user.usersubscription.flexprouser?.id === null
-              ? 0
-              : user.usersubscription.flexprouser?.id
-          );
-
-          // get the remaining days
-          const getRemainingDays = await remainingDays(
-            user.usersubscription.date_subscribed,
-            user.usersubscription.subscription.per.per
-          );
-          // end get the reamining days
-
-          // get trainiers remaining days
-          const getTrainersRemainingDays = await remainingDays(
-            user.usersubscription.date_subscribed,
-            "personal_training_day",
-            user.usersubscription.subscription.personal_training_session
-          );
-          //end get trainers remaining days
-
-          const imageDataUrl = await loadImageData(imgpath?.image1);
-
-          return {
-            ...user,
-            trainersRemainingDays: getTrainersRemainingDays,
-            image: imageDataUrl || "/media/image/default.jpg",
-          }; // If imgpath is null, use default image
-        })
-      );
-
-      setActiveUsers(() => newUser.slice(0, 5));
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-  };
-
-  const getDayPassActive = async () => {
-    setDayPassActive(await getDaypassUser());
-  };
-
-  const getDayPassOnline = async () => {
-    setDayPassOnline(await getDayPassUserOnline3());
-  };
-
-
-  // for online users
-  useEffect(() => {
-    getUsersOnline();
-  }, [triggerLogout]);
-
-  // GET NO OF ONLINE USERS
-  useEffect(() => {
-    const fetchNoOnlineUsers = async () => {
-      try {
-        const noOnlineUsers = await getNoOnlineUsers();
-
-        setNoOnlineUser(noOnlineUsers);
-      } catch (error) {
-        console.error("Error fetching inactive users:", error);
-      }
-    };
-
-    fetchNoOnlineUsers();
-  }, []);
-
-  // GET NO OF ACTIVE USERS
-  useEffect(() => {
-    const fetchNoActiveUsers = async () => {
-      try {
-        const noActiveUsers = await getNoActiveUsers();
-
-        setNoActiveUsers(noActiveUsers);
-      } catch (error) {
-        console.error("Error fetching inactive users:", error);
-      }
-    };
-
-    fetchNoActiveUsers();
-  }, []);
-
-  // for registered users
-  useEffect(() => {
-    getRegisteredUsers();
-  }, []);
-
-  useEffect(() => {
-    getActiveUsers();
-    getDayPassActive();
-    getDayPassOnline();
-    // setActiveUsers(async () => await getActiveUsers());
-  }, []);
+      return {
+        onlineUser,
+        noOfOnline,
+        dayPassOnline,
+        noOfActiveUsers,
+        _activeUsers,
+        renewalUsers,
+      };
+    },
+    // refetchInterval: 1000,
+  });
 
   // refresher
   useEffect(() => {
@@ -300,21 +104,51 @@ const MyDashboardSection = () => {
     setRefresher(false);
   }, [refresher]);
 
-  // refresher2
-  useEffect(() => {
-    getUsersOnline();
-    // console.log("refresher2");
-    setRefresher(false);
-  }, [refresher2]);
+  const RenewalUsersLessThanOrEqualToTwoDays = () => {
+    return data?.renewalUsers?.filter(
+      (user) =>
+        (user.extendedSubDays <= 2 ||
+          (user.extendedTrainerDays <= 2 && user.extendedTrainerData > 0)) &&
+        user.usersubscription.subscription.gym_rate_desc.toUpperCase() !=
+          "DAY PASS"
+    );
+  };
 
-  // refresher3
-  useEffect(() => {
-    getActiveUsers();
-    // setActiveUsers(async () => await getActiveUsers());
+  const NoOfOnlineUsersComponent = () => {
+    const noOfUsersOnWorkOut = data?.noOfOnline + data?.dayPassOnline?.length;
+    return (
+      <>
+        <strong>
+          {fetchStatus === "fetching" ? <LoadingEffect /> : noOfUsersOnWorkOut}{" "}
+        </strong>
+        {noOfUsersOnWorkOut > 1 ? "USERS" : "USER"}
+      </>
+    );
+  };
 
-    // console.log("refresher3");
-    setRefresher(false);
-  }, [refresher3]);
+  const NoOfActiveUsersComponent = () => {
+    const noOfActiveUsers = data?.noOfActiveUsers;
+    return (
+      <>
+        <strong>
+          {fetchStatus === "fetching" ? <LoadingEffect /> : noOfActiveUsers}{" "}
+        </strong>
+        {noOfActiveUsers > 1 ? "USERS" : "USER"}
+      </>
+    );
+  };
+
+  const NoOfRenewalUsersComponent = () => {
+    const noOfRenewalUsers = RenewalUsersLessThanOrEqualToTwoDays()?.length;
+    return (
+      <>
+        <strong>
+          {fetchStatus === "fetching" ? <LoadingEffect /> : noOfRenewalUsers}{" "}
+        </strong>
+        {noOfRenewalUsers > 1 ? "USERS" : "USER"}
+      </>
+    );
+  };
 
   return (
     <>
@@ -326,22 +160,12 @@ const MyDashboardSection = () => {
           <div className="col-lg-3 col-xs-12">
             <div className="dashboard-col">
               <span>ACTIVE USER</span>
-
               <h1>
-                {noActiveUsers +
-                  dayPassActive?.filter(
-                    (user) => user.remainingHours != "Expired"
-                  ).length}{" "}
-                <strong>
-                  {" "}
-                  {noActiveUsers > 1 ? "USERS" : "USER"} {}
-                </strong>
+                <NoOfActiveUsersComponent />
               </h1>
 
-              {noActiveUsers > 0 ? "" : <LoadingEffect />}
-
               <div className="scrollable-list-of-user">
-                {activeUsers?.slice(0, 5).map((user) => (
+                {data?._activeUsers?.slice(0, 5).map((user) => (
                   <RegisteredUser
                     key={user.id}
                     pix={Pic3}
@@ -373,27 +197,16 @@ const MyDashboardSection = () => {
             <div className="dashboard-col">
               <span>CLIENTS ON WORKOUT</span>
               <h1>
-                <strong>
-                  {" "}
-                  {noOnlineUser +
-                    dayPassOnline?.filter(
-                      (user) => FormatDateOnly(user.time_out) === "1990-01-01"
-                    ).length}
-                </strong>{" "}
-                {noOnlineUser > 1 ? "USERS" : "USER"}
+                <NoOfOnlineUsersComponent />
               </h1>
 
               <div className="scrollable-list-of-user">
-                {dayPassOnline
-                  ?.filter(
-                    (user) => FormatDateOnly(user.time_out) === "1990-01-01"
-                  )
-                  ?.map((user) => (
-                    <DayPassClientsOnline user={user} />
-                  ))}
+                {data?.dayPassOnline?.slice(0, 2)?.map((user, index) => (
+                  <DayPassClientsOnline user={user} key={index} />
+                ))}
 
-                {flexProUsers?.length > 0 ? "" : <LoadingEffect />}
-                {flexProUsers?.map((user) => (
+                {/* {data?.onlineUser.length > 0 ? "" : <LoadingEffect />} */}
+                {data?.onlineUser?.slice(0, 3)?.map((user) => (
                   // Get the time portion
 
                   <ClientsOnline
@@ -430,7 +243,6 @@ const MyDashboardSection = () => {
                 ))}
               </div>
             </div>
-            {/* <NavLink className="btn btn-danger">           </Navlink> */}
             <NavLink className="btn btn-danger" to="/clients-on-workout">
               View More
             </NavLink>
@@ -443,53 +255,49 @@ const MyDashboardSection = () => {
               <span>FOR RENEWAL</span>
 
               <h1>
-                {noRenewalUser}
-                <strong> {noRenewalUser > 1 ? "USERS" : "USER"}</strong>
+                <NoOfRenewalUsersComponent />
               </h1>
 
-              {forRenewalUsers?.length > 0 ? "" : <LoadingEffect />}
               <div className="scrollable-list-of-user">
-                {forRenewalUsers.map(
-                  (user) =>
-                    (user.extendedSubDays <= 2 ||
-                      (user.extendedTrainerDays <= 2 &&
-                        user.extendedTrainerData > 0)) &&
-                    user.usersubscription.subscription.gym_rate_desc.toUpperCase() !=
-                      "DAY PASS" && (
-                      <ForRenewal
-                        key={user.id}
-                        pix={user.image}
-                        user_id={user.usersubscription.flexprouser?.id}
-                        id={user.id}
-                        registeredName={user.usersubscription.flexprouser?.name}
-                        subscription={
-                          user.usersubscription.subscription.gym_rate_desc
-                        }
-                        date_log={user.usersubscription.date_subscribed}
-                        per={user.usersubscription.subscription.per.per}
-                        setRefresher={setRefresher}
-                        setNoRenewalUser={setNoRenewalUser}
-                        trainersRemainingDays={user.trainersRemainingDays}
-                        trainers={user.usersubscription.trainer?.name}
-                        extendedSubDays={user.extendedSubDays}
-                        extendedTrainerDays={user.extendedTrainerDays}
-                        contactNo={
-                          user.usersubscription.flexprouser?.contact_number
-                        }
-                        sub_session_days={
-                          user.usersubscription.sub_session_days
-                        }
-                        subscriptionId={user?.usersubscription?.id}
-                      />
-                    )
-                )}
+                {RenewalUsersLessThanOrEqualToTwoDays()
+                  ?.slice(0, 5)
+                  ?.map(
+                    (user) =>
+                      (user.extendedSubDays <= 2 ||
+                        (user.extendedTrainerDays <= 2 &&
+                          user.extendedTrainerData > 0)) &&
+                      user.usersubscription.subscription.gym_rate_desc.toUpperCase() !=
+                        "DAY PASS" && (
+                        <ForRenewal
+                          key={user.id}
+                          pix={user.image}
+                          user_id={user.usersubscription.flexprouser?.id}
+                          id={user.id}
+                          registeredName={
+                            user.usersubscription.flexprouser?.name
+                          }
+                          subscription={
+                            user.usersubscription.subscription.gym_rate_desc
+                          }
+                          date_log={user.usersubscription.date_subscribed}
+                          per={user.usersubscription.subscription.per.per}
+                          setRefresher={setRefresher}
+                          setNoRenewalUser={setNoRenewalUser}
+                          trainersRemainingDays={user.trainersRemainingDays}
+                          trainers={user.usersubscription.trainer?.name}
+                          extendedSubDays={user.extendedSubDays}
+                          extendedTrainerDays={user.extendedTrainerDays}
+                          contactNo={
+                            user.usersubscription.flexprouser?.contact_number
+                          }
+                          sub_session_days={
+                            user.usersubscription.sub_session_days
+                          }
+                          subscriptionId={user?.usersubscription?.id}
+                        />
+                      )
+                  )}
               </div>
-              {/* <Trainers
-                pix={Pic3}
-                blobPix={Pic3}
-                registeredName={"John Mayer"}
-                weights={"60"}
-              /> */}
             </div>
             <NavLink className="btn btn-danger" to="/for-renewal-users">
               View More
