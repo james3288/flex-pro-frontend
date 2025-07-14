@@ -7,7 +7,7 @@ import {
   extendSubscriptionReducer,
   INITIAL_STATE,
 } from "../../../reducers/extendSubscriptionReducer";
-import RemainingDaysLeft2 from "./RemainingDaysLeft2";
+
 
 const RenewalUsers = ({
   blobPic,
@@ -113,14 +113,6 @@ const RenewalUsers = ({
               subscriptionId={subscriptionId}
               id={id}
             />
-            {/* <RemainingDaysLeft2
-              date_subscribed={date_subscribed}
-              per={per}
-              user_id={user_id}
-              session_days={sub_session_days}
-              subscriptionId={subscriptionId}
-              id={id}
-            /> */}
 
             {/* CARD PERSONAL TRAINERS COMPONENTS */}
             <PersonalTrainerComponents

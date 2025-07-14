@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import useRemainingDaysLeft from "../../../hooks/useRemainingDaysLeft";
 import instance from "../../../others/axiosInstance";
 
@@ -11,20 +11,18 @@ const RemainingDaysLeftComponent = ({
   id,
   fontColor,
 }) => {
-  // function for expired subscription
-  const handleExpired = async () => {
-    // setCounter((prev) => prev + 1);
+  const hasUpdatedRef = useRef(false); // to track if already updated
 
-    instance
-      .put(`/api/user_status_update/${id}`, {
+  const handleExpired = async () => {
+    try {
+      await instance.put(`/api/user_status_update/${id}`, {
         status: "expired",
-      })
-      .then((response) => {
-        console.log("Update successful:", response.data);
-      })
-      .catch((error) => {
-        console.error("Error updating data:", error);
       });
+      console.log("Update successful");
+      hasUpdatedRef.current = true;
+    } catch (error) {
+      console.error("Error updating data:", error);
+    }
   };
 
   const { remainingDaysLeft } = useRemainingDaysLeft(
@@ -38,19 +36,9 @@ const RemainingDaysLeftComponent = ({
   const result = remainingDaysLeft();
 
   useEffect(() => {
-    const ifExpired = async () => {
-      if (result == "Expired") {
-        const interval = setInterval(async () => {
-          await handleExpired();
-
-          console.log(result, id);
-        }, 1000);
-
-        return () => clearInterval(interval);
-      }
-    };
-
-    ifExpired();
+    if (result === "Expired" && !hasUpdatedRef.current) {
+      handleExpired();
+    }
   }, [result]);
 
   return (

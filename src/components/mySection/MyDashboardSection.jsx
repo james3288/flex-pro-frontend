@@ -1,39 +1,21 @@
-import React, { useEffect, useState } from "react";
-import Pic1 from "../../assets/img/team/team-1.jpg";
-import Pic2 from "../../assets/img/team/team-2.jpg";
+import { useState } from "react";
 import Pic3 from "../../assets/img/team/team-3.jpg";
-import Pic from "../../assets/img/dummy.png";
-
-import OwlCarousel from "react-owl-carousel";
 import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
 
 import "./mySection.scss";
 import ClientsOnline from "./clientsOnline/ClientsOnline";
 import RegisteredUser from "./registeredUser/RegisteredUser";
-import Trainers from "./trainers/Trainers";
-import axios from "axios";
-import instance from "../../others/axiosInstance";
 import ForRenewal from "./forRenewal/ForRenewal";
-import remainingDays from "../../others/GetRemainingDays";
-import formatTime from "../../others/ReadableFormatTime";
 import { NavLink } from "react-router-dom";
-import getTrainerRemainingDays from "../../getData/getTrainerRemainingDays";
 import getForRenewalUsers from "../../getData/getForRenewalUsers";
-import getSubscriptionDaysLeft from "../../getData/getSubscriptionDaysLeft";
-import getExtendedSubscription from "../../getData/getExtendedSubscription";
 import LoadingEffect from "./loadingEffect/LoadingEffect";
 import getNoActiveUsers from "../../getData/getNoActiveUsers";
 import getNoOnlineUsers from "../../getData/getNoOnlineUsers";
-import getDaypassUser from "../../getData/getDayPassUser";
-import getDayPassUserOnline2 from "../../getData/getDayPassUserOnline2";
 import getDayPassUserOnline3 from "../../getData/getDayPassUserOnline3";
-import FormatDateOnly from "../../others/FormatDateOnly";
 import DayPassClientsOnline from "./clientsOnline/DayPassClientsOnline";
-import getImagePath from "../../getData/getImagePath";
 import useGetUserOnline from "../../hooks/useGetUserOnline";
 import { useQuery } from "@tanstack/react-query";
-import loadImageData from "../../getData/loadImageData";
 import useGetActiveUsers from "../../hooks/useGetActiveUsers";
 
 const MyDashboardSection = () => {
@@ -81,28 +63,6 @@ const MyDashboardSection = () => {
     },
     // refetchInterval: 1000,
   });
-
-  // refresher
-  useEffect(() => {
-    // setForRenewalUsers(()=> getForRenewalUsers())
-    const getRenewalUsers = async () => {
-      let users = await getForRenewalUsers();
-      let noOfRenewalUsers = users.filter(
-        (user) =>
-          (user.extendedSubDays <= 2 ||
-            (user.extendedTrainerDays <= 2 && user.extendedTrainerData > 0)) &&
-          user.usersubscription.subscription.gym_rate_desc.toUpperCase() !=
-            "DAY PASS"
-      );
-
-      setNoRenewalUser(noOfRenewalUsers.length);
-      setForRenewalUsers(() => users);
-    };
-
-    getRenewalUsers();
-
-    setRefresher(false);
-  }, [refresher]);
 
   const RenewalUsersLessThanOrEqualToTwoDays = () => {
     return data?.renewalUsers?.filter(

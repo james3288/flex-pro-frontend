@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
-import getActiveUser from "../../../getData/getActiveUsers";
+// import getActiveUser from "../../../getData/getActiveUsers";
 import RenewalUsers from "../forRenewal/RenewalUsers";
 import AddTrainerModal from "./AddTrainerModal";
 import ExtendSubscriptionModal from "./ExtendSubscriptionModal";
 import RemoveExtendedSub from "./RemoveExtendedSub";
-import getDaypassUser from "../../../getData/getDayPassUser";
+// import getDaypassUser from "../../../getData/getDayPassUser";
 import DayPassUser from "../dayPassUser/DayPassUser";
 import DayPassAddTrainerModal from "../../modals/DayPassAddTrainerModal";
 import RemoveModal from "../../modals/RemoveModal";
@@ -13,6 +13,9 @@ import "./myActiveUser.scss";
 import SearchIconSvg from "../../svg/SearchIconSvg";
 import useDebounce from "../../../hooks/useDebounce";
 import useRemainingDaysLeft from "../../../hooks/useRemainingDaysLeft";
+import useGetActiveUsers from "../../../hooks/useGetActiveUsers";
+import useGetDayPassUsers from "../../../hooks/useGetDayPassUsers";
+import LoadingEffect from "../loadingEffect/LoadingEffect";
 
 const MyActiveUser = () => {
   const [userSubscriptionId, setUserSubscriptionId] = useState(0);
@@ -22,12 +25,15 @@ const MyActiveUser = () => {
 
   const [search, setSearch] = useState("");
 
+  const { getActiveUsers } = useGetActiveUsers();
+  const { getDayPassUserActive } = useGetDayPassUsers();
+
   const queryKey = ["forActiveUser", "forDayPassUser"];
   const { isPending, error, data, fetchStatus } = useQuery({
     queryKey,
     queryFn: async () => {
-      const activeUser = await getActiveUser();
-      const dayPassUser = await getDaypassUser();
+      const activeUser = await getActiveUsers(); //getActiveUser();
+      const dayPassUser = await getDayPassUserActive();
 
       return {
         data1: activeUser,
@@ -37,6 +43,7 @@ const MyActiveUser = () => {
     // refetchInterval: 1000,
   });
 
+  // console.log(data?.data1);
   const handleOnChange = (e) => {
     setSearch(e.target.value);
   };
@@ -64,9 +71,48 @@ const MyActiveUser = () => {
     (user) => user.remainingHours != "Expired"
   );
 
-  // const ex = data?.data1?.filter((x) => x.remainingDaysStatus != "Expired");
+  const ActiveUsersComponent = () => {
+    const context = data?.data1?.map((user) => (
+      <RenewalUsers
+        key={user.id}
+        blobPic={user.image}
+        registeredName={user.usersubscription.flexprouser?.name}
+        date_subscribed={user.usersubscription.date_subscribed}
+        subscription={user.usersubscription.subscription.gym_rate_desc}
+        remainingDays={user.remainingDays}
+        per={user.usersubscription.subscription.per.per}
+        user_id={user.usersubscription.flexprouser?.id}
+        id={user.id}
+        trainers={user.usersubscription.trainer?.name}
+        trainerRemainingDays={user?.trainersRemainingDays}
+        subscriptionId={user?.usersubscription.id}
+        setUserSubscriptionId={setUserSubscriptionId}
+        session_days={user.usersubscription.session_days}
+        setModalTitle={setModalTitle}
+        setExtendedSubId={setExtendedSubId}
+        setExtendedTrainerId={setExtendedTrainerId}
+        contactNo={user.usersubscription.flexprouser?.contact_number}
+        trainer_date_started={user.usersubscription.trainer_date_started}
+        packages_details={user.usersubscription.subscription.packages_details}
+        sub_session_days={user?.usersubscription.sub_session_days}
+      />
+    ));
 
-  // console.log(ex);
+    return fetchStatus === "fetching" ? <LoadingEffect /> : context;
+  };
+
+  const ActiveDayPassUsersComponent = () => {
+    const context = data?.data2?.map((user) => (
+      <DayPassUser
+        key={user.id}
+        user={user}
+        setUserSubscriptionId={setUserSubscriptionId}
+        setModalTitle={setModalTitle}
+      />
+    ));
+
+    return fetchStatus === "fetching" ? <LoadingEffect /> : context;
+  };
 
   return (
     <>
@@ -79,60 +125,11 @@ const MyActiveUser = () => {
             </h1>
           </div>
         </div>
-        {/* <div className="row">
-          <div className="searchbox">
-            <input
-              type="text"
-              placeholder="search here..."
-              onChange={handleOnChange}
-            />
-            <SearchIconSvg />
-          </div>
-        </div> */}
         <div className="row">
           <div className="c-col-wrapper">
-            {data?.data2?.map((user) => (
-              <DayPassUser
-                key={user.id}
-                user={user}
-                setUserSubscriptionId={setUserSubscriptionId}
-                setModalTitle={setModalTitle}
-              />
-            ))}
-
-            {data?.data1?.map((user) => (
-              // user.remainingDays <= 2 ||
-              <RenewalUsers
-                key={user.id}
-                blobPic={user.image}
-                registeredName={user.usersubscription.flexprouser?.name}
-                date_subscribed={user.usersubscription.date_subscribed}
-                subscription={user.usersubscription.subscription.gym_rate_desc}
-                remainingDays={user.remainingDays}
-                per={user.usersubscription.subscription.per.per}
-                user_id={user.usersubscription.flexprouser?.id}
-                id={user.id}
-                trainers={user.usersubscription.trainer?.name}
-                trainerRemainingDays={user?.trainersRemainingDays}
-                subscriptionId={user?.usersubscription.id}
-                setUserSubscriptionId={setUserSubscriptionId}
-                session_days={user.usersubscription.session_days}
-                setModalTitle={setModalTitle}
-                setExtendedSubId={setExtendedSubId}
-                setExtendedTrainerId={setExtendedTrainerId}
-                contactNo={user.usersubscription.flexprouser?.contact_number}
-                trainer_date_started={
-                  user.usersubscription.trainer_date_started
-                }
-                packages_details={
-                  user.usersubscription.subscription.packages_details
-                }
-                sub_session_days={user?.usersubscription.sub_session_days}
-              />
-            ))}
-
+            <ActiveDayPassUsersComponent />
+            <ActiveUsersComponent />
             <DayPassAddTrainerModal />
-
             <AddTrainerModal
               id={"addTrainerModal"}
               userSubscriptionId={userSubscriptionId}

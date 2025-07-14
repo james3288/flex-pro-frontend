@@ -74,7 +74,11 @@ const UseDashBoard = ({
       content = <MyRenewalUser />;
       break;
     default:
-      content = <div>Default Dashboard</div>;
+      content = (
+        <div>
+          <h1>Coming soon...</h1>
+        </div>
+      );
   }
 
   return content;
