@@ -6,7 +6,7 @@ import "owl.carousel/dist/assets/owl.theme.default.css";
 import "./mySection.scss";
 import ClientsOnline from "./clientsOnline/ClientsOnline";
 import RegisteredUser from "./registeredUser/RegisteredUser";
-import ExpiredUser from "./expiredUser/ExpiredUser";
+import ExpiredUserItem from "./expiredUser/ExpiredUser";
 import ForRenewal from "./forRenewal/ForRenewal";
 import { NavLink } from "react-router-dom";
 import getForRenewalUsers from "../../getData/getForRenewalUsers";
@@ -194,7 +194,7 @@ const MyDashboardSection = () => {
 
               <div className="scrollable-list-of-user">
                 {expiredUsersData?.slice(0, 2).map((user) => (
-                  <ExpiredUser
+                  <ExpiredUserItem
                     key={user.id}
                     pix={Pic3}
                     user_id={user.usersubscription.flexprouser?.id}
@@ -214,7 +214,7 @@ const MyDashboardSection = () => {
                 ))}
               </div>
             </div>
-            <NavLink className="btn btn-danger" to="/active-users">
+            <NavLink className="btn btn-danger" to="/expired-users">
               View More
             </NavLink>
           </div>

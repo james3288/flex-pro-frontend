@@ -2,6 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import useRemainingDaysLeft from "../../../hooks/useRemainingDaysLeft";
 import instance from "../../../others/axiosInstance";
 
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import useToastifyMessage from "../../../hooks/useToastifyMessage";
+import { useLocation } from "react-router-dom";
+import { PageName } from "../../../constants/enum";
+
 const RemainingDaysLeftComponent = ({
   date_subscribed,
   per,
@@ -10,8 +16,11 @@ const RemainingDaysLeftComponent = ({
   subscriptionId,
   id,
   fontColor,
+  fullname,
 }) => {
   const hasUpdatedRef = useRef(false); // to track if already updated
+  const [remaining, setRemaining] = useState();
+  const location = useLocation();
 
   const handleExpired = async () => {
     try {
@@ -33,18 +42,46 @@ const RemainingDaysLeftComponent = ({
     subscriptionId
   );
 
-  const result = remainingDaysLeft();
+  const { showToastMessage } = useToastifyMessage({
+    message: (
+      <p>
+        <span
+          style={{
+            color: "green",
+            fontWeight: "bold",
+            fontFamily: "monospace",
+          }}
+        >
+          {fullname}
+        </span>{" "}
+        was already expired
+      </p>
+    ),
+    position: "top-right",
+  });
+
+  const result = async () => {
+    setRemaining(await remainingDaysLeft());
+  };
+
+  result();
 
   useEffect(() => {
-    if (result === "Expired" && !hasUpdatedRef.current) {
+    if (remaining === "Expired" && !hasUpdatedRef.current) {
+      console.log(location.pathname.toString());
+
       handleExpired();
+      if (location.pathname.toString() === "/expired-users") {
+        return;
+      }
+      showToastMessage();
     }
-  }, [result]);
+  }, [remaining, id]);
 
   return (
     <>
       <h5>Subscription Remaining Days:</h5>
-      <h4 style={{ fontSize: "20px", color: fontColor }}>{result}</h4>
+      <h4 style={{ fontSize: "20px", color: fontColor }}>{remaining}</h4>
     </>
   );
 };

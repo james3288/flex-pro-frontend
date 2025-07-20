@@ -30,7 +30,7 @@ const useRemainingDaysLeft = (
     refetchInterval: 1000,
   });
 
-  const remainingDaysLeft = () => {
+  const remainingDaysLeft = async () => {
     return getSubscriptionDaysLeft(
       data?.remainingDays,
       data?.extendedSub,

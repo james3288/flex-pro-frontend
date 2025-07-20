@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import remainingDays from "../../../others/GetRemainingDays";
 import formatTime from "../../../others/ReadableFormatTime";
 
-const ExpiredUser = ({
+const ExpiredUserItem = ({
   registeredName,
   pix,
   weights,
@@ -64,4 +64,4 @@ const ExpiredUser = ({
   );
 };
 
-export default ExpiredUser;
+export default ExpiredUserItem;

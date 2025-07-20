@@ -8,6 +8,7 @@ const SubscriptionComponents = ({
   handleUpdateExtendSubscriptions,
   handleRemoveExtendedSub,
   subscription,
+  isExpired,
 }) => {
   return (
     <>
@@ -57,15 +58,17 @@ const SubscriptionComponents = ({
           </div>
         </>
       ))}
-      <button
-        className="btn btn-secondary btn-sm extend-subscription"
-        data-toggle="modal"
-        data-target="#extendSubscriptionModal"
-        data-whatever="@mdo"
-        onClick={handleExtendSubscriptions}
-      >
-        Extend Subscripition
-      </button>
+      {!isExpired && (
+        <button
+          className="btn btn-secondary btn-sm extend-subscription"
+          data-toggle="modal"
+          data-target="#extendSubscriptionModal"
+          data-whatever="@mdo"
+          onClick={handleExtendSubscriptions}
+        >
+          Extend Subscripition
+        </button>
+      )}
     </>
   );
 };

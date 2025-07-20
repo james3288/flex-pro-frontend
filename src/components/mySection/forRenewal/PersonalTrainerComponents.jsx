@@ -5,6 +5,42 @@ import formatTime from "../../../others/ReadableFormatTime";
 import TrainerRemainingDays from "./TrainerRemainingDays";
 import getExtendedTrainer from "../../../getData/getExtendedTrainer";
 
+const AddPersonalTrainerComponentButton = ({ handleAddPersonalTrainers }) => {
+  return (
+    <button
+      className="btn btn-primary"
+      style={{
+        padding: "3px 10px",
+        marginRight: "5px",
+        marginBottom: "5px",
+      }}
+      onClick={handleAddPersonalTrainers}
+      data-toggle="modal"
+      data-target="#addTrainerModal"
+      data-whatever="@mdo"
+    >
+      Free Personal Trainer
+    </button>
+  );
+};
+
+const AddExtenededTrainerComponentButton = ({
+  handleExtendPersonalTrainers,
+}) => {
+  return (
+    <button
+      className="btn btn-success"
+      style={{ padding: "3px 10px", marginBottom: "5px" }}
+      data-toggle="modal"
+      data-target="#addTrainerModal"
+      data-whatever="@mdo"
+      onClick={handleExtendPersonalTrainers}
+    >
+      Extend Personal Trainer
+    </button>
+  );
+};
+
 const PersonalTrainerComponents = ({
   trainers,
   trainerRemainingDays,
@@ -16,6 +52,7 @@ const PersonalTrainerComponents = ({
   subscriptionId,
   setUserSubscriptionId,
   setModalTitle,
+  isExpired,
 }) => {
   const [extendedTrainer, setExtendedTrainer] = useState([]);
   const [totalFreeTrainerLeft, setTotalFreeTrainerLeft] = useState(0);
@@ -140,30 +177,19 @@ const PersonalTrainerComponents = ({
       )}
       {/* buttons */}
       <div className="">
-        <button
-          className="btn btn-primary"
-          style={{
-            padding: "3px 10px",
-            marginRight: "5px",
-            marginBottom: "5px",
-          }}
-          onClick={handleAddPersonalTrainers}
-          data-toggle="modal"
-          data-target="#addTrainerModal"
-          data-whatever="@mdo"
-        >
-          Free Personal Trainer
-        </button>
-        <button
-          className="btn btn-success"
-          style={{ padding: "3px 10px", marginBottom: "5px" }}
-          data-toggle="modal"
-          data-target="#addTrainerModal"
-          data-whatever="@mdo"
-          onClick={handleExtendPersonalTrainers}
-        >
-          Extend Personal Trainer
-        </button>
+        {/* add personal trainer button */}
+        {!isExpired && (
+          <AddPersonalTrainerComponentButton
+            handleAddPersonalTrainers={handleAddPersonalTrainers}
+          />
+        )}
+
+        {/* add extended trainer button */}
+        {!isExpired && (
+          <AddExtenededTrainerComponentButton
+            handleExtendPersonalTrainers={handleExtendPersonalTrainers}
+          />
+        )}
       </div>
     </>
   );

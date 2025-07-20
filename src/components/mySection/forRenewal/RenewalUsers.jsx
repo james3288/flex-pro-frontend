@@ -8,7 +8,6 @@ import {
   INITIAL_STATE,
 } from "../../../reducers/extendSubscriptionReducer";
 
-
 const RenewalUsers = ({
   blobPic,
   registeredName,
@@ -29,6 +28,7 @@ const RenewalUsers = ({
   trainer_date_started,
   packages_details,
   sub_session_days,
+  isExpired,
 }) => {
   const [extendedSubscript, setExtendedSubscript] = useState([]);
 
@@ -102,6 +102,7 @@ const RenewalUsers = ({
               handleUpdateExtendSubscriptions={handleUpdateExtendSubscriptions}
               handleRemoveExtendedSub={handleRemoveExtendedSub}
               subscription={subscription}
+              isExpired={isExpired}
             />
 
             {/* CARD REMAINING DAYS COMPONENTS */}
@@ -112,6 +113,7 @@ const RenewalUsers = ({
               session_days={sub_session_days}
               subscriptionId={subscriptionId}
               id={id}
+              fullname={registeredName}
             />
 
             {/* CARD PERSONAL TRAINERS COMPONENTS */}
@@ -126,6 +128,7 @@ const RenewalUsers = ({
               subscriptionId={subscriptionId}
               setUserSubscriptionId={setUserSubscriptionId}
               setModalTitle={setModalTitle}
+              isExpired={isExpired}
             />
           </div>
         </div>
