@@ -20,6 +20,9 @@ import ClientsOnWorkoutPage from "../pages/clientOnWorkOutPage/ClientsOnWorkoutP
 import ForRenewalPage from "../pages/forRenewalPage/ForRenewalPage.jsx";
 import ActiveUserPage from "../pages/activeUserPage/ActiveUserPage.jsx";
 
+// Expired User Page
+import ExpiredUserPage from "../pages/expiredUserPage/ExpiredUserPage.jsx";
+
 // Reports
 import ReportPage from "../pages/reportPage/ReportPage.jsx";
 import MainLayout from "../components/layout/mainLayout.jsx";
@@ -114,6 +117,16 @@ const routes = [
       <>
         <MainLayout>
           <ActiveUserPage />
+        </MainLayout>
+      </>
+    ),
+  },
+  {
+    path: "/expired-users",
+    element: (
+      <>
+        <MainLayout>
+          <ExpiredUserPage />
         </MainLayout>
       </>
     ),

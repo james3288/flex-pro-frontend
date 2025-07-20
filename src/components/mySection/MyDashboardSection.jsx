@@ -6,6 +6,7 @@ import "owl.carousel/dist/assets/owl.theme.default.css";
 import "./mySection.scss";
 import ClientsOnline from "./clientsOnline/ClientsOnline";
 import RegisteredUser from "./registeredUser/RegisteredUser";
+import ExpiredUser from "./expiredUser/ExpiredUser";
 import ForRenewal from "./forRenewal/ForRenewal";
 import { NavLink } from "react-router-dom";
 import getForRenewalUsers from "../../getData/getForRenewalUsers";
@@ -17,6 +18,7 @@ import DayPassClientsOnline from "./clientsOnline/DayPassClientsOnline";
 import useGetUserOnline from "../../hooks/useGetUserOnline";
 import { useQuery } from "@tanstack/react-query";
 import useGetActiveUsers from "../../hooks/useGetActiveUsers";
+import useGetExpiredUsers from "../../hooks/useGetExpiredUsers";
 
 const MyDashboardSection = () => {
   const [forRenewalUsers, setForRenewalUsers] = useState([]);
@@ -30,8 +32,10 @@ const MyDashboardSection = () => {
 
   const { getUsersOnline } = useGetUserOnline();
   const { getActiveUsers } = useGetActiveUsers();
+  const { getExpiredUsers } = useGetExpiredUsers();
 
   const queryKey = ["forDashboardDataFetching"];
+  const queryKey2 = ["forExpiredUsers"];
 
   const { isPending, error, data, fetchStatus } = useQuery({
     queryKey,
@@ -43,6 +47,7 @@ const MyDashboardSection = () => {
         noOfActiveUsers,
         _activeUsers,
         renewalUsers,
+        // expiredUsers,
       ] = await Promise.all([
         getUsersOnline(),
         getNoOnlineUsers(),
@@ -50,6 +55,7 @@ const MyDashboardSection = () => {
         getNoActiveUsers(),
         getActiveUsers(),
         getForRenewalUsers(),
+        // getExpiredUsers(),
       ]);
 
       return {
@@ -59,9 +65,22 @@ const MyDashboardSection = () => {
         noOfActiveUsers,
         _activeUsers,
         renewalUsers,
+        // expiredUsers,
       };
     },
     // refetchInterval: 1000,
+  });
+
+  const { data: expiredUsersData, fetchStatus: fetchStatus2 } = useQuery({
+    queryKey: queryKey2,
+    queryFn: async () => {
+      const expiredUsers = await getExpiredUsers();
+      return expiredUsers;
+    },
+    refetchOnWindowFocus: false, // ✅ Don't refetch when window is focused
+    refetchOnMount: false, // ✅ Don't refetch when component mounts
+    refetchOnReconnect: false, // ✅ Don't refetch on network reconnect
+    staleTime: 1000 * 60 * 5,
   });
 
   const RenewalUsersLessThanOrEqualToTwoDays = () => {
@@ -110,13 +129,24 @@ const MyDashboardSection = () => {
     );
   };
 
+  const NoOfExpiredUsersComponent = ({ expiredUsersData }) => {
+    const noOfExpiredUsers = expiredUsersData?.length;
+    return (
+      <>
+        <strong>
+          {fetchStatus2 === "fetching" ? <LoadingEffect /> : noOfExpiredUsers}{" "}
+        </strong>
+        <span style={{ color: "white" }}>SUBSCRIPTION EXPIRED</span>
+      </>
+    );
+  };
   return (
     <>
       {/* <!-- Dashboard container--> */}
 
       <div className="container-fluid content-margin">
         <div className="row">
-          {/* REGISTERED USER */}
+          {/* ACTIVE USER */}
           <div className="col-lg-3 col-xs-12">
             <div className="dashboard-col">
               <span>ACTIVE USER</span>
@@ -150,10 +180,48 @@ const MyDashboardSection = () => {
               View More
             </NavLink>
           </div>
-          {/* END REGISTERED USER */}
+          {/* END ACTIVE USER */}
+
+          {/* EXPIRED USER */}
+          <div className="col-lg-3 col-xs-12">
+            <div className="dashboard-col">
+              <span>EXPIRED USER</span>
+              <h1 style={{ fontSize: "20px" }}>
+                <NoOfExpiredUsersComponent
+                  expiredUsersData={expiredUsersData}
+                />
+              </h1>
+
+              <div className="scrollable-list-of-user">
+                {expiredUsersData?.slice(0, 2).map((user) => (
+                  <ExpiredUser
+                    key={user.id}
+                    pix={Pic3}
+                    user_id={user.usersubscription.flexprouser?.id}
+                    blobPix={user.image}
+                    registeredName={user.usersubscription.flexprouser?.name}
+                    weights={22}
+                    subscription={
+                      user.usersubscription.subscription.gym_rate_desc
+                    }
+                    date_subscribed={user.usersubscription.date_subscribed}
+                    per={user.usersubscription.subscription.per.per}
+                    setRefresher={setRefresher3}
+                    trainers={user.usersubscription.trainer?.name}
+                    trainersRemainingDays={user.trainersRemainingDays}
+                    sub_session_days={user.usersubscription.sub_session_days}
+                  />
+                ))}
+              </div>
+            </div>
+            <NavLink className="btn btn-danger" to="/active-users">
+              View More
+            </NavLink>
+          </div>
+          {/* END EXPIRED USER */}
 
           {/* CLIENTS ON WORKOUT */}
-          <div className="col-lg-6 col-xs-12">
+          <div className="col-lg-3 col-xs-12">
             <div className="dashboard-col">
               <span>CLIENTS ON WORKOUT</span>
               <h1>

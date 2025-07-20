@@ -13,4 +13,5 @@ export const PageName = Object.freeze({
   USERS_PAGE: "usersPage",
   USER_HISTORY: "userHistory",
   TRAINOR_HISTORY_PAGE: "trainerHistoryPage",
+  EXPIRED_USER: "expiredUser",
 });

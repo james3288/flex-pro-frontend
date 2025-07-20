@@ -11,6 +11,10 @@ import MyUsers from "../components/mySection/users/MyUsers";
 import MyActiveUser from "../components/mySection/activeUser/MyActiveUser";
 import MyUserHistory from "../components/mySection/userHistory/MyUserHistory";
 import MyRenewalUser from "../components/mySection/forRenewal/MyRenewalUser";
+import MyTrainors from "../components/mySection/trainers/MyTrainors";
+import MyTrainerHistory from "../components/mySection/trainerHistory/MyTrainerHistory";
+import MyExpiredUser from "../components/mySection/expiredUser/MyExpiredUser";
+
 const UseDashBoard = ({
   page,
   formDone,
@@ -72,6 +76,15 @@ const UseDashBoard = ({
       break;
     case PageName.FOR_RENEWAL_USER:
       content = <MyRenewalUser />;
+      break;
+    case PageName.TRAINOR:
+      content = <MyTrainors />;
+      break;
+    case PageName.TRAINOR_HISTORY_PAGE:
+      content = <MyTrainerHistory />;
+      break;
+    case PageName.EXPIRED_USER:
+      content = <MyExpiredUser />;
       break;
     default:
       content = (

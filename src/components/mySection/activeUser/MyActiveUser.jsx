@@ -10,9 +10,6 @@ import DayPassUser from "../dayPassUser/DayPassUser";
 import DayPassAddTrainerModal from "../../modals/DayPassAddTrainerModal";
 import RemoveModal from "../../modals/RemoveModal";
 import "./myActiveUser.scss";
-import SearchIconSvg from "../../svg/SearchIconSvg";
-import useDebounce from "../../../hooks/useDebounce";
-import useRemainingDaysLeft from "../../../hooks/useRemainingDaysLeft";
 import useGetActiveUsers from "../../../hooks/useGetActiveUsers";
 import useGetDayPassUsers from "../../../hooks/useGetDayPassUsers";
 import LoadingEffect from "../loadingEffect/LoadingEffect";
@@ -22,8 +19,6 @@ const MyActiveUser = () => {
   const [extendedSubId, setExtendedSubId] = useState(0);
   const [extendedTrainerId, setExtendedTrainerId] = useState(0);
   const [modalTitle, setModalTitle] = useState();
-
-  const [search, setSearch] = useState("");
 
   const { getActiveUsers } = useGetActiveUsers();
   const { getDayPassUserActive } = useGetDayPassUsers();
@@ -42,21 +37,6 @@ const MyActiveUser = () => {
     },
     // refetchInterval: 1000,
   });
-
-  // console.log(data?.data1);
-  const handleOnChange = (e) => {
-    setSearch(e.target.value);
-  };
-
-  // const debounceValue = useDebounce(search);
-
-  // const onlineUsers = data?.data1.filter((user) =>
-  //   user.usersubscription.flexprouser.name
-  //     .toLowerCase()
-  //     .includes(debounceValue.toLowerCase())
-  // );
-
-  // console.log(onlineUsers);
 
   if (isPending)
     return (
