@@ -18,7 +18,7 @@ import DayPassClientsOnline from "./clientsOnline/DayPassClientsOnline";
 import useGetUserOnline from "../../hooks/useGetUserOnline";
 import { useQuery } from "@tanstack/react-query";
 import useGetActiveUsers from "../../hooks/useGetActiveUsers";
-import useGetExpiredUsers from "../../hooks/useGetExpiredUsers";
+import useGetAllExpiredUsers from "../../hooks/useGetAllExpiredUsers";
 
 const MyDashboardSection = () => {
   const [forRenewalUsers, setForRenewalUsers] = useState([]);
@@ -32,7 +32,7 @@ const MyDashboardSection = () => {
 
   const { getUsersOnline } = useGetUserOnline();
   const { getActiveUsers } = useGetActiveUsers();
-  const { getExpiredUsers } = useGetExpiredUsers();
+  const { getExpiredUsers } = useGetAllExpiredUsers();
 
   const queryKey = ["forDashboardDataFetching"];
   const queryKey2 = ["forExpiredUsers"];

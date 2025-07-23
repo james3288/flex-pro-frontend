@@ -41,19 +41,16 @@ const useGetExpiredUsers = () => {
     return newUser;
   };
 
-  const getExpiredUsers = async ({ page = 1, pageSize = 10 }) => {
+  const getExpiredUsers = async () => {
     try {
-      const response = await instance.get(
-        `/api/get_expired_users_today/?page=${page}&page_size=${pageSize}`
-      );
-      const { users, hasMore } = response.data;
+      const response = await instance.get(`/api/get_all_expired_users_today`);
+      const users = response.data;
 
       const refactoredExpiredUsers = await refactorExpiredUsers(users);
 
-      return { users: refactoredExpiredUsers, hasMore };
+      return refactoredExpiredUsers;
     } catch (error) {
       console.error("Error fetching users:", error);
-      return { users: [], hasMore: false };
     }
   };
   return { getExpiredUsers };
