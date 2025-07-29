@@ -30,7 +30,13 @@ const ClientsOnWorkoutNew = ({ online }) => {
       online.usersubscription.id
     );
 
-  console.log(isLoading);
+  useEffect(() => {
+    const setTheRemaining = async () => {
+      const rd = await remainingDaysLeft();
+      setRemaining(rd);
+    };
+    setTheRemaining();
+  }, [data]);
 
   // // get the remaining days
   // const getRemainingDays = async () => {
@@ -73,14 +79,14 @@ const ClientsOnWorkoutNew = ({ online }) => {
   };
   //online/offline button class
   const onlineOfflineBtnClass = () => {
-    return remainingDaysLeft() === "Expired" && yearValidation === 1990
+    return remaining === "Expired" && yearValidation === 1990
       ? "btn btn-danger"
       : "btn btn-warning";
   };
 
   //expired class
   const expiredStyle = () => {
-    return remainingDaysLeft() === "Expired" && yearValidation === 1990
+    return remaining === "Expired" && yearValidation === 1990
       ? { border: "2px solid red" }
       : { border: "0px solid black" };
   };
@@ -147,7 +153,7 @@ const ClientsOnWorkoutNew = ({ online }) => {
           ))}
           <h5>Remaining Days:</h5>
           <RemainingDaysComponent
-            remainingDaysLeft={remainingDaysLeft}
+            remainingDaysLeft={remaining}
             isLoading={isLoading}
           />
         </div>
@@ -168,9 +174,9 @@ const RemainingDaysComponent = ({ remainingDaysLeft, isLoading }) => {
     <LoadingEffect />
   ) : (
     <h5 style={{ color: "orange" }}>
-      {remainingDaysLeft() === "0 day, 0 hours"
+      {remainingDaysLeft === "0 day, 0 hours"
         ? "initializing..."
-        : remainingDaysLeft()}
+        : remainingDaysLeft}
     </h5>
   );
 };

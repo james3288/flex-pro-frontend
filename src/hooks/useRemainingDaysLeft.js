@@ -22,6 +22,7 @@ const useRemainingDaysLeft = (
         flexProUserId,
         sub_session_days === 0 ? 1 : sub_session_days
       );
+
       return {
         extendedSub: extSub,
         remainingDays: remDays,

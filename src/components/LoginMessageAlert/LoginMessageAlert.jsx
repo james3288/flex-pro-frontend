@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import TrainerRemainingDays from "../mySection/forRenewal/TrainerRemainingDays";
 import personalTrainerDaysLeft from "../../getData/personalTrainerDaysLeft";
 import CheckCircleFillSvg from "../svg/checkCircleFillSvg";
@@ -153,8 +153,8 @@ const RemainingDaysLeftComponent = ({
   fontColor,
 }) => {
   // function for expired subscription
-
-  const { remainingDaysLeft } = useRemainingDaysLeft(
+  const [remaining, setRemaining] = useState(0);
+  const { data, remainingDaysLeft } = useRemainingDaysLeft(
     date_subscribed,
     per,
     user_id,
@@ -162,13 +162,18 @@ const RemainingDaysLeftComponent = ({
     subscriptionId
   );
 
-  console.log(date_subscribed, per, user_id, session_days, subscriptionId);
-  const result = remainingDaysLeft();
+  useEffect(() => {
+    const setTheRemaining = async () => {
+      const rd = await remainingDaysLeft();
+      setRemaining(rd);
+    };
+    setTheRemaining();
+  }, [data]);
 
   return (
     <>
       <h5>Subscription Remaining Days:</h5>
-      <h4 style={{ fontSize: "20px", color: fontColor }}>{result}</h4>
+      <h4 style={{ fontSize: "20px", color: fontColor }}>{remaining}</h4>
     </>
   );
 };
