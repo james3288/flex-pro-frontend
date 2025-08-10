@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import remainingDays from "../others/GetRemainingDays";
 import instance from "../others/axiosInstance";
 import getImagePath from "./getImagePath";
@@ -16,13 +17,6 @@ const getActiveAndInactiveUsers = async () => {
             ? 0
             : user.usersubscription.flexprouser?.id
         );
-
-        // // get the remaining days
-        // const getRemainingDays = await remainingDays(
-        //   user.usersubscription.date_subscribed,
-        //   user.usersubscription.subscription.per.per
-        // );
-        // // end get the reamining days
 
         // get free trainiers remaining days
         const getTrainersRemainingDays = await remainingDays(

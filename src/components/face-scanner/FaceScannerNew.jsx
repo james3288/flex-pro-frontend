@@ -14,6 +14,8 @@ import useFaceScannerNew from "../../customHooks/useFaceScannerNew";
 import useFetchImage from "../../hooks/useFetchImage";
 import useCheckIfAlreadyLogin from "../../hooks/useCheckIfAlreadyLogin";
 import useFetchUserStatus from "../../hooks/useFetchUserStatus";
+import useGetActiveAndInactiveUsers from "../../hooks/useGetActiveAndInactiveUsers";
+import useFetchImageRefactor from "../../hooks/useFetchImageRefactor";
 
 const FaceScannerNew = ({
   setPlay,
@@ -32,6 +34,7 @@ const FaceScannerNew = ({
   const [waiting, setWaiting] = React.useState(false);
   const [savedTimeRecord, setSavedTimeRecord] = React.useState(false);
   const [isLogin2, setIsLogin2] = React.useState(false);
+  const [videoStarted, setVideostarted] = React.useState(false);
   const numberOfDetection = 3;
 
   let count = 0;
@@ -70,17 +73,33 @@ const FaceScannerNew = ({
   // function for starting video
   const startVideo = async () => {
     setCaptureVideo(true);
-    await navigator.mediaDevices
-      .getUserMedia({ video: { width: 300 } })
-      .then((stream) => {
-        let video = videoRef.current;
+
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const hasVideoInput = devices.some(
+      (device) => device.kind === "videoinput"
+    );
+
+    if (!hasVideoInput) {
+      console.error("No video input devices found.");
+      alert("No camera found on this device.");
+      return;
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { width: 300 },
+      });
+
+      let video = videoRef.current;
+      if (video) {
         video.srcObject = stream;
         video.play();
         console.log("video has been played");
-      })
-      .catch((err) => {
-        console.error("error:", err);
-      });
+      }
+    } catch (err) {
+      console.error("getUserMedia error:", err);
+      alert(`Camera access failed: ${err.message}`);
+    }
   };
 
   // function for closing webcam
@@ -169,40 +188,57 @@ const FaceScannerNew = ({
   const { fetchUserStatus } = useFetchUserStatus();
   const { checkIfAlreadyIn } = useCheckIfAlreadyLogin();
   const { fetchImage } = useFetchImage();
+  const {
+    data: activeAndInactive,
+    isPending,
+    isLoading: isLoadingActiveAndInactive,
+  } = useGetActiveAndInactiveUsers();
 
   async function getLabeledFaceDescriptions() {
+    // Load the face detection model once
+    await faceapi.nets.tinyFaceDetector.loadFromUri(
+      window.location.origin + "/models"
+    );
+
     const labeledFaceDescriptors = await Promise.all(
       flexProUser?.map(async (label) => {
-        const descriptions = [];
-        const flexProUserName = label.usersubscription?.flexprouser?.name;
-        const flexProUserId = label.usersubscription?.flexprouser?.id;
+        try {
+          const descriptions = [];
+          const flexProUserName = label.usersubscription?.flexprouser?.name;
+          const flexProUserId = label.usersubscription?.flexprouser?.id;
 
-        const imgBlob = await fetchImage(flexProUserId);
-        const img = await faceapi.bufferToImage(imgBlob); // Convert Blob to Image
+          // const { isLoading: isLoadingUserImages, data: userImages } =
+          //   useFetchImageRefactor(flexProUserId);
 
-        // Load the face detection model if not already loaded
-        await faceapi.nets.tinyFaceDetector.loadFromUri(
-          window.location.origin + "/models"
-        );
+          const imgBlob = await fetchImage(flexProUserId);
+          const img = await faceapi.bufferToImage(imgBlob);
 
-        // Detect faces, landmarks, and compute descriptors
-        const detections = await faceapi
-          .detectSingleFace(img, new faceapi.TinyFaceDetectorOptions())
-          .withFaceLandmarks()
-          .withFaceDescriptor();
+          const detections = await faceapi
+            .detectSingleFace(img, new faceapi.TinyFaceDetectorOptions())
+            .withFaceLandmarks()
+            .withFaceDescriptor();
 
-        if (detections) {
-          descriptions.push(detections.descriptor);
-
-          return new faceapi.LabeledFaceDescriptors(
-            flexProUserName,
-            descriptions
+          if (detections) {
+            descriptions.push(detections.descriptor);
+            return new faceapi.LabeledFaceDescriptors(
+              flexProUserName,
+              descriptions
+            );
+          }
+          return undefined;
+        } catch (error) {
+          console.error(
+            `Error processing user ${label.usersubscription?.flexprouser?.name}:`,
+            error
           );
+          return undefined;
         }
       })
     );
+
     setWaiting(true);
-    return labeledFaceDescriptors.filter((item) => item != undefined);
+
+    return labeledFaceDescriptors.filter(Boolean);
   }
 
   // save time record functions
@@ -250,8 +286,20 @@ const FaceScannerNew = ({
     };
 
     loadFaceModels();
-    loadUser();
+    // loadUser();
   }, []);
+
+  // start video
+  useEffect(() => {
+    const startVideoIfReady = async () => {
+      await startVideo();
+      console.log("Video started successfully");
+    };
+
+    if (isLoadingActiveAndInactive === false) {
+      startVideoIfReady();
+    }
+  }, [isLoadingActiveAndInactive]);
 
   const faceRecognitionLogic = async () => {
     const labeledFaceDescriptors = await getLabeledFaceDescriptions();
@@ -403,7 +451,6 @@ const FaceScannerNew = ({
     if (isLogin2) {
       const ff = async () => {
         const labeledFaceDescriptors = await getLabeledFaceDescriptions();
-
         const faceMatcher = new faceapi.FaceMatcher(
           labeledFaceDescriptors,
           0.4
@@ -416,10 +463,14 @@ const FaceScannerNew = ({
         }, 1000);
         return () => clearInterval(intervalId);
       };
-
       ff();
     }
-  }, [isLogin2]);
+  }, [isLogin2, isLoadingActiveAndInactive]);
+
+  // load users
+  useEffect(() => {
+    setFlexProUser(activeAndInactive);
+  }, [isLoadingActiveAndInactive, activeAndInactive]);
 
   const handleVideoOnPlay = async () => {
     setIsLogin2(true);
@@ -431,11 +482,11 @@ const FaceScannerNew = ({
     }
   };
 
-  const content = () => {
+  const CameraComponent = () => {
     return (
       <>
         <div style={{ textAlign: "center" }}>
-          {waiting === false && (
+          {isLoadingActiveAndInactive === true && (
             <>
               <LoadingEffect />
               <h3 style={{ color: "gray" }}>
@@ -464,7 +515,8 @@ const FaceScannerNew = ({
 
   return (
     <>
-      <div>
+      <div>{captureVideo ? CameraComponent() : <LoadingEffect />}</div>
+      {/* <div>
         {captureVideo ? (
           modelsLoaded ? (
             flexProUser?.length > 0 ? (
@@ -478,7 +530,7 @@ const FaceScannerNew = ({
         ) : (
           <LoadingEffect />
         )}
-      </div>
+      </div> */}
     </>
   );
 };

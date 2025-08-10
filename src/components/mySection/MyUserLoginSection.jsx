@@ -4,8 +4,24 @@ import DayPassLoginModal from "../modals/DayPassLoginModal";
 import LoginMessageAlert from "../LoginMessageAlert/LoginMessageAlert";
 import LoginMessageAlertDayPass from "../LoginMessageAlert/LoginMessageAlertDayPass";
 import useMyUserLoginSection from "./users/hooks/useMyUserLoginSection";
+import FaceScannerNew2 from "../face-scanner/FaceScannerNew2";
+import FaceScannerNew3 from "../face-scanner/FaceScannerNew3";
+import UserLoginIDVerificationModal from "../face-scanner/modals/UserLoginIDVerificationModal";
+import useGetActiveAndInactiveUsers from "../../hooks/useGetActiveAndInactiveUsers";
+import { memo, useEffect, useState } from "react";
+import { useCurrentlyLoginStore } from "../face-scanner/store/currentlyLoginStore";
+import LoadingEffect from "./loadingEffect/LoadingEffect";
+0;
+const MyUserLoginSection = memo(() => {
+  // const [flexProUserId, setFlexProUserId] = useState(0);
 
-const MyUserLoginSection = () => {
+  const {
+    isPending,
+    data: users,
+    fetchStatus,
+    isLoading: isLoadingActiveAndInactiveUser,
+  } = useGetActiveAndInactiveUsers();
+
   const {
     setPlay,
     setUserId,
@@ -30,6 +46,72 @@ const MyUserLoginSection = () => {
     daypassProps,
   } = useMyUserLoginSection();
 
+  const [cCurrentlyLogin] = useCurrentlyLoginStore((state) => [
+    state.currentlyLogin,
+  ]);
+
+  const LoginUserIdButton = () => {
+    return (
+      <button
+        className="btn btn-success enabled"
+        // onClick={handlePlayClick}
+        disabled={isLoadingActiveAndInactiveUser}
+        data-toggle="modal"
+        data-target=".bd-example-modal-lg"
+        style={{ zIndex: "9999" }}
+      >
+        Login User ID
+      </button>
+    );
+  };
+
+  const WaitForInitializingUsersComponent = () => {
+    if (isLoadingActiveAndInactiveUser) {
+      return (
+        <>
+          <LoadingEffect />
+          <h3 style={{ color: "gray" }}>
+            Initializing active and inactive users...
+          </h3>
+        </>
+      );
+    }
+    return "";
+  };
+
+  const WaitingForFaceRecognitionComponent = () => {
+    if (cCurrentlyLogin) {
+      return (
+        <>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: "20px",
+            }}
+          >
+            <div>
+              <img
+                src={cCurrentlyLogin?.image}
+                alt=""
+                className="scan-profile"
+              />
+            </div>
+            <div>
+              <h3>Waiting for face authentication...</h3>
+              <h5>{cCurrentlyLogin?.usersubscription?.flexprouser?.name}</h5>
+            </div>
+          </div>
+        </>
+      );
+    }
+  };
+
+  // console.log("an id:", flexProUserId);
+
+  console.log(cCurrentlyLogin);
   return (
     <>
       <div className="container-fluid content-margin">
@@ -42,9 +124,33 @@ const MyUserLoginSection = () => {
                 <strong>SCAN TO</strong> LOGIN USER
               </span>
               <div className="camera-wrapper">
+                <div
+                  style={{
+                    textAlign: "center",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignContent: "center",
+                  }}
+                >
+                  <WaitForInitializingUsersComponent />
+                </div>
                 {/* <FaceScanner playNow={play} /> */}
                 {play && (
-                  <FaceScannerNew
+                  // <FaceScannerNew
+                  //   playNow={play}
+                  //   stopNow={stop}
+                  //   setPlay={setPlay}
+                  //   setUserId={setUserId}
+                  //   setUserFound={setUserFound}
+                  //   setIsOnGoing={setIsOnGoing}
+                  //   isOnGoing={isOnGoing}
+                  //   setIsLogin={setIsLogin}
+                  //   setTrainers={setTrainers}
+                  //   isLogin={isLogin}
+                  //   setIsExpired={setIsExpired}
+                  //   setSubscriptionRecord={setSubscriptionRecord}
+                  // />
+                  <FaceScannerNew3
                     playNow={play}
                     stopNow={stop}
                     setPlay={setPlay}
@@ -57,6 +163,10 @@ const MyUserLoginSection = () => {
                     isLogin={isLogin}
                     setIsExpired={setIsExpired}
                     setSubscriptionRecord={setSubscriptionRecord}
+                    users={users}
+                    isLoadingActiveAndInactiveUser={
+                      isLoadingActiveAndInactiveUser
+                    }
                   />
                 )}
               </div>
@@ -69,16 +179,9 @@ const MyUserLoginSection = () => {
                 >
                   Face Recognition
                 </button>
-                <button
-                  className="btn btn-success enabled"
-                  // onClick={handlePlayClick}
-                  // disabled={disableBtn}
-                  data-toggle="modal"
-                  data-target=".bd-example-modal-lg"
-                  style={{ zIndex: "9999" }}
-                >
-                  Login User ID
-                </button>
+                {/* login using id */}
+
+                <LoginUserIdButton />
                 <button
                   className="btn btn-success enabled"
                   data-toggle="modal"
@@ -144,6 +247,7 @@ const MyUserLoginSection = () => {
                 <div className="scan-profile-wrapper">
                   <div className="scan-profile-name">
                     <h5>Waiting for user...</h5>
+                    <WaitingForFaceRecognitionComponent />
                   </div>
                 </div>
               </div>
@@ -152,23 +256,25 @@ const MyUserLoginSection = () => {
 
           {/* end scan result section */}
         </div>
-
-        <UserLoginModal
-          setUserId={setUserId}
-          setIsOnGoing={setIsOnGoing}
-          setIsLogin={setIsLogin}
-          setTrainers={setTrainers}
-          setUserFound={setUserFound}
-          setSubscriptionRecord={setSubscriptionRecord}
-        />
       </div>
 
       <DayPassLoginModal
         setIsOnGoing={setIsOnGoing}
         setDayPassLogin={setDayPassLogin}
       />
+
+      <UserLoginIDVerificationModal
+        setUserId={setUserId}
+        setIsOnGoing={setIsOnGoing}
+        setIsLogin={setIsLogin}
+        setTrainers={setTrainers}
+        setUserFound={setUserFound}
+        setSubscriptionRecord={setSubscriptionRecord}
+        users={users}
+        // setFlexProUserId={setFlexProUserId}
+      />
     </>
   );
-};
+});
 
 export default MyUserLoginSection;
