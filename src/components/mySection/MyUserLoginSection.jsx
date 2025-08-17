@@ -9,6 +9,8 @@ import { memo, useEffect } from "react";
 import { useCurrentlyLoginStore } from "../face-scanner/store/currentlyLoginStore";
 import LoadingEffect from "./loadingEffect/LoadingEffect";
 import { use } from "react";
+import { useNumpadStore } from "../face-scanner/store/numpadStore";
+import ProgressLine from "../progressbar/ProgressLine";
 0;
 const MyUserLoginSection = memo(() => {
   // const [flexProUserId, setFlexProUserId] = useState(0);
@@ -44,9 +46,19 @@ const MyUserLoginSection = memo(() => {
     daypassProps,
   } = useMyUserLoginSection();
 
-  const [cCurrentlyLogin, cSetCurrentlyLogin] = useCurrentlyLoginStore(
-    (state) => [state.currentlyLogin, state.setCurrentlyLogin]
-  );
+  const [cCurrentlyLogin, cSetCurrentlyLogin, cSetUserFound] =
+    useCurrentlyLoginStore((state) => [
+      state.currentlyLogin,
+      state.setCurrentlyLogin,
+      state.setUserFound,
+    ]);
+
+  const cSetNumpadResult = useNumpadStore((state) => state.setNumpadResult);
+
+  const handleUserRefresh = () => {
+    cSetUserFound(null);
+    cSetNumpadResult("");
+  };
 
   const LoginUserIdButton = () => {
     return (
@@ -57,6 +69,7 @@ const MyUserLoginSection = memo(() => {
         data-toggle="modal"
         data-target=".bd-example-modal-lg"
         style={{ zIndex: "9999" }}
+        onClick={handleUserRefresh}
       >
         Login User ID
       </button>
@@ -83,6 +96,7 @@ const MyUserLoginSection = memo(() => {
 
   const handleCancelLogin = () => {
     cSetCurrentlyLogin(null);
+    cSetUserFound(null);
   };
 
   const WaitingForFaceRecognitionComponent = () => {
@@ -264,6 +278,16 @@ const MyUserLoginSection = memo(() => {
                   <div className="scan-profile-name">
                     <h5>Waiting for user...</h5>
                     <WaitingForFaceRecognitionComponent />
+
+                    <ProgressLine
+                      label="Full progressbar"
+                      visualParts={[
+                        {
+                          percentage: "100%",
+                          color: "red",
+                        },
+                      ]}
+                    />
                   </div>
                 </div>
               </div>

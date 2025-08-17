@@ -2,7 +2,9 @@ import { produce } from "immer";
 import { create } from "zustand";
 
 const initialState = {
-  currentlyLogin: {},
+  currentlyLogin: null,
+  userFound: null,
+  numpadResult: null,
 };
 
 export const useCurrentlyLoginStore = create((set) => ({
@@ -11,6 +13,18 @@ export const useCurrentlyLoginStore = create((set) => ({
     set(
       produce((state) => {
         state.currentlyLogin = data;
+      })
+    ),
+  setUserFound: async (data) =>
+    set(
+      produce((state) => {
+        state.userFound = data;
+      })
+    ),
+  setNumpadResult: async (data) =>
+    set(
+      produce((state) => {
+        state.numpadResult = data;
       })
     ),
 }));

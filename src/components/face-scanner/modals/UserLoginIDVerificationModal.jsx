@@ -3,6 +3,7 @@ import useUserLoginModalNumpad from "../hooks/useUserLoginModalNumpad";
 import useGetActiveAndInactiveUsers from "../../../hooks/useGetActiveAndInactiveUsers";
 import NumpadButton from "../../modals/NumpadButton";
 import { useCurrentlyLoginStore } from "../store/currentlyLoginStore";
+import { useNumpadStore } from "../store/numpadStore";
 
 const UserLoginIDVerificationModal = memo(
   ({
@@ -16,8 +17,8 @@ const UserLoginIDVerificationModal = memo(
     // setFlexProUserId,
   }) => {
     const {
-      numpadResult,
-      userFound,
+      // numpadResult,
+      // userFound,
       flexProUserIdStorage,
       handleNumpadOnClick,
       handleDelOnClick,
@@ -26,15 +27,8 @@ const UserLoginIDVerificationModal = memo(
       handleLoginOnclick,
     } = useUserLoginModalNumpad();
 
-    const [cSetCurrentlyLogin] = useCurrentlyLoginStore((state) => [
-      state.setCurrentlyLogin,
-    ]);
-
-    // set flexProUserId when userFound changes
-    useEffect(() => {
-      // setFlexProUserId(userFound?.usersubscription?.flexprouser?.id);
-      cSetCurrentlyLogin(userFound);
-    }, [flexProUserIdStorage]);
+    const [cUserFound] = useCurrentlyLoginStore((state) => [state.userFound]);
+    const [cNumpadResult] = useNumpadStore((state) => [state.numpadResult]);
 
     const UserFoundComponent = () => {
       return (
@@ -42,19 +36,18 @@ const UserLoginIDVerificationModal = memo(
           <h5>Check if it's you?</h5>
           <div className="existing-user-result">
             <img
-              src={userFound?.image}
+              src={cUserFound?.image}
               alt=""
               className="existing-user-result-img"
             />
             <div>
               <h3>
-                {" "}
-                {userFound?.usersubscription.flexprouser?.id}
+                {cUserFound?.usersubscription.flexprouser?.id}
                 {" - "}
-                {userFound?.usersubscription.flexprouser?.name}
+                {cUserFound?.usersubscription.flexprouser?.name}
               </h3>
               <h5>
-                {userFound?.usersubscription?.subscription?.gym_rate_desc}
+                {cUserFound?.usersubscription?.subscription?.gym_rate_desc}
               </h5>
               <div>
                 <button
@@ -103,12 +96,12 @@ const UserLoginIDVerificationModal = memo(
                 <div className="col-4">
                   <h4>
                     USER ID:{" "}
-                    <span style={{ fontSize: "2em" }}>{numpadResult}</span>
+                    <span style={{ fontSize: "2em" }}>{cNumpadResult}</span>
                   </h4>
                 </div>
 
                 <div className="col-8 existing-user">
-                  {userFound ? (
+                  {cUserFound ? (
                     <UserFoundComponent />
                   ) : (
                     <h4 className="text-danger">No User has been found!</h4>
@@ -185,7 +178,7 @@ const UserLoginIDVerificationModal = memo(
                     onClick={() =>
                       handleEnterOnClick({
                         activeAndInactiveUsers: users?.activeAndInactiveUsers,
-                        flexProUserId: numpadResult,
+                        flexProUserId: cNumpadResult,
                       })
                     }
                   >
