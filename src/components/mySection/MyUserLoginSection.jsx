@@ -1,16 +1,14 @@
-import UserLoginModal from "../modals/UserLoginModal";
-import FaceScannerNew from "../face-scanner/FaceScannerNew";
 import DayPassLoginModal from "../modals/DayPassLoginModal";
 import LoginMessageAlert from "../LoginMessageAlert/LoginMessageAlert";
 import LoginMessageAlertDayPass from "../LoginMessageAlert/LoginMessageAlertDayPass";
 import useMyUserLoginSection from "./users/hooks/useMyUserLoginSection";
-import FaceScannerNew2 from "../face-scanner/FaceScannerNew2";
 import FaceScannerNew3 from "../face-scanner/FaceScannerNew3";
 import UserLoginIDVerificationModal from "../face-scanner/modals/UserLoginIDVerificationModal";
 import useGetActiveAndInactiveUsers from "../../hooks/useGetActiveAndInactiveUsers";
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect } from "react";
 import { useCurrentlyLoginStore } from "../face-scanner/store/currentlyLoginStore";
 import LoadingEffect from "./loadingEffect/LoadingEffect";
+import { use } from "react";
 0;
 const MyUserLoginSection = memo(() => {
   // const [flexProUserId, setFlexProUserId] = useState(0);
@@ -46,9 +44,9 @@ const MyUserLoginSection = memo(() => {
     daypassProps,
   } = useMyUserLoginSection();
 
-  const [cCurrentlyLogin] = useCurrentlyLoginStore((state) => [
-    state.currentlyLogin,
-  ]);
+  const [cCurrentlyLogin, cSetCurrentlyLogin] = useCurrentlyLoginStore(
+    (state) => [state.currentlyLogin, state.setCurrentlyLogin]
+  );
 
   const LoginUserIdButton = () => {
     return (
@@ -68,15 +66,23 @@ const MyUserLoginSection = memo(() => {
   const WaitForInitializingUsersComponent = () => {
     if (isLoadingActiveAndInactiveUser) {
       return (
-        <>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           <LoadingEffect />
-          <h3 style={{ color: "gray" }}>
-            Initializing active and inactive users...
-          </h3>
-        </>
+          <h3 style={{ color: "gray" }}>Initializing user images...</h3>
+        </div>
       );
     }
     return "";
+  };
+
+  const handleCancelLogin = () => {
+    cSetCurrentlyLogin(null);
   };
 
   const WaitingForFaceRecognitionComponent = () => {
@@ -90,6 +96,7 @@ const MyUserLoginSection = memo(() => {
               justifyContent: "center",
               alignItems: "center",
               gap: "20px",
+              position: "relative",
             }}
           >
             <div>
@@ -102,6 +109,11 @@ const MyUserLoginSection = memo(() => {
             <div>
               <h3>Waiting for face authentication...</h3>
               <h5>{cCurrentlyLogin?.usersubscription?.flexprouser?.name}</h5>
+              <div>
+                <button className="btn btn-warning" onClick={handleCancelLogin}>
+                  Cancel Login
+                </button>
+              </div>
             </div>
           </div>
         </>
@@ -109,9 +121,12 @@ const MyUserLoginSection = memo(() => {
     }
   };
 
-  // console.log("an id:", flexProUserId);
+  useEffect(() => {
+    if (isLoadingActiveAndInactiveUser) {
+      setPlay(true);
+    }
+  }, [isLoadingActiveAndInactiveUser]);
 
-  console.log(cCurrentlyLogin);
   return (
     <>
       <div className="container-fluid content-margin">
@@ -128,11 +143,12 @@ const MyUserLoginSection = memo(() => {
                   style={{
                     textAlign: "center",
                     display: "flex",
+                    flexDirection: "column",
                     justifyContent: "center",
                     alignContent: "center",
                   }}
                 >
-                  <WaitForInitializingUsersComponent />
+                  {<WaitForInitializingUsersComponent />}
                 </div>
                 {/* <FaceScanner playNow={play} /> */}
                 {play && (

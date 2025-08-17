@@ -37,7 +37,7 @@ const useFaceDetectionLogic = ({ canvasRef, faceapi, videoRef }) => {
             const box = detection.detection.box; // This is a valid IBoundingBox
 
             const drawBox = new faceapi.draw.DrawBox(box, {
-              label: "unrecognized person",
+              label: "unrecognized person:login user id first",
             });
             drawBox.draw(canvasRef.current);
             return;
