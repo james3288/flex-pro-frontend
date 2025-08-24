@@ -5,6 +5,8 @@ const initialState = {
   currentlyLogin: null,
   userFound: null,
   numpadResult: null,
+  isFound: false,
+  loginAttempt: 0,
 };
 
 export const useCurrentlyLoginStore = create((set) => ({
@@ -21,10 +23,12 @@ export const useCurrentlyLoginStore = create((set) => ({
         state.userFound = data;
       })
     ),
-  setNumpadResult: async (data) =>
-    set(
-      produce((state) => {
-        state.numpadResult = data;
-      })
-    ),
+  setIsFound: (data) =>
+    set(() => ({
+      isFound: data,
+    })),
+  setLoginAttempt: (data) =>
+    set(() => ({
+      loginAttempt: data,
+    })),
 }));

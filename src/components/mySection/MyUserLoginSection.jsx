@@ -5,13 +5,14 @@ import useMyUserLoginSection from "./users/hooks/useMyUserLoginSection";
 import FaceScannerNew3 from "../face-scanner/FaceScannerNew3";
 import UserLoginIDVerificationModal from "../face-scanner/modals/UserLoginIDVerificationModal";
 import useGetActiveAndInactiveUsers from "../../hooks/useGetActiveAndInactiveUsers";
-import { memo, useEffect } from "react";
+import { memo, useEffect, useState } from "react";
 import { useCurrentlyLoginStore } from "../face-scanner/store/currentlyLoginStore";
 import LoadingEffect from "./loadingEffect/LoadingEffect";
 import { use } from "react";
 import { useNumpadStore } from "../face-scanner/store/numpadStore";
 import ProgressLine from "../progressbar/ProgressLine";
-0;
+import RemainingDaysLeftComponent from "./forRenewal/RemainingDaysLeftComponent";
+
 const MyUserLoginSection = memo(() => {
   // const [flexProUserId, setFlexProUserId] = useState(0);
 
@@ -53,7 +54,17 @@ const MyUserLoginSection = memo(() => {
       state.setUserFound,
     ]);
 
+  const validLoginAttempt = 5;
+
   const cSetNumpadResult = useNumpadStore((state) => state.setNumpadResult);
+
+  const [cLoginAttempt, cSetLoginAttempt, cSetIsFound, cIsFound] =
+    useCurrentlyLoginStore((state) => [
+      state.loginAttempt,
+      state.setLoginAttempt,
+      state.setIsFound,
+      state.isFound,
+    ]);
 
   const handleUserRefresh = () => {
     cSetUserFound(null);
@@ -97,6 +108,69 @@ const MyUserLoginSection = memo(() => {
   const handleCancelLogin = () => {
     cSetCurrentlyLogin(null);
     cSetUserFound(null);
+
+    cSetLoginAttempt(0);
+    cSetIsFound(false);
+  };
+
+  const UserFoundComponent = () => {
+    if (!cIsFound) {
+      return (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
+          <LoadingEffect />
+          <h3>{cLoginAttempt * 20}%</h3>
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <h3>Successfully Login </h3>
+          <div>
+            <RemainingDaysLeftComponent
+              date_subscribed={
+                cCurrentlyLogin?.usersubscription?.date_subscribed
+              }
+              per={cCurrentlyLogin?.usersubscription?.subscription?.per?.per}
+              user_id={cCurrentlyLogin?.usersubscription?.flexprouser?.id}
+              session_days={cCurrentlyLogin?.usersubscription?.sub_session_days}
+              subscriptionId={
+                cCurrentlyLogin?.usersubscription?.subscription?.id
+              }
+              id={cCurrentlyLogin?.usersubscription?.flexprouser?.id}
+              fullname={cCurrentlyLogin?.usersubscription?.flexprouser?.name}
+              fontColor={"orange"}
+            />
+            <ProceedButtonComponent />
+          </div>
+        </div>
+      );
+    }
+  };
+
+  const CancelLoginButtonComponent = () => {
+    return (
+      <div>
+        <button className="btn btn-warning" onClick={handleCancelLogin}>
+          Cancel Login
+        </button>
+      </div>
+    );
+  };
+
+  const ProceedButtonComponent = () => {
+    return (
+      <div>
+        <button className="btn btn-success" onClick={handleCancelLogin}>
+          Proceed
+        </button>
+      </div>
+    );
   };
 
   const WaitingForFaceRecognitionComponent = () => {
@@ -121,17 +195,16 @@ const MyUserLoginSection = memo(() => {
               />
             </div>
             <div>
-              <h3>Waiting for face authentication...</h3>
+              {!cIsFound && <h3>Waiting for face authentication...</h3>}
               <h5>{cCurrentlyLogin?.usersubscription?.flexprouser?.name}</h5>
-              <div>
-                <button className="btn btn-warning" onClick={handleCancelLogin}>
-                  Cancel Login
-                </button>
-              </div>
+              {<UserFoundComponent />}
+              {!cIsFound && <CancelLoginButtonComponent />}
             </div>
           </div>
         </>
       );
+    } else {
+      return <h5>Waiting for user...</h5>;
     }
   };
 
@@ -140,6 +213,13 @@ const MyUserLoginSection = memo(() => {
       setPlay(true);
     }
   }, [isLoadingActiveAndInactiveUser]);
+
+  useEffect(() => {
+    if (validLoginAttempt === cLoginAttempt) {
+      console.log("login successfully");
+      if (!cIsFound) cSetIsFound(true);
+    }
+  }, [cLoginAttempt, cIsFound]);
 
   return (
     <>
@@ -166,20 +246,6 @@ const MyUserLoginSection = memo(() => {
                 </div>
                 {/* <FaceScanner playNow={play} /> */}
                 {play && (
-                  // <FaceScannerNew
-                  //   playNow={play}
-                  //   stopNow={stop}
-                  //   setPlay={setPlay}
-                  //   setUserId={setUserId}
-                  //   setUserFound={setUserFound}
-                  //   setIsOnGoing={setIsOnGoing}
-                  //   isOnGoing={isOnGoing}
-                  //   setIsLogin={setIsLogin}
-                  //   setTrainers={setTrainers}
-                  //   isLogin={isLogin}
-                  //   setIsExpired={setIsExpired}
-                  //   setSubscriptionRecord={setSubscriptionRecord}
-                  // />
                   <FaceScannerNew3
                     playNow={play}
                     stopNow={stop}
@@ -276,18 +342,7 @@ const MyUserLoginSection = memo(() => {
 
                 <div className="scan-profile-wrapper">
                   <div className="scan-profile-name">
-                    <h5>Waiting for user...</h5>
                     <WaitingForFaceRecognitionComponent />
-
-                    <ProgressLine
-                      label="Full progressbar"
-                      visualParts={[
-                        {
-                          percentage: "100%",
-                          color: "red",
-                        },
-                      ]}
-                    />
                   </div>
                 </div>
               </div>

@@ -1,9 +1,24 @@
 import { FaceDetection } from "face-api.js";
 import React, { useCallback } from "react";
+import { useCurrentlyLoginStore } from "../store/currentlyLoginStore";
 
 const useFaceDetectionLogic = ({ canvasRef, faceapi, videoRef }) => {
   const videoHeight = 480;
   const videoWidth = 640;
+
+  let counter = 0;
+
+  const [cSetIsFound, cLoginAttempt, cSetLoginAttempt] = useCurrentlyLoginStore(
+    (state) => [state.setIsFound, state.loginnAttempt, state.setLoginAttempt]
+  );
+
+  const isFaceDetected = (result, count) => {
+    if (!result?.toString()?.includes("unknown") && count <= 5) {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   const faceDetectionLogic = useCallback(
     async (faceMatcher) => {
@@ -50,6 +65,13 @@ const useFaceDetectionLogic = ({ canvasRef, faceapi, videoRef }) => {
             label: result.toString(),
           });
           drawBox.draw(canvasRef.current);
+
+          if (isFaceDetected(result, counter)) {
+            counter += 1;
+            cSetLoginAttempt(counter);
+          } else {
+            counter = 0;
+          }
         });
       }
     },
