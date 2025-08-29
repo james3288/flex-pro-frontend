@@ -12,6 +12,8 @@ import { use } from "react";
 import { useNumpadStore } from "../face-scanner/store/numpadStore";
 import ProgressLine from "../progressbar/ProgressLine";
 import RemainingDaysLeftComponent from "./forRenewal/RemainingDaysLeftComponent";
+import CheckCircleFillSvg from "../svg/checkCircleFillSvg";
+import useFetchLoginUser from "../../hooks/useFetchLoginUser";
 
 const MyUserLoginSection = memo(() => {
   // const [flexProUserId, setFlexProUserId] = useState(0);
@@ -47,12 +49,22 @@ const MyUserLoginSection = memo(() => {
     daypassProps,
   } = useMyUserLoginSection();
 
-  const [cCurrentlyLogin, cSetCurrentlyLogin, cSetUserFound] =
-    useCurrentlyLoginStore((state) => [
-      state.currentlyLogin,
-      state.setCurrentlyLogin,
-      state.setUserFound,
-    ]);
+  const [
+    cCurrentlyLogin,
+    cSetCurrentlyLogin,
+    cSetUserFound,
+    cSetIsAlreadyLoginInDatabase,
+    cIsAlreadyLoginInDatabase,
+  ] = useCurrentlyLoginStore((state) => [
+    state.currentlyLogin,
+    state.setCurrentlyLogin,
+    state.setUserFound,
+    state.setIsAlreadyLoginInDatabase,
+    state.isAlreadyLoginInDatabase,
+  ]);
+
+  const { loginUser, isLoading } = useFetchLoginUser({ user_id: 58 });
+  // cCurrentlyLogin?.usersubscription?.flexprouser?.id ?? 0
 
   const validLoginAttempt = 5;
 
@@ -130,7 +142,10 @@ const MyUserLoginSection = memo(() => {
     } else {
       return (
         <div>
-          <h3>Successfully Login </h3>
+          <h3 style={{ color: "yellowgreen" }}>
+            <CheckCircleFillSvg />
+            {"  "} Login Successfully
+          </h3>
           <div>
             <RemainingDaysLeftComponent
               date_subscribed={
@@ -145,6 +160,7 @@ const MyUserLoginSection = memo(() => {
               id={cCurrentlyLogin?.usersubscription?.flexprouser?.id}
               fullname={cCurrentlyLogin?.usersubscription?.flexprouser?.name}
               fontColor={"orange"}
+              fontSize="26px"
             />
             <ProceedButtonComponent />
           </div>
@@ -173,6 +189,14 @@ const MyUserLoginSection = memo(() => {
     );
   };
 
+  const ClientNameComponent = () => {
+    return (
+      <h4 style={{ color: "white", fontSize: "22px" }}>
+        {cCurrentlyLogin?.usersubscription?.flexprouser?.name?.toUpperCase()}
+      </h4>
+    );
+  };
+
   const WaitingForFaceRecognitionComponent = () => {
     if (cCurrentlyLogin) {
       return (
@@ -196,8 +220,8 @@ const MyUserLoginSection = memo(() => {
             </div>
             <div>
               {!cIsFound && <h3>Waiting for face authentication...</h3>}
-              <h5>{cCurrentlyLogin?.usersubscription?.flexprouser?.name}</h5>
-              {<UserFoundComponent />}
+              <ClientNameComponent />
+              <UserFoundComponent />
               {!cIsFound && <CancelLoginButtonComponent />}
             </div>
           </div>
@@ -217,9 +241,14 @@ const MyUserLoginSection = memo(() => {
   useEffect(() => {
     if (validLoginAttempt === cLoginAttempt) {
       console.log("login successfully");
+
+      if (loginUser) {
+        // cSetIsAlreadyLoginInDatabase(true); to be continue ky si axle dikatulog
+      }
+
       if (!cIsFound) cSetIsFound(true);
     }
-  }, [cLoginAttempt, cIsFound]);
+  }, [cLoginAttempt, cIsFound, cIsAlreadyLoginInDatabase]);
 
   return (
     <>

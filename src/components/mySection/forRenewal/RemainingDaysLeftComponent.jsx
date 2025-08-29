@@ -17,6 +17,7 @@ const RemainingDaysLeftComponent = ({
   id,
   fontColor,
   fullname,
+  fontSize = "20px",
 }) => {
   const hasUpdatedRef = useRef(false); // to track if already updated
   const [remaining, setRemaining] = useState();
@@ -80,8 +81,8 @@ const RemainingDaysLeftComponent = ({
 
   return (
     <>
-      <h5>Subscription Remaining Days:</h5>
-      <h4 style={{ fontSize: "20px", color: fontColor }}>{remaining}</h4>
+      <h5 style={{ fontSize: "18px" }}>Subscription Remaining Days:</h5>
+      <h4 style={{ fontSize: fontSize, color: fontColor }}>{remaining}</h4>
     </>
   );
 };

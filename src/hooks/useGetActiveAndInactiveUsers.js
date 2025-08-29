@@ -13,6 +13,7 @@ const useGetActiveAndInactiveUsers = () => {
       };
     },
     refetchOnWindowFocus: false,
+    refetchOnMount: false,
     // refetchInterval: 1000,
   });
 

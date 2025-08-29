@@ -7,6 +7,7 @@ const initialState = {
   numpadResult: null,
   isFound: false,
   loginAttempt: 0,
+  isAlreadyLoginInDatabase: false,
 };
 
 export const useCurrentlyLoginStore = create((set) => ({
@@ -31,4 +32,6 @@ export const useCurrentlyLoginStore = create((set) => ({
     set(() => ({
       loginAttempt: data,
     })),
+  setIsAlreadyLoginInDatabase: (data) =>
+    set(() => ({ isAlreadyLoginInDatabase: data })),
 }));
