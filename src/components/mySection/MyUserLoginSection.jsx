@@ -14,10 +14,11 @@ import ProgressLine from "../progressbar/ProgressLine";
 import RemainingDaysLeftComponent from "./forRenewal/RemainingDaysLeftComponent";
 import CheckCircleFillSvg from "../svg/checkCircleFillSvg";
 import useFetchLoginUser from "../../hooks/useFetchLoginUser";
+import ExclamationSvg from "../svg/exclamationSvg";
+import useSaveTimeRecords from "./users/hooks/useSaveTimeRecords";
 
 const MyUserLoginSection = memo(() => {
   // const [flexProUserId, setFlexProUserId] = useState(0);
-
   const {
     isPending,
     data: users,
@@ -63,8 +64,11 @@ const MyUserLoginSection = memo(() => {
     state.isAlreadyLoginInDatabase,
   ]);
 
-  const { loginUser, isLoading } = useFetchLoginUser({ user_id: 58 });
-  // cCurrentlyLogin?.usersubscription?.flexprouser?.id ?? 0
+  const { loginUser, isLoading } = useFetchLoginUser({
+    user_id: cCurrentlyLogin?.usersubscription?.flexprouser?.id ?? 0,
+  });
+
+  const { saveTimeRecords } = useSaveTimeRecords();
 
   const validLoginAttempt = 5;
 
@@ -77,6 +81,31 @@ const MyUserLoginSection = memo(() => {
       state.setIsFound,
       state.isFound,
     ]);
+
+  const getTimeInRecord = async () => {
+    const { usersubscription: usersSub, status } = cCurrentlyLogin;
+
+    const record = {
+      id: usersSub?.id,
+      time_in: new Date(),
+      time_out: new Date(1990, 0, 1, 0, 0),
+      date_subscribed: usersSub?.date_subscribed,
+      per: usersSub?.subscription?.per?.per,
+      flexProUserId: usersSub?.flexprouser?.id,
+      session_days: usersSub?.session_days,
+      userSubscriptionId: usersSub?.id,
+      sub_session_days: usersSub?.sub_session_days,
+    };
+
+    return record;
+  };
+
+  const handleSaveTimeRecord = async () => {
+    const timeRecord = await getTimeInRecord();
+
+    const saveResult = await saveTimeRecords(timeRecord);
+    console.log(saveResult);
+  };
 
   const handleUserRefresh = () => {
     cSetUserFound(null);
@@ -123,6 +152,8 @@ const MyUserLoginSection = memo(() => {
 
     cSetLoginAttempt(0);
     cSetIsFound(false);
+
+    cSetIsAlreadyLoginInDatabase(false);
   };
 
   const UserFoundComponent = () => {
@@ -167,6 +198,18 @@ const MyUserLoginSection = memo(() => {
         </div>
       );
     }
+  };
+
+  const AlreadyLoginComponent = () => {
+    return (
+      <div>
+        <h3 style={{ color: "red" }}>
+          <ExclamationSvg />
+          {"  "} Already login...
+        </h3>
+        <ProceedButtonComponent />
+      </div>
+    );
   };
 
   const CancelLoginButtonComponent = () => {
@@ -221,7 +264,12 @@ const MyUserLoginSection = memo(() => {
             <div>
               {!cIsFound && <h3>Waiting for face authentication...</h3>}
               <ClientNameComponent />
-              <UserFoundComponent />
+              {cIsAlreadyLoginInDatabase ? (
+                <AlreadyLoginComponent />
+              ) : (
+                <UserFoundComponent />
+              )}
+
               {!cIsFound && <CancelLoginButtonComponent />}
             </div>
           </div>
@@ -241,14 +289,16 @@ const MyUserLoginSection = memo(() => {
   useEffect(() => {
     if (validLoginAttempt === cLoginAttempt) {
       console.log("login successfully");
-
-      if (loginUser) {
-        // cSetIsAlreadyLoginInDatabase(true); to be continue ky si axle dikatulog
+      console.log(loginUser);
+      if (loginUser.length > 0) {
+        cSetIsAlreadyLoginInDatabase(true);
+      } else {
+        handleSaveTimeRecord();
       }
 
       if (!cIsFound) cSetIsFound(true);
     }
-  }, [cLoginAttempt, cIsFound, cIsAlreadyLoginInDatabase]);
+  }, [cLoginAttempt, cIsFound, cIsAlreadyLoginInDatabase, loginUser]);
 
   return (
     <>

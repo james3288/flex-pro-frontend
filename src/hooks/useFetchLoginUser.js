@@ -15,6 +15,7 @@ const useFetchLoginUser = ({ user_id }) => {
     },
     refetchOnWindowFocus: false,
   });
+
   return { loginUser: data, isLoading };
 };
 
