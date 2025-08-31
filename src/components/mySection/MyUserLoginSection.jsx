@@ -16,9 +16,12 @@ import CheckCircleFillSvg from "../svg/checkCircleFillSvg";
 import useFetchLoginUser from "../../hooks/useFetchLoginUser";
 import ExclamationSvg from "../svg/exclamationSvg";
 import useSaveTimeRecords from "./users/hooks/useSaveTimeRecords";
+import useLoginAttempt from "../face-scanner/hooks/useLoginAttempt";
+import useLoginMutation from "../face-scanner/hooks/useLoginMutation";
 
 const MyUserLoginSection = memo(() => {
   // const [flexProUserId, setFlexProUserId] = useState(0);
+  const [loginTrigger, setLoginTrigger] = useState(false);
   const {
     isPending,
     data: users,
@@ -64,13 +67,7 @@ const MyUserLoginSection = memo(() => {
     state.isAlreadyLoginInDatabase,
   ]);
 
-  const { loginUser, isLoading } = useFetchLoginUser({
-    user_id: cCurrentlyLogin?.usersubscription?.flexprouser?.id ?? 0,
-  });
-
-  const { saveTimeRecords } = useSaveTimeRecords();
-
-  const validLoginAttempt = 5;
+  const { usersubscription: userSub } = cCurrentlyLogin || {};
 
   const cSetNumpadResult = useNumpadStore((state) => state.setNumpadResult);
 
@@ -82,34 +79,28 @@ const MyUserLoginSection = memo(() => {
       state.isFound,
     ]);
 
-  const getTimeInRecord = async () => {
-    const { usersubscription: usersSub, status } = cCurrentlyLogin;
+  const { isThisYourFace, setIsThisYourFace } = useLoginAttempt();
+  const loginMutation = useLoginMutation();
 
-    const record = {
-      id: usersSub?.id,
-      time_in: new Date(),
-      time_out: new Date(1990, 0, 1, 0, 0),
-      date_subscribed: usersSub?.date_subscribed,
-      per: usersSub?.subscription?.per?.per,
-      flexProUserId: usersSub?.flexprouser?.id,
-      session_days: usersSub?.session_days,
-      userSubscriptionId: usersSub?.id,
-      sub_session_days: usersSub?.sub_session_days,
-    };
+  const { loginUser } = useFetchLoginUser({
+    user_id: userSub?.flexprouser?.id,
+  });
 
-    return record;
-  };
-
-  const handleSaveTimeRecord = async () => {
-    const timeRecord = await getTimeInRecord();
-
-    const saveResult = await saveTimeRecords(timeRecord);
-    console.log(saveResult);
-  };
+  function isAlreadyLoggedIn(loginUser) {
+    if (!loginUser || !loginUser.loginUser) return false;
+    return loginUser.loginUser.some((record) => {
+      const timeOut =
+        typeof record.time_out === "string"
+          ? record.time_out
+          : record.time_out?.toISOString();
+      return timeOut?.startsWith("1990-01-01");
+    });
+  }
 
   const handleUserRefresh = () => {
     cSetUserFound(null);
     cSetNumpadResult("");
+    cSetIsFound(false);
   };
 
   const LoginUserIdButton = () => {
@@ -154,10 +145,11 @@ const MyUserLoginSection = memo(() => {
     cSetIsFound(false);
 
     cSetIsAlreadyLoginInDatabase(false);
+    setIsThisYourFace(false);
   };
 
   const UserFoundComponent = () => {
-    if (!cIsFound) {
+    if (!isThisYourFace) {
       return (
         <div
           style={{
@@ -207,6 +199,17 @@ const MyUserLoginSection = memo(() => {
           <ExclamationSvg />
           {"  "} Already login...
         </h3>
+        <RemainingDaysLeftComponent
+          date_subscribed={userSub?.date_subscribed}
+          per={userSub?.subscription?.per?.per}
+          user_id={userSub?.flexprouser?.id}
+          session_days={userSub?.sub_session_days}
+          subscriptionId={userSub?.subscription?.id}
+          id={userSub?.flexprouser?.id}
+          fullname={userSub?.flexprouser?.name}
+          fontColor={"orange"}
+          fontSize="26px"
+        />
         <ProceedButtonComponent />
       </div>
     );
@@ -242,6 +245,7 @@ const MyUserLoginSection = memo(() => {
 
   const WaitingForFaceRecognitionComponent = () => {
     if (cCurrentlyLogin) {
+      const alreadyLoggedIn = isAlreadyLoggedIn(loginUser);
       return (
         <>
           <div
@@ -262,15 +266,18 @@ const MyUserLoginSection = memo(() => {
               />
             </div>
             <div>
-              {!cIsFound && <h3>Waiting for face authentication...</h3>}
+              {!isThisYourFace && !alreadyLoggedIn && (
+                <h3>Waiting for face authentication...</h3>
+              )}
               <ClientNameComponent />
-              {cIsAlreadyLoginInDatabase ? (
+              {alreadyLoggedIn ? (
                 <AlreadyLoginComponent />
               ) : (
                 <UserFoundComponent />
               )}
-
-              {!cIsFound && <CancelLoginButtonComponent />}
+              {!isThisYourFace && !alreadyLoggedIn && (
+                <CancelLoginButtonComponent />
+              )}
             </div>
           </div>
         </>
@@ -281,24 +288,16 @@ const MyUserLoginSection = memo(() => {
   };
 
   useEffect(() => {
+    if (isThisYourFace) {
+      loginMutation.mutate();
+    }
+  }, [isThisYourFace]);
+
+  useEffect(() => {
     if (isLoadingActiveAndInactiveUser) {
       setPlay(true);
     }
   }, [isLoadingActiveAndInactiveUser]);
-
-  useEffect(() => {
-    if (validLoginAttempt === cLoginAttempt) {
-      console.log("login successfully");
-      console.log(loginUser);
-      if (loginUser.length > 0) {
-        cSetIsAlreadyLoginInDatabase(true);
-      } else {
-        handleSaveTimeRecord();
-      }
-
-      if (!cIsFound) cSetIsFound(true);
-    }
-  }, [cLoginAttempt, cIsFound, cIsAlreadyLoginInDatabase, loginUser]);
 
   return (
     <>
@@ -377,57 +376,22 @@ const MyUserLoginSection = memo(() => {
                 </form> */}
               </div>
             </div>
-            {/* ) : (
-              ""
-            )} */}
           </div>
           {/* end scan face section */}
-
           {/* scan result section */}
+          <div className="col-lg-6 col-xs-12">
+            <div className="dashboard-col">
+              <span>
+                <strong>LOGIN</strong> STATUS
+              </span>
 
-          {/* IF USER ID HAS BEEN FOUND AND NOT LOGIN YET*/}
-          {isOnGoing === "on-going" && userId > 0 ? (
-            <>
-              <LoginMessageAlert {...props} message={"Successfully login!"} />
-            </>
-          ) : // IF USER HAS ALREADY LOGIN
-          isOnGoing === "already-login" && dayPassLogin === false ? (
-            <LoginMessageAlert
-              {...props}
-              message={"You are currently logged in!"}
-            />
-          ) : isOnGoing === "on-going" &&
-            dayPassLogin === true &&
-            isAlreadyLogin === false ? (
-            <LoginMessageAlertDayPass
-              {...daypassProps}
-              message="Daypass successfully login!"
-            />
-          ) : // DAYPASS ALREADY LOGIN
-          isOnGoing === "already-login" &&
-            dayPassLogin === true &&
-            isAlreadyLogin === true ? (
-            <LoginMessageAlertDayPass
-              {...daypassProps}
-              message={"You are currently logged in!"}
-            />
-          ) : (
-            // DEFAULT
-            <div className="col-lg-6 col-xs-12">
-              <div className="dashboard-col">
-                <span>
-                  <strong>LOGIN</strong> STATUS
-                </span>
-
-                <div className="scan-profile-wrapper">
-                  <div className="scan-profile-name">
-                    <WaitingForFaceRecognitionComponent />
-                  </div>
+              <div className="scan-profile-wrapper">
+                <div className="scan-profile-name">
+                  <WaitingForFaceRecognitionComponent />
                 </div>
               </div>
             </div>
-          )}
-
+          </div>
           {/* end scan result section */}
         </div>
       </div>

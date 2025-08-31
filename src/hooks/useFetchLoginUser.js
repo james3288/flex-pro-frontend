@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import useCheckIfAlreadyLogin from "../hooks/useCheckIfAlreadyLogin";
+import { useEffect, useState } from "react";
 const useFetchLoginUser = ({ user_id }) => {
   const { checkIfAlreadyIn } = useCheckIfAlreadyLogin();
 
-  const queryKey = ["forLoginUser"];
+  const queryKey = ["forLoginUser", user_id];
   const { isPending, error, data, fetchStatus, isLoading } = useQuery({
     queryKey,
     queryFn: async () => {
@@ -13,10 +14,11 @@ const useFetchLoginUser = ({ user_id }) => {
         loginUser: loginUserData,
       };
     },
-    refetchOnWindowFocus: false,
   });
 
-  return { loginUser: data, isLoading };
+  return { loginUser: data };
+
+  // return { loginUser: data, isLoading };
 };
 
 export default useFetchLoginUser;
