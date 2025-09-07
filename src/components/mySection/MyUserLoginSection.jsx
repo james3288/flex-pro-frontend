@@ -119,6 +119,20 @@ const MyUserLoginSection = memo(() => {
     );
   };
 
+  const LoginByDayPassButton = () => {
+    return (
+      <button
+        className="btn btn-success enabled"
+        data-toggle="modal"
+        data-target="#daypass-login-modal"
+        onClick={handleDayPassLoginClick}
+        style={{ zIndex: "9999" }}
+      >
+        Login Daypass
+      </button>
+    );
+  };
+
   const WaitForInitializingUsersComponent = () => {
     if (isLoadingActiveAndInactiveUser) {
       return (
@@ -148,43 +162,64 @@ const MyUserLoginSection = memo(() => {
     setIsThisYourFace(false);
   };
 
+  const PrivateRemainingDaysLeftComponent = () => {
+    return (
+      <RemainingDaysLeftComponent
+        date_subscribed={userSub?.date_subscribed}
+        per={userSub?.subscription?.per?.per}
+        user_id={userSub?.flexprouser?.id}
+        session_days={userSub?.sub_session_days}
+        subscriptionId={userSub?.subscription?.id}
+        id={userSub?.flexprouser?.id}
+        fullname={userSub?.flexprouser?.name}
+        fontColor={"orange"}
+        fontSize="26px"
+      />
+    );
+  };
+
+  const LoginLoadingStatusComponent = () => {
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+        }}
+      >
+        <LoadingEffect />
+        <h3>{cLoginAttempt * 20}%</h3>
+      </div>
+    );
+  };
+
+  const LoginSuccesfullyStatusComponent = () => {
+    return (
+      <h3 style={{ color: "yellowgreen" }}>
+        <CheckCircleFillSvg />
+        {"  "} Login Successfully
+      </h3>
+    );
+  };
+
+  const AlreadyLoginStatusComponent = () => {
+    return (
+      <h3 style={{ color: "red" }}>
+        <ExclamationSvg />
+        {"  "} Already login...
+      </h3>
+    );
+  };
+
   const UserFoundComponent = () => {
     if (!isThisYourFace) {
-      return (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-        >
-          <LoadingEffect />
-          <h3>{cLoginAttempt * 20}%</h3>
-        </div>
-      );
+      return <LoginLoadingStatusComponent />;
     } else {
       return (
         <div>
-          <h3 style={{ color: "yellowgreen" }}>
-            <CheckCircleFillSvg />
-            {"  "} Login Successfully
-          </h3>
+          <LoginSuccesfullyStatusComponent />
           <div>
-            <RemainingDaysLeftComponent
-              date_subscribed={
-                cCurrentlyLogin?.usersubscription?.date_subscribed
-              }
-              per={cCurrentlyLogin?.usersubscription?.subscription?.per?.per}
-              user_id={cCurrentlyLogin?.usersubscription?.flexprouser?.id}
-              session_days={cCurrentlyLogin?.usersubscription?.sub_session_days}
-              subscriptionId={
-                cCurrentlyLogin?.usersubscription?.subscription?.id
-              }
-              id={cCurrentlyLogin?.usersubscription?.flexprouser?.id}
-              fullname={cCurrentlyLogin?.usersubscription?.flexprouser?.name}
-              fontColor={"orange"}
-              fontSize="26px"
-            />
+            <PrivateRemainingDaysLeftComponent />
             <ProceedButtonComponent />
           </div>
         </div>
@@ -195,21 +230,8 @@ const MyUserLoginSection = memo(() => {
   const AlreadyLoginComponent = () => {
     return (
       <div>
-        <h3 style={{ color: "red" }}>
-          <ExclamationSvg />
-          {"  "} Already login...
-        </h3>
-        <RemainingDaysLeftComponent
-          date_subscribed={userSub?.date_subscribed}
-          per={userSub?.subscription?.per?.per}
-          user_id={userSub?.flexprouser?.id}
-          session_days={userSub?.sub_session_days}
-          subscriptionId={userSub?.subscription?.id}
-          id={userSub?.flexprouser?.id}
-          fullname={userSub?.flexprouser?.name}
-          fontColor={"orange"}
-          fontSize="26px"
-        />
+        <AlreadyLoginStatusComponent />
+        <PrivateRemainingDaysLeftComponent />
         <ProceedButtonComponent />
       </div>
     );
@@ -356,24 +378,7 @@ const MyUserLoginSection = memo(() => {
                 {/* login using id */}
 
                 <LoginUserIdButton />
-                <button
-                  className="btn btn-success enabled"
-                  data-toggle="modal"
-                  data-target="#daypass-login-modal"
-                  onClick={handleDayPassLoginClick}
-                  style={{ zIndex: "9999" }}
-                >
-                  Login Daypass
-                </button>
-                {/* <button className="btn btn-success">QR Code</button> */}
-                {/* <form action="" style={{ zIndex: "9999" }}>
-                  <button
-                    className="btn btn-danger"
-                    //onClick={handleStopClick}
-                  >
-                    Refresh
-                  </button>
-                </form> */}
+                <LoginByDayPassButton />
               </div>
             </div>
           </div>

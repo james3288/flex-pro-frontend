@@ -27,15 +27,20 @@ import ExpiredUserPage from "../pages/expiredUserPage/ExpiredUserPage.jsx";
 import ReportPage from "../pages/reportPage/ReportPage.jsx";
 import MainLayout from "../components/layout/mainLayout.jsx";
 import { PageName } from "../constants/enum.js";
+import MainLayoutNew from "../layouts/MainLayout.jsx";
 import DashboardPage from "../pages/DashboardPage.jsx";
+import DashboardPageNew from "../pages/DashboardPageNew/DashboardPageNew.jsx";
 const routes = [
   {
     path: "/",
     element: (
       <>
-        <MainLayout>
+        {/* <MainLayout>
           <App />
-        </MainLayout>
+        </MainLayout> */}
+        <MainLayoutNew>
+          <DashboardPageNew />
+        </MainLayoutNew>
       </>
     ),
     errorElement: <ErrorPage />,
