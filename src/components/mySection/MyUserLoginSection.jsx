@@ -169,7 +169,7 @@ const MyUserLoginSection = memo(() => {
         per={userSub?.subscription?.per?.per}
         user_id={userSub?.flexprouser?.id}
         session_days={userSub?.sub_session_days}
-        subscriptionId={userSub?.subscription?.id}
+        subscriptionId={userSub?.id}
         id={userSub?.flexprouser?.id}
         fullname={userSub?.flexprouser?.name}
         fontColor={"orange"}

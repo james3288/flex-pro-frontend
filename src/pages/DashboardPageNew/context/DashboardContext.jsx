@@ -1,5 +1,6 @@
 import { createContext } from "react";
-import useGetActiveAndInactiveUsers from "../../../hooks/useGetActiveAndInactiveUsers";
+import useGetActiveAndInactiveUsers from "@hooks/useGetActiveAndInactiveUsers";
+
 export const DashboardContext = createContext();
 
 export const DashboardProvider = ({ children }) => {

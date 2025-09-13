@@ -40,6 +40,8 @@ const useRemainingDaysLeft = (
     );
   };
 
+  console.log(userSubscriptionId);
+
   return { data, isLoading, isPending, error, remainingDaysLeft };
 };
 
