@@ -1,12 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import useRemainingDaysLeft from "../../../hooks/useRemainingDaysLeft";
 import instance from "../../../others/axiosInstance";
-
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useToastifyMessage from "../../../hooks/useToastifyMessage";
 import { useLocation } from "react-router-dom";
-import { PageName } from "../../../constants/enum";
 
 const RemainingDaysLeftComponent = ({
   date_subscribed,
@@ -18,29 +15,19 @@ const RemainingDaysLeftComponent = ({
   fontColor,
   fullname,
   fontSize = "20px",
+  daysOnly = false,
 }) => {
-  const hasUpdatedRef = useRef(false); // to track if already updated
-  const [remaining, setRemaining] = useState();
+  const hasUpdatedRef = useRef(false); // prevents duplicate API update
+  const [remaining, setRemaining] = useState(null);
   const location = useLocation();
-
-  const handleExpired = async () => {
-    try {
-      await instance.put(`/api/user_status_update/${id}`, {
-        status: "expired",
-      });
-      console.log("Update successful");
-      hasUpdatedRef.current = true;
-    } catch (error) {
-      console.error("Error updating data:", error);
-    }
-  };
 
   const { remainingDaysLeft } = useRemainingDaysLeft(
     date_subscribed,
     per,
     user_id,
     session_days,
-    subscriptionId
+    subscriptionId,
+    daysOnly
   );
 
   const { showToastMessage } = useToastifyMessage({
@@ -61,28 +48,57 @@ const RemainingDaysLeftComponent = ({
     position: "top-right",
   });
 
-  const result = async () => {
-    setRemaining(await remainingDaysLeft());
-  };
+  // Fetch remaining days safely
+  useEffect(() => {
+    let isMounted = true;
 
-  result();
+    const fetchRemaining = async () => {
+      try {
+        const days = await remainingDaysLeft();
+        if (isMounted) {
+          setRemaining(days);
+        }
+      } catch (err) {
+        console.error("Error fetching remaining days:", err);
+      }
+    };
 
+    fetchRemaining();
+
+    return () => {
+      isMounted = false; // cleanup → prevent memory leak
+    };
+  }, [remainingDaysLeft]);
+
+  // Handle expired users
   useEffect(() => {
     if (remaining === "Expired" && !hasUpdatedRef.current) {
-      console.log(location.pathname.toString());
+      const updateStatus = async () => {
+        try {
+          await instance.put(`/api/user_status_update/${id}`, {
+            status: "expired",
+          });
+          hasUpdatedRef.current = true;
+          console.log("Update successful");
+        } catch (error) {
+          console.error("Error updating data:", error);
+        }
+      };
 
-      handleExpired();
-      if (location.pathname.toString() === "/expired-users") {
-        return;
+      updateStatus();
+
+      if (location.pathname !== "/expired-users") {
+        showToastMessage();
       }
-      showToastMessage();
     }
-  }, [remaining, id]);
+  }, [remaining, id, location.pathname, showToastMessage]);
 
   return (
     <>
       <h5 style={{ fontSize: "18px" }}>Subscription Remaining Days:</h5>
-      <h4 style={{ fontSize: fontSize, color: fontColor }}>{remaining}</h4>
+      <h4 style={{ fontSize, color: fontColor }}>
+        {remaining ?? "Loading..."}
+      </h4>
     </>
   );
 };

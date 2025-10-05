@@ -1,12 +1,12 @@
-import React from "react";
 import instance from "../others/axiosInstance";
 import getImagePath from "../getData/getImagePath";
 import remainingDays from "../others/GetRemainingDays";
 import loadImageData from "../getData/loadImageData";
 
 const useGetActiveUsers = () => {
+  // Refactor users by enriching with image + remaining days
   const refactorActiveUsers = async (users) => {
-    const newUser = await Promise.all(
+    return Promise.all(
       users.slice(0, 5).map(async (user) => {
         const flexProUserId = user.usersubscription.flexprouser?.id ?? 0;
         const date_subscribed = user.usersubscription.date_subscribed;
@@ -14,46 +14,47 @@ const useGetActiveUsers = () => {
         const personal_training_session =
           user.usersubscription.subscription.personal_training_session;
 
-        // Call getImagePath asynchronously for each user
+        // Get image path first
         const imgpath = await getImagePath(flexProUserId);
 
-        // get the remaining days
-        const getRemainingDays = await remainingDays(date_subscribed, per);
-        // end get the reamining days
+        // Run async operations in parallel
+        const [trainersRemainingDays, imageDataUrl] = await Promise.all([
+          remainingDays(
+            date_subscribed,
+            "personal_training_day",
+            personal_training_session
+          ),
+          loadImageData(imgpath?.image1),
+        ]);
 
-        // get trainiers remaining days
-        const getTrainersRemainingDays = await remainingDays(
+        // Compute normal subscription days (likely synchronous, but kept await just in case)
+        const subscriptionRemainingDays = await remainingDays(
           date_subscribed,
-          "personal_training_day",
-          personal_training_session
+          per
         );
-
-        //end get trainers remaining days
-        const imageDataUrl = await loadImageData(imgpath?.image1);
 
         return {
           ...user,
-          trainersRemainingDays: getTrainersRemainingDays,
-          image: imageDataUrl || "/media/image/default.jpg",
+          trainersRemainingDays,
+          remainingDays: subscriptionRemainingDays,
+          image: imageDataUrl || "/media/image/default.jpg", // ✅ fallback
         };
       })
     );
-
-    return newUser;
   };
 
+  // Main API fetch
   const getActiveUsers = async () => {
     try {
       const response = await instance.get(`/api/user_all_status_top5/`);
-      const users = response.data;
-
-      //refactor active users
-      const refactoredActiveUsers = await refactorActiveUsers(users);
-      return refactoredActiveUsers;
+      const users = response.data || [];
+      return await refactorActiveUsers(users);
     } catch (error) {
       console.error("Error fetching users:", error);
+      return []; // ensure predictable return type
     }
   };
+
   return { getActiveUsers };
 };
 

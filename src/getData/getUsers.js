@@ -1,7 +1,6 @@
-import instance from "../others/axiosInstance";
-import remainingDays from "../others/GetRemainingDays";
-import getImagePath from "./getImagePath";
-import loadImageData from "./loadImageData";
+import instance from "@others/axiosInstance";
+import getImagePath from "@getData/getImagePath";
+import loadImageData from "@getData/loadImageData";
 
 const getUsers = async () => {
   try {
@@ -10,21 +9,36 @@ const getUsers = async () => {
 
     const newUser = await Promise.all(
       users.map(async (user) => {
-        // Call getImagePath asynchronously for each user
-        const imgpath = await getImagePath(user.flex_pro_user.id);
-        const imageDataUrl = await loadImageData(imgpath.image1);
+        try {
+          const imgpath = await getImagePath(user.flex_pro_user.id);
 
-        return {
-          ...user,
-          image: imageDataUrl || "/media/image/default.jpg",
-        }; // If imgpath is null, use default image
+          let imageDataUrl = null;
+          if (imgpath?.image1) {
+            // Use object URL instead of base64 for performance
+            imageDataUrl = await loadImageData(imgpath.image1);
+          }
+
+          return {
+            ...user,
+            image: imageDataUrl || "/media/image/default.jpg",
+          };
+        } catch (err) {
+          console.error(
+            `Error loading image for user ${user.flex_pro_user.id}:`,
+            err
+          );
+          return {
+            ...user,
+            image: "/media/image/default.jpg",
+          };
+        }
       })
     );
 
-    // console.log("users", newUser);
     return newUser;
   } catch (error) {
     console.error("Error fetching users:", error);
+    return []; // safer default instead of undefined
   }
 };
 

@@ -1,78 +1,58 @@
-import React from "react";
 import instance from "../others/axiosInstance";
 import remainingDays from "../others/GetRemainingDays";
 import getSubscriptionDaysLeft from "../getData/getSubscriptionDaysLeft";
 
 const useGetDayPassUsers = () => {
-  const getDaypassUser = async () => {
+  // 🔹 Extract shared user processing logic
+  const processUsers = async (users) => {
+    return Promise.all(
+      users.map(async (user) => {
+        const remaining = await remainingDays(
+          user.date_subscribed,
+          "day",
+          user.id
+        );
+
+        // If this is synchronous, remove `await`
+        const subDaysLeft = getSubscriptionDaysLeft(
+          remaining,
+          [],
+          user.date_subscribed,
+          false
+        );
+
+        return {
+          ...user,
+          remaining,
+          remainingHours: subDaysLeft,
+        };
+      })
+    );
+  };
+
+  // 🔹 General fetcher
+  const fetchUsers = async () => {
     try {
       const response = await instance.get(`/api/get_daypass_user/`);
-      const users = response.data;
-
-      const newUser = await Promise.all(
-        users.map(async (user) => {
-          // Call getImagePath asynchronously for each user
-          const remaining = await remainingDays(
-            user.date_subscribed,
-            "day",
-            user.id
-          );
-
-          const subDaysLeft = getSubscriptionDaysLeft(
-            remaining,
-            [],
-            user.date_subscribed,
-            false
-          );
-
-          return {
-            ...user,
-            remaining: remaining,
-            remainingHours: subDaysLeft,
-          }; // If imgpath is null, use default image
-        })
-      );
-
-      return newUser;
+      return response.data || [];
     } catch (error) {
-      console.error("Error fetching day pass users:", error);
+      console.error("Error fetching day pass users:", error.message);
+      return []; // return empty array instead of undefined
     }
+  };
+
+  // 🔹 Public methods
+  const getDaypassUser = async () => {
+    const users = await fetchUsers();
+    return processUsers(users);
   };
 
   const getDayPassUserActive = async () => {
-    try {
-      const response = await instance.get(`/api/get_daypass_user/`);
-      const users = response.data;
-
-      const newUser = await Promise.all(
-        users.map(async (user) => {
-          // Call getImagePath asynchronously for each user
-          const remaining = await remainingDays(
-            user.date_subscribed,
-            "day",
-            user.id
-          );
-
-          const subDaysLeft = getSubscriptionDaysLeft(
-            remaining,
-            [],
-            user.date_subscribed,
-            false
-          );
-
-          return {
-            ...user,
-            remaining: remaining,
-            remainingHours: subDaysLeft,
-          }; // If imgpath is null, use default image
-        })
-      );
-
-      return newUser.filter((x) => x.remainingHours != "Expired");
-    } catch (error) {
-      console.error("Error fetching day pass users:", error);
-    }
+    const users = await fetchUsers();
+    const processed = await processUsers(users);
+    return processed.filter((x) => x.remainingHours !== "Expired");
   };
+
   return { getDaypassUser, getDayPassUserActive };
 };
 

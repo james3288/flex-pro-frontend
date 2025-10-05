@@ -1,13 +1,16 @@
-import React from "react";
 import formatTime from "../others/ReadableFormatTime";
 
-// Function to add days to a Date object
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
+// Add days to a given timestamp and return formatted result
 const timeStampAddDays = (timeStamp, extendedDays, daysonly) => {
-  const timestamp = timeStamp + extendedDays * 24 * 60 * 60 * 1000;
-  return timestamp < 0
-    ? "Expired"
-    : daysonly === false
+  const timestamp = timeStamp + extendedDays * MS_PER_DAY;
+
+  if (timestamp < 0) {
+    return "Expired";
+  }
+
+  return daysonly === false
     ? formatTime(timestamp, "days-hours-minutes-seconds")
     : formatTime(timestamp, "days-left");
 };
@@ -15,45 +18,17 @@ const timeStampAddDays = (timeStamp, extendedDays, daysonly) => {
 const getSubscriptionDaysLeft = (
   remaining,
   extendedSubscript,
-  date_subscribed,
+  date_subscribed, // kept for compatibility, though unused
   daysOnly
 ) => {
-  const extendedRangeDays = (extendedDate, extended_days) => {
-    const dateLogObj1 = new Date(extendedDate);
-    dateLogObj1.setDate(dateLogObj1.getDate() + extended_days);
+  // calculate total extended session days safely
+  const extendedSessionDays =
+    extendedSubscript?.reduce(
+      (acc, extend) => acc + (extend?.extended_session_day || 0),
+      0
+    ) || 0;
 
-    return 5;
-  };
-
-  const now = new Date();
-  // initialize  remainingdays to default 0
-  let remainingDays = 0;
-  let remainingHoursOnly = 0;
-  let extendedSessionDays = 0;
-
-  // this is the remaining days of the main subscription
-  remainingDays += formatTime(remaining, "days-left");
-  remainingHoursOnly += formatTime(remaining, "hours-left");
-
-  // extended days for subscriptions
-  extendedSubscript?.map((extend, index) => {
-    extendedSessionDays += extend?.extended_session_day;
-
-    // remainingDays += extendedRangeDays(
-    //   extend?.date_extend,
-    //   extend?.extended_session_day
-    // );
-  });
-
-  // return daysOnly === true
-  //   ? remainingDays
-  //   : remainingDays < 0
-  //   ? "Expired"
-  //   : `${remainingDays} ${
-  //       remainingDays > 1 ? " days," : "day,"
-  //     } ${remainingHoursOnly} ${remainingHoursOnly > 1 ? " hours" : " hour"}`;
-  // // return remaining < 0 ? "Expired" : remainingDays + " Days";
-
+  // Final calculation with added extended days
   return timeStampAddDays(remaining, extendedSessionDays, daysOnly);
 };
 

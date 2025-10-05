@@ -8,13 +8,24 @@ const RemoveExtendedSub = ({
   modalTitle,
   extendedTrainerId,
 }) => {
-  const handleDeleteExtendedSub = () => {
-    console.log(extendedSubId);
-    deleteExtendedSub(extendedSubId);
-  };
+  const isTrainer = modalTitle === "Remove Extended Trainers";
 
-  const handleDeleteExtendedTrainer = () => {
-    deleteExtendedTrainer(extendedTrainerId);
+  // Precompute message & handler to avoid repeated conditionals in JSX
+  const confirmMessage = isTrainer
+    ? "Are you sure you want to delete the extended personal trainer?"
+    : "Are you sure you want to delete the extended subscription?";
+
+  const handleDelete = async () => {
+    try {
+      if (isTrainer) {
+        await deleteExtendedTrainer(extendedTrainerId);
+      } else {
+        await deleteExtendedSub(extendedSubId);
+      }
+      // Optionally trigger UI feedback or close modal programmatically
+    } catch (err) {
+      console.error("Delete failed:", err);
+    }
   };
 
   return (
@@ -27,6 +38,7 @@ const RemoveExtendedSub = ({
     >
       <div className="modal-dialog" role="document">
         <div className="modal-content">
+          {/* Header */}
           <div className="modal-header">
             <h5 className="modal-title text-danger" id="exampleModalLabel">
               <svg
@@ -50,11 +62,11 @@ const RemoveExtendedSub = ({
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          <div className="modal-body">
-            {modalTitle === "Remove Extended Trainers"
-              ? "Are you sure you want delete extended personal trainer?"
-              : "Are you sure you want delete extended subscription?"}
-          </div>
+
+          {/* Body */}
+          <div className="modal-body">{confirmMessage}</div>
+
+          {/* Footer */}
           <div className="modal-footer">
             <button
               type="button"
@@ -63,23 +75,13 @@ const RemoveExtendedSub = ({
             >
               Close
             </button>
-            {modalTitle === "Remove Extended Trainers" ? (
-              <button
-                type="button"
-                className="btn btn-danger"
-                onClick={() => handleDeleteExtendedTrainer()}
-              >
-                Delete
-              </button>
-            ) : (
-              <button
-                type="button"
-                className="btn btn-danger"
-                onClick={() => handleDeleteExtendedSub(extendedSubId)}
-              >
-                Delete
-              </button>
-            )}
+            <button
+              type="button"
+              className="btn btn-danger"
+              onClick={handleDelete}
+            >
+              Delete
+            </button>
           </div>
         </div>
       </div>

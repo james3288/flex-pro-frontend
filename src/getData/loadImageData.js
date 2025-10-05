@@ -1,18 +1,29 @@
 import instance from "../others/axiosInstance";
 
+const cache = new Map();
+
 const loadImageData = async (path) => {
+  if (!path) return null;
+
+  // ✅ Return cached image if available
+  if (cache.has(path)) {
+    return cache.get(path);
+  }
+
   try {
+    // Fetch image as blob
     const response = await instance.get(path, { responseType: "blob" });
-    const reader = new FileReader();
-    return new Promise((resolve, reject) => {
-      reader.onloadend = () => {
-        resolve(reader.result);
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(response.data);
-    });
+    const blob = response.data;
+
+    // ✅ Faster + smaller memory footprint using Object URL
+    const objectUrl = URL.createObjectURL(blob);
+
+    // Store in cache
+    cache.set(path, objectUrl);
+
+    return objectUrl;
   } catch (error) {
-    console.error("Error fetching image:", error);
+    console.error(`Error fetching image at ${path}:`, error.message);
     return null;
   }
 };

@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import getExtendedSubscription from "../getData/getExtendedSubscription";
 import getSubscriptionDaysLeft from "../getData/getSubscriptionDaysLeft";
 import remainingDays from "../others/GetRemainingDays";
@@ -9,38 +8,49 @@ const useRemainingDaysLeft = (
   per,
   flexProUserId,
   sub_session_days,
-  userSubscriptionId
+  userSubscriptionId,
+  daysOnly = false
 ) => {
+  // Normalize once at the start
+  const normalizedSessionDays = sub_session_days === 0 ? 1 : sub_session_days;
+
   const queryKey = [`extendedSubData_${flexProUserId}`];
+
   const { isPending, error, data, isLoading } = useQuery({
     queryKey,
     queryFn: async () => {
-      const extSub = await getExtendedSubscription(userSubscriptionId);
-      const remDays = await remainingDays(
-        date_subscribed,
-        per,
-        flexProUserId,
-        sub_session_days === 0 ? 1 : sub_session_days
-      );
+      // Run in parallel for efficiency
+      const [extSub, remDays] = await Promise.all([
+        getExtendedSubscription(userSubscriptionId),
+        remainingDays(
+          date_subscribed,
+          per,
+          flexProUserId,
+          normalizedSessionDays
+        ),
+      ]);
 
       return {
         extendedSub: extSub,
         remainingDays: remDays,
       };
     },
-    refetchInterval: 1000,
+    // ⚡ Optimize fetching strategy
+    staleTime: 1000 * 60, // cache 1 min
+    refetchOnWindowFocus: true, // refresh only when focus
+    retry: 1, // avoid endless retries
   });
 
+  // Keep your original return signature
   const remainingDaysLeft = async () => {
+    if (!data) return null; // safe guard
     return getSubscriptionDaysLeft(
-      data?.remainingDays,
-      data?.extendedSub,
+      data.remainingDays,
+      data.extendedSub,
       date_subscribed,
-      false
+      daysOnly
     );
   };
-
-  console.log(userSubscriptionId);
 
   return { data, isLoading, isPending, error, remainingDaysLeft };
 };

@@ -1,21 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import React, {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  useTransition,
-} from "react";
-// import getUsers from "../../../getData/getUsers";
+import React, { useRef, useState, useTransition, useMemo } from "react";
 import getUsers from "../../../getdata/getusers";
 
 import Users from "./Users";
 import UsersModal from "./usersModal";
 import DeleteUserModal from "./DeleteUserModal";
 import UserContractModal from "./UserContractModal";
-// import LoadingEffect from "../loadingEffect/LoadingEffect";
-import LoadingEffect from "../loadingEffect/LoadingEffect";
-
 import NoDataFound from "../noDataFound/NoDataFound";
 
 const MyUsers = () => {
@@ -23,38 +13,47 @@ const MyUsers = () => {
   const searchRef = useRef();
   const [selectedUser, setSelectedUser] = useState();
   const [filterData, setFilterData] = useState([]);
-  const [counter, setCounter] = useState(0);
 
-  const queryKey = useMemo(() => ["forUsersData"], []);
-
-  const { isPending, error, data } = useQuery({
-    queryKey,
-    queryFn: () => getUsers(),
-    // refetchInterval: 1000,
+  const {
+    isPending,
+    error,
+    data = [],
+  } = useQuery({
+    queryKey: ["forUsersData"],
+    queryFn: getUsers,
+    staleTime: 1000 * 60, // cache for 1 minute
   });
 
-  if (isPending)
+  if (isPending) {
     return (
       <div id="preloder">
         <div className="loader"></div>
       </div>
     );
+  }
 
-  const handleOnChange = async (e) => {
+  const handleOnChange = (e) => {
+    const query = e.target.value.toLowerCase();
+
     startTransition(() => {
-      setFilterData(() =>
+      if (!query) {
+        setFilterData([]); // reset search
+        return;
+      }
+
+      setFilterData(
         data.filter(
           (row) =>
             row.flex_pro_user.name &&
-            row.flex_pro_user.name
-              .toLowerCase()
-              .includes(e.target.value.toLowerCase())
+            row.flex_pro_user.name.toLowerCase().includes(query)
         )
       );
     });
-
-    setCounter((prev) => prev + 1);
   };
+
+  // Decide which dataset to render: filtered or all
+  const usersToRender =
+    filterData.length > 0 ? filterData : !searchRef.current?.value ? data : [];
 
   return (
     <>
@@ -62,10 +61,9 @@ const MyUsers = () => {
         className="team-section team-page"
         style={{ paddingTop: "20px" }}
       >
-        {error ? ( // ERROR HERE
+        {error ? (
           <NoDataFound />
         ) : (
-          // INFOR HERE
           <div className="container-fluid">
             <div className="row">
               <div className="col-lg-2">
@@ -92,39 +90,21 @@ const MyUsers = () => {
                 </div>
               </div>
             </div>
+
             <div className="row">
-              {counter > 0 && filterData && filterData.length > 0 ? (
-                filterData?.map(
-                  (user, index) => (
-                    <Users
-                      key={index}
-                      name={user.flex_pro_user.name}
-                      weight={user.flex_pro_user.weights}
-                      image={user.image}
-                      user_id={user.flex_pro_user.id}
-                      user={user}
-                      setSelectedUser={setSelectedUser}
-                      contactNo={user.flex_pro_user.contact_number}
-                    />
-                  )
-                  // console.log(trainor)
-                )
-              ) : counter === 0 ? (
-                data?.map(
-                  (user, index) => (
-                    <Users
-                      key={index}
-                      name={user.flex_pro_user.name}
-                      weight={user.flex_pro_user.weights}
-                      image={user.image}
-                      user_id={user.flex_pro_user.id}
-                      user={user}
-                      setSelectedUser={setSelectedUser}
-                      contactNo={user.flex_pro_user.contact_number}
-                    />
-                  )
-                  // console.log(trainor)
-                )
+              {usersToRender.length > 0 ? (
+                usersToRender.map((user) => (
+                  <Users
+                    key={user.flex_pro_user.id}
+                    name={user.flex_pro_user.name}
+                    weight={user.flex_pro_user.weights}
+                    image={user.image}
+                    user_id={user.flex_pro_user.id}
+                    user={user}
+                    setSelectedUser={setSelectedUser}
+                    contactNo={user.flex_pro_user.contact_number}
+                  />
+                ))
               ) : (
                 <div className="col-lg-12 col-sm-3">
                   <div className="ts-item set-bg bg">
@@ -138,6 +118,7 @@ const MyUsers = () => {
           </div>
         )}
       </section>
+
       <UsersModal
         id={"usersModal1"}
         option={"Update"}
@@ -148,7 +129,6 @@ const MyUsers = () => {
         id={"deleteUserModal"}
         user_id={selectedUser?.flex_pro_user?.id}
       />
-
       <UserContractModal id={"userContractModal"} user={selectedUser} />
     </>
   );

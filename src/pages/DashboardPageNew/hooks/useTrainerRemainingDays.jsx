@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import getTrainerRemainingDays from "@getData/getTrainerRemainingDays";
 import personalTrainerDaysLeft from "@getData/personalTrainerDaysLeft";
 import formatTime from "@others/ReadableFormatTime";
@@ -12,13 +12,13 @@ const useTrainerRemainingDays = ({
   color = "orange",
   lineHeight = "18px",
 }) => {
-  // const [remainingDays, setRemainingDays] = useState(null);
-
   const [extendedTrainerRemainingDays, setExtendedTrainerRemainingDays] =
     useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    let isActive = true; // prevent memory leaks if unmounted
+
+    (async () => {
       try {
         const days = await getTrainerRemainingDays(
           trainerRemainingDays,
@@ -26,36 +26,52 @@ const useTrainerRemainingDays = ({
           extendedTrainer
         );
 
-        setExtendedTrainerRemainingDays(days);
+        if (isActive) setExtendedTrainerRemainingDays(days);
       } catch (error) {
         console.error("Error fetching remaining days:", error);
+        if (isActive) setExtendedTrainerRemainingDays(null);
       }
-    };
+    })();
 
-    fetchData();
+    return () => {
+      isActive = false;
+    };
   }, [trainerRemainingDays, session_days, extendedTrainer]);
 
-  //false means whole number of days
-  const FREE_TRAINER_DAYS_LEFT = personalTrainerDaysLeft(
-    trainers,
-    "trainer-remaining-days",
-    trainerRemainingDays,
-    session_days,
-    extendedTrainerRemainingDays,
-    false
+  // Derived value memoization
+  const FREE_TRAINER_DAYS_LEFT = useMemo(
+    () =>
+      personalTrainerDaysLeft(
+        trainers,
+        "trainer-remaining-days",
+        trainerRemainingDays,
+        session_days,
+        extendedTrainerRemainingDays,
+        false
+      ),
+    [trainers, trainerRemainingDays, session_days, extendedTrainerRemainingDays]
   );
 
-  const TrainerRemainingDaysLeftComponent = () => {
-    return (
-      <h3 style={{ fontSize: fontSize, color: color, lineHeight: lineHeight }}>
+  // Memoize styles to avoid reallocation
+  const headingStyle = useMemo(
+    () => ({ fontSize, color, lineHeight }),
+    [fontSize, color, lineHeight]
+  );
+
+  const TrainerRemainingDaysLeftComponent = useMemo(() => {
+    return () => (
+      <h3 style={headingStyle}>
         {FREE_TRAINER_DAYS_LEFT === "N/A"
           ? "N/A"
           : formatTime(FREE_TRAINER_DAYS_LEFT, "days-hours-minutes")}
       </h3>
     );
-  };
+  }, [FREE_TRAINER_DAYS_LEFT, headingStyle]);
 
-  return { TrainerRemainingDaysLeftComponent };
+  return {
+    TrainerRemainingDaysLeftComponent,
+    personalTrainerDaysLeft: FREE_TRAINER_DAYS_LEFT,
+  };
 };
 
 export default useTrainerRemainingDays;

@@ -1,149 +1,136 @@
-import React, { useEffect, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import useDashboardDatas from "./useDashboardDatas";
 import { getRemainingDaysLeft } from "../get/getRemainingDaysLeft";
 import LoadingEffect from "../../../components/mySection/loadingEffect/LoadingEffect";
 import RemainingDaysLeftComponent from "@components/mySection/forRenewal/RemainingDaysLeftComponent";
-// import PersonalTrainerComponents from "@components/mySection/forRenewal/PersonalTrainerComponents";
 import PersonalTrainerComponent from "../components/PersonalTrainerComponent";
-import TrainerRemainingDays from "../../../components/mySection/forRenewal/TrainerRemainingDays";
 
+// 🔹 Child Components moved outside for stability
+const UserImage = memo(({ src }) => (
+  <div className="col-3">
+    <img
+      src={src}
+      alt=""
+      className="circle"
+      style={{ border: "2px solid yellowGreen" }}
+    />
+  </div>
+));
+
+const UserInfo = memo(({ name, id, gymRate }) => (
+  <>
+    <h5>{name}</h5>
+    <p>ID: {id}</p>
+    <p style={{ color: "yellow", fontSize: "18px", lineHeight: "14px" }}>
+      {gymRate}
+    </p>
+  </>
+));
+
+const RemainingDaysWrapper = memo(({ userSub }) => (
+  <RemainingDaysLeftComponent
+    date_subscribed={userSub?.date_subscribed}
+    per={userSub?.subscription?.per?.per}
+    user_id={userSub?.flexprouser?.id}
+    session_days={userSub?.sub_session_days}
+    subscriptionId={userSub?.id}
+    id={userSub?.flexprouser?.id}
+    fullname={userSub?.flexprouser?.name}
+    fontColor="orange"
+    fontSize="14px"
+  />
+));
+
+const ActiveUserCard = memo(({ user }) => {
+  const sub = user?.usersubscription;
+  return (
+    <div className="clients-online">
+      <div className="row row2">
+        <UserImage src={user?.image} />
+        <div className="col-7">
+          <div className="clients-flex">
+            <UserInfo
+              name={sub?.flexprouser?.name}
+              id={sub?.flexprouser?.id}
+              gymRate={sub?.subscription?.gym_rate_desc}
+            />
+            <RemainingDaysWrapper userSub={sub} />
+            <PersonalTrainerComponent
+              trainers={sub?.trainer?.name}
+              trainerRemainingDays={user?.trainersRemainingDays}
+              session_days={sub?.session_days}
+              user_id={sub?.flexprouser?.id}
+              id={user.id}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+// 🔹 Main Hook
 const useUsersWithRemainingDaysDatas = () => {
-  const [refetch, setRefetch] = useState(false);
   const [usersWithRemaining, setUsersWithRemaining] = useState([]);
-
   const { activeAndInactiveDatas, isLoading } = useDashboardDatas();
 
   useEffect(() => {
-    const addRemainingDays = async () => {
-      if (!activeAndInactiveDatas?.activeAndInactiveUsers) return;
+    let isMounted = true;
 
-      setRefetch(true);
-      const users = await Promise.all(
-        activeAndInactiveDatas.activeAndInactiveUsers.map(async (user) => {
-          const remaining = await getRemainingDaysLeft(
-            user?.usersubscription?.date_subscribed,
-            user?.usersubscription?.subscription?.per?.per,
-            user?.usersubscription?.flexprouser?.user_id,
-            user?.usersubscription?.session_days,
-            user?.usersubscription?.id
-          );
-          return {
-            ...user,
-            remainingDays: remaining,
-          };
-        })
-      );
-      setUsersWithRemaining(users);
-      setRefetch(false);
+    const addRemainingDays = async () => {
+      const users = activeAndInactiveDatas?.activeAndInactiveUsers;
+      if (!users) return;
+
+      try {
+        const processed = await Promise.all(
+          users.map((user) =>
+            getRemainingDaysLeft(
+              user?.usersubscription?.date_subscribed,
+              user?.usersubscription?.subscription?.per?.per,
+              user?.usersubscription?.flexprouser?.user_id,
+              user?.usersubscription?.session_days,
+              user?.usersubscription?.id,
+              false
+            ).then((remaining) => ({
+              ...user,
+              remainingDays: remaining,
+            }))
+          )
+        );
+        if (isMounted) setUsersWithRemaining(processed);
+      } catch (e) {
+        console.error("Error processing remaining days:", e);
+      }
     };
 
-    if (!isLoading) {
-      addRemainingDays();
-    }
+    if (!isLoading) addRemainingDays();
+
+    return () => {
+      isMounted = false; // cleanup to prevent memory leaks
+    };
   }, [activeAndInactiveDatas, isLoading]);
 
-  const ActiveUsers = () => {
-    return usersWithRemaining?.filter(
-      (user) => user.remainingDays != "Expired"
-    );
-  };
+  // 🔹 Memoize filtered active users
+  const activeUsers = useMemo(
+    () => usersWithRemaining.filter((user) => user.remainingDays !== "Expired"),
+    [usersWithRemaining]
+  );
 
-  const PrivateRemainingDaysLeftComponent = ({ userSub }) => {
-    return (
-      <RemainingDaysLeftComponent
-        date_subscribed={userSub?.date_subscribed}
-        per={userSub?.subscription?.per?.per}
-        user_id={userSub?.flexprouser?.id}
-        session_days={userSub?.sub_session_days}
-        subscriptionId={userSub?.id}
-        id={userSub?.flexprouser?.id}
-        fullname={userSub?.flexprouser?.name}
-        fontColor={"orange"}
-        fontSize="14px"
-      />
-    );
-  };
-
-  const PrivatePersonalTrainingRemainingDays = () => {
-    return (
-      <div>
-        {/* TRAINER REMAINING DAYS */}
-        <h5>Extended Trainer Remaning Days:</h5>
-        {extendedTrainer?.length > 0 ? (
-          <TrainerRemainingDays
-            trainerRemainingDays={trainerRemainingDays}
-            session_days={session_days}
-            extendedTrainer={extendedTrainer}
-            trainers={trainers}
-            totalFreeTrainerLeft={totalFreeTrainerLeft}
-            setTotalFreeTrainerLeft={setTotalFreeTrainerLeft}
-          />
-        ) : (
-          <h4 style={{ fontSize: "20px", color: "orange" }}>N/A</h4>
-        )}
-      </div>
-    );
-  };
-
-  const ActiveUsersComponent = () => {
-    if (refetch || isLoading) {
-      return <LoadingEffect />;
-    }
+  const ActiveUsersComponent = memo(() => {
+    if (isLoading) return <LoadingEffect />;
     return (
       <div className="scrollable-list-of-user">
-        {ActiveUsers().map((user) => (
-          <div className="clients-online" key={user?.id}>
-            <div className="row row2">
-              <div className="col-3">
-                <img
-                  src={user?.image}
-                  alt=""
-                  className="circle"
-                  style={{ border: "2px solid yellowGreen" }}
-                />
-              </div>
-              <div className="col-7">
-                <div className="clients-flex">
-                  <h5>{user?.usersubscription?.flexprouser?.name}</h5>
-                  <p>ID: {user?.usersubscription?.flexprouser?.id}</p>
-                  <p
-                    style={{
-                      color: "yellow",
-                      fontSize: "18px",
-                      lineHeight: "14px",
-                    }}
-                  >
-                    {user?.usersubscription?.subscription?.gym_rate_desc}
-                  </p>
-
-                  <PrivateRemainingDaysLeftComponent
-                    userSub={user?.usersubscription}
-                  />
-                  <PersonalTrainerComponent
-                    trainers={user?.usersubscription?.trainer?.name}
-                    trainerRemainingDays={user?.trainersRemainingDays}
-                    session_days={user?.usersubscription?.session_days}
-                    user_id={user?.usersubscription?.flexprouser?.id}
-                    id={user.id}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+        {activeUsers.map((user) => (
+          <ActiveUserCard user={user} key={user?.id} />
         ))}
       </div>
     );
-  };
+  });
 
-  const NoOfActiveUsers = () => {
-    if (isLoading) {
-      return <LoadingEffect />;
-    }
-    return ActiveUsers().length;
-  };
+  const NoOfActiveUsers = () =>
+    isLoading ? <LoadingEffect /> : activeUsers.length;
 
   return {
-    refetch,
     usersWithRemaining,
     isLoading,
     ActiveUsersComponent,
