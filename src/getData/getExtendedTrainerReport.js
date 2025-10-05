@@ -1,86 +1,91 @@
 import instance from "../others/axiosInstance";
 import remainingDays from "../others/GetRemainingDays";
+import formatTime from "../others/ReadableFormatTime";
 
-const PT = (trainer_date_started, personal_training_session) => {
-  // Return promise directly
-  return remainingDays(
+const PT = async (trainer_date_started, personal_training_session) => {
+  // get free trainiers remaining days
+  const getTrainersRemainingDays = await remainingDays(
     trainer_date_started,
     "personal_training_day",
     personal_training_session
   );
+
+  return getTrainersRemainingDays;
 };
 
 const getExtendedTrainerReport = async (dateFrom, dateTo, trainer) => {
   try {
-    // Fetch both reports in parallel
-    const [response1, response2] = await Promise.all([
-      instance.get(
-        `/api/get_extended_trainer_report/?dateFrom=${dateFrom}&dateTo=${dateTo}&trainer=${trainer}`
-      ),
-      instance.get(
-        `/api/get_daypass_subscription_report/?dateFrom=${dateFrom}&dateTo=${dateTo}&trainer=${trainer}`
-      ),
-    ]);
+    const newUser = [];
 
-    const data = response1.data || [];
-    const data2 = response2.data || [];
+    // Fetch extended trainer report
+    const response = await instance.get(
+      `/api/get_extended_trainer_report/?dateFrom=${dateFrom}&dateTo=${dateTo}&trainer=${trainer}`
+    );
+    const data = response.data;
 
-    // Process extended trainer report in parallel
-    const extendedUsers = await Promise.all(
-      data.map(async (item) => {
-        const pt = await PT(item.date_extend, item.extended_session_day);
-        return {
+    // Fetch daypass subscription report
+    const response2 = await instance.get(
+      `/api/get_daypass_subscription_report/?dateFrom=${dateFrom}&dateTo=${dateTo}&trainer=${trainer}`
+    );
+    const data2 = response2.data;
+
+    // Process the extended trainer report data
+    for (const item of data) {
+      const object = {
+        id: item.id,
+        user: item.user_subscription.flexprouser.name,
+        date_extend: item.date_extend,
+        gym_rate_desc: item.user_subscription.subscription.gym_rate_desc,
+        trainer: item?.trainer?.name,
+        rate: item?.user_subscription.subscription.rate,
+        category: "extended_trainer",
+        extended_session_day: item?.extended_session_day,
+        rate_per_session: item?.trainer?.rate_per_session,
+        trainer_rate:
+          item?.trainer?.rate_per_session * item?.extended_session_day,
+        PT: await PT(item.date_extend, item.extended_session_day),
+      };
+
+      newUser.push(object);
+    }
+
+    // Process the daypass subscription report data
+    data2
+      ?.filter(
+        (user) =>
+          user?.personal_trainer != null &&
+          user?.personal_trainer?.name
+            ?.toUpperCase()
+            .includes(trainer.toUpperCase())
+      )
+      .forEach(async (item) => {
+        const object = {
           id: item.id,
-          user: item.user_subscription.flexprouser.name,
-          date_extend: item.date_extend,
-          gym_rate_desc: item.user_subscription.subscription.gym_rate_desc,
-          trainer: item?.trainer?.name,
-          rate: item?.user_subscription.subscription.rate,
-          category: "extended_trainer",
-          extended_session_day: item?.extended_session_day,
-          rate_per_session: item?.trainer?.rate_per_session,
-          trainer_rate:
-            item?.trainer?.rate_per_session * item?.extended_session_day,
-          PT: pt,
+          user: item.name,
+          date_extend: item.date_subscribed,
+          gym_rate_desc: item.subscription.gym_rate_desc,
+          trainer: item?.personal_trainer?.name,
+          rate: item.subscription.rate,
+          category: "daypass",
+          extended_session_day: 1,
+          rate_per_session: item?.personal_trainer?.rate_per_session,
+          trainer_rate: item?.personal_trainer?.rate_per_session * 1,
+          PT: await PT(item.date_subscribed, 1),
         };
-      })
-    );
 
-    // Process daypass report in parallel
-    const daypassUsers = await Promise.all(
-      data2
-        .filter(
-          (user) =>
-            user?.personal_trainer != null &&
-            user?.personal_trainer?.name
-              ?.toUpperCase()
-              .includes(trainer.toUpperCase())
-        )
-        .map(async (item) => {
-          const pt = await PT(item.date_subscribed, 1);
-          return {
-            id: item.id,
-            user: item.name,
-            date_extend: item.date_subscribed,
-            gym_rate_desc: item.subscription.gym_rate_desc,
-            trainer: item?.personal_trainer?.name,
-            rate: item.subscription.rate,
-            category: "daypass",
-            extended_session_day: 1,
-            rate_per_session: item?.personal_trainer?.rate_per_session,
-            trainer_rate: item?.personal_trainer?.rate_per_session * 1,
-            PT: pt,
-          };
-        })
-    );
+        newUser.push(object);
+      });
 
-    // Combine and sort by date descending
-    return [...extendedUsers, ...daypassUsers].sort(
-      (a, b) => new Date(b.date_extend) - new Date(a.date_extend)
-    );
+    // Sort the users by date_extend in descending order
+    const sortedUsers = newUser.sort((a, b) => {
+      const dateA = new Date(a.date_extend);
+      const dateB = new Date(b.date_extend);
+      return dateB - dateA;
+    });
+
+    return sortedUsers;
   } catch (err) {
     console.error("Error in fetching Extended Trainer Report:", err);
-    return [];
   }
 };
 

@@ -123,20 +123,9 @@ const TrainersModal = ({ id, option, selectedTrainer }) => {
     });
   };
 
-  function safeAtob(str) {
-    try {
-      if (!str || typeof str !== "string" || str.trim() === "") return "";
-      // Optional: check if string is valid base64 using regex
-      if (!/^[A-Za-z0-9+/=]+$/.test(str)) return "";
-      return atob(str);
-    } catch (e) {
-      return "";
-    }
-  }
-
   // Function to convert base64 to File object
   const base64toFile = (base64String, filename, mimeType) => {
-    const byteCharacters = safeAtob(base64String.split(",")[1]);
+    const byteCharacters = atob(base64String.split(",")[1]);
     const byteNumbers = new Array(byteCharacters.length);
     for (let i = 0; i < byteCharacters.length; i++) {
       byteNumbers[i] = byteCharacters.charCodeAt(i);
