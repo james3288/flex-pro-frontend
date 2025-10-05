@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
-import FormatDate from "../../../others/FormatDate";
-import formatTime from "../../../others/ReadableFormatTime";
+import FormatDate from "@others/FormatDate";
+import formatTime from "@others/ReadableFormatTime";
 
 const ExtendedTrainerHistory2 = ({ extendedTraining }) => {
   // Memoize formatted PT values for performance

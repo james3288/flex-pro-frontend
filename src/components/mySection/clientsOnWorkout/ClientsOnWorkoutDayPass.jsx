@@ -11,7 +11,7 @@ import formatTimeToString from "../../../others/formatTimeToString";
 import FormatDate from "../../../others/FormatDate";
 import UserDayPassLogout from "../clientsOnline/userDayPassLogout";
 
-const ClientsOnWorkoutDayPass = ({ online }) => {
+const ClientsOnWorkoutDayPass = ({ online, setRefreshKey }) => {
   const [remaining, setRemaining] = useState(0);
   const [extendedSubscript, setExtendedSubscript] = useState([]);
 
@@ -46,7 +46,7 @@ const ClientsOnWorkoutDayPass = ({ online }) => {
     const result = await UserDayPassLogout(online.time_in, online.id);
     //   setRefresher((prev) => prev + 1);
     //   setTempTimeOut(formatTimeToString(Date()));
-
+    setRefreshKey((prev) => prev + 1);
     console.log(result);
   };
 
@@ -124,7 +124,7 @@ const ClientsOnWorkoutDayPass = ({ online }) => {
             {/* {remaining < 0 ? "Expired" : remaining} */}
             {/* {formatTime(remaining, "all")} */}
             {remainingDaysLeft() === "0 day, 0 hours" && remaining < 0
-              ? "Expired" 
+              ? "Expired"
               : remainingDaysLeft()}
           </h5>
         </div>

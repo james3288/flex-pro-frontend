@@ -1,58 +1,57 @@
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import useDebounce from "./useDebounce";
 import getUsersOnlineByDate from "../getData/getUserOnlineByDate";
 import getDayPassUserOnline from "../getData/getDayPassUserOnline";
 import { useQuery } from "@tanstack/react-query";
 
-function getFormattedDate() {
-  const currentDate = new Date();
-  const year = currentDate.getFullYear();
-  let month = currentDate.getMonth() + 1;
-  month = month < 10 ? "0" + month : month;
-  let day = currentDate.getDate();
-  day = day < 10 ? "0" + day : day;
-  return `${year}-${month}-${day}`;
-}
+const getFormattedDate = () => {
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, "0");
+  const dd = String(now.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+};
 
 const useClientsOnWorkout2 = () => {
   const [search, setSearch] = useState("");
   const [date, setDate] = useState(getFormattedDate());
-
-  const handleSearchOnWorkout = (e) => {
-    setSearch(e.target.value);
-  };
-
-  const handleDateChange = (e) => {
-    setDate(e.target.value);
-  };
-
-  const queryKey = ["onWorkoutData", "dayPassOnWorkOutData"];
-  const { isPending, error, data, isLoading } = useQuery({
-    queryKey,
-    queryFn: async () => {
-      const usersOnline = await getUsersOnlineByDate(date);
-      const dayPassUsersOnline = await getDayPassUserOnline(date);
-      return {
-        usersOnline: usersOnline,
-        dayPassUsersOnline: dayPassUsersOnline,
-      };
-    },
-    refetchInterval: 1000,
-  });
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const debounceValue = useDebounce(search);
 
-  const onlineUsers = data?.usersOnline.filter((user) =>
-    user.usersubscription.flexprouser.name
-      .toLowerCase()
-      .includes(debounceValue.toLowerCase())
-  );
+  const handleSearchOnWorkout = (e) => setSearch(e.target.value);
+  const handleDateChange = (e) => setDate(e.target.value);
 
-  const onlineDayPassUsers = data?.dayPassUsersOnline.filter((user) =>
-    user.flexprouserdaypass.name
-      .toLowerCase()
-      .includes(debounceValue.toLowerCase())
-  );
+  const queryKey = ["onWorkoutData", date]; // refetch automatically when date changes
+
+  const { data, isLoading, error } = useQuery({
+    queryKey,
+    queryFn: async () => {
+      const [usersOnline, dayPassUsersOnline] = await Promise.all([
+        getUsersOnlineByDate(date),
+        getDayPassUserOnline(date),
+      ]);
+      return { usersOnline, dayPassUsersOnline };
+    },
+    staleTime: 30000, // 30 seconds cache
+    refetchOnWindowFocus: false,
+  });
+
+  const onlineUsers = useMemo(() => {
+    return data?.usersOnline?.filter((user) =>
+      user?.usersubscription?.flexprouser?.name
+        ?.toLowerCase()
+        .includes(debounceValue.toLowerCase())
+    );
+  }, [data?.usersOnline, debounceValue, refreshKey]);
+
+  const onlineDayPassUsers = useMemo(() => {
+    return data?.dayPassUsersOnline?.filter((user) =>
+      user?.flexprouserdaypass?.name
+        ?.toLowerCase()
+        .includes(debounceValue.toLowerCase())
+    );
+  }, [data?.dayPassUsersOnline, debounceValue, refreshKey]);
 
   return {
     date,
@@ -61,8 +60,9 @@ const useClientsOnWorkout2 = () => {
     onlineUsers,
     onlineDayPassUsers,
     isLoading,
-    isPending,
+    error,
     debounceValue,
+    setRefreshKey,
   };
 };
 

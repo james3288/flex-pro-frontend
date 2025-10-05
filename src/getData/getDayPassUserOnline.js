@@ -1,4 +1,3 @@
-import React from "react";
 import instance from "../others/axiosInstance";
 
 const getDayPassUserOnline = async (dateLog) => {
@@ -8,17 +7,13 @@ const getDayPassUserOnline = async (dateLog) => {
     );
     const users = response.data;
 
-    const newUser = await Promise.all(
-      users.map(async (user) => {
-        return {
-          ...user,
-        }; // If imgpath is null, use default image
-      })
-    );
+    // No need for async or Promise.all if no async work is done
+    const newUser = users.map((user) => ({ ...user }));
 
     return newUser;
   } catch (error) {
     console.error("Error fetching users:", error);
+    return []; // fallback to empty array to prevent downstream errors
   }
 };
 

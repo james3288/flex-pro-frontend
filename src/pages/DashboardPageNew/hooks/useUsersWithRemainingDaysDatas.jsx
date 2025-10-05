@@ -72,7 +72,7 @@ const ActiveUserCard = memo(({ user }) => {
 // 🔹 Main Hook
 const useUsersWithRemainingDaysDatas = () => {
   const [usersWithRemaining, setUsersWithRemaining] = useState([]);
-  const { activeAndInactiveDatas, isLoading } = useDashboardDatas();
+  const { activeAndInactiveDatas, isLoading, isPending } = useDashboardDatas();
 
   useEffect(() => {
     let isMounted = true;
@@ -117,7 +117,7 @@ const useUsersWithRemainingDaysDatas = () => {
   );
 
   const ActiveUsersComponent = memo(() => {
-    if (isLoading) return <LoadingEffect />;
+    if (isLoading || isPending) return <span>initializing...</span>;
     return (
       <div className="scrollable-list-of-user">
         {activeUsers.map((user) => (
