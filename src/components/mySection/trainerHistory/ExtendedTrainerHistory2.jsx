@@ -1,6 +1,11 @@
+<<<<<<< HEAD
 import React, { useMemo } from "react";
 import FormatDate from "@others/FormatDate";
 import formatTime from "@others/ReadableFormatTime";
+=======
+import FormatDate from "../../../others/FormatDate";
+import formatTime from "../../../others/ReadableFormatTime";
+>>>>>>> parent of c05bd45 (trainer page has been refactored and optimise using chagtp prompt)
 
 const ExtendedTrainerHistory2 = ({ extendedTraining }) => {
   return (
