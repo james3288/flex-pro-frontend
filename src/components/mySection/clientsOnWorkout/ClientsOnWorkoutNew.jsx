@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import YearValidation from "../../../others/YearValidation";
 import FormatDate from "../../../others/FormatDate";
 import ReactTimeAgo from "react-time-ago";
@@ -9,71 +9,92 @@ import useRemainingDaysLeft from "../../../hooks/useRemainingDaysLeft";
 import LoadingEffect from "../loadingEffect/LoadingEffect";
 
 const ClientsOnWorkoutNew = ({ online }) => {
-  const [remainingDaysLeftNew, setRemainingDaysLeftNew] = React.useState();
-  const yearValidation = useMemo(
-    () => YearValidation(online.time_out),
-    [online.time_out]
-  );
+  const [remainingDaysLeftNew, setRemainingDaysLeftNew] = useState();
+
+  // Early destructuring for performance and clarity
+  const userSub = online?.usersubscription;
+  const user = userSub?.flexprouser;
+  const subscription = userSub?.subscription;
+
+  const yearValidation = YearValidation(online.time_out);
+
+  // Stable timestamp
   const timestamp = useMemo(
     () => new Date(online.date_log).getTime(),
     [online.date_log]
   );
-  const trigger = useLogoutStore((state) => state.trigger);
 
+  // Custom hook for remaining days
   const { isLoading, remainingDaysLeft } = useRemainingDaysLeft(
-    online.usersubscription.date_subscribed,
-    online.usersubscription.subscription.per.per,
-    online.usersubscription.flexprouser.id,
-    online.usersubscription.sub_session_days,
-    online.usersubscription.id
+    userSub?.date_subscribed,
+    subscription?.per?.per,
+    user?.id,
+    userSub?.sub_session_days,
+    userSub?.id
   );
 
-  const remDaysResult = async () => {
-    const result = await remainingDaysLeft();
-    setRemainingDaysLeftNew(result);
-  };
+  // Async fetch remaining days safely
+  useEffect(() => {
+    let isMounted = true;
 
-  remDaysResult();
+    const fetchDays = async () => {
+      try {
+        const result = await remainingDaysLeft();
+        if (isMounted) setRemainingDaysLeftNew(result);
+      } catch (err) {
+        console.error("Failed to fetch remaining days:", err);
+      }
+    };
 
-  const onlineOfflineClass = useMemo(
-    () => (yearValidation === 1990 ? "online" : "offline"),
-    [yearValidation]
+    fetchDays();
+    return () => {
+      isMounted = false;
+    };
+  }, [remainingDaysLeft]);
+
+  const isOnline = yearValidation === 1990;
+
+  // Memoized computed values
+  const styles = useMemo(() => {
+    const base = {};
+    if (remainingDaysLeftNew === "Expired" && isOnline)
+      base.border = "2px solid red";
+    return base;
+  }, [remainingDaysLeftNew, isOnline]);
+
+  const imageStyle = useMemo(
+    () => (isOnline ? { color: "green" } : { border: "2px solid red" }),
+    [isOnline]
   );
 
-  const onlineOfflineBtnClass = useMemo(
+  const onlineOfflineClass = isOnline ? "online" : "offline";
+  const onlineOfflineBtnClass =
+    remainingDaysLeftNew === "Expired" && isOnline
+      ? "btn btn-danger"
+      : "btn btn-warning";
+
+  // Memoize extended subscriptions to prevent re-render
+  const extendedSubs = useMemo(
     () =>
-      remainingDaysLeftNew === "Expired" && yearValidation === 1990
-        ? "btn btn-danger"
-        : "btn btn-warning",
-    [remainingDaysLeftNew, yearValidation]
-  );
-
-  const expiredStyle = useMemo(
-    () =>
-      remainingDaysLeftNew === "Expired" && yearValidation === 1990
-        ? { border: "2px solid red" }
-        : { border: "0px solid black" },
-    [remainingDaysLeftNew, yearValidation]
+      online.extendedSubscriptions?.map((extended, idx) => (
+        <p key={idx} style={{ color: "yellowgreen", margin: 0 }}>
+          - {extended.subscription.gym_rate_desc} / extend{" "}
+          {extended.extended_session_day} day/s
+        </p>
+      )),
+    [online.extendedSubscriptions]
   );
 
   return (
     <div className="col-lg-3 col-xs-12">
-      <div className="c-col" style={expiredStyle}>
+      <div className="c-col" style={styles}>
         <div className={onlineOfflineClass}></div>
+
         <div className="c-col-name">
-          <img
-            src={online.image}
-            alt=""
-            style={
-              yearValidation === 1990
-                ? { color: "green" }
-                : { border: "2px solid red" }
-            }
-          />
+          <img src={online.image} alt="" style={imageStyle} />
           <div className="col-name">
             <h4>
-              <span>ID:{online.usersubscription.flexprouser.id}</span>{" "}
-              {online.usersubscription.flexprouser.name}
+              <span>ID:{user?.id}</span> {user?.name}
             </h4>
           </div>
         </div>
@@ -81,13 +102,12 @@ const ClientsOnWorkoutNew = ({ online }) => {
         <div className="c-col-time-in-out">
           <h4>
             Time In: {formatTimeToString(online.time_in)} <br />
-            Time Out:{" "}
-            {yearValidation === 1990
-              ? "--:--"
-              : formatTimeToString(online.time_out)}
+            Time Out: {isOnline ? "--:--" : formatTimeToString(online.time_out)}
           </h4>
+
           <p>{FormatDate(online.date_log)}</p>
-          {yearValidation === 1990 && (
+
+          {isOnline && (
             <p>
               <ReactTimeAgo
                 date={timestamp}
@@ -97,16 +117,12 @@ const ClientsOnWorkoutNew = ({ online }) => {
               ago
             </p>
           )}
+
           <h3 style={{ color: "yellowgreen" }}>
-            {online.usersubscription.subscription.gym_rate_desc}
+            {subscription?.gym_rate_desc}
           </h3>
 
-          {online.extendedSubscriptions?.map((extended, idx) => (
-            <p key={idx} style={{ color: "yellowgreen", margin: "0" }}>
-              - {extended.subscription.gym_rate_desc} / extend{" "}
-              {extended.extended_session_day} day/s
-            </p>
-          ))}
+          {extendedSubs}
 
           <h5>Remaining Days:</h5>
           <RemainingDaysComponent
@@ -126,16 +142,18 @@ const ClientsOnWorkoutNew = ({ online }) => {
   );
 };
 
-const RemainingDaysComponent = ({ remainingDaysLeft, isLoading }) => {
-  return isLoading ? (
-    <LoadingEffect />
-  ) : (
-    <h5 style={{ color: "orange" }}>
-      {remainingDaysLeft === "0 day, 0 hours"
-        ? "initializing..."
-        : remainingDaysLeft}
-    </h5>
-  );
-};
+// ✅ Memoized child avoids unnecessary re-renders
+const RemainingDaysComponent = React.memo(
+  ({ remainingDaysLeft, isLoading }) => {
+    if (isLoading) return <LoadingEffect />;
+    return (
+      <h5 style={{ color: "orange" }}>
+        {remainingDaysLeft === "0 day, 0 hours"
+          ? "initializing..."
+          : remainingDaysLeft}
+      </h5>
+    );
+  }
+);
 
 export default ClientsOnWorkoutNew;

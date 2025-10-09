@@ -3,6 +3,7 @@ import useDebounce from "./useDebounce";
 import getUsersOnlineByDate from "../getData/getUserOnlineByDate";
 import getDayPassUserOnline from "../getData/getDayPassUserOnline";
 import { useQuery } from "@tanstack/react-query";
+import { useLogoutStore } from "../store/useLogoutStore";
 
 const getFormattedDate = () => {
   const now = new Date();
@@ -18,11 +19,12 @@ const useClientsOnWorkout2 = () => {
   const [refreshKey, setRefreshKey] = useState(0);
 
   const debounceValue = useDebounce(search);
+  const trigger = useLogoutStore((state) => state.trigger);
 
   const handleSearchOnWorkout = (e) => setSearch(e.target.value);
   const handleDateChange = (e) => setDate(e.target.value);
 
-  const queryKey = ["onWorkoutData", date]; // refetch automatically when date changes
+  const queryKey = ["onWorkoutData", date, trigger]; // refetch automatically when date changes
 
   const { data, isLoading, error } = useQuery({
     queryKey,
@@ -33,8 +35,9 @@ const useClientsOnWorkout2 = () => {
       ]);
       return { usersOnline, dayPassUsersOnline };
     },
-    staleTime: 30000, // 30 seconds cache
-    refetchOnWindowFocus: false,
+
+    // refetchOnWindowFocus: false,
+    // refetchInterval: 30000, // Refetch every 30 seconds
   });
 
   const onlineUsers = useMemo(() => {
