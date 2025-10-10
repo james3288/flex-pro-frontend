@@ -26,8 +26,8 @@ const useGetActiveAndInactiveUsers = () => {
     queryKey: ["forActiveAndInactiveUsers"],
     queryFn: async () => {
       const activeUser = await getActiveUsers();
-      // const dayPassUser = await getDayPassUserActive();
-      return { activeAndInactiveUsers: activeUser };
+      const dayPassUser = await getDayPassUserActive();
+      return { activeAndInactiveUsers: activeUser, dayPassUser: dayPassUser };
     },
   });
 

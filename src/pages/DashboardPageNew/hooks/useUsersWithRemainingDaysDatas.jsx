@@ -1,9 +1,10 @@
 import { memo, useEffect, useMemo, useState } from "react";
 import useDashboardDatas from "./useDashboardDatas";
 import { getRemainingDaysLeft } from "../get/getRemainingDaysLeft";
-import LoadingEffect from "../../../components/mySection/loadingEffect/LoadingEffect";
+import LoadingEffect from "@components/mySection/loadingEffect/LoadingEffect";
 import RemainingDaysLeftComponent from "@components/mySection/forRenewal/RemainingDaysLeftComponent";
 import PersonalTrainerComponent from "../components/PersonalTrainerComponent";
+import dayPassImage from "@assets/img/dummy.png";
 
 // 🔹 Child Components moved outside for stability
 const UserImage = memo(({ src }) => (
@@ -41,6 +42,20 @@ const RemainingDaysWrapper = memo(({ userSub }) => (
   />
 ));
 
+const RemainingDaysDayPassWrapper = memo(({ userSub }) => (
+  <RemainingDaysLeftComponent
+    date_subscribed={userSub?.date_subscribed}
+    per={userSub?.subscription?.per?.per}
+    user_id={userSub?.id}
+    session_days={1}
+    subscriptionId={userSub?.subscription?.id}
+    id={userSub?.id}
+    fullname={userSub?.name}
+    fontColor="orange"
+    fontSize="14px"
+  />
+));
+
 const ActiveUserCard = memo(({ user }) => {
   const sub = user?.usersubscription;
   return (
@@ -69,16 +84,42 @@ const ActiveUserCard = memo(({ user }) => {
   );
 });
 
+const ActiveDayPassUserCard = memo(({ user }) => {
+  const sub = user;
+  return (
+    <div className="clients-online">
+      <div className="row row2">
+        <UserImage src={dayPassImage} />
+        <div className="col-7">
+          <div className="clients-flex">
+            <UserInfo
+              name={sub?.name}
+              id={sub?.id}
+              gymRate={sub?.subscription?.gym_rate_desc}
+            />
+            <RemainingDaysDayPassWrapper userSub={sub} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+});
+
 // 🔹 Main Hook
 const useUsersWithRemainingDaysDatas = () => {
   const [usersWithRemaining, setUsersWithRemaining] = useState([]);
+  const [dayPassUserWithRemaining, setDayPassUserWithRemaining] = useState([]);
+
   const { activeAndInactiveDatas, isLoading, isPending } = useDashboardDatas();
 
+  const { activeAndInactiveUsers, dayPassUser } = activeAndInactiveDatas || {};
+
+  // 🔹 Effect to compute remaining days for activeUsers
   useEffect(() => {
     let isMounted = true;
 
     const addRemainingDays = async () => {
-      const users = activeAndInactiveDatas?.activeAndInactiveUsers;
+      const users = activeAndInactiveUsers;
       if (!users) return;
 
       try {
@@ -108,11 +149,57 @@ const useUsersWithRemainingDaysDatas = () => {
     return () => {
       isMounted = false; // cleanup to prevent memory leaks
     };
-  }, [activeAndInactiveDatas, isLoading]);
+  }, [activeAndInactiveUsers, isLoading]);
+
+  // 🔹 Effect to compute remaining days for daypassUser
+  useEffect(() => {
+    let isMounted = true;
+
+    const addRemainingDays = async () => {
+      const users = dayPassUser;
+      if (!users) return;
+
+      try {
+        const processed = await Promise.all(
+          users.map((user) =>
+            getRemainingDaysLeft(
+              user?.date_subscribed,
+              user?.subscription?.per?.per,
+              user?.id,
+              1,
+              user?.subscription?.id,
+              false
+            ).then((remaining) => ({
+              ...user,
+              remainingDays: remaining,
+            }))
+          )
+        );
+        if (isMounted) setDayPassUserWithRemaining(processed);
+      } catch (e) {
+        console.error("Error processing remaining days:", e);
+      }
+    };
+
+    if (!isLoading) addRemainingDays();
+
+    return () => {
+      isMounted = false; // cleanup to prevent memory leaks
+    };
+  }, [dayPassUser, isLoading]);
 
   // 🔹 Memoize filtered active users
   const activeUsers = useMemo(
     () => usersWithRemaining.filter((user) => user.remainingDays !== "Expired"),
+    [usersWithRemaining]
+  );
+
+  // 🔹 Memoize filtered active users
+  const activeDayPassUser = useMemo(
+    () =>
+      dayPassUserWithRemaining.filter(
+        (user) => user.remainingDays !== "Expired"
+      ),
     [usersWithRemaining]
   );
 
@@ -123,12 +210,19 @@ const useUsersWithRemainingDaysDatas = () => {
         {activeUsers.map((user) => (
           <ActiveUserCard user={user} key={user?.id} />
         ))}
+        {activeDayPassUser.map((user) => (
+          <ActiveDayPassUserCard user={user} key={user?.id} />
+        ))}
       </div>
     );
   });
 
   const NoOfActiveUsers = () =>
-    isLoading ? <LoadingEffect /> : activeUsers.length;
+    isLoading ? (
+      <LoadingEffect />
+    ) : (
+      activeUsers.length + activeDayPassUser?.length
+    );
 
   return {
     usersWithRemaining,

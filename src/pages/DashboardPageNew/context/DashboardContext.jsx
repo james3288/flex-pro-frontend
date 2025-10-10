@@ -6,6 +6,7 @@ export const DashboardContext = createContext();
 export const DashboardProvider = ({ children }) => {
   const { data, isLoading, isPending } = useGetActiveAndInactiveUsers();
 
+
   return (
     <DashboardContext.Provider
       value={{ activeAndInactiveDatas: data, isLoading, isPending }}
