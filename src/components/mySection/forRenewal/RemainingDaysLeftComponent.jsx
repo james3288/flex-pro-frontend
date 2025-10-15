@@ -93,7 +93,9 @@ const RemainingDaysLeftComponent = ({
     }
   }, [remaining, id, location.pathname, showToastMessage]);
 
-  return (
+  return daysOnly ? (
+    remaining
+  ) : (
     <>
       <h5 style={{ fontSize: "18px" }}>Subscription Remaining Days:</h5>
       <h4 style={{ fontSize, color: fontColor }}>

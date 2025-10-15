@@ -9,10 +9,10 @@ const timeStampAddDays = (timeStamp, extendedDays, daysonly) => {
   if (timestamp < 0) {
     return "Expired";
   }
-
+  console.log(daysonly);
   return daysonly === false
     ? formatTime(timestamp, "days-hours-minutes-seconds")
-    : formatTime(timestamp, "days-left");
+    : formatTime(timestamp, "days-only");
 };
 
 const getSubscriptionDaysLeft = (

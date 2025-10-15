@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import getActiveAndInactiveUsers from "../getData/getActiveAndInactiveUsers";
 import useGetActiveUsers from "./useGetActiveUsers";
 import useGetDayPassUsers from "./useGetDayPassUsers";
+import getForRenewalUsers from "../getData/getForRenewalUsers";
 
 const useGetActiveAndInactiveUsers = () => {
   // const queryKey = ["forActiveAndInactiveUsers"];
@@ -27,7 +28,12 @@ const useGetActiveAndInactiveUsers = () => {
     queryFn: async () => {
       const activeUser = await getActiveUsers();
       const dayPassUser = await getDayPassUserActive();
-      return { activeAndInactiveUsers: activeUser, dayPassUser: dayPassUser };
+      const renewalUser = await getForRenewalUsers();
+      return {
+        activeAndInactiveUsers: activeUser,
+        dayPassUser: dayPassUser,
+        renewalUser: renewalUser,
+      };
     },
   });
 
