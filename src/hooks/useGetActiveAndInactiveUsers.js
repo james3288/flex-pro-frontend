@@ -3,6 +3,7 @@ import getActiveAndInactiveUsers from "../getData/getActiveAndInactiveUsers";
 import useGetActiveUsers from "./useGetActiveUsers";
 import useGetDayPassUsers from "./useGetDayPassUsers";
 import getForRenewalUsers from "../getData/getForRenewalUsers";
+import useClientsOnWorkout2 from "./useClientsOnWorkout2";
 
 const useGetActiveAndInactiveUsers = () => {
   // const queryKey = ["forActiveAndInactiveUsers"];
@@ -29,6 +30,7 @@ const useGetActiveAndInactiveUsers = () => {
       const activeUser = await getActiveUsers();
       const dayPassUser = await getDayPassUserActive();
       const renewalUser = await getForRenewalUsers();
+
       return {
         activeAndInactiveUsers: activeUser,
         dayPassUser: dayPassUser,

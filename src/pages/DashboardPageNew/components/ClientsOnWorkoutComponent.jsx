@@ -1,14 +1,16 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import useOnlineUsersData from "../hooks/useOnlineUsersData";
 
 const ClientsOnWorkoutComponent = () => {
+  const { OnlineUserComponent, NoOfOnlineUsers } = useOnlineUsersData();
   return (
     <div className="col-lg-3 col-xs-12">
       <div className="dashboard-col">
-        <span>CLIENTS ON WORKOUT</span>
-        <h1>22</h1>
-
-        <div className="scrollable-list-of-user"></div>
+        <h3 style={{ color: "yellowGreen" }}>
+          ONLINE USER <span>{NoOfOnlineUsers()}</span>
+        </h3>
+        <OnlineUserComponent />
       </div>
       <NavLink className="btn btn-danger" to="/clients-on-workout">
         View More

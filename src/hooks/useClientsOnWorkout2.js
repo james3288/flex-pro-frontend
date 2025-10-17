@@ -26,7 +26,7 @@ const useClientsOnWorkout2 = () => {
 
   const queryKey = ["onWorkoutData", date, trigger]; // refetch automatically when date changes
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, isPending } = useQuery({
     queryKey,
     queryFn: async () => {
       const [usersOnline, dayPassUsersOnline] = await Promise.all([
@@ -63,6 +63,7 @@ const useClientsOnWorkout2 = () => {
     onlineUsers,
     onlineDayPassUsers,
     isLoading,
+    isPending,
     error,
     debounceValue,
     setRefreshKey,
