@@ -5,7 +5,8 @@ import LoadingEffect from "@components/mySection/loadingEffect/LoadingEffect";
 import RemainingDaysLeftComponent from "@components/mySection/forRenewal/RemainingDaysLeftComponent";
 import PersonalTrainerComponent from "../components/PersonalTrainerComponent";
 import dayPassImage from "@assets/img/dummy.png";
-import SpinnerComponent from "../../../components/spinner/SpinnerComponent";
+import Loader2 from "../../../components/ui/loader2/Loader2";
+import Loader3 from "../../../components/ui/loader3/Loader3";
 
 // 🔹 Child Components moved outside for stability
 const UserImage = memo(({ src }) => (
@@ -208,7 +209,7 @@ const useUsersWithRemainingDaysDatas = () => {
   );
 
   const ActiveUsersComponent = memo(() => {
-    if (isLoading || isPending) return <span>initializing...</span>;
+    if (isLoading || isPending) return <LoadingEffect />;
     return (
       <div className="scrollable-list-of-user">
         {activeUsers.map((user) => (
@@ -222,11 +223,7 @@ const useUsersWithRemainingDaysDatas = () => {
   });
 
   const NoOfActiveUsers = () =>
-    isLoading ? (
-      <SpinnerComponent />
-    ) : (
-      activeUsers.length + activeDayPassUser?.length
-    );
+    isLoading ? <Loader3 /> : activeUsers.length + activeDayPassUser?.length;
 
   return {
     usersWithRemaining,

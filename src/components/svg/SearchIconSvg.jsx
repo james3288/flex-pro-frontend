@@ -1,4 +1,4 @@
-const SearchIconSvg = () => {
+export const SearchIconSvg = () => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -36,5 +36,3 @@ const SearchIconSvg = () => {
     </svg>
   );
 };
-
-export default SearchIconSvg;

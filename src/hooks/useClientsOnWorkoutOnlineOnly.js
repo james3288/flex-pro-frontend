@@ -1,12 +1,12 @@
 import { useState, useMemo, useEffect } from "react";
 import useDebounce from "./useDebounce";
-import getUsersOnlineByDate from "../getData/getUserOnlineByDate";
 import getDayPassUserOnline from "../getData/getDayPassUserOnline";
 import { useQuery } from "@tanstack/react-query";
 import { useLogoutStore } from "@store/useLogoutStore";
 import { getFormattedDate } from "@others/dateUtilities";
+import getUserOnlineNotIncludeOffline from "../getData/getUserOnlineNotIncludeOffline";
 
-const useClientsOnWorkout2 = () => {
+const useClientsOnWorkoutOnlineOnly = () => {
   const [search, setSearch] = useState("");
   const [date, setDate] = useState(getFormattedDate());
   const [refreshKey, setRefreshKey] = useState(0);
@@ -23,7 +23,7 @@ const useClientsOnWorkout2 = () => {
     queryKey,
     queryFn: async () => {
       const [usersOnline, dayPassUsersOnline] = await Promise.all([
-        getUsersOnlineByDate(date),
+        getUserOnlineNotIncludeOffline(),
         getDayPassUserOnline(date),
       ]);
       return { usersOnline, dayPassUsersOnline };
@@ -34,11 +34,7 @@ const useClientsOnWorkout2 = () => {
   });
 
   const onlineUsers = useMemo(() => {
-    return data?.usersOnline?.filter((user) =>
-      user?.usersubscription?.flexprouser?.name
-        ?.toLowerCase()
-        .includes(debounceValue.toLowerCase())
-    );
+    return data?.usersOnline;
   }, [data?.usersOnline, debounceValue, refreshKey]);
 
   const onlineDayPassUsers = useMemo(() => {
@@ -63,4 +59,4 @@ const useClientsOnWorkout2 = () => {
   };
 };
 
-export default useClientsOnWorkout2;
+export default useClientsOnWorkoutOnlineOnly;

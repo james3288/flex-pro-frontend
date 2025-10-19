@@ -6,6 +6,7 @@ import formatTimeToString from "../../../others/formatTimeToString";
 import ReactTimeAgo from "react-time-ago";
 import YearValidation from "../../../others/YearValidation";
 import FormatDate from "../../../others/FormatDate";
+import useClientsOnWorkoutOnlineOnly from "../../../hooks/useClientsOnWorkoutOnlineOnly";
 
 // 🔹 Child Components moved outside for stability
 
@@ -120,7 +121,7 @@ const useOnlineUsersData = () => {
     onlineDayPassUsers = [],
     isLoading,
     isPending,
-  } = useClientsOnWorkout2();
+  } = useClientsOnWorkoutOnlineOnly();
 
   const OnlineUserComponent = memo(() => {
     if (isLoading || isPending) return <span>initializing...</span>;

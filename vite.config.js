@@ -15,6 +15,8 @@ export default defineConfig({
       "@getData": path.resolve(__dirname, "./src/getData"),
       "@pages": path.resolve(__dirname, "./src/pages"),
       "@others": path.resolve(__dirname, "./src/others"),
+      "@store": path.resolve(__dirname, "./src/store"),
+      "@svg": path.resolve(__dirname, "./src/components/svg"),
 
       // Add more aliases as needed
     },

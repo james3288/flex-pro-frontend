@@ -15,9 +15,11 @@ const extendedSub = async (subscriptionId) => {
   }
 };
 
-const getUsersOnlineByDate = async (dateLog) => {
+const getUserOnlineNotIncludeOffline = async () => {
   try {
-    const response = await instance.get(`/api/user_online_by_date/${dateLog}`);
+    const response = await instance.get(
+      `/api/get_user_online_not_including_offline`
+    );
 
     const users = response.data;
 
@@ -64,4 +66,4 @@ const getUsersOnlineByDate = async (dateLog) => {
   }
 };
 
-export default getUsersOnlineByDate;
+export default getUserOnlineNotIncludeOffline;
