@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 import useUsersWithRemainingDaysDatas from "../hooks/useUsersWithRemainingDaysDatas";
 
 const ActiveUserComponent = () => {
-  const { ActiveUsersComponent, NoOfActiveUsers } =
+  const { ActiveUsersComponent, NoOfActiveUsers, isLoading } =
     useUsersWithRemainingDaysDatas();
 
   return (
@@ -13,7 +13,11 @@ const ActiveUserComponent = () => {
         </h3>
         <ActiveUsersComponent />
       </div>
-      <NavLink className="btn btn-danger" to="/active-users">
+      <NavLink
+        className="btn btn-danger"
+        to="/active-users"
+        style={{ display: isLoading && "none" }}
+      >
         View More
       </NavLink>
     </div>

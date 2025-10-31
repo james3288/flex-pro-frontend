@@ -24,31 +24,42 @@ const ActiveUsersComponent = ({
 }) => {
   // if (fetchStatus === "fetching") return <LoadingEffect />;
 
-  return users?.map((user) => (
-    <RenewalUsers
-      key={user.id}
-      blobPic={user.image}
-      registeredName={user.usersubscription.flexprouser?.name}
-      date_subscribed={user.usersubscription.date_subscribed}
-      subscription={user.usersubscription.subscription.gym_rate_desc}
-      remainingDays={user.remainingDays}
-      per={user.usersubscription.subscription.per.per}
-      user_id={user.usersubscription.flexprouser?.id}
-      id={user.id}
-      trainers={user.usersubscription.trainer?.name}
-      trainerRemainingDays={user?.trainersRemainingDays}
-      subscriptionId={user?.usersubscription.id}
-      setUserSubscriptionId={setUserSubscriptionId}
-      session_days={user.usersubscription.session_days}
-      setModalTitle={setModalTitle}
-      setExtendedSubId={setExtendedSubId}
-      setExtendedTrainerId={setExtendedTrainerId}
-      contactNo={user.usersubscription.flexprouser?.contact_number}
-      trainer_date_started={user.usersubscription.trainer_date_started}
-      packages_details={user.usersubscription.subscription.packages_details}
-      sub_session_days={user?.usersubscription.sub_session_days}
-    />
-  ));
+  return users?.map((user) => {
+    const {
+      remainingDays,
+      image,
+      id,
+      usersubscription: userSubData,
+      trainersRemainingDays,
+    } = user;
+
+    console.log(userSubData);
+    return (
+      <RenewalUsers
+        key={id}
+        blobPic={image}
+        registeredName={userSubData.flexprouser?.name}
+        date_subscribed={userSubData.date_subscribed}
+        subscription={userSubData.subscription.gym_rate_desc}
+        remainingDays={remainingDays}
+        per={userSubData.subscription.per.per}
+        user_id={userSubData.flexprouser?.id}
+        id={id}
+        trainers={userSubData.trainer?.name}
+        trainerRemainingDays={trainersRemainingDays}
+        subscriptionId={userSubData.id}
+        setUserSubscriptionId={setUserSubscriptionId}
+        session_days={userSubData.session_days}
+        setModalTitle={setModalTitle}
+        setExtendedSubId={setExtendedSubId}
+        setExtendedTrainerId={setExtendedTrainerId}
+        contactNo={userSubData.flexprouser?.contact_number}
+        trainer_date_started={userSubData.trainer_date_started}
+        packages_details={userSubData.subscription.packages_details}
+        sub_session_days={userSubData.sub_session_days}
+      />
+    );
+  });
 };
 
 const ActiveDayPassUsersComponent = ({

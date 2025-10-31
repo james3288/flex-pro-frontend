@@ -3,7 +3,8 @@ import { NavLink } from "react-router-dom";
 import useOnlineUsersData from "../hooks/useOnlineUsersData";
 
 const ClientsOnWorkoutComponent = () => {
-  const { OnlineUserComponent, NoOfOnlineUsers } = useOnlineUsersData();
+  const { OnlineUserComponent, NoOfOnlineUsers, isLoading } =
+    useOnlineUsersData();
   return (
     <div className="col-lg-3 col-xs-12">
       <div className="dashboard-col">
@@ -12,7 +13,11 @@ const ClientsOnWorkoutComponent = () => {
         </h3>
         <OnlineUserComponent />
       </div>
-      <NavLink className="btn btn-danger" to="/clients-on-workout">
+      <NavLink
+        className="btn btn-danger"
+        to="/clients-on-workout"
+        style={{ display: isLoading && "none" }}
+      >
         View More
       </NavLink>
     </div>

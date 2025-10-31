@@ -188,6 +188,7 @@ const AddTrainerModal = ({
                   </option>
                 ))}
               </select>
+              <br />
               {state.trainersName == 0 && (
                 <span style={{ color: "red" }}>select trainers</span>
               )}
@@ -210,7 +211,7 @@ const AddTrainerModal = ({
                 <span style={{ color: "red" }}>input must be day/s</span>
               )
             )}
-
+            <br />
             <label className="col-form-label">Training Date Started:</label>
             <input
               type="datetime-local"

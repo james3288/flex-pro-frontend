@@ -19,7 +19,7 @@ const isUserOnline = ({ user }) => {
 };
 
 const UserImage = memo(({ src, isOnline }) => (
-  <div className="col-3">
+  <div className="col-3 user-image">
     <img
       src={src}
       alt=""
@@ -33,7 +33,7 @@ const UserInfo = memo(({ name, id, gymRate }) => (
   <>
     <h5>{name}</h5>
     <p>ID: {id}</p>
-    <p style={{ color: "yellow", fontSize: "18px", lineHeight: "14px" }}>
+    <p style={{ color: "yellow", fontSize: "18px", lineHeight: "19px" }}>
       {gymRate}
     </p>
   </>

@@ -5,12 +5,11 @@ import LoadingEffect from "@components/mySection/loadingEffect/LoadingEffect";
 import RemainingDaysLeftComponent from "@components/mySection/forRenewal/RemainingDaysLeftComponent";
 import PersonalTrainerComponent from "../components/PersonalTrainerComponent";
 import dayPassImage from "@assets/img/dummy.png";
-import Loader2 from "../../../components/ui/loader2/Loader2";
 import Loader3 from "../../../components/ui/loader3/Loader3";
 
 // 🔹 Child Components moved outside for stability
 const UserImage = memo(({ src }) => (
-  <div className="col-3">
+  <div className="col-3 user-image">
     <img
       src={src}
       alt=""
@@ -24,7 +23,7 @@ const UserInfo = memo(({ name, id, gymRate }) => (
   <>
     <h5>{name}</h5>
     <p>ID: {id}</p>
-    <p style={{ color: "yellow", fontSize: "18px", lineHeight: "14px" }}>
+    <p style={{ color: "yellow", fontSize: "18px", lineHeight: "19px" }}>
       {gymRate}
     </p>
   </>

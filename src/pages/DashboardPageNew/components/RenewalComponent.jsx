@@ -3,7 +3,8 @@ import { NavLink } from "react-router-dom";
 import useUsersRenewal from "../hooks/useUsersRenewal";
 
 const RenewalComponent = () => {
-  const { ActiveUsersComponent, NoOfActiveUsers } = useUsersRenewal();
+  const { ActiveUsersComponent, NoOfActiveUsers, isLoading } =
+    useUsersRenewal();
 
   return (
     <div className="col-lg-3 col-xs-12">
@@ -13,7 +14,11 @@ const RenewalComponent = () => {
         </h3>
         <ActiveUsersComponent />
       </div>
-      <NavLink className="btn btn-danger" to="/for-renewal-users">
+      <NavLink
+        className="btn btn-danger"
+        to="/for-renewal-users"
+        style={{ display: isLoading && "none" }}
+      >
         View More
       </NavLink>
     </div>
