@@ -18,13 +18,16 @@ import ExclamationSvg from "../svg/exclamationSvg";
 import useLoginAttempt from "../face-scanner/hooks/useLoginAttempt";
 import useLoginMutation from "../face-scanner/hooks/useLoginMutation";
 import useSaveTimeRecords from "./users/hooks/useSaveTimeRecords";
-
+import Loading4 from "../ui/loading4/Loading4";
+import Loader3 from "../ui/loader3/Loader3";
 const SmallCentered = ({ children, style }) => (
   <div
     style={{
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
+      flexDirection: "column",
+      gap: " 10px",
       ...style,
     }}
   >
@@ -83,6 +86,7 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
     data: users = [],
     fetchStatus,
     isLoading: isLoadingActiveAndInactiveUser,
+    refetch,
   } = useGetActiveAndInactiveUsers();
 
   // login section hook (returns many callbacks/values) - keep stable by destructuring once
@@ -244,6 +248,8 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
     [isLoadingActiveAndInactiveUser, handleUserRefresh]
   );
 
+  const RefreshButton = useCallback(() => {});
+
   const LoginByDayPassButton = useCallback(
     () => (
       <button
@@ -252,6 +258,7 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
         data-target="#daypass-login-modal"
         onClick={handleDayPassLoginClick}
         style={{ zIndex: 9999 }}
+        disabled={isLoadingActiveAndInactiveUser}
       >
         Login Daypass
       </button>
@@ -263,8 +270,11 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
     if (!isLoadingActiveAndInactiveUser) return null;
     return (
       <SmallCentered>
-        <LoadingEffect />
-        <h3 style={{ color: "gray" }}>Initializing user images...</h3>
+        {/* <Loading4 /> */}
+        <Loader3 />
+        <h5 style={{ color: "gray", marginTop: "20px" }}>
+          Initializing user images...
+        </h5>
       </SmallCentered>
     );
   }, [isLoadingActiveAndInactiveUser]);
@@ -383,7 +393,7 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
               <div className="camera-btn">
                 <button
                   className="btn btn-success enabled"
-                  onClick={handlePlayClick}
+                  onClick={() => refetch()} //{handlePlayClick}
                   disabled={disableBtn}
                   style={{ zIndex: 9999 }}
                 >
@@ -416,6 +426,7 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
       <DayPassLoginModal
         setIsOnGoing={setIsOnGoing}
         setDayPassLogin={setDayPassLogin}
+        dayPassUsers={users?.dayPassUser || []}
       />
       <UserLoginIDVerificationModal
         setUserId={setUserId}

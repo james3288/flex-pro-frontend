@@ -9,7 +9,7 @@ import postDayPassTimeRecords from "../../postData/postDayPassTimeRecords";
 import FormatDate from "../../others/FormatDate";
 import FormatDateOnly from "../../others/FormatDateOnly";
 
-const DayPassLoginModal = ({ setIsOnGoing, setDayPassLogin }) => {
+const DayPassLoginModal = ({ setIsOnGoing, setDayPassLogin, dayPassUsers }) => {
   const [myDayPassUsers, setMyDayPassUsers] = useState([]);
 
   //setter
@@ -44,10 +44,10 @@ const DayPassLoginModal = ({ setIsOnGoing, setDayPassLogin }) => {
     };
 
     listOfDaypassUser();
-  }, []);
+  }, [dayPassUsers]);
 
   const onChangeDaypassUser = (e) => {
-    setMyDayPassUsers(dayPassUser.filter((user) => user.id == e.target.value));
+    setMyDayPassUsers(dayPassUsers.filter((user) => user.id == e.target.value));
     setDayPassUserOnline(e.target.value);
   };
 
@@ -120,7 +120,7 @@ const DayPassLoginModal = ({ setIsOnGoing, setDayPassLogin }) => {
                   onChange={onChangeDaypassUser}
                 >
                   <option value={0}>--- Select User ---</option>
-                  {dayPassUser?.map(
+                  {dayPassUsers?.map(
                     (user) =>
                       user?.remaining > -1 && (
                         <option value={user.id} key={user.id}>

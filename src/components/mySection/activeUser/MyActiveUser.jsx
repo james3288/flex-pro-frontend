@@ -117,7 +117,7 @@ const MyActiveUser = () => {
         <div className="form-floating title">
           <h1>
             {data?.data1?.length + countDayPassActive?.length}{" "}
-            <span>ACTIVE</span> USERS
+            <span style={{ color: "yellowGreen" }}>ACTIVE</span> USERS
           </h1>
         </div>
       </div>
