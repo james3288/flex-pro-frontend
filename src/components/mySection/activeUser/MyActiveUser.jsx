@@ -33,7 +33,6 @@ const ActiveUsersComponent = ({
       trainersRemainingDays,
     } = user;
 
-    console.log(userSubData);
     return (
       <RenewalUsers
         key={id}

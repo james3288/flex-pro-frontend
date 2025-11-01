@@ -31,58 +31,68 @@ const SubscriptionComponents = ({
 
   return (
     <>
-      <h5>DATE SUBSCRIBED</h5>
-      <h4>{FormatDate(date_subscribed)}</h4>
+      <div style={{ margin: "10px 0" }}>
+        <h5>DATE SUBSCRIBED</h5>
+        <h4>{FormatDate(date_subscribed)}</h4>
 
-      {/* MAIN SUBSCRIPTION */}
-      <h3>{subscription}</h3>
+        {/* MAIN SUBSCRIPTION */}
+        <h3>{subscription}</h3>
 
-      {/* PACKAGES DETAILS */}
-      {packageText && (
-        <span style={{ fontSize: "12px", color: "yellowgreen" }}>
-          {packageText}
-        </span>
-      )}
+        {/* PACKAGES DETAILS */}
+        {packageText && (
+          <span style={{ fontSize: "12px", color: "yellowgreen" }}>
+            {packageText}
+          </span>
+        )}
+        {/* EXTENDED SUBSCRIPTIONS */}
+        {extendedSubscript?.map((ex) => (
+          <div
+            key={ex.id}
+            style={{
+              display: "flex",
+              alignItems: "start",
+              justifyContent: "center",
+              gap: "2px",
+            }}
+          >
+            <a
+              className="extendSubscript"
+              data-toggle="modal"
+              data-target="#extendSubscriptionModal"
+              data-whatever="@mdo"
+              onClick={() => handleUpdateExtendSubscriptions(ex.id)}
+            >
+              - {ex?.subscription.gym_rate_desc} / extend{" "}
+              {ex?.extended_session_day} days{" "}
+              {ex?.options === "promo" && `- (${ex.options})`}
+            </a>
+            <a
+              className="removeExtendedSubs"
+              data-toggle="modal"
+              data-target="#removeExtendedSubModal"
+              data-whatever="@mdo"
+              onClick={() => handleRemoveExtendedSub(ex.id)}
+            >
+              <TrashIcon />
+            </a>
+          </div>
+        ))}
 
-      {/* EXTENDED SUBSCRIPTIONS */}
-      {extendedSubscript?.map((ex) => (
-        <div key={ex.id}>
-          <a
-            className="extendSubscript"
+        {/* EXTEND SUBSCRIPTION BUTTON */}
+        {!isExpired && (
+          <button
+            type="button"
+            className="btn btn-secondary btn-sm extend-subscription"
             data-toggle="modal"
             data-target="#extendSubscriptionModal"
             data-whatever="@mdo"
-            onClick={() => handleUpdateExtendSubscriptions(ex.id)}
+            onClick={handleExtendSubscriptions}
+            style={{ width: "100%" }}
           >
-            - {ex?.subscription.gym_rate_desc} / extend{" "}
-            {ex?.extended_session_day} days{" "}
-            {ex?.options === "promo" && `- (${ex.options})`}
-          </a>
-          <a
-            className="removeExtendedSubs"
-            data-toggle="modal"
-            data-target="#removeExtendedSubModal"
-            data-whatever="@mdo"
-            onClick={() => handleRemoveExtendedSub(ex.id)}
-          >
-            <TrashIcon />
-          </a>
-        </div>
-      ))}
-
-      {/* EXTEND SUBSCRIPTION BUTTON */}
-      {!isExpired && (
-        <button
-          type="button"
-          className="btn btn-secondary btn-sm extend-subscription"
-          data-toggle="modal"
-          data-target="#extendSubscriptionModal"
-          data-whatever="@mdo"
-          onClick={handleExtendSubscriptions}
-        >
-          Extend Subscription
-        </button>
-      )}
+            Extend Subscription
+          </button>
+        )}
+      </div>
     </>
   );
 };

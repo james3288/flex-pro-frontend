@@ -101,6 +101,16 @@ const RenewalUsers = ({
         </div>
 
         <div className="c-col-time-in-out" key={id}>
+          {/* CARD REMAINING DAYS COMPONENTS */}
+          <RemainingDaysLeftComponent
+            date_subscribed={date_subscribed}
+            per={per}
+            user_id={user_id}
+            session_days={sub_session_days}
+            subscriptionId={subscriptionId}
+            id={id}
+            fullname={registeredName}
+          />
           {/* CARD SUBSCRIPTION COMPONENTS */}
           <SubscriptionComponents
             date_subscribed={date_subscribed}
@@ -112,18 +122,7 @@ const RenewalUsers = ({
             subscription={subscription}
             isExpired={isExpired}
           />
-
-          {/* CARD REMAINING DAYS COMPONENTS */}
-          <RemainingDaysLeftComponent
-            date_subscribed={date_subscribed}
-            per={per}
-            user_id={user_id}
-            session_days={sub_session_days}
-            subscriptionId={subscriptionId}
-            id={id}
-            fullname={registeredName}
-          />
-
+          <hr />
           {/* CARD PERSONAL TRAINERS COMPONENTS */}
           <PersonalTrainerComponents
             trainers={trainers}

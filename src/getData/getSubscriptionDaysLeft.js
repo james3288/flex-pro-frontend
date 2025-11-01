@@ -11,7 +11,7 @@ const timeStampAddDays = (timeStamp, extendedDays, daysonly) => {
   }
   console.log(daysonly);
   return daysonly === false
-    ? formatTime(timestamp, "days-hours-minutes-seconds")
+    ? formatTime(timestamp, "days-hours-minutes")
     : formatTime(timestamp, "days-only");
 };
 

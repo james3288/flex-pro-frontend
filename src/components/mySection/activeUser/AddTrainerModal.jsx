@@ -46,7 +46,9 @@ const AddTrainerModal = ({
         try {
           if (modalTitle === "Update Extended Trainer") {
             const data = await getSpecificExtendedTrainer(extendedTrainerId);
+
             if (!data) return;
+
             dispatch({
               type: "BULK_UPDATE",
               payload: {
@@ -57,6 +59,8 @@ const AddTrainerModal = ({
                   : null,
               },
             });
+
+            console.log(state.trainersName);
           } else {
             dispatch({
               type: "BULK_UPDATE",
