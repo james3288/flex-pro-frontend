@@ -78,9 +78,11 @@ const useMyUserLoginSection = () => {
     setIsLogin2(false);
   };
 
-  const handleDayPassLoginClick = async () => {
+  const handleDayPassLoginClick = async ({ resetRegularUserLogin }) => {
     await setDayPassUserId("daypass-login-modal");
     await setModalTitle("Daypass Login");
+
+    resetRegularUserLogin();
   };
 
   // props

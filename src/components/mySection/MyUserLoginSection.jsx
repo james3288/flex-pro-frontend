@@ -1,8 +1,6 @@
 // Refactored MyUserLoginSection (keeps same exported name)
 import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import DayPassLoginModal from "../modals/DayPassLoginModal";
-import LoginMessageAlert from "../LoginMessageAlert/LoginMessageAlert";
-import LoginMessageAlertDayPass from "../LoginMessageAlert/LoginMessageAlertDayPass";
 import useMyUserLoginSection from "./users/hooks/useMyUserLoginSection";
 import FaceScannerNew3 from "../face-scanner/FaceScannerNew3";
 import UserLoginIDVerificationModal from "../face-scanner/modals/UserLoginIDVerificationModal";
@@ -20,6 +18,10 @@ import useLoginMutation from "../face-scanner/hooks/useLoginMutation";
 import useSaveTimeRecords from "./users/hooks/useSaveTimeRecords";
 import Loading4 from "../ui/loading4/Loading4";
 import Loader3 from "../ui/loader3/Loader3";
+import { useDayPassStore } from "../../store/useDayPassStore";
+import Pic from "@assets/img/dummy.png";
+import useResetLogin from "./users/hooks/useResetLogin";
+
 const SmallCentered = ({ children, style }) => (
   <div
     style={{
@@ -57,10 +59,20 @@ const ScanLoading = memo(({ attempt }) => (
 ));
 
 const UserInfo = memo(({ user }) => (
-  <h4 style={{ color: "white", fontSize: 22 }}>
+  <h4 style={{ color: "white", fontSize: 39 }}>
     {user?.usersubscription?.flexprouser?.name?.toUpperCase()}
   </h4>
 ));
+
+const DaypassUserInfo = ({ user }) => {
+  return (
+    <>
+      <h4 style={{ color: "lightYellow", fontSize: 39 }}>{user.name}</h4>
+      <h1 style={{ color: "white", fontSize: 22 }}>{user.remainingHours}</h1>
+      <h4 style={{ color: "orange", fontSize: 35 }}>{user.subscription}</h4>
+    </>
+  );
+};
 
 const PrivateRemainingDays = memo(({ userSub }) => (
   <RemainingDaysLeftComponent
@@ -76,9 +88,13 @@ const PrivateRemainingDays = memo(({ userSub }) => (
   />
 ));
 
+// 🔹 MAIN COMPONENT
 const MyUserLoginSection = memo(function MyUserLoginSection() {
   // local UI state
   const [loginTrigger, setLoginTrigger] = useState(false);
+
+  // reset daypass and regular login hook
+  const { resetDayPassLogin, resetRegularUserLogin } = useResetLogin();
 
   // Active + Inactive users loader (assumed to return: { isPending, data, fetchStatus, isLoading })
   const {
@@ -131,6 +147,21 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
   const cSetIsFound = useCurrentlyLoginStore((s) => s.setIsFound);
   const cIsFound = useCurrentlyLoginStore((s) => s.isFound);
 
+  // for daypass getter login store
+  const [
+    cIsDayPassLogin,
+    cDayPassName,
+    cDayPassRH,
+    cDayPassSubscription,
+    cDayPassIsAlreadyLogin,
+  ] = useDayPassStore((state) => [
+    state.isLogin,
+    state.dayPassName,
+    state.remainingHours,
+    state.subscriptionName,
+    state.isAlreadyLogin,
+  ]);
+
   // numpad setter
   const cSetNumpadResult = useNumpadStore((s) => s.setNumpadResult);
 
@@ -157,11 +188,16 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
   }, [loginUser]);
 
   // handlers: keep stable references
-  const handleUserRefresh = useCallback(() => {
-    cSetUserFound(null);
-    cSetNumpadResult("");
-    cSetIsFound(false);
-  }, [cSetUserFound, cSetNumpadResult, cSetIsFound]);
+  const handleUserRefresh = useCallback(
+    ({ resetDayPassLogin }) => {
+      cSetUserFound(null);
+      cSetNumpadResult("");
+      cSetIsFound(false);
+
+      resetDayPassLogin();
+    },
+    [cSetUserFound, cSetNumpadResult, cSetIsFound]
+  );
 
   const handleCancelLogin = useCallback(() => {
     cSetCurrentlyLogin(null);
@@ -233,14 +269,14 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
 
   // small presentational components as callbacks to keep stable identity
   const LoginUserIdButton = useCallback(
-    () => (
+    ({ resetDayPassLogin }) => (
       <button
         className="btn btn-success enabled"
         disabled={isLoadingActiveAndInactiveUser}
         data-toggle="modal"
         data-target=".bd-example-modal-lg"
         style={{ zIndex: 9999 }}
-        onClick={handleUserRefresh}
+        onClick={() => handleUserRefresh({ resetDayPassLogin })}
       >
         Login User ID
       </button>
@@ -251,12 +287,12 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
   const RefreshButton = useCallback(() => {});
 
   const LoginByDayPassButton = useCallback(
-    () => (
+    ({ resetRegularUserLogin }) => (
       <button
         className="btn btn-success enabled"
         data-toggle="modal"
         data-target="#daypass-login-modal"
-        onClick={handleDayPassLoginClick}
+        onClick={() => handleDayPassLoginClick({ resetRegularUserLogin })}
         style={{ zIndex: 9999 }}
         disabled={isLoadingActiveAndInactiveUser}
       >
@@ -270,7 +306,6 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
     if (!isLoadingActiveAndInactiveUser) return null;
     return (
       <SmallCentered>
-        {/* <Loading4 /> */}
         <Loader3 />
         <h5 style={{ color: "gray", marginTop: "20px" }}>
           Initializing user images...
@@ -313,7 +348,10 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
                 userSub={cCurrentlyLogin?.usersubscription}
               />
               <div>
-                <button className="btn btn-success" onClick={handleCancelLogin}>
+                <button
+                  className="btn btn-success"
+                  onClick={() => resetRegularUserLogin()}
+                >
                   Proceed
                 </button>
               </div>
@@ -364,6 +402,51 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
     handleCancelLogin,
   ]);
 
+  const WaitingForDayPassLogin = useMemo(() => {
+    if (!cIsDayPassLogin) {
+      return <h5>Waiting for daypass user...</h5>;
+    }
+
+    const dayPassUserData = {
+      name: cDayPassName,
+      subscription: cDayPassSubscription,
+      remainingHours: cDayPassRH,
+    };
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: 20,
+          position: "relative",
+        }}
+      >
+        <div>
+          <img src={Pic} alt="" className="scan-profile" />
+        </div>
+        <div>
+          {cDayPassIsAlreadyLogin && cIsDayPassLogin === true && (
+            <AlreadyLoginStatus />
+          )}
+          {cIsDayPassLogin && cDayPassIsAlreadyLogin === false && (
+            <CheckStatus />
+          )}
+          <DaypassUserInfo user={dayPassUserData} />
+          <div>
+            <button
+              className="btn btn-success"
+              onClick={() => resetDayPassLogin()}
+            >
+              Proceed
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }, [cDayPassIsAlreadyLogin, cIsDayPassLogin]);
+
   // top-level render
   return (
     <>
@@ -400,8 +483,10 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
                   Face Recognition
                 </button>
 
-                <LoginUserIdButton />
-                <LoginByDayPassButton />
+                <LoginUserIdButton resetDayPassLogin={resetDayPassLogin} />
+                <LoginByDayPassButton
+                  resetRegularUserLogin={resetRegularUserLogin}
+                />
               </div>
             </div>
           </div>
@@ -410,12 +495,24 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
           <div className="col-lg-6 col-xs-12">
             <div className="dashboard-col">
               <span>
-                <strong>LOGIN</strong> STATUS
+                REGULAR USER <strong>LOGIN</strong> STATUS
               </span>
 
               <div className="scan-profile-wrapper">
                 <div className="scan-profile-name">
                   {WaitingForFaceRecognition}
+                </div>
+              </div>
+            </div>
+
+            <div className="dashboard-col">
+              <span>
+                DAYPASS<strong> LOGIN</strong> STATUS
+              </span>
+
+              <div className="scan-profile-wrapper">
+                <div className="scan-profile-name">
+                  {WaitingForDayPassLogin}
                 </div>
               </div>
             </div>

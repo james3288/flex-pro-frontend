@@ -53,37 +53,65 @@ const DayPassLoginModal = ({ setIsOnGoing, setDayPassLogin, dayPassUsers }) => {
 
   const handleLoginOnclick = async () => {
     // const data = new FormData();
-    const dayPassUserId = myDayPassUsers[0];
+    const dayPassUserId = myDayPassUsers[0] || {};
 
-    const dayPassUserOnline1990 = dayPassUserOnline.filter(
-      (user) => FormatDateOnly(user.time_out) === "1990-01-01"
-    );
+    // const dayPassUserOnline1990 = dayPassUserOnline.filter(
+    //   (user) => FormatDateOnly(user.time_out) === "1990-01-01"
+    // );
 
-    if (dayPassUserOnline1990.length === 0) {
+    console.log(dayPassUserOnline);
+
+    const isDaypassAlreadyLogin = () => {
+      const dayPassUserOnline1990 = dayPassUserOnline.filter(
+        (user) => FormatDateOnly(user.time_out) === "1990-01-01"
+      );
+
+      return dayPassUserOnline1990.length === 0 ? false : true;
+    };
+
+    if (isDaypassAlreadyLogin() === false) {
       const data = {
-        dayPassId: dayPassUserId.id,
+        dayPassId: dayPassUserId?.id,
         time_in: new Date(),
         time_out: new Date(1990, 0, 1, 0, 0),
       };
 
+      console.log(dayPassUserId);
+
       postDayPassTimeRecords(data);
 
-      console.log(myDayPassUsers[0]?.subscription?.gym_rate_desc);
+      // console.log(myDayPassUsers[0]?.subscription?.gym_rate_desc);
 
       setIsLogin(true);
-      setDayPassName(myDayPassUsers[0].name);
+      // setDayPassName(myDayPassUsers[0].name);
+      // setIsOnGoing("on-going");
+      // setDayPassLogin(true);
+      // setSubscriptionName(myDayPassUsers[0]?.subscription?.gym_rate_desc);
+      // setMyDayPassUsers([]);
+
+      setDayPassName(dayPassUserId?.name);
       setIsOnGoing("on-going");
       setDayPassLogin(true);
-      setSubscriptionName(myDayPassUsers[0]?.subscription?.gym_rate_desc);
+      setIsAlreadyLogin(false);
+      setSubscriptionName(dayPassUserId?.subscription?.gym_rate_desc);
       setMyDayPassUsers([]);
     } else {
-      console.log("nag login pani xa karon");
-      setDayPassLogin(true);
+      // console.log("nag login pani xa karon");
+      // setDayPassLogin(true);
+      // setIsOnGoing("already-login");
+      // setIsAlreadyLogin(true);
+      // setSubscriptionName(myDayPassUsers[0]?.subscription?.gym_rate_desc);
+      // setMyDayPassUsers([]);
+      // setDayPassName(dayPassUserOnline1990[0]?.flexprouserdaypass.name)
+
+      console.log("already login");
+      setIsLogin(true);
+      setDayPassName(dayPassUserId?.name);
       setIsOnGoing("already-login");
+      setDayPassLogin(false);
       setIsAlreadyLogin(true);
-      setSubscriptionName(myDayPassUsers[0]?.subscription?.gym_rate_desc);
+      setSubscriptionName(dayPassUserId?.subscription?.gym_rate_desc);
       setMyDayPassUsers([]);
-      setDayPassName(dayPassUserOnline1990[0]?.flexprouserdaypass.name);
     }
   };
 
