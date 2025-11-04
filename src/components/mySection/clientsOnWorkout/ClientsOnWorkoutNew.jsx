@@ -10,6 +10,8 @@ import LoadingEffect from "../loadingEffect/LoadingEffect";
 
 const ClientsOnWorkoutNew = ({ online }) => {
   const [remainingDaysLeftNew, setRemainingDaysLeftNew] = useState();
+  const [localTimeOut, setLocalTimeOut] = useState(online.time_out);
+  const [isLoggedOut, setIsLoggedOut] = useState(false);
 
   // Early destructuring for performance and clarity
   const userSub = online?.usersubscription;
@@ -52,6 +54,10 @@ const ClientsOnWorkoutNew = ({ online }) => {
     };
   }, [remainingDaysLeft]);
 
+  const isFromOnlineToLogout = () => {
+    return isOnline && !isLoggedOut;
+  };
+
   const isOnline = yearValidation === 1990;
 
   // Memoized computed values
@@ -63,13 +69,14 @@ const ClientsOnWorkoutNew = ({ online }) => {
   }, [remainingDaysLeftNew, isOnline]);
 
   const imageStyle = useMemo(
-    () => (isOnline ? { color: "green" } : { border: "2px solid red" }),
-    [isOnline]
+    () =>
+      isFromOnlineToLogout() ? { color: "green" } : { border: "2px solid red" },
+    [isOnline, isLoggedOut]
   );
 
-  const onlineOfflineClass = isOnline ? "online" : "offline";
+  const onlineOfflineClass = isFromOnlineToLogout() ? "online" : "offline";
   const onlineOfflineBtnClass =
-    remainingDaysLeftNew === "Expired" && isOnline
+    remainingDaysLeftNew === "Expired" && isFromOnlineToLogout()
       ? "btn btn-danger"
       : "btn btn-warning";
 
@@ -102,12 +109,15 @@ const ClientsOnWorkoutNew = ({ online }) => {
         <div className="c-col-time-in-out">
           <h4>
             Time In: {formatTimeToString(online.time_in)} <br />
-            Time Out: {isOnline ? "--:--" : formatTimeToString(online.time_out)}
+            Time Out:{" "}
+            {isFromOnlineToLogout()
+              ? "--:--"
+              : formatTimeToString(online.time_out)}
           </h4>
 
           <p>{FormatDate(online.date_log)}</p>
 
-          {isOnline && (
+          {isFromOnlineToLogout() && (
             <p>
               <ReactTimeAgo
                 date={timestamp}
@@ -136,6 +146,9 @@ const ClientsOnWorkoutNew = ({ online }) => {
           id={online.id}
           time_in={online.time_in}
           yearValidation={yearValidation}
+          setLocalTimeOut={setLocalTimeOut}
+          setIsLoggedOut={setIsLoggedOut}
+          isFromOnlineToLogout={isFromOnlineToLogout}
         />
       </div>
     </div>

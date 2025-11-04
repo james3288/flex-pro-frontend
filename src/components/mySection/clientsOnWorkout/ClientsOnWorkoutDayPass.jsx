@@ -1,92 +1,87 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import YearValidation from "../../../others/YearValidation";
 import { useLogoutStore } from "../../../store/useLogoutStore";
 import remainingDays from "../../../others/GetRemainingDays";
-import getExtendedSubscription from "../../../getData/getExtendedSubscription";
-import UserLogout from "../clientsOnline/userLogout";
+import UserDayPassLogout from "../clientsOnline/userDayPassLogout";
 import getSubscriptionDaysLeft from "../../../getData/getSubscriptionDaysLeft";
 import pic from "./../../../../src/assets/img/dummy.png";
 import ReactTimeAgo from "react-time-ago";
 import formatTimeToString from "../../../others/formatTimeToString";
 import FormatDate from "../../../others/FormatDate";
-import UserDayPassLogout from "../clientsOnline/userDayPassLogout";
 
 const ClientsOnWorkoutDayPass = ({ online, setRefreshKey }) => {
   const [remaining, setRemaining] = useState(0);
-  const [extendedSubscript, setExtendedSubscript] = useState([]);
-
   const yearValidation = YearValidation(online.time_out);
-  const dateObj = new Date(online.date_log);
-  const timestamp = dateObj.getTime(); // Convert Date object to timestamp in milliseconds
+  const triggered = useLogoutStore((state) => state.trigger);
+  const timestamp = new Date(online.date_log).getTime();
 
-  const trigger = useLogoutStore((state) => state.trigger);
+  const [localTimeOut, setLocalTimeOut] = useState(online.time_out);
+  const [isLoggedOut, setIsLoggedOut] = useState(false);
 
-  // get the remaining days
+  const isMounted = useRef(true);
+
+  // Optimized async function
   const getRemainingDays = async () => {
-    setRemaining(
-      await remainingDays(
-        online.flexprouserdaypass.date_subscribed,
-        online.flexprouserdaypass.subscription.per.per,
-        online.flexprouserdaypass.id
-      )
+    const res = await remainingDays(
+      online.flexprouserdaypass.date_subscribed,
+      online.flexprouserdaypass.subscription?.per?.per,
+      online.flexprouserdaypass.id
     );
+
+    if (isMounted.current) setRemaining(res);
   };
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      // Your code to be executed every 1000ms
-      getRemainingDays();
-    }, 1000);
+    isMounted.current = true;
+    getRemainingDays();
 
-    // Cleanup function to clear the interval when the component unmounts
-    return () => clearInterval(intervalId);
-  }, []); // Add dependencies as needed
+    const intervalId = setInterval(getRemainingDays, 30000); // call every 30s
+
+    return () => {
+      isMounted.current = false;
+      clearInterval(intervalId);
+    };
+  }, [online.id]);
 
   const handleLogout = async () => {
     const result = await UserDayPassLogout(online.time_in, online.id);
-    //   setRefresher((prev) => prev + 1);
-    //   setTempTimeOut(formatTimeToString(Date()));
+
+    const now = new Date(); // local current time
+    setLocalTimeOut(now); // update immediate UI
+    setIsLoggedOut(true); // hide the button
+
     setRefreshKey((prev) => prev + 1);
-    console.log(result);
   };
 
-  const onlineOfflineClass = () => {
-    return yearValidation === 1990 ? "online" : "offline";
-  };
-
-  const onlineOfflineBtnClass = () => {
-    return remainingDaysLeft() === "Expired" && yearValidation === 1990
-      ? "btn btn-danger"
-      : "btn btn-warning";
-  };
-  const expiredStyle = () => {
-    return remainingDaysLeft() === "Expired" && yearValidation === 1990
-      ? { border: "2px solid red" }
-      : { border: "0px solid black" };
-  };
-
-  const remainingDaysLeft = () => {
+  const daysLeft = useMemo(() => {
     return getSubscriptionDaysLeft(
       remaining,
-      extendedSubscript,
+      [],
       online.flexprouserdaypass.date_subscribed,
       false
     );
+  }, [remaining, online.flexprouserdaypass.date_subscribed]);
+
+  const isExpired = daysLeft === "Expired" || remaining < 0;
+  const isOnline = yearValidation === 1990;
+
+  const isFromOnlineToLogout = () => {
+    return isOnline && !isLoggedOut;
   };
 
   return (
     <div className="col-lg-3 col-xs-12">
-      <div className="c-col" style={expiredStyle()}>
-        <div className={onlineOfflineClass()}></div>
+      <div
+        className="c-col"
+        style={isOnline && isExpired ? { border: "2px solid red" } : {}}
+      >
+        <div className={isFromOnlineToLogout() ? "online" : "offline"}></div>
+
         <div className="c-col-name">
           <img
             src={pic}
             alt=""
-            style={
-              yearValidation === 1990
-                ? { color: "green" }
-                : { border: "2px solid red" }
-            }
+            style={isFromOnlineToLogout() ? {} : { border: "2px solid red" }}
           />
           <div className="col-name">
             <h4>
@@ -95,16 +90,19 @@ const ClientsOnWorkoutDayPass = ({ online, setRefreshKey }) => {
             </h4>
           </div>
         </div>
+
         <div className="c-col-time-in-out">
           <h4>
-            Time In: {formatTimeToString(online.time_in)} <br /> Time Out:{" "}
-            {yearValidation === 1990
+            Time In: {formatTimeToString(online.time_in)} <br />
+            Time Out:{" "}
+            {isFromOnlineToLogout()
               ? "--:--"
-              : formatTimeToString(online.time_out)}
+              : formatTimeToString(localTimeOut)}
           </h4>
+
           <p>{FormatDate(online.date_log)}</p>
 
-          {yearValidation === 1990 && (
+          {isFromOnlineToLogout() && (
             <p>
               <ReactTimeAgo
                 date={timestamp}
@@ -121,16 +119,15 @@ const ClientsOnWorkoutDayPass = ({ online, setRefreshKey }) => {
 
           <h5>Remaining Hours:</h5>
           <h5 style={{ color: "orange" }}>
-            {/* {remaining < 0 ? "Expired" : remaining} */}
-            {/* {formatTime(remaining, "all")} */}
-            {remainingDaysLeft() === "0 day, 0 hours" && remaining < 0
-              ? "Expired"
-              : remainingDaysLeft()}
+            {isExpired ? "Expired" : daysLeft}
           </h5>
         </div>
 
-        {yearValidation === 1990 && (
-          <button className={onlineOfflineBtnClass()} onClick={handleLogout}>
+        {isFromOnlineToLogout() && (
+          <button
+            className={`btn ${isExpired ? "btn-danger" : "btn-warning"}`}
+            onClick={handleLogout}
+          >
             Logout
           </button>
         )}
