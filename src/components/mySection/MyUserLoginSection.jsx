@@ -142,10 +142,18 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
     (s) => s.isAlreadyLoginInDatabase
   );
 
-  const cLoginAttempt = useCurrentlyLoginStore((s) => s.loginAttempt);
-  const cSetLoginAttempt = useCurrentlyLoginStore((s) => s.setLoginAttempt);
-  const cSetIsFound = useCurrentlyLoginStore((s) => s.setIsFound);
-  const cIsFound = useCurrentlyLoginStore((s) => s.isFound);
+  // const cLoginAttempt = useCurrentlyLoginStore((s) => s.loginAttempt);
+  // const cSetLoginAttempt = useCurrentlyLoginStore((s) => s.setLoginAttempt);
+  // const cSetIsFound = useCurrentlyLoginStore((s) => s.setIsFound);
+  // const cIsFound = useCurrentlyLoginStore((s) => s.isFound);
+
+  const [cLoginAttempt, cSetLoginAttempt, cSetIsFound, cIsFound] =
+    useCurrentlyLoginStore((state) => [
+      state.loginAttempt,
+      state.setLoginAttempt,
+      state.setIsFound,
+      state.isFound,
+    ]);
 
   // for daypass getter login store
   const [
@@ -193,6 +201,7 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
       cSetUserFound(null);
       cSetNumpadResult("");
       cSetIsFound(false);
+      setIsThisYourFace(false);
 
       resetDayPassLogin();
     },
@@ -284,7 +293,16 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
     [isLoadingActiveAndInactiveUser, handleUserRefresh]
   );
 
-  const RefreshButton = useCallback(() => {});
+  const RefreshButton = useCallback(() => (
+    <button
+      className="btn btn-success enabled"
+      onClick={() => refetch()} //{handlePlayClick}
+      disabled={disableBtn}
+      style={{ zIndex: 9999 }}
+    >
+      Refresh
+    </button>
+  ));
 
   const LoginByDayPassButton = useCallback(
     ({ resetRegularUserLogin }) => (
@@ -474,15 +492,7 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
               </div>
 
               <div className="camera-btn">
-                <button
-                  className="btn btn-success enabled"
-                  onClick={() => refetch()} //{handlePlayClick}
-                  disabled={disableBtn}
-                  style={{ zIndex: 9999 }}
-                >
-                  Face Recognition
-                </button>
-
+                <RefreshButton />
                 <LoginUserIdButton resetDayPassLogin={resetDayPassLogin} />
                 <LoginByDayPassButton
                   resetRegularUserLogin={resetRegularUserLogin}
