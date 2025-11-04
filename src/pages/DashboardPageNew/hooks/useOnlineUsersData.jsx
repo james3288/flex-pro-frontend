@@ -96,7 +96,9 @@ const OnlineUserCard = memo(({ user }) => {
 const OnlineDayPassCard = memo(({ user }) => {
   const sub = user?.flexprouserdaypass;
 
-  return (
+  return !isUserOnline({ user }) ? (
+    ""
+  ) : (
     <div className="clients-online">
       <div className="row row2">
         <UserImage src={dayPassImage} />
