@@ -1,7 +1,30 @@
+import { useEffect, useState } from "react";
 import useExtendSubscriptionModal from "../../../hooks/useExtendSubscriptionModal";
+import TextFieldModalComponent from "../../modals/TextFieldModalComponent";
+import useCheckCredential from "./hooks/useCheckCredential";
+import { useClearCredentialTextField } from "../../../store/useClearCredentialTextField";
 
 // Error message helper outside component to avoid recreation on each render
 const ErrorMessage = ({ msg }) => <span style={{ color: "red" }}>{msg}</span>;
+
+const { checkCredential } = useCheckCredential();
+
+const InvalidCredentialComponent = ({ isValid }) => {
+  return (
+    !isValid && (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "3px",
+        }}
+      >
+        <p style={{ color: "red" }}>Invalid Admin Credentials..</p>
+      </div>
+    )
+  );
+};
 
 const ExtendSubscriptionModal = ({ id, modalTitle, userSubscriptionId }) => {
   const {
@@ -17,9 +40,38 @@ const ExtendSubscriptionModal = ({ id, modalTitle, userSubscriptionId }) => {
     handleUpdate,
   } = useExtendSubscriptionModal({ userSubscriptionId }); // ✅ fixed parameter passing
 
+  const [userName, setUserName] = useState("admin");
+  const [password, setPassword] = useState("");
+  const [isValid, setIsValid] = useState(false);
+
+  const [cIsClear, cSetIsClear] = useClearCredentialTextField((state) => [
+    state.isClear,
+    state.setIsClear,
+  ]);
+
   const isExtend = modalTitle === "Extend Subscriptions";
   const actionHandler = isExtend ? handleSave : handleUpdate;
   const actionLabel = isExtend ? "Save changes" : "Update changes";
+
+  const setCredentialValidOrInvalid = async ({ username, password }) => {
+    const result = await checkCredential({ username, password });
+
+    if (result) {
+      setIsValid(result?.valid);
+    } else {
+      setIsValid(false);
+    }
+  };
+
+  useEffect(() => {
+    let isMounted = true;
+    if (cIsClear) {
+      setPassword("");
+    }
+    return () => {
+      isMounted = false;
+    };
+  }, [cIsClear]);
 
   return (
     <div
@@ -116,6 +168,24 @@ const ExtendSubscriptionModal = ({ id, modalTitle, userSubscriptionId }) => {
                 <ErrorMessage msg="Promo rate must be numeric..." />
               )}
             </div>
+            <InvalidCredentialComponent isValid={isValid} />
+            <TextFieldModalComponent
+              label={"Username:"}
+              id={"credential-username"}
+              name={"username"}
+              setText={setUserName}
+              text={userName}
+              type={"text"}
+              isDisable={true}
+            />
+            <TextFieldModalComponent
+              label={"Password:"}
+              id={"credential-password"}
+              name={"password"}
+              setText={setPassword}
+              text={password}
+              type={"password"}
+            />
           </div>
 
           {/* Footer */}
@@ -130,7 +200,13 @@ const ExtendSubscriptionModal = ({ id, modalTitle, userSubscriptionId }) => {
             <button
               type="button"
               className="btn btn-primary"
-              onClick={actionHandler}
+              // onClick={actionHandler}
+              onClick={() =>
+                setCredentialValidOrInvalid({
+                  username: userName,
+                  password: password,
+                })
+              }
             >
               {actionLabel}
             </button>

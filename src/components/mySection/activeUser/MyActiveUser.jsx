@@ -12,6 +12,7 @@ import useGetActiveUsers from "../../../hooks/useGetActiveUsers";
 import useGetDayPassUsers from "../../../hooks/useGetDayPassUsers";
 import LoadingEffect from "../loadingEffect/LoadingEffect";
 import NoDataFound from "../noDataFound/NoDataFound"; // assuming this exists
+import CheckCredentialModal from "../../modals/CheckCredentialModal";
 
 // ---------------- Subcomponents ----------------
 const ActiveUsersComponent = ({
@@ -160,6 +161,7 @@ const MyActiveUser = () => {
             modalTitle={modalTitle}
           />
           <RemoveModal />
+          <CheckCredentialModal id="checkCredentialModal" />
         </div>
       </div>
     </div>

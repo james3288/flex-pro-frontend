@@ -1,4 +1,6 @@
 import FormatDate from "../../../others/FormatDate";
+import { useClearCredentialTextField } from "../../../store/useClearCredentialTextField";
+import useCheckCredential from "../activeUser/hooks/useCheckCredential";
 
 const TrashIcon = () => (
   <svg
@@ -24,6 +26,14 @@ const SubscriptionComponents = ({
   subscription,
   isExpired,
 }) => {
+  const [cSetIsClear] = useClearCredentialTextField((state) => [
+    state.setIsClear,
+  ]);
+
+  const clearPasswordTextField = () => {
+    cSetIsClear(true);
+  };
+
   // Build package details as a single string
   const packageText = packages_details
     ?.map((pkg) => pkg.packages_details)
@@ -86,7 +96,11 @@ const SubscriptionComponents = ({
             data-toggle="modal"
             data-target="#extendSubscriptionModal"
             data-whatever="@mdo"
-            onClick={handleExtendSubscriptions}
+            onClick={() => {
+              clearPasswordTextField();
+              handleExtendSubscriptions();
+            }}
+            // onClick={clearPasswordTextField}
             style={{ width: "100%" }}
           >
             Extend Subscription
