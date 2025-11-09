@@ -1,3 +1,4 @@
+import useClearPasswordTextField from "../../../hooks/useClearPasswordTextField";
 import FormatDate from "../../../others/FormatDate";
 import { useClearCredentialTextField } from "../../../store/useClearCredentialTextField";
 import useCheckCredential from "../activeUser/hooks/useCheckCredential";
@@ -26,13 +27,7 @@ const SubscriptionComponents = ({
   subscription,
   isExpired,
 }) => {
-  const [cSetIsClear] = useClearCredentialTextField((state) => [
-    state.setIsClear,
-  ]);
-
-  const clearPasswordTextField = () => {
-    cSetIsClear(true);
-  };
+  const { clearPasswordTextField } = useClearPasswordTextField();
 
   // Build package details as a single string
   const packageText = packages_details
@@ -81,7 +76,10 @@ const SubscriptionComponents = ({
               data-toggle="modal"
               data-target="#removeExtendedSubModal"
               data-whatever="@mdo"
-              onClick={() => handleRemoveExtendedSub(ex.id)}
+              onClick={() => {
+                clearPasswordTextField();
+                handleRemoveExtendedSub(ex.id);
+              }}
             >
               <TrashIcon />
             </a>

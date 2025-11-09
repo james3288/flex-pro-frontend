@@ -5,25 +5,16 @@ import useCheckCredential from "./hooks/useCheckCredential";
 import { useClearCredentialTextField } from "../../../store/useClearCredentialTextField";
 
 // Error message helper outside component to avoid recreation on each render
-const ErrorMessage = ({ msg }) => <span style={{ color: "red" }}>{msg}</span>;
+const ErrorMessage = ({ msg }) => (
+  <div className="alert alert-warning mt-2">
+    <span style={{ color: "red" }}>{msg}</span>
+  </div>
+);
 
 const { checkCredential } = useCheckCredential();
 
 const InvalidCredentialComponent = ({ isValid }) => {
-  return (
-    !isValid && (
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "3px",
-        }}
-      >
-        <p style={{ color: "red" }}>Invalid Admin Credentials..</p>
-      </div>
-    )
-  );
+  return !isValid && <ErrorMessage msg={"Invalid Admin Credentials..."} />;
 };
 
 const ExtendSubscriptionModal = ({ id, modalTitle, userSubscriptionId }) => {
@@ -58,6 +49,9 @@ const ExtendSubscriptionModal = ({ id, modalTitle, userSubscriptionId }) => {
 
     if (result) {
       setIsValid(result?.valid);
+
+      //✅ save or update function
+      actionHandler();
     } else {
       setIsValid(false);
     }
@@ -168,7 +162,7 @@ const ExtendSubscriptionModal = ({ id, modalTitle, userSubscriptionId }) => {
                 <ErrorMessage msg="Promo rate must be numeric..." />
               )}
             </div>
-            <InvalidCredentialComponent isValid={isValid} />
+
             <TextFieldModalComponent
               label={"Username:"}
               id={"credential-username"}
@@ -186,6 +180,7 @@ const ExtendSubscriptionModal = ({ id, modalTitle, userSubscriptionId }) => {
               text={password}
               type={"password"}
             />
+            <InvalidCredentialComponent isValid={isValid} />
           </div>
 
           {/* Footer */}

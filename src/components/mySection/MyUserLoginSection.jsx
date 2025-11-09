@@ -297,7 +297,7 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
     <button
       className="btn btn-success enabled"
       onClick={() => refetch()} //{handlePlayClick}
-      disabled={disableBtn}
+      disabled={isLoadingActiveAndInactiveUser}
       style={{ zIndex: 9999 }}
     >
       Refresh

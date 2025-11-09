@@ -1,6 +1,21 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import deleteExtendedSub from "../../../deleteData/deleteExtendedSub";
 import deleteExtendedTrainer from "../../../deleteData/deleteExtendedTrainer";
+import TextFieldModalComponent from "../../modals/TextFieldModalComponent";
+import { useClearCredentialTextField } from "../../../store/useClearCredentialTextField";
+import useCheckCredential from "./hooks/useCheckCredential";
+
+const ErrorMessage = ({ msg }) => (
+  <div className="alert alert-warning mt-2">
+    <span style={{ color: "red" }}>{msg}</span>
+  </div>
+);
+
+const { checkCredential } = useCheckCredential();
+
+const InvalidCredentialComponent = ({ isValid }) => {
+  return !isValid && <ErrorMessage msg={"Invalid Admin Credentials..."} />;
+};
 
 const RemoveExtendedSub = ({
   id,
@@ -8,6 +23,25 @@ const RemoveExtendedSub = ({
   modalTitle,
   extendedTrainerId,
 }) => {
+  const [userName, setUserName] = useState("admin");
+  const [password, setPassword] = useState("");
+  const [isValid, setIsValid] = useState(false);
+
+  const [cIsClear] = useClearCredentialTextField((state) => [
+    state.isClear,
+    state.setIsClear,
+  ]);
+
+  useEffect(() => {
+    let isMounted = true;
+    if (cIsClear) {
+      setPassword("");
+    }
+    return () => {
+      isMounted = false;
+    };
+  }, [cIsClear]);
+
   const isTrainer = modalTitle === "Remove Extended Trainers";
 
   // Precompute message & handler to avoid repeated conditionals in JSX
@@ -25,6 +59,19 @@ const RemoveExtendedSub = ({
       // Optionally trigger UI feedback or close modal programmatically
     } catch (err) {
       console.error("Delete failed:", err);
+    }
+  };
+
+  const setCredentialValidOrInvalid = async ({ username, password }) => {
+    const result = await checkCredential({ username, password });
+
+    if (result) {
+      setIsValid(result?.valid);
+
+      //✅ delete function
+      handleDelete();
+    } else {
+      setIsValid(false);
     }
   };
 
@@ -65,7 +112,24 @@ const RemoveExtendedSub = ({
 
           {/* Body */}
           <div className="modal-body">{confirmMessage}</div>
-
+          <TextFieldModalComponent
+            label={"Username:"}
+            id={"credential-username"}
+            name={"username"}
+            setText={setUserName}
+            text={userName}
+            type={"text"}
+            isDisable={true}
+          />
+          <TextFieldModalComponent
+            label={"Password:"}
+            id={"credential-password"}
+            name={"password"}
+            setText={setPassword}
+            text={password}
+            type={"password"}
+          />
+          <InvalidCredentialComponent isValid={isValid} />
           {/* Footer */}
           <div className="modal-footer">
             <button
@@ -78,7 +142,12 @@ const RemoveExtendedSub = ({
             <button
               type="button"
               className="btn btn-danger"
-              onClick={handleDelete}
+              onClick={() =>
+                setCredentialValidOrInvalid({
+                  username: userName,
+                  password: password,
+                })
+              }
             >
               Delete
             </button>
