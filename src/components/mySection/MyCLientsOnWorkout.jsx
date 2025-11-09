@@ -40,14 +40,6 @@ const MyCLientsOnWorkout = () => {
     [onlineDayPassUsers, setRefreshKey]
   );
 
-  // const userList = useMemo(
-  //   () =>
-  //     onlineUsers.map((user) => (
-  //       <ClientsOnWorkoutNew key={user.id} online={user} />
-  //     )),
-  //   [onlineUsers]
-  // );
-
   const userList = useMemo(
     () =>
       onlineUsers.map((user) => (

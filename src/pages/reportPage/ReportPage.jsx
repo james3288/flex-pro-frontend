@@ -10,29 +10,8 @@ import ByAll from "./ByAll";
 import ByExtendedTrainer from "./ByExtendedTrainer";
 import ByFreeTrainer from "./ByFreeTrainer";
 import getter from "../../getter/getter";
+import ByClientsOnWorkout from "./ByClientsOnWorkout";
 const ReportPage = () => {
-  // const cSetModalTitle = useReportStore((state) => state.setModalTitle);
-  // const cSetModalId = useReportStore((state) => state.setModalId);
-
-  // const cUserSubscriptionReport = useReportStore(
-  //   (state) => state.userSubscriptionReport
-  // );
-  // const cSubscriptionTotalIncome = useReportStore(
-  //   (state) => state.subscriptionTotalIncome
-  // );
-
-  // const cSubscription = useReportStore(
-  //   (state) => state.reportData.subscription
-  // );
-
-  // const cExtendedTrainerTotalSession = useReportStore(
-  //   (state) => state.extendedTrainerTotalSession
-  // );
-
-  // const cFreeSessionTotal = useReportStore((state) => state.freeTotalSession);
-
-  // const cTotalTrainerRate = useReportStore((state) => state.totalTrainerRate);
-
   const {
     cFreeSessionTotal,
     cTotalTrainerRate,
@@ -84,6 +63,16 @@ const ReportPage = () => {
           <div className="col-1 header-col">Trainer Session Days</div>
           <div className="col-2 header-col">Subscription Rate</div>
         </div>
+      ) : cSubscription === "clients-on-workout" ? (
+        <div className="row header">
+          <div className="col-1 header-col">#</div>
+          <div className="col-2 header-col">User</div>
+          <div className="col-2 header-col">Date Login</div>
+          <div className="col-2 header-col">Subscription</div>
+          <div className="col-2 header-col">Time In</div>
+          <div className="col-1 header-col">Time Out</div>
+          <div className="col-2 header-col">Subscription Rate</div>
+        </div>
       ) : (
         <div className="row header">
           <div className="col-1 header-col">#</div>
@@ -101,6 +90,8 @@ const ReportPage = () => {
         <ByAll />
       ) : cSubscription === "free-trainer" ? (
         <ByFreeTrainer />
+      ) : cSubscription === "clients-on-workout" ? (
+        <ByClientsOnWorkout />
       ) : (
         <ByExtendedTrainer />
       )}

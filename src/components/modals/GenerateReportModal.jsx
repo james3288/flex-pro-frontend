@@ -210,6 +210,7 @@ const GenerateReportModal = () => {
                     Extended Trainer/Personal Trainer
                   </option>
                   <option value="free-trainer">Free Trainer</option>
+                  <option value="clients-on-workout">Clients On Workout</option>
                 </select>
 
                 <br />

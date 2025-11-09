@@ -5,6 +5,7 @@ import getDayPassUserOnline from "../getData/getDayPassUserOnline";
 import { useQuery } from "@tanstack/react-query";
 import { useLogoutStore } from "@store/useLogoutStore";
 import { getFormattedDate } from "@others/dateUtilities";
+import useOnWorkOutData from "./useOnWorkOutData";
 
 const useClientsOnWorkout2 = () => {
   const [search, setSearch] = useState("");
@@ -17,20 +18,9 @@ const useClientsOnWorkout2 = () => {
   const handleSearchOnWorkout = (e) => setSearch(e.target.value);
   const handleDateChange = (e) => setDate(e.target.value);
 
-  const queryKey = ["onWorkoutData", date, trigger]; // refetch automatically when date changes
-
-  const { data, isLoading, error, isPending } = useQuery({
-    queryKey,
-    queryFn: async () => {
-      const [usersOnline, dayPassUsersOnline] = await Promise.all([
-        getUsersOnlineByDate(date),
-        getDayPassUserOnline(date),
-      ]);
-      return { usersOnline, dayPassUsersOnline };
-    },
-
-    // refetchOnWindowFocus: false,
-    // refetchInterval: 30000, // Refetch every 30 seconds
+  const { data, isLoading, error, isPending } = useOnWorkOutData({
+    date: date,
+    trigger: trigger,
   });
 
   const onlineUsers = useMemo(() => {
