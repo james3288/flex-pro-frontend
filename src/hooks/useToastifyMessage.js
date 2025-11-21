@@ -4,7 +4,7 @@ const useToastifyMessage = ({ message, position }) => {
   const showToastMessage = () => {
     toast.error(message, {
       position: position,
-      autoClose: false,
+      autoClose: true,
     });
   };
   return { showToastMessage };

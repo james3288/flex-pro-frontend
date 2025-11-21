@@ -7,7 +7,7 @@ const useGetActiveUsers = () => {
   // Refactor users by enriching with image + remaining days
   const refactorActiveUsers = async (users) => {
     return Promise.all(
-      users.slice(0, 5).map(async (user) => {
+      users.map(async (user) => {
         const flexProUserId = user.usersubscription.flexprouser?.id ?? 0;
         const date_subscribed = user.usersubscription.date_subscribed;
         const per = user.usersubscription.subscription.per.per;
@@ -46,7 +46,7 @@ const useGetActiveUsers = () => {
   // Main API fetch
   const getActiveUsers = async () => {
     try {
-      const response = await instance.get(`/api/user_all_status_top5/`);
+      const response = await instance.get(`/api/user_all_status/`);
       const users = response.data || [];
       return await refactorActiveUsers(users);
     } catch (error) {

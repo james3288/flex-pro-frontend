@@ -6,6 +6,7 @@ export const ToastifyMessage = () => {
   const showToastMessage = () => {
     toast.success("Success Notification !", {
       position: "top-right",
+      autoClose: true,
     });
   };
   return (

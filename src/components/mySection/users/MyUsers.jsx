@@ -7,6 +7,7 @@ import UsersModal from "./usersModal";
 import DeleteUserModal from "./DeleteUserModal";
 import UserContractModal from "./UserContractModal";
 import NoDataFound from "../noDataFound/NoDataFound";
+import Loader3 from "../../ui/loader3/Loader3";
 
 const MyUsers = () => {
   const [isPending2, startTransition] = useTransition();
@@ -84,6 +85,7 @@ const MyUsers = () => {
                         type="text"
                         placeholder="search user here..."
                         onChange={handleOnChange}
+                        style={{ padding: "10px 20px" }}
                       />
                     </div>
                   </div>
@@ -92,6 +94,18 @@ const MyUsers = () => {
             </div>
 
             <div className="row">
+              {isPending2 && (
+                <div
+                  style={{
+                    display: "flex",
+                    width: "100%",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Loader3 />
+                </div>
+              )}
               {usersToRender.length > 0 ? (
                 usersToRender.map((user) => (
                   <Users
