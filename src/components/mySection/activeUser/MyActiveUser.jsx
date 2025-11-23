@@ -12,6 +12,8 @@ import useGetActiveUsers from "../../../hooks/useGetActiveUsers";
 import useGetDayPassUsers from "../../../hooks/useGetDayPassUsers";
 import NoDataFound from "../noDataFound/NoDataFound"; // assuming this exists
 import CheckCredentialModal from "../../modals/CheckCredentialModal";
+import useGetActiveMembership from "../../../hooks/useGetActiveMembership";
+import MembershipUser from "../membershipUser/MembershipUser";
 
 // ---------------- Subcomponents ----------------
 const ActiveUsersComponent = ({
@@ -79,6 +81,24 @@ const ActiveDayPassUsersComponent = ({
   ));
 };
 
+const ActiveMembershipComponent = ({
+  users,
+  fetchStatus,
+  setUserSubscriptionId,
+  setModalTitle,
+}) => {
+  // if (fetchStatus === "fetching") return <LoadingEffect />;
+
+  return users?.map((user) => (
+    <MembershipUser
+      key={user.id}
+      user={user}
+      setUserSubscriptionId={setUserSubscriptionId}
+      setModalTitle={setModalTitle}
+    />
+  ));
+};
+
 // ---------------- Main Component ----------------
 const MyActiveUser = () => {
   const [userSubscriptionId, setUserSubscriptionId] = useState(0);
@@ -88,13 +108,19 @@ const MyActiveUser = () => {
 
   const { getActiveUsers } = useGetActiveUsers();
   const { getDayPassUserActive } = useGetDayPassUsers();
+  const { getMembershipUserActive } = useGetActiveMembership();
 
   const { isPending, error, data, fetchStatus } = useQuery({
     queryKey: ["forActiveUser", "forDayPassUser"],
     queryFn: async () => {
       const activeUser = await getActiveUsers();
       const dayPassUser = await getDayPassUserActive();
-      return { data1: activeUser, data2: dayPassUser };
+      const membershipUser = await getMembershipUserActive();
+      return {
+        data1: activeUser,
+        data2: dayPassUser,
+        membershipData: membershipUser,
+      };
     },
   });
 
@@ -111,12 +137,18 @@ const MyActiveUser = () => {
     (user) => user.remainingHours !== "Expired"
   );
 
+  const countMembershipActive = data.membershipData?.filter(
+    (user) => user.remainingHours !== "Expired"
+  );
+
   return (
     <div className="container-fluid content-margin c-col-scrollbar">
       <div className="row">
         <div className="form-floating title">
           <h1>
-            {data?.data1?.length + countDayPassActive?.length}{" "}
+            {data?.data1?.length +
+              countDayPassActive?.length +
+              countMembershipActive?.length}{" "}
             <span style={{ color: "yellowGreen" }}>ACTIVE</span> USERS
           </h1>
         </div>
@@ -124,6 +156,13 @@ const MyActiveUser = () => {
 
       <div className="row">
         <div className="c-col-wrapper">
+          <ActiveMembershipComponent
+            users={data?.membershipData}
+            fetchStatus={fetchStatus}
+            setUserSubscriptionId={setUserSubscriptionId}
+            setModalTitle={setModalTitle}
+          />
+
           <ActiveDayPassUsersComponent
             users={data?.data2}
             fetchStatus={fetchStatus}
