@@ -29,6 +29,16 @@ const UserInfo = memo(({ name, id, gymRate }) => (
   </>
 ));
 
+const MembershipUserInfo = memo(({ name, id, gymRate }) => (
+  <>
+    <h5>{name}</h5>
+    <p>ID: {id}</p>
+    <p style={{ color: "red", fontSize: "18px", lineHeight: "19px" }}>
+      {gymRate}
+    </p>
+  </>
+));
+
 const RemainingDaysWrapper = memo(({ userSub }) => (
   <RemainingDaysLeftComponent
     date_subscribed={userSub?.date_subscribed}
@@ -108,14 +118,38 @@ const ActiveDayPassUserCard = memo(({ user }) => {
   );
 });
 
+const ActiveMembershipUserCard = memo(({ user }) => {
+  const sub = user;
+
+  return (
+    <div className="clients-online">
+      <div className="row row2">
+        <UserImage src={dayPassImage} />
+        <div className="col-7">
+          <div className="clients-flex">
+            <MembershipUserInfo
+              name={sub?.name}
+              id={sub?.id}
+              gymRate={sub?.subscription?.gym_rate_desc}
+            />
+            <RemainingDaysDayPassWrapper userSub={sub} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+});
+
 // 🔹 Main Hook
 const useUsersWithRemainingDaysDatas = () => {
   const [usersWithRemaining, setUsersWithRemaining] = useState([]);
   const [dayPassUserWithRemaining, setDayPassUserWithRemaining] = useState([]);
+  const [membershipUserWithRemaining, setMembershipUserWithRemaining] =
+    useState([]);
 
   const { activeAndInactiveDatas, isLoading, isPending } = useDashboardDatas();
 
-  const { activeAndInactiveUsers, dayPassUser, renewalUser } =
+  const { activeAndInactiveUsers, dayPassUser, renewalUser, membershipUser } =
     activeAndInactiveDatas || {};
 
   // 🔹 Effect to compute remaining days for activeUsers
@@ -192,13 +226,50 @@ const useUsersWithRemainingDaysDatas = () => {
     };
   }, [dayPassUser, isLoading]);
 
+  // 🔹 Effect to compute remaining days for membership
+  useEffect(() => {
+    let isMounted = true;
+
+    const addRemainingDays = async () => {
+      const users = membershipUser;
+      if (!users) return;
+
+      try {
+        const processed = await Promise.all(
+          users.map((user) =>
+            getRemainingDaysLeft(
+              user?.date_subscribed,
+              user?.subscription?.per?.per,
+              user?.id,
+              1,
+              user?.subscription?.id,
+              false
+            ).then((remaining) => ({
+              ...user,
+              remainingDays: remaining,
+            }))
+          )
+        );
+        if (isMounted) setMembershipUserWithRemaining(processed);
+      } catch (e) {
+        console.error("Error processing remaining days:", e);
+      }
+    };
+
+    if (!isLoading) addRemainingDays();
+
+    return () => {
+      isMounted = false; // cleanup to prevent memory leaks
+    };
+  }, [membershipUser, isLoading]);
+
   // 🔹 Memoize filtered active users
   const activeUsers = useMemo(
     () => usersWithRemaining.filter((user) => user.remainingDays !== "Expired"),
     [usersWithRemaining]
   );
 
-  // 🔹 Memoize filtered active users
+  // 🔹 Memoize filtered daypass users
   const activeDayPassUser = useMemo(
     () =>
       dayPassUserWithRemaining.filter(
@@ -207,10 +278,22 @@ const useUsersWithRemainingDaysDatas = () => {
     [usersWithRemaining]
   );
 
+  // 🔹 Memoize filtered  membership users
+  const activeMembershipUser = useMemo(
+    () =>
+      membershipUserWithRemaining.filter(
+        (user) => user.remainingDays !== "Expired"
+      ),
+    [membershipUserWithRemaining]
+  );
+
   const ActiveUsersComponent = memo(() => {
     if (isLoading || isPending) return <LoadingEffect />;
     return (
       <div className="scrollable-list-of-user">
+        {membershipUser.map((user) => (
+          <ActiveMembershipUserCard user={user} key={user?.id} />
+        ))}
         {activeUsers.map((user) => (
           <ActiveUserCard user={user} key={user?.id} />
         ))}
@@ -222,7 +305,13 @@ const useUsersWithRemainingDaysDatas = () => {
   });
 
   const NoOfActiveUsers = () =>
-    isLoading ? <Loader3 /> : activeUsers.length + activeDayPassUser?.length;
+    isLoading ? (
+      <Loader3 />
+    ) : (
+      activeUsers.length +
+      activeDayPassUser?.length +
+      activeMembershipUser?.length
+    );
 
   return {
     usersWithRemaining,

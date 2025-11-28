@@ -136,8 +136,6 @@ const getForRenewalUsers = async () => {
       })
     );
 
-    // console.log("HELLOKING", newUser);
-
     return newUser;
   } catch (error) {
     console.error("Error fetching users:", error);

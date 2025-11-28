@@ -111,7 +111,7 @@ const MyActiveUser = () => {
   const { getMembershipUserActive } = useGetActiveMembership();
 
   const { isPending, error, data, fetchStatus } = useQuery({
-    queryKey: ["forActiveUser", "forDayPassUser"],
+    queryKey: ["forActiveUser", "forDayPassUser", "forMembershipUser"],
     queryFn: async () => {
       const activeUser = await getActiveUsers();
       const dayPassUser = await getDayPassUserActive();

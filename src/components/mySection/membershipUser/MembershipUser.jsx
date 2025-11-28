@@ -97,22 +97,13 @@ const MembershipUser = ({ user }) => {
           <h4>{FormatDate(user?.date_subscribed)}</h4>
 
           {/* MAIN SUBSCRIPTION */}
-          <h3>{user?.subscription?.gym_rate_desc}</h3>
+          <h3 style={{ color: "red" }}>{user?.subscription?.gym_rate_desc}</h3>
 
           <h5>Remaining Hours:</h5>
           <h4 style={{ fontSize: "20px" }}>{subDaysLeft}</h4>
 
-          <h5 style={{ color: "white" }}>Personal Trainer:</h5>
+          {/* <h5 style={{ color: "white" }}>Personal Trainer:</h5>
           <div>
-            {/* <a
-              className="removeExtendedTrainer"
-              data-toggle="modal"
-              data-target="#remove-Membership-trainer"
-              data-whatever="@mdo"
-              onClick={handleRemoveTrainer}
-            >
-              {user?.personal_trainer?.name && <DeleteIconSvg />}
-            </a> */}
             <a
               className="extendedTrainer"
               data-toggle="modal"
@@ -122,7 +113,7 @@ const MembershipUser = ({ user }) => {
               {user?.personal_trainer?.name}{" "}
               {user?.personal_trainer?.name && FormatDate(user?.date_started)}
             </a>
-          </div>
+          </div> */}
           <br />
 
           {/* <div>

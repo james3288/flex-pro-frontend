@@ -9,7 +9,7 @@ const useGetActiveMembership = () => {
       users.map(async (user) => {
         const remaining = await remainingDays(
           user.date_subscribed,
-          "day",
+          "year",
           user.id
         );
 
@@ -44,12 +44,14 @@ const useGetActiveMembership = () => {
   // 🔹 Public methods
   const getMembershipUsers = async () => {
     const users = await fetchUsers();
+
     return processUsers(users);
   };
 
   const getMembershipUserActive = async () => {
     const users = await fetchUsers();
     const processed = await processUsers(users);
+
     return processed.filter((x) => x.remainingHours !== "Expired");
   };
 
