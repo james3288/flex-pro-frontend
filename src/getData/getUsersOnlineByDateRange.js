@@ -17,8 +17,11 @@ const extendedSub = async (subscriptionId) => {
 
 const getUsersOnlineByDateRange = async (dateFrom, dateTo) => {
   try {
+    const cleanDateFrom = dateFrom.split("T")[0];
+    const cleanDateTo = dateTo.split("T")[0];
+
     const response = await instance.get(
-      `/api/get_clients_on_workout_report/?dateFrom=${dateFrom}&dateTo=${dateTo}`
+      `/api/get_clients_on_workout_report/?dateFrom=${cleanDateFrom}&dateTo=${cleanDateTo}`
     );
 
     const users = response.data;
@@ -42,7 +45,7 @@ const getUsersOnlineByDateRange = async (dateFrom, dateTo) => {
             remainingDaysResult,
             extendedSubDaysData,
             userSub.date_subscribed,
-            true
+            false
           );
 
           return {

@@ -1,16 +1,43 @@
 import "./reportPage.scss";
 import logo from "./../../assets/img/logo-2.png";
 import GenerateReportModal from "../../components/modals/GenerateReportModal";
-import { useReportStore } from "./../../store/useReportStore";
-import formatTime from "../../others/ReadableFormatTime";
-import FormatDateISO from "../../others/FormatDateISO";
-import FormatDateOnly from "../../others/FormatDateOnly";
 import { useState } from "react";
 import ByAll from "./ByAll";
 import ByExtendedTrainer from "./ByExtendedTrainer";
 import ByFreeTrainer from "./ByFreeTrainer";
 import getter from "../../getter/getter";
 import ByClientsOnWorkout from "./ByClientsOnWorkout";
+
+const GrandTotalInfo = ({ children }) => {
+  return <h2>{children}</h2>;
+};
+
+const GrandTotalComponent = ({
+  subscription,
+  totalIncome,
+  freeSessionTotal,
+  extendedTrainerTotalSession,
+}) => {
+  switch (subscription) {
+    case "all":
+      return <GrandTotalInfo>{totalIncome}</GrandTotalInfo>;
+
+    case "free-trainer":
+      return <GrandTotalInfo>{freeSessionTotal + " DAYS"}</GrandTotalInfo>;
+
+    case "extended-trainer":
+      return (
+        <GrandTotalInfo>{extendedTrainerTotalSession + " DAYS"}</GrandTotalInfo>
+      );
+
+    case "clients-on-workout":
+      return <GrandTotalInfo>{"--"}</GrandTotalInfo>;
+
+    default:
+      return null;
+  }
+};
+
 const ReportPage = () => {
   const {
     cFreeSessionTotal,
@@ -71,7 +98,7 @@ const ReportPage = () => {
           <div className="col-2 header-col">Subscription</div>
           <div className="col-2 header-col">Time In</div>
           <div className="col-1 header-col">Time Out</div>
-          <div className="col-2 header-col">Subscription Rate</div>
+          <div className="col-2 header-col">Remaining Days Left</div>
         </div>
       ) : (
         <div className="row header">
@@ -105,13 +132,12 @@ const ReportPage = () => {
           <h2>TOTAL:</h2>
         </div>
         <div className="col-2 total-col">
-          <h2>
-            {cSubscription === "all"
-              ? cSubscriptionTotalIncome?.toLocaleString()
-              : cSubscription === "free-trainer"
-              ? cFreeSessionTotal + " DAYS"
-              : cExtendedTrainerTotalSession + " DAYS"}
-          </h2>
+          <GrandTotalComponent
+            subscription={cSubscription}
+            totalIncome={cSubscriptionTotalIncome?.toLocaleString()}
+            freeSessionTotal={cFreeSessionTotal}
+            extendedTrainerTotalSession={cExtendedTrainerTotalSession}
+          />
         </div>
         <div className="col-2 total-col">
           <h2>

@@ -4,6 +4,14 @@ import formatTimeToString from "@others/formatTimeToString";
 import { useReportStore } from "../../store/useReportStore";
 import useOnWorkOutDataByDateRange from "../../hooks/useOnWorkOutDataByDateRange";
 
+const isExpired = (value) => {
+  return value === "Expired" ? "red" : "green";
+};
+
+const is1990 = (value) => {
+  return value?.includes("1990") ? "--:--" : formatTimeToString(value);
+};
+
 const ByClientsOnWorkout = ({ index }) => {
   const [cDateFrom, cDateTo] = useReportStore((state) => [
     state.reportData.dateFrom,
@@ -47,10 +55,15 @@ const ByClientsOnWorkout = ({ index }) => {
           <div className="body-col">{formatTimeToString(user?.time_in)}</div>
         </div>
         <div className="col-1">
-          <div className="body-col">{formatTimeToString(user?.time_out)}</div>
+          <div className="body-col">{is1990(user?.time_out)}</div>
         </div>
         <div className="col-2">
-          <div className="body-col">{user?.per}</div>
+          <div
+            className="body-col"
+            style={{ color: isExpired(user?.extendedSubDays) }}
+          >
+            {user?.extendedSubDays}
+          </div>
         </div>
       </div>
     </>
