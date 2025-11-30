@@ -88,7 +88,7 @@ const MyExpiredUser = () => {
         <div className="row">
           <div className="form-floating title">
             <h1>
-              {users?.length} <span>EXPIRED</span> USERS
+              <span>EXPIRED</span> USERS
             </h1>
           </div>
         </div>

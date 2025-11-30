@@ -56,6 +56,13 @@ const getUserSubscriptionReport = async (dateFrom, dateTo, gym_rate_desc) => {
 
     const data3 = await response3.data;
 
+    // get membership subscription by date range
+    const response4 = await instance.get(
+      `/api/get_membership_subscription_report/?dateFrom=${dateFrom}&dateTo=${dateTo}`
+    );
+
+    const data4 = await response4.data;
+
     data?.forEach((item) => {
       const object = {
         id: $`sub-{ item.id}`,
@@ -116,6 +123,24 @@ const getUserSubscriptionReport = async (dateFrom, dateTo, gym_rate_desc) => {
         per: "day",
         category: "",
         extended_session: item.subscription.rate,
+        promo_option: "",
+        promo_rate: 0,
+      };
+      newUser.push(object);
+    });
+
+    data4?.forEach((item) => {
+      const object = {
+        id: $`ex-{item.id}`,
+        user: item.name,
+        date_subscribed: item.date_subscribed,
+        gym_rate_desc: item.subscription.gym_rate_desc,
+        trainer: item.personal_trainer?.name,
+        // rate: item.user_subscription.subscription.rate,
+        rate: item.rate,
+        per: "year",
+        category: "",
+        extended_session: item.rate,
         promo_option: "",
         promo_rate: 0,
       };

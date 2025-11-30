@@ -279,7 +279,6 @@ const useUsersRenewal = () => {
           user?.remaining,
           "days-only"
         );
-
         return remainingMembershipHours <= 2;
       }),
     [membershipUserWithRemaining]
@@ -299,7 +298,8 @@ const useUsersRenewal = () => {
     );
   });
 
-  const NoOfActiveUsers = () => (isLoading ? <Loader3 /> : activeUsers.length);
+  const NoOfActiveUsers = () =>
+    isLoading ? <Loader3 /> : activeUsers.length + activeMembershipUsers.length;
 
   return {
     usersWithRemaining,
