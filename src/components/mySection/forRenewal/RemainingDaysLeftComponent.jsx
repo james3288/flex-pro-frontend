@@ -83,7 +83,7 @@ const RemainingDaysLeftComponent = ({
             status: "expired",
           });
           hasUpdatedRef.current = true;
-          console.log("Update successful");
+          console.log("Update successful", id);
         } catch (error) {
           console.error("Error updating data:", error);
         }

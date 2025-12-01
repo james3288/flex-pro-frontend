@@ -38,6 +38,63 @@ const GrandTotalComponent = ({
   }
 };
 
+const AllSubscriptionColumnsCompontent = () => {
+  return (
+    <div className="row header">
+      <div className="col-1 header-col">#</div>
+      <div className="col-2 header-col">User</div>
+      <div className="col-2 header-col">Date Subscribed</div>
+      <div className="col-2 header-col">Subscription</div>
+      <div className="col-2 header-col">Free Trainer</div>
+      <div className="col-1 header-col">Rate</div>
+      <div className="col-2 header-col">Days/Month</div>
+    </div>
+  );
+};
+
+const FreeTrainerColumnsComponent = () => {
+  return (
+    <div className="row header">
+      <div className="col-1 header-col">#</div>
+      <div className="col-2 header-col">User</div>
+      <div className="col-2 header-col">Date Subscribed</div>
+      <div className="col-2 header-col">Subscription</div>
+      <div className="col-2 header-col">Free Trainer</div>
+      <div className="col-1 header-col">Trainer Session Days</div>
+      <div className="col-2 header-col">Subscription Rate</div>
+    </div>
+  );
+};
+
+const ClientsOnWorkoutColumnsComponent = () => {
+  return (
+    <div className="row header">
+      <div className="col-1 header-col">#</div>
+      <div className="col-2 header-col">User</div>
+      <div className="col-2 header-col">Date Login</div>
+      <div className="col-2 header-col">Subscription</div>
+      <div className="col-2 header-col">Time In</div>
+      <div className="col-1 header-col">Time Out</div>
+      <div className="col-2 header-col">Remaining Days Left</div>
+    </div>
+  );
+};
+
+const ExtendedTrainerColumnsComponent = () => {
+  return (
+    <div className="row header">
+      <div className="col-1 header-col">#</div>
+      <div className="col-2 header-col">User</div>
+      <div className="col-1 header-col">Date Extend Started</div>
+      <div className="col-2 header-col">Subscription</div>
+      <div className="col-2 header-col">Trainer</div>
+      <div className="col-2 header-col">Session days</div>
+      <div className="col-1 header-col">PT Rate</div>
+      <div className="col-1 header-col">*</div>
+    </div>
+  );
+};
+
 const ReportPage = () => {
   const {
     cFreeSessionTotal,
@@ -71,46 +128,13 @@ const ReportPage = () => {
         </button>
       </div>
       {cSubscription === "all" ? (
-        <div className="row header">
-          <div className="col-1 header-col">#</div>
-          <div className="col-2 header-col">User</div>
-          <div className="col-2 header-col">Date Subscribed</div>
-          <div className="col-2 header-col">Subscription</div>
-          <div className="col-2 header-col">Free Trainer</div>
-          <div className="col-1 header-col">Rate</div>
-          <div className="col-2 header-col">Days/Month</div>
-        </div>
+        <AllSubscriptionColumnsCompontent />
       ) : cSubscription === "free-trainer" ? (
-        <div className="row header">
-          <div className="col-1 header-col">#</div>
-          <div className="col-2 header-col">User</div>
-          <div className="col-2 header-col">Date Subscribed</div>
-          <div className="col-2 header-col">Subscription</div>
-          <div className="col-2 header-col">Free Trainer</div>
-          <div className="col-1 header-col">Trainer Session Days</div>
-          <div className="col-2 header-col">Subscription Rate</div>
-        </div>
+        <FreeTrainerColumnsComponent />
       ) : cSubscription === "clients-on-workout" ? (
-        <div className="row header">
-          <div className="col-1 header-col">#</div>
-          <div className="col-2 header-col">User</div>
-          <div className="col-2 header-col">Date Login</div>
-          <div className="col-2 header-col">Subscription</div>
-          <div className="col-2 header-col">Time In</div>
-          <div className="col-1 header-col">Time Out</div>
-          <div className="col-2 header-col">Remaining Days Left</div>
-        </div>
+        <ClientsOnWorkoutColumnsComponent />
       ) : (
-        <div className="row header">
-          <div className="col-1 header-col">#</div>
-          <div className="col-2 header-col">User</div>
-          <div className="col-1 header-col">Date Extend Started</div>
-          <div className="col-2 header-col">Subscription</div>
-          <div className="col-2 header-col">Trainer</div>
-          <div className="col-2 header-col">Session days</div>
-          <div className="col-1 header-col">PT Rate</div>
-          <div className="col-1 header-col">*</div>
-        </div>
+        <ExtendedTrainerColumnsComponent />
       )}
 
       {cSubscription === "all" ? (

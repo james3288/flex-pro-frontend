@@ -1,8 +1,6 @@
 import React from "react";
 import instance from "../others/axiosInstance";
-import { create } from "zustand";
 import getRate from "../others/getRate";
-import { useReportStore } from "../store/useReportStore";
 
 const customizeRateFn = (extended_session) => {
   const setExtendedSession = extended_session === 0 ? 1 : extended_session;
@@ -28,26 +26,22 @@ const ifPlural = (days, per) => {
   }
 };
 
-const getUserSubscriptionReport = async (dateFrom, dateTo, gym_rate_desc) => {
+const getUserSubscriptionReportByAll = async (dateFrom, dateTo) => {
   try {
     const newUser = [];
 
     // get user subscription by date range and gym rate desc
     const response = await instance.get(
-      `/api/get_user_subscription_report/?dateFrom=${dateFrom}&dateTo=${dateTo}&gym_rate_desc=${encodeURIComponent(
-        gym_rate_desc
-      )}`
+      `/api/get_user_subscription_report_by_all/?dateFrom=${dateFrom}&dateTo=${dateTo}`
     );
     const data = await response.data;
 
-    // get extended subscription by date range
-    const response2 = await instance.get(
-      `/api/get_extended_subscription_report/?dateFrom=${dateFrom}&dateTo=${dateTo}&gym_rate_desc=${encodeURIComponent(
-        gym_rate_desc
-      )}`
-    );
-
-    const data2 = await response2.data;
+    // const response2 = await instance.get(
+    //   `/api/get_extended_subscription_report/?dateFrom=${dateFrom}&dateTo=${dateTo}&gym_rate_desc=${encodeURIComponent(
+    //     gym_rate_desc
+    //   )}`
+    // );
+    // const data2 = await response2.data;
 
     // get daypass subscription by date range
     const response3 = await instance.get(
@@ -86,30 +80,30 @@ const getUserSubscriptionReport = async (dateFrom, dateTo, gym_rate_desc) => {
       newUser.push(object);
     });
 
-    data2?.forEach((item) => {
-      const object = {
-        id: $`ex-{item.id}`,
-        user: item.user_subscription.flexprouser.name,
-        date_subscribed: item.date_extend,
-        gym_rate_desc: item.subscription.gym_rate_desc,
-        trainer: null,
-        // rate: item.user_subscription.subscription.rate,
-        rate: getRate("day", item.extended_session_day),
-        per:
-          item.extended_session_day > 1
-            ? item.extended_session_day +
-              ` days (extended${item?.options === "promo" ? " - P" : ""})`
-            : item.extended_session_day + ` day (extended - PROMO)`,
-        category: "extended",
-        extended_session:
-          item?.options === "promo"
-            ? item?.promo_rate
-            : customizeRateFn(item.extended_session_day),
-        promo_option: item?.options,
-        promo_rate: item?.promo_rate,
-      };
-      newUser.push(object);
-    });
+    // data2?.forEach((item) => {
+    //   const object = {
+    //     id: $`ex-{item.id}`,
+    //     user: item.user_subscription.flexprouser.name,
+    //     date_subscribed: item.date_extend,
+    //     gym_rate_desc: item.subscription.gym_rate_desc,
+    //     trainer: null,
+    //     // rate: item.user_subscription.subscription.rate,
+    //     rate: getRate("day", item.extended_session_day),
+    //     per:
+    //       item.extended_session_day > 1
+    //         ? item.extended_session_day +
+    //           ` days (extended${item?.options === "promo" ? " - P" : ""})`
+    //         : item.extended_session_day + ` day (extended - PROMO)`,
+    //     category: "extended",
+    //     extended_session:
+    //       item?.options === "promo"
+    //         ? item?.promo_rate
+    //         : customizeRateFn(item.extended_session_day),
+    //     promo_option: item?.options,
+    //     promo_rate: item?.promo_rate,
+    //   };
+    //   newUser.push(object);
+    // });
 
     data3?.forEach((item) => {
       const object = {
@@ -158,10 +152,7 @@ const getUserSubscriptionReport = async (dateFrom, dateTo, gym_rate_desc) => {
     // });
 
     // filter by subscription
-    const filterBySubscription = newUser.filter(
-      (user) =>
-        user.gym_rate_desc.toLowerCase().includes(gym_rate_desc.toLowerCase()) //(gym_rate_desc.toLowerCase())
-    );
+    const filterBySubscription = newUser;
 
     // sort by date
     const sortedUsers = filterBySubscription.sort((a, b) => {
@@ -176,4 +167,4 @@ const getUserSubscriptionReport = async (dateFrom, dateTo, gym_rate_desc) => {
   }
 };
 
-export default getUserSubscriptionReport;
+export default getUserSubscriptionReportByAll;

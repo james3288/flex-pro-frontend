@@ -6,6 +6,7 @@ import FormatDate from "../../others/FormatDate";
 import FormatDateOnly from "../../others/FormatDateOnly";
 import getExtendedTrainerReport from "../../getData/getExtendedTrainerReport";
 import getSubscriptionReportByFreeTrainer from "../../getData/getSubscriptionReportByFreeTrainer";
+import getUserSubscriptionReportByAll from "../../getData/getUserSubscriptionReportByAll";
 
 const GenerateReportModal = () => {
   const cModalTitle = useReportStore((state) => state.modalTitle);
@@ -115,15 +116,26 @@ const GenerateReportModal = () => {
     dTo.setDate(dTo.getDate() + 1);
 
     const getDataByAll = async () => {
-      setUserSubscriptionReport(
-        dFrom !== null &&
-          dTo !== null &&
-          (await getUserSubscriptionReport(
-            FormatDateOnly(dFrom),
-            FormatDateOnly(dTo),
-            selectSubscription
-          ))
-      );
+      if (selectSubscription === "select-all") {
+        setUserSubscriptionReport(
+          dFrom !== null &&
+            dTo !== null &&
+            (await getUserSubscriptionReportByAll(
+              FormatDateOnly(dFrom),
+              FormatDateOnly(dTo)
+            ))
+        );
+      } else {
+        setUserSubscriptionReport(
+          dFrom !== null &&
+            dTo !== null &&
+            (await getUserSubscriptionReport(
+              FormatDateOnly(dFrom),
+              FormatDateOnly(dTo),
+              selectSubscription
+            ))
+        );
+      }
 
       await setSubscriptionTotalIncome();
       // await getUserSubscriptionReport()
@@ -165,6 +177,7 @@ const GenerateReportModal = () => {
       getByExtendedTrainer();
     } else if (subscription === "free-trainer") {
       getFreeTrainer();
+    } else if (subscription === "select-all") {
     }
   };
 
@@ -227,6 +240,13 @@ const GenerateReportModal = () => {
                       onChange={handleChange}
                     >
                       <option value={""}>-- Select Subscription --</option>
+                      <option
+                        key={"select-all"}
+                        value={"select-all"}
+                        style={{ color: "green" }}
+                      >
+                        SELECT ALL SUBSCRIPTION
+                      </option>
                       {listOfSubscription?.map((subscription) => (
                         <option
                           key={subscription.id}
