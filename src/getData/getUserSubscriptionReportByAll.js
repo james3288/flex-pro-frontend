@@ -36,12 +36,11 @@ const getUserSubscriptionReportByAll = async (dateFrom, dateTo) => {
     );
     const data = await response.data;
 
-    // const response2 = await instance.get(
-    //   `/api/get_extended_subscription_report/?dateFrom=${dateFrom}&dateTo=${dateTo}&gym_rate_desc=${encodeURIComponent(
-    //     gym_rate_desc
-    //   )}`
-    // );
-    // const data2 = await response2.data;
+    const response2 = await instance.get(
+      `/api/get_extended_subscription_report_by_all/?dateFrom=${dateFrom}&dateTo=${dateTo}`
+    );
+
+    const data2 = await response2.data;
 
     // get daypass subscription by date range
     const response3 = await instance.get(
@@ -80,30 +79,30 @@ const getUserSubscriptionReportByAll = async (dateFrom, dateTo) => {
       newUser.push(object);
     });
 
-    // data2?.forEach((item) => {
-    //   const object = {
-    //     id: $`ex-{item.id}`,
-    //     user: item.user_subscription.flexprouser.name,
-    //     date_subscribed: item.date_extend,
-    //     gym_rate_desc: item.subscription.gym_rate_desc,
-    //     trainer: null,
-    //     // rate: item.user_subscription.subscription.rate,
-    //     rate: getRate("day", item.extended_session_day),
-    //     per:
-    //       item.extended_session_day > 1
-    //         ? item.extended_session_day +
-    //           ` days (extended${item?.options === "promo" ? " - P" : ""})`
-    //         : item.extended_session_day + ` day (extended - PROMO)`,
-    //     category: "extended",
-    //     extended_session:
-    //       item?.options === "promo"
-    //         ? item?.promo_rate
-    //         : customizeRateFn(item.extended_session_day),
-    //     promo_option: item?.options,
-    //     promo_rate: item?.promo_rate,
-    //   };
-    //   newUser.push(object);
-    // });
+    data2?.forEach((item) => {
+      const object = {
+        id: $`ex-{item.id}`,
+        user: item.user_subscription.flexprouser.name,
+        date_subscribed: item.date_extend,
+        gym_rate_desc: item.subscription.gym_rate_desc,
+        trainer: null,
+        // rate: item.user_subscription.subscription.rate,
+        rate: getRate("day", item.extended_session_day),
+        per:
+          item.extended_session_day > 1
+            ? item.extended_session_day +
+              ` days (extended${item?.options === "promo" ? " - P" : ""})`
+            : item.extended_session_day + ` day (extended - PROMO)`,
+        category: "extended",
+        extended_session:
+          item?.options === "promo"
+            ? item?.promo_rate
+            : customizeRateFn(item.extended_session_day),
+        promo_option: item?.options,
+        promo_rate: item?.promo_rate,
+      };
+      newUser.push(object);
+    });
 
     data3?.forEach((item) => {
       const object = {
