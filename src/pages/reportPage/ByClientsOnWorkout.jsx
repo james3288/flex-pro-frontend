@@ -1,8 +1,10 @@
 import FormatDateOnly from "../../others/FormatDateOnly";
 import Loader3 from "../../components/ui/loader3/Loader3";
+import JollyShapeLoading from "../../components/ui/jollyShapeLoading/JollyShapeLoading";
 import formatTimeToString from "@others/formatTimeToString";
 import { useReportStore } from "../../store/useReportStore";
 import useOnWorkOutDataByDateRange from "../../hooks/useOnWorkOutDataByDateRange";
+import Loading5 from "../../components/ui/loading5/Loading5";
 
 const isExpired = (value) => {
   return value === "Expired" ? "red" : "green";
@@ -25,7 +27,7 @@ const ByClientsOnWorkout = ({ index }) => {
   });
 
   if (isLoading) {
-    return <Loader3 />;
+    return <Loading5 />;
   }
 
   const { usersOnline, dayPassUsersOnline } = data;
