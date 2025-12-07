@@ -13,7 +13,7 @@ const useFaceDetectionLogic = ({ canvasRef, faceapi, videoRef }) => {
   );
 
   const isFaceDetected = (result, count) => {
-    if (!result?.toString()?.includes("unknown") && count <= 5) {
+    if (!result?.toString()?.includes("unknown") && count <= 2) {
       return true;
     } else {
       return false;

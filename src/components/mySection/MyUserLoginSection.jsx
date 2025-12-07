@@ -21,6 +21,8 @@ import Loader3 from "../ui/loader3/Loader3";
 import { useDayPassStore } from "../../store/useDayPassStore";
 import Pic from "@assets/img/dummy.png";
 import useResetLogin from "./users/hooks/useResetLogin";
+import NeonCheckBox from "../ui/check/NeonCheckBox";
+import ScanLoadingNew from "../ui/scan/ScanLoadingNew";
 
 const SmallCentered = ({ children, style }) => (
   <div
@@ -39,8 +41,9 @@ const SmallCentered = ({ children, style }) => (
 
 const CheckStatus = memo(() => (
   <h3 style={{ color: "yellowgreen" }}>
-    <CheckCircleFillSvg />
-    {"  "} Login Successfully
+    {/* <CheckCircleFillSvg /> */}
+    <NeonCheckBox />
+    {/* {"  "} Login Successfully */}
   </h3>
 ));
 
@@ -54,7 +57,8 @@ const AlreadyLoginStatus = memo(() => (
 const ScanLoading = memo(({ attempt }) => (
   <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
     <LoadingEffect />
-    <h3>{attempt * 20}%</h3>
+    {/* <h3>{attempt * 20}%</h3> */}
+    <ScanLoadingNew />
   </div>
 ));
 
@@ -335,7 +339,7 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
   // render logic for waiting/scan state
   const WaitingForFaceRecognition = useMemo(() => {
     if (!cCurrentlyLogin) {
-      return <h5>Waiting for user...</h5>;
+      return <h3>waiting for regular user...</h3>;
     }
 
     // stable boolean for already logged in
@@ -397,7 +401,7 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
                 </>
               )}
               {!isThisYourFace && (
-                <div>
+                <div style={{ marginTop: "15px" }}>
                   <button
                     className="btn btn-warning"
                     onClick={handleCancelLogin}
@@ -422,7 +426,7 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
 
   const WaitingForDayPassLogin = useMemo(() => {
     if (!cIsDayPassLogin) {
-      return <h5>Waiting for daypass user...</h5>;
+      return <h3>waiting for daypass user...</h3>;
     }
 
     const dayPassUserData = {

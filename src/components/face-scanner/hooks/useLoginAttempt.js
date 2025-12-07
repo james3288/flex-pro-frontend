@@ -4,7 +4,7 @@ import { useCurrentlyLoginStore } from "../store/currentlyLoginStore";
 const useLoginAttempt = () => {
   const [isThisYourFace, setIsThisYourFace] = useState(false);
 
-  const validLoginAttempt = 5;
+  const validLoginAttempt = 2;
   const [cLoginAttempt, cSetIsFound, cIsFound] = useCurrentlyLoginStore(
     (state) => [
       state.loginAttempt,
