@@ -3,26 +3,58 @@ import SaveTrainers from "./saveTrainers";
 import { INITIAL_STATE, formReducer } from "../../../reducers/trainorsReducer";
 import UpdateTrainers from "./updateTrainers";
 
+function toSlug(name) {
+  return name
+    .toLowerCase() // convert to lowercase
+    .trim() // remove whitespace from start/end
+    .replace(/[^\w\s-]/g, "") // remove all non-word characters except spaces and hyphens
+    .replace(/\s+/g, "-") // replace spaces with hyphens
+    .replace(/--+/g, "-"); // replace multiple hyphens with a single one
+}
+
 const TrainersModal = ({ id, option, selectedTrainer }) => {
   const [state, dispatch] = useReducer(formReducer, INITIAL_STATE);
   const refName = useRef(null);
   const refPosition = useRef(null);
   const refContactNo = useRef(null);
   const refImage = useRef(null);
+  const inputRef = useRef(null);
+
+  const setFileInput = async (blobUrl, filename) => {
+    // Fetch the blob from the blob URL
+    const response = await fetch(blobUrl);
+    const blob = await response.blob();
+
+    // Convert blob to a File
+    const file = new File([blob], filename, { type: blob.type });
+
+    // Create a DataTransfer to set files programmatically
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+
+    // Assign files to input
+    if (inputRef.current) {
+      inputRef.current.files = dataTransfer.files;
+    }
+  };
 
   useEffect(() => {
     if (option === "Update") {
       // convert image to base64 file
-      const filename = "1.jpg"; // You can set your desired filename here
+      const filename = `${selectedTrainer?.id}.jpg`; // You can set your desired filename here
       const mimeType = "image/jpeg"; // Mime type of the image
       const base64String = selectedTrainer?.image;
-      const file =
-        selectedTrainer?.image != undefined &&
-        base64toFile(base64String, filename, mimeType);
+
+      // const file =
+      //   selectedTrainer?.image != undefined &&
+      //   base64toFile(base64String, filename, mimeType);
 
       refName.current.value = selectedTrainer?.name;
       refPosition.current.value = selectedTrainer?.position;
       refContactNo.current.value = selectedTrainer?.contact_no;
+
+      setFileInput(base64String, filename);
+
       // refImage.current.value = file;
 
       // console.log(file);
@@ -59,8 +91,8 @@ const TrainersModal = ({ id, option, selectedTrainer }) => {
       dispatch({
         type: "CHANGE_IMAGE",
         payload: {
-          name: refImage.current.name,
-          value: file,
+          name: "image",
+          value: inputRef.current.files,
         },
       });
       // END FILL ALL DATA TO STATE
@@ -103,7 +135,7 @@ const TrainersModal = ({ id, option, selectedTrainer }) => {
     uploadData.append("id", state.id);
     uploadData.append("trainersName", state.trainersName);
     uploadData.append("position", state.position);
-    uploadData.append("image", state.image);
+    uploadData.append("image", inputRef.current.files[0]);
     uploadData.append("contactNo", state.contactNo);
     UpdateTrainers(uploadData);
     dispatch({ type: "CLEAR" });
@@ -122,20 +154,6 @@ const TrainersModal = ({ id, option, selectedTrainer }) => {
       payload: { name: e.target.name, value: e.target.files[0] },
     });
   };
-
-  // Function to convert base64 to File object
-  const base64toFile = (base64String, filename, mimeType) => {
-    const byteCharacters = atob(base64String.split(",")[1]);
-    const byteNumbers = new Array(byteCharacters.length);
-    for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
-    }
-    const byteArray = new Uint8Array(byteNumbers);
-    const file = new File([byteArray], filename, { type: mimeType });
-    return file;
-  };
-
-  // console.log(state);
 
   return (
     <div
@@ -229,7 +247,7 @@ const TrainersModal = ({ id, option, selectedTrainer }) => {
                 type="file"
                 id="formFile"
                 name="image"
-                ref={refImage}
+                ref={inputRef}
                 // onChange={(e) => setImage(e.target.files[0])}
                 onChange={handleChangeImage}
               />

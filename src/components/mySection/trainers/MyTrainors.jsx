@@ -10,21 +10,8 @@ import TrainersModal from "./TrainersModal";
 import DeleteTrainerModal from "./DeleteTrainerModal";
 
 const MyTrainors = () => {
-  // useEffect(() => {
-  //   const trainorData = async () => {
-  //     return await getTrainors();
-  //   };
-
-  //   console.log(trainorData());
-  // }, []);
-
   const [selectedTrainer, setSelectedTrainer] = useState();
-  // useEffect(() => {
-  //   // console.log(selectedTrainer);
-  // }, [selectedTrainer]);
-
   const queryKey = useMemo(() => ["forTrainorsData"], []);
-
   const { isPending, error, data } = useQuery({
     queryKey,
     queryFn: () => getTrainors(),
