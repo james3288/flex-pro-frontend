@@ -3,6 +3,8 @@ import useUserLoginModalNumpad from "../hooks/useUserLoginModalNumpad";
 import NumpadButton from "../../modals/NumpadButton";
 import { useCurrentlyLoginStore } from "../store/currentlyLoginStore";
 import { useNumpadStore } from "../store/numpadStore";
+import { useActiveCameraStore } from "../../../store/useActiveCamera";
+import useToastifyMessageComponent from "./../../../customHooks/useToastifyMessageComponent";
 
 const UserFoundComponent = ({ user, onLogin, onCancel }) => {
   if (!user) return <h4 className="text-danger">No User has been found!</h4>;
@@ -47,6 +49,9 @@ const UserLoginIDVerificationModal = memo(({ users }) => {
 
   const [cUserFound] = useCurrentlyLoginStore((state) => [state.userFound]);
   const [cNumpadResult] = useNumpadStore((state) => [state.numpadResult]);
+  const [cHasVideoOutput] = useActiveCameraStore((state) => [
+    state.hasVideoOutput,
+  ]);
 
   // Avoid inline recreation for Enter handler
   const handleEnter = useCallback(() => {

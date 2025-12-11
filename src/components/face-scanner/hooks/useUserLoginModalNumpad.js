@@ -1,19 +1,28 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useCurrentlyLoginStore } from "../store/currentlyLoginStore";
 import { useNumpadStore } from "../store/numpadStore";
+import { useActiveCameraStore } from "../../../store/useActiveCamera";
+import { useLoginWithoutCameraStore } from "../../../store/useLoginWithoutCamera";
 
 const useUserLoginModalNumpad = () => {
   // const [numpadResult, setNumpadResult] = useState("");
   // const [userFound, setUserFound] = useState(0);
   const [flexProUserIdStorage, setFlexProUserIdStorage] = useState(0);
-  const [cSetCurrentlyLogin, cSetUserFound, cUserFound] =
+  const [cSetCurrentlyLogin, cSetUserFound, cUserFound, cSetLoginAttempt] =
     useCurrentlyLoginStore((state) => [
       state.setCurrentlyLogin,
       state.setUserFound,
       state.userFound,
+      state.setLoginAttempt,
     ]);
 
   const cSetNumpadResult = useNumpadStore((state) => state.setNumpadResult);
+  const [cHasVideoOutput] = useActiveCameraStore((state) => [
+    state.hasVideoOutput,
+  ]);
+  const [cSetIsLoginWithoutCamera] = useLoginWithoutCameraStore((state) => [
+    state.setIsLoginWithoutCamera,
+  ]);
 
   const handleNumpadOnClick = (e) => {
     // setNumpadResult((prev) => prev + e.target.value);
@@ -49,9 +58,14 @@ const useUserLoginModalNumpad = () => {
   );
 
   const handleLoginOnclick = async () => {
-    if (cUserFound) {
+    if (cUserFound && cHasVideoOutput) {
       setFlexProUserIdStorage(cUserFound?.usersubscription.flexprouser?.id);
       cSetCurrentlyLogin(cUserFound);
+    } else if (cUserFound && !cHasVideoOutput) {
+      // alert("No camera found on this device.");
+      setFlexProUserIdStorage(cUserFound?.usersubscription.flexprouser?.id);
+      cSetCurrentlyLogin(cUserFound);
+      cSetIsLoginWithoutCamera(true);
     }
   };
 

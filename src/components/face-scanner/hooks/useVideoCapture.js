@@ -1,17 +1,25 @@
 import { useRef, useState, useCallback } from "react";
+import { useActiveCameraStore } from "../../../store/useActiveCamera";
 
 const useVideoCapture = () => {
   const [captureVideo, setCaptureVideo] = useState(false);
   const videoRef = useRef(null);
   const streamRef = useRef(null);
 
+  const [cHasVideoOutput, cSetHasVideoOutput] = useActiveCameraStore(
+    (state) => [state.hasVideoOutput, state.setHasVideoOutput]
+  );
+
   const startVideo = async () => {
     try {
       const devices = await navigator.mediaDevices.enumerateDevices();
       const hasVideoInput = devices.some((d) => d.kind === "videoinput");
 
+      cSetHasVideoOutput(hasVideoInput);
+
       if (!hasVideoInput) {
         alert("No camera found on this device.");
+
         return;
       }
 

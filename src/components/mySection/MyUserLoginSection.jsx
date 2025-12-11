@@ -23,6 +23,8 @@ import Pic from "@assets/img/dummy.png";
 import useResetLogin from "./users/hooks/useResetLogin";
 import NeonCheckBox from "../ui/check/NeonCheckBox";
 import ScanLoadingNew from "../ui/scan/ScanLoadingNew";
+import { useActiveCameraStore } from "../../store/useActiveCamera";
+import { useLoginWithoutCameraStore } from "../../store/useLoginWithoutCamera";
 
 const SmallCentered = ({ children, style }) => (
   <div
@@ -181,6 +183,18 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
   const { isThisYourFace, setIsThisYourFace } = useLoginAttempt();
   const loginMutation = useLoginMutation();
 
+  // check camera if active
+  const [cHasVideoOutput] = useActiveCameraStore((state) => [
+    state.hasVideoOutput,
+  ]);
+
+  // check if user is already logged in without camera
+  const [cIsLoginWithoutCamera, cSetIsLoginWithoutCamera] =
+    useLoginWithoutCameraStore((state) => [
+      state.isLoginWithoutCamera,
+      state.setIsLoginWithoutCamera,
+    ]);
+
   // loginUser fetch — memoize user id param
   const userSub = cCurrentlyLogin?.usersubscription;
   const { loginUser } = useFetchLoginUser({
@@ -228,13 +242,16 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
     setIsThisYourFace,
   ]);
 
+  const handleLoginWithoutCamera = () => {
+    cSetLoginAttempt(2);
+  };
+
   // side effects
   useEffect(() => {
     if (isThisYourFace) {
       // ensure loginMutation is stable or handles deduping
       loginMutation.mutate();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isThisYourFace]); // loginMutation likely stable
 
   useEffect(() => {
@@ -401,13 +418,23 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
                 </>
               )}
               {!isThisYourFace && (
-                <div style={{ marginTop: "15px" }}>
+                <div
+                  style={{ marginTop: "15px", display: "flex", gap: "10px" }}
+                >
                   <button
                     className="btn btn-warning"
                     onClick={handleCancelLogin}
                   >
                     Cancel Login
                   </button>
+                  {cIsLoginWithoutCamera && !cHasVideoOutput && (
+                    <button
+                      className="btn btn-success"
+                      onClick={handleLoginWithoutCamera}
+                    >
+                      Bypass Login
+                    </button>
+                  )}
                 </div>
               )}
             </>
