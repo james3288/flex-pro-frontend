@@ -246,6 +246,50 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
     cSetLoginAttempt(2);
   };
 
+  // small presentational components as callbacks to keep stable identity
+  const LoginUserIdButton = useCallback(
+    ({ resetDayPassLogin }) => (
+      <button
+        className="btn btn-success enabled"
+        disabled={isLoadingActiveAndInactiveUser}
+        data-toggle="modal"
+        data-target=".bd-example-modal-lg"
+        style={{ zIndex: 9999 }}
+        onClick={() => handleUserRefresh({ resetDayPassLogin })}
+      >
+        Login User ID
+      </button>
+    ),
+    [isLoadingActiveAndInactiveUser, handleUserRefresh]
+  );
+
+  const RefreshButton = useCallback(() => (
+    <button
+      className="btn btn-success enabled"
+      onClick={() => refetch()} //{handlePlayClick}
+      disabled={isLoadingActiveAndInactiveUser}
+      style={{ zIndex: 9999 }}
+    >
+      Refresh
+    </button>
+  ));
+
+  const LoginByDayPassButton = useCallback(
+    ({ resetRegularUserLogin }) => (
+      <button
+        className="btn btn-success enabled"
+        data-toggle="modal"
+        data-target="#daypass-login-modal"
+        onClick={() => handleDayPassLoginClick({ resetRegularUserLogin })}
+        style={{ zIndex: 9999 }}
+        disabled={isLoadingActiveAndInactiveUser}
+      >
+        Login Daypass
+      </button>
+    ),
+    [handleDayPassLoginClick]
+  );
+
   // side effects
   useEffect(() => {
     if (isThisYourFace) {
@@ -295,50 +339,6 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
       users,
       isLoadingActiveAndInactiveUser,
     ]
-  );
-
-  // small presentational components as callbacks to keep stable identity
-  const LoginUserIdButton = useCallback(
-    ({ resetDayPassLogin }) => (
-      <button
-        className="btn btn-success enabled"
-        disabled={isLoadingActiveAndInactiveUser}
-        data-toggle="modal"
-        data-target=".bd-example-modal-lg"
-        style={{ zIndex: 9999 }}
-        onClick={() => handleUserRefresh({ resetDayPassLogin })}
-      >
-        Login User ID
-      </button>
-    ),
-    [isLoadingActiveAndInactiveUser, handleUserRefresh]
-  );
-
-  const RefreshButton = useCallback(() => (
-    <button
-      className="btn btn-success enabled"
-      onClick={() => refetch()} //{handlePlayClick}
-      disabled={isLoadingActiveAndInactiveUser}
-      style={{ zIndex: 9999 }}
-    >
-      Refresh
-    </button>
-  ));
-
-  const LoginByDayPassButton = useCallback(
-    ({ resetRegularUserLogin }) => (
-      <button
-        className="btn btn-success enabled"
-        data-toggle="modal"
-        data-target="#daypass-login-modal"
-        onClick={() => handleDayPassLoginClick({ resetRegularUserLogin })}
-        style={{ zIndex: 9999 }}
-        disabled={isLoadingActiveAndInactiveUser}
-      >
-        Login Daypass
-      </button>
-    ),
-    [handleDayPassLoginClick]
   );
 
   const WaitForInitializingUsersComponent = useCallback(() => {

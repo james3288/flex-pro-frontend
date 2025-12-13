@@ -5,7 +5,7 @@ const useCheckIfAlreadyLogin = () => {
   const checkIfAlreadyIn = async (user_id) => {
     try {
       const response = await instance.get(
-        `/api/user_time_record_get/${user_id}`
+        `/api/user_time_record_get/${user_id ?? 0}`
       );
 
       return await response.data;
