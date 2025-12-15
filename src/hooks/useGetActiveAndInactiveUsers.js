@@ -26,7 +26,6 @@ const useGetActiveAndInactiveUsers = () => {
         membershipUser: membershipUser,
       };
     },
-    refetchInterval: false,
   });
 
   return { isPending, data, fetchStatus, isLoading, refetch };

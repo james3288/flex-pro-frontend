@@ -102,15 +102,6 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
   // reset daypass and regular login hook
   const { resetDayPassLogin, resetRegularUserLogin } = useResetLogin();
 
-  // Active + Inactive users loader (assumed to return: { isPending, data, fetchStatus, isLoading })
-  const {
-    isPending,
-    data: users = [],
-    fetchStatus,
-    isLoading: isLoadingActiveAndInactiveUser,
-    refetch,
-  } = useGetActiveAndInactiveUsers();
-
   // login section hook (returns many callbacks/values) - keep stable by destructuring once
   const myLogin = useMyUserLoginSection();
   const {
@@ -201,6 +192,15 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
     user_id: userSub?.flexprouser?.id,
   });
 
+  // Active + Inactive users loader (assumed to return: { isPending, data, fetchStatus, isLoading })
+  const {
+    isPending,
+    data: users = [],
+    fetchStatus,
+    isLoading: isLoadingActiveAndInactiveUser,
+    refetch,
+  } = useGetActiveAndInactiveUsers();
+
   // derived: is user already logged in according to fetched loginUser
   const alreadyLoggedIn = useMemo(() => {
     if (!loginUser || !loginUser.loginUser) return false;
@@ -271,6 +271,17 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
       style={{ zIndex: 9999 }}
     >
       Refresh
+    </button>
+  ));
+
+  const StartCamera = useCallback(() => (
+    <button
+      className="btn btn-success enabled"
+      onClick={() => refetch()} //{handlePlayClick}
+      disabled={isLoadingActiveAndInactiveUser}
+      style={{ zIndex: 9999 }}
+    >
+      Start Camera
     </button>
   ));
 
@@ -523,6 +534,7 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
               </div>
 
               <div className="camera-btn">
+                {/* <StartCamera /> */}
                 <RefreshButton />
                 <LoginUserIdButton resetDayPassLogin={resetDayPassLogin} />
                 <LoginByDayPassButton

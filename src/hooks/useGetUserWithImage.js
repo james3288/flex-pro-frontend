@@ -6,6 +6,7 @@ const useGetUserWithImage = ({ userId }) => {
   const [userFound, setUserFound] = useState(null);
   useEffect(() => {
     const userWithImg = async () => {
+      console.log(userId);
       let imgData = await getImagePath(userId);
 
       const imageDataUrl = await loadImageData(imgData?.image1);
@@ -13,7 +14,9 @@ const useGetUserWithImage = ({ userId }) => {
       setUserFound(newImgData);
     };
 
-    userWithImg();
+    if (!userId === 0) {
+      userWithImg();
+    }
 
     // trainer
   }, [userId]);

@@ -14,6 +14,18 @@ const useGetActiveUsers = () => {
         const personal_training_session =
           user.usersubscription.subscription.personal_training_session;
 
+        // ✅ ESCAPE HERE
+        if (flexProUserId === 0) {
+          const remaining = await remainingDays(date_subscribed, per);
+
+          return {
+            ...user,
+            trainersRemainingDays: 0,
+            remainingDays: remaining,
+            image: "/media/image/default.jpg",
+          };
+        }
+
         // Get image path first
         const imgpath = await getImagePath(flexProUserId);
 
