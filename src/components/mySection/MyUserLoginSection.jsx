@@ -220,6 +220,16 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
       cSetNumpadResult("");
       cSetIsFound(false);
       setIsThisYourFace(false);
+      cSetCurrentlyLogin(null);
+      cSetLoginAttempt(0);
+      cSetIsAlreadyLoginInDatabase(false);
+
+      //       cSetCurrentlyLogin(null);
+      // cSetUserFound(null);
+      // cSetLoginAttempt(0);
+      // cSetIsFound(false);
+      // cSetIsAlreadyLoginInDatabase(false);
+      // setIsThisYourFace(false);
 
       resetDayPassLogin();
     },
