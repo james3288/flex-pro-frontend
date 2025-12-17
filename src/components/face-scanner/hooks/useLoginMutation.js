@@ -3,6 +3,7 @@ import React from "react";
 import useSaveTimeRecords from "../../mySection/users/hooks/useSaveTimeRecords";
 import { useCurrentlyLoginStore } from "../store/currentlyLoginStore";
 import useFetchLoginUser from "../../../hooks/useFetchLoginUser";
+import formatTimeToString from "../../../others/formatTimeToString";
 
 const useLoginMutation = () => {
   const queryClient = useQueryClient();
@@ -48,7 +49,11 @@ const useLoginMutation = () => {
   return useMutation({
     mutationFn: async () => {
       if (isAlreadyLoggedIn(loginUser)) {
-        throw new Error("User already logged in (time-out is 1990-01-01)");
+        throw new Error(
+          `User already logged at ${formatTimeToString(
+            loginUser.loginUser[0].time_in
+          )}`
+        );
       }
       const timeRecord = await getTimeInRecord();
       return await saveTimeRecords(timeRecord);

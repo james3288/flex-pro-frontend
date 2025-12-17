@@ -97,7 +97,8 @@ const PrivateRemainingDays = memo(({ userSub }) => (
 // 🔹 MAIN COMPONENT
 const MyUserLoginSection = memo(function MyUserLoginSection() {
   // local UI state
-  const [loginTrigger, setLoginTrigger] = useState(false);
+
+  const [loginError, setLoginError] = useState(null);
 
   // reset daypass and regular login hook
   const { resetDayPassLogin, resetRegularUserLogin } = useResetLogin();
@@ -326,6 +327,31 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
     }
   }, [isLoadingActiveAndInactiveUser, setPlay]);
 
+  // side effects for login mutation status failed
+  useEffect(() => {
+    if (!loginMutation) return;
+
+    if (loginMutation.isError) {
+      setLoginError(
+        loginMutation.error?.message || "Login failed. Please try again."
+      );
+    }
+
+    if (loginMutation.isSuccess) {
+      setLoginError(null);
+    }
+  }, [loginMutation.isError, loginMutation.isSuccess]);
+
+  useEffect(() => {
+    if (!isThisYourFace || alreadyLoggedIn) return;
+
+    const timeout = setTimeout(() => {
+      handleCancelLogin();
+    }, 3000); // 3 seconds
+
+    return () => clearTimeout(timeout);
+  }, [isThisYourFace, alreadyLoggedIn, handleCancelLogin]);
+
   // Stable props object for FaceScanner to avoid re-renders from new object each render
   const faceScannerProps = useMemo(
     () => ({
@@ -400,10 +426,22 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
           {!isThisYourFace && !alreadyLoggedIn && (
             <h3>Waiting for face authentication...</h3>
           )}
+
           <UserInfo user={cCurrentlyLogin} />
           {alreadyLoggedIn ? (
             <>
               <AlreadyLoginStatus />
+              {loginError && (
+                <h6
+                  style={{
+                    color: "gray",
+                    marginTop: "10px",
+                    marginBottom: "10px",
+                  }}
+                >
+                  {loginError}
+                </h6>
+              )}
               <PrivateRemainingDays
                 userSub={cCurrentlyLogin?.usersubscription}
               />
