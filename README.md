@@ -13,3 +13,7 @@
 - Django
 - SQLite
 - Django Rest Framework
+- Zustand
+- Bootstrap
+- SASS
+- 
