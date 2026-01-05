@@ -419,7 +419,11 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
         }}
       >
         <div>
-          <img src={cCurrentlyLogin?.image} alt="" className="scan-profile" />
+          <img
+            src={cCurrentlyLogin?.image || Pic}
+            alt="User"
+            className="scan-profile"
+          />
         </div>
 
         <div>
@@ -442,6 +446,7 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
                   {loginError}
                 </h6>
               )}
+
               <PrivateRemainingDays
                 userSub={cCurrentlyLogin?.usersubscription}
               />

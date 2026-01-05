@@ -5,7 +5,7 @@ import SubscriptionModal from "./subscriptionModal";
 
 const MySubscriptionPlan = () => {
   const [plans, setPlan] = useState([]);
-  const exempted_plans = ["DAY PASS", "DAY PASS + PT", "MEMBERSHIP"];
+  const exempted_plans = ["DAY PASS", "DAY PASS + PT"];
 
   const get_subscription = async () => {
     const response = await instance.get(`/api/subscription/`);
