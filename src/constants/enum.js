@@ -4,6 +4,7 @@ export const PageName = Object.freeze({
   USER_IMAGE_REGISTRATION: "userImageRegistration",
   USER_IMAGE_REGISTRATION_NEW: "userImageRegistrationNew",
   USER_LOGIN: "userLogin",
+  USER_DAYPASS_LOGIN: "userDaypassLogin",
   SUBSCRIPTION_PLAN: "subscriptionPlan",
   SUBSCRIBE_NOW: "subscribeNow",
   CLIENTS_ON_WORKOUT: "clientsOnWorkout",

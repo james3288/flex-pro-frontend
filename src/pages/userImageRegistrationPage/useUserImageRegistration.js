@@ -13,7 +13,6 @@ const useUserImageRegistration = () => {
   const [msg, setMsg] = useState("");
   const { formData } = useFormRegistrationStore();
 
-
   const capturePhoto = React.useCallback(async () => {
     const imageSrc = webcamRef.current.getScreenshot();
     setCapture(true);
@@ -58,7 +57,6 @@ const useUserImageRegistration = () => {
   // Save user info using formData from Zustand
   const saveUserInfo = async () => {
     try {
-      console.log(formData);
       const response = await instance.post("/api/save_users/", formData);
       return response.data.id;
     } catch (error) {
@@ -82,7 +80,6 @@ const useUserImageRegistration = () => {
 
   // Main save handler
   const handleSaveUserData = async () => {
-    alert("Button clicked!");
     if (capture === true && url != null) {
       const saveuserinfo = await saveUserInfo();
 

@@ -14,6 +14,7 @@ import MyRenewalUser from "../components/mySection/forRenewal/MyRenewalUser";
 import MyTrainors from "../components/mySection/trainers/MyTrainors";
 import MyTrainerHistory from "../components/mySection/trainerHistory/MyTrainerHistory";
 import MyExpiredUser from "../components/mySection/expiredUser/MyExpiredUser";
+import MyUserDaypassLoginSection from "../components/mySection/MyUserDaypassLoginSection";
 
 const UseDashBoard = ({
   page,
@@ -50,6 +51,10 @@ const UseDashBoard = ({
 
     case PageName.USER_LOGIN:
       content = <MyUserLoginSection />;
+      break;
+
+    case PageName.USER_DAYPASS_LOGIN:
+      content = <MyUserDaypassLoginSection />;
       break;
 
     case PageName.SUBSCRIPTION_PLAN:

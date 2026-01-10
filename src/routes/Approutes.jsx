@@ -30,6 +30,7 @@ import { PageName } from "../constants/enum.js";
 import MainLayoutNew from "../layouts/MainLayout.jsx";
 import DashboardPage from "../pages/DashboardPage.jsx";
 import DashboardPageNew from "../pages/DashboardPageNew/DashboardPageNew.jsx";
+import UserDaypassLoginPage from "../pages/userLoginPage/UserDaypassLoginPage.jsx";
 const routes = [
   {
     path: "/",
@@ -67,6 +68,10 @@ const routes = [
   {
     path: "/user-login",
     element: <UserLoginPage />,
+  },
+  {
+    path: "/user-login-daypass",
+    element: <UserDaypassLoginPage />,
   },
   {
     path: "/user-subscription",

@@ -89,7 +89,17 @@ function MyHeader({ setIsOpen, setLeftMenuOpen, setOffCanvasMenu }) {
                         </NavLink>
                         {/* <a href="">MEMBER LOGIN</a> */}
                       </li>
-
+                      <li>
+                        <NavLink
+                          to={`/user-login-daypass`}
+                          className={({ isActive, isPending }) =>
+                            isActive ? "active" : isPending ? "pending" : ""
+                          }
+                          target="_blank"
+                        >
+                          DAYPASS LOGIN
+                        </NavLink>
+                      </li>
                       <li>
                         <NavLink
                           to={`/user-subscription`}
