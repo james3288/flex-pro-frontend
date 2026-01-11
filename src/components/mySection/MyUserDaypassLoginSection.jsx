@@ -15,6 +15,10 @@ import useResetLogin from "./users/hooks/useResetLogin";
 import NeonCheckBox from "../ui/check/NeonCheckBox";
 import ScanLoadingNew from "../ui/scan/ScanLoadingNew";
 import useMyUserLoginSection from "./users/hooks/useMyUserLoginSection";
+import useGetDayPassUsers from "../../hooks/useGetDayPassUsers";
+import useGetDayPassActiveUsers from "../../hooks/useGetDayPassActiveUsers";
+import Loading5 from "../ui/loading5/Loading5";
+import Loading4 from "../ui/loading4/Loading4";
 
 const CheckStatus = memo(() => (
   <h3 style={{ color: "yellowgreen" }}>
@@ -31,20 +35,6 @@ const AlreadyLoginStatus = memo(() => (
   </h3>
 ));
 
-const ScanLoading = memo(({ attempt }) => (
-  <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-    <LoadingEffect />
-    {/* <h3>{attempt * 20}%</h3> */}
-    <ScanLoadingNew />
-  </div>
-));
-
-const UserInfo = memo(({ user }) => (
-  <h4 style={{ color: "white", fontSize: 39 }}>
-    {user?.usersubscription?.flexprouser?.name?.toUpperCase()}
-  </h4>
-));
-
 const DaypassUserInfo = ({ user }) => {
   return (
     <>
@@ -54,20 +44,6 @@ const DaypassUserInfo = ({ user }) => {
     </>
   );
 };
-
-const PrivateRemainingDays = memo(({ userSub }) => (
-  <RemainingDaysLeftComponent
-    date_subscribed={userSub?.date_subscribed}
-    per={userSub?.subscription?.per?.per}
-    user_id={userSub?.flexprouser?.id}
-    session_days={userSub?.sub_session_days}
-    subscriptionId={userSub?.id}
-    id={userSub?.flexprouser?.id}
-    fullname={userSub?.flexprouser?.name}
-    fontColor={"orange"}
-    fontSize="26px"
-  />
-));
 
 // 🔹 MAIN COMPONENT
 const MyUserDaypassLoginSection = memo(function MyUserDaypassLoginSection() {
@@ -103,26 +79,34 @@ const MyUserDaypassLoginSection = memo(function MyUserDaypassLoginSection() {
   // login attempt hook
   const loginMutation = useLoginMutation();
 
-  // loginUser fetch — memoize user id param
-  const userSub = cCurrentlyLogin?.usersubscription;
-  const { loginUser } = useFetchLoginUser({
-    user_id: userSub?.flexprouser?.id,
-  });
+  // // loginUser fetch — memoize user id param
+  // const userSub = cCurrentlyLogin?.usersubscription;
+  // const { loginUser } = useFetchLoginUser({
+  //   user_id: userSub?.flexprouser?.id,
+  // });
 
   // Active + Inactive users loader (assumed to return: { isPending, data, fetchStatus, isLoading })
+  // const {
+  //   isPending,
+  //   data: users = [],
+  //   fetchStatus,
+  //   isLoading: isLoadingActiveAndInactiveUser,
+  //   refetch,
+  // } = useGetActiveAndInactiveUsers();
+
   const {
-    isPending,
-    data: users = [],
-    fetchStatus,
-    isLoading: isLoadingActiveAndInactiveUser,
-    refetch,
-  } = useGetActiveAndInactiveUsers();
+    isPending: isDayPassPending,
+    data: dayPassActiveUsers = [],
+    fetchStatus: dayPassFetchStatus,
+    isLoading: isLoadingDayPass,
+    refetch: refetchDayPass,
+  } = useGetDayPassActiveUsers();
 
   const RefreshButton = useCallback(() => (
     <button
       className="btn btn-success enabled"
-      onClick={() => refetch()} //{handlePlayClick}
-      disabled={isLoadingActiveAndInactiveUser}
+      onClick={() => refetchDayPass()} //{handlePlayClick}
+      disabled={isLoadingDayPass}
       style={{ zIndex: 9999 }}
     >
       Refresh
@@ -137,7 +121,7 @@ const MyUserDaypassLoginSection = memo(function MyUserDaypassLoginSection() {
         data-target="#daypass-login-modal"
         onClick={() => handleDayPassLoginClick({ resetRegularUserLogin })}
         style={{ zIndex: 9999 }}
-        disabled={isLoadingActiveAndInactiveUser}
+        disabled={isLoadingDayPass}
       >
         Login Daypass
       </button>
@@ -194,7 +178,9 @@ const MyUserDaypassLoginSection = memo(function MyUserDaypassLoginSection() {
           <DaypassUserInfo user={dayPassUserData} />
           <div>
             <button
-              className="btn btn-success"
+              className={`btn btn-success ${
+                cDayPassIsAlreadyLogin && cIsDayPassLogin && "btn-danger"
+              }`}
               onClick={() => resetDayPassLogin()}
             >
               Proceed
@@ -216,7 +202,9 @@ const MyUserDaypassLoginSection = memo(function MyUserDaypassLoginSection() {
               <span>
                 <strong>SCAN TO</strong> LOGIN USER
               </span>
-              <div className="camera-wrapper"></div>
+              <div className="camera-wrapper">
+                {isLoadingDayPass ? <Loading4 /> : ""}
+              </div>
 
               <div className="camera-btn">
                 {/* <StartCamera /> */}
@@ -248,7 +236,7 @@ const MyUserDaypassLoginSection = memo(function MyUserDaypassLoginSection() {
       <DayPassLoginModal
         setIsOnGoing={setIsOnGoing}
         setDayPassLogin={setDayPassLogin}
-        dayPassUsers={users?.dayPassUser || []}
+        dayPassUsers={dayPassActiveUsers?.dayPassUsers || []}
       />
     </>
   );
