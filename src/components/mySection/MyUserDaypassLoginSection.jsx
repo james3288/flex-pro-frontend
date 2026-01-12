@@ -19,6 +19,7 @@ import useGetDayPassUsers from "../../hooks/useGetDayPassUsers";
 import useGetDayPassActiveUsers from "../../hooks/useGetDayPassActiveUsers";
 import Loading5 from "../ui/loading5/Loading5";
 import Loading4 from "../ui/loading4/Loading4";
+import { useIsFetching } from "@tanstack/react-query";
 
 const CheckStatus = memo(() => (
   <h3 style={{ color: "yellowgreen" }}>
@@ -99,13 +100,15 @@ const MyUserDaypassLoginSection = memo(function MyUserDaypassLoginSection() {
     data: dayPassActiveUsers = [],
     fetchStatus: dayPassFetchStatus,
     isLoading: isLoadingDayPass,
-    refetch: refetchDayPass,
+    refetch,
   } = useGetDayPassActiveUsers();
+
+  console.log(dayPassActiveUsers);
 
   const RefreshButton = useCallback(() => (
     <button
       className="btn btn-success enabled"
-      onClick={() => refetchDayPass()} //{handlePlayClick}
+      onClick={() => refetch()} //{handlePlayClick}
       disabled={isLoadingDayPass}
       style={{ zIndex: 9999 }}
     >

@@ -1,19 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { useDayPassStore } from "../../store/useDayPassStore";
 
 import "./daypassLoginModal.scss";
 import getDaypassUser from "./../../../src/getData/getDayPassUser";
 import DpUserInfo from "./DpUserInfo";
-import PostSaveTimeRecords from "../../postData/postSaveTimeRecords";
 import postDayPassTimeRecords from "../../postData/postDayPassTimeRecords";
-import FormatDate from "../../others/FormatDate";
 import FormatDateOnly from "../../others/FormatDateOnly";
 
 const DayPassLoginModal = ({ setIsOnGoing, setDayPassLogin, dayPassUsers }) => {
-  const [myDayPassUsers, setMyDayPassUsers] = useState([]);
+  const [selectedUserId, setSelectedUserId] = useState(null);
 
-  //setter
   const {
+    dayPassUserId,
+    modalTitle,
+    dayPassUserOnline,
     setDayPassUser,
     setDayPassUserOnline,
     setIsLogin,
@@ -21,6 +21,9 @@ const DayPassLoginModal = ({ setIsOnGoing, setDayPassLogin, dayPassUsers }) => {
     setIsAlreadyLogin,
     setSubscriptionName,
   } = useDayPassStore((state) => ({
+    dayPassUserId: state.dayPassUserId,
+    modalTitle: state.modalTitle,
+    dayPassUserOnline: state.dayPassUserOnline,
     setDayPassUser: state.setDayPassUser,
     setDayPassUserOnline: state.setDayPassUserOnline,
     setIsLogin: state.setIsLogin,
@@ -29,90 +32,68 @@ const DayPassLoginModal = ({ setIsOnGoing, setDayPassLogin, dayPassUsers }) => {
     setSubscriptionName: state.setSubscriptionName,
   }));
 
-  //getter
-  const { dayPassUserId, modalTitle, dayPassUser, dayPassUserOnline } =
-    useDayPassStore((state) => ({
-      dayPassUserId: state.dayPassUserId,
-      modalTitle: state.modalTitle,
-      dayPassUser: state.dayPassUser,
-      dayPassUserOnline: state.dayPassUserOnline,
-    }));
-
   useEffect(() => {
-    const listOfDaypassUser = async () => {
-      setDayPassUser(await getDaypassUser());
+    let isMounted = true;
+
+    const loadUsers = async () => {
+      const users = await getDaypassUser();
+      if (isMounted) {
+        setDayPassUser(users);
+      }
     };
 
-    listOfDaypassUser();
-  }, [dayPassUsers]);
+    loadUsers();
 
-  const onChangeDaypassUser = (e) => {
-    setMyDayPassUsers(dayPassUsers.filter((user) => user.id == e.target.value));
-    setDayPassUserOnline(e.target.value);
-  };
+    return () => {
+      isMounted = false;
+    };
+  }, [dayPassUsers, setDayPassUser]);
+
+  const selectedUser = useMemo(() => {
+    return dayPassUsers?.find((u) => u.id === selectedUserId) || null;
+  }, [selectedUserId, dayPassUsers]);
+
+  const onChangeDaypassUser = useCallback(
+    (e) => {
+      const id = Number(e.target.value);
+      setSelectedUserId(id || null);
+      setDayPassUserOnline(id);
+    },
+    [setDayPassUserOnline]
+  );
+
+  const isAlreadyLoggedIn = useMemo(() => {
+    return dayPassUserOnline?.some(
+      (user) => FormatDateOnly(user.time_out) === "1990-01-01"
+    );
+  }, [dayPassUserOnline]);
 
   const handleLoginOnclick = async () => {
-    // const data = new FormData();
-    const dayPassUserId = myDayPassUsers[0] || {};
+    if (!selectedUser) return;
 
-    // const dayPassUserOnline1990 = dayPassUserOnline.filter(
-    //   (user) => FormatDateOnly(user.time_out) === "1990-01-01"
-    // );
-
-    console.log(dayPassUserOnline);
-
-    const isDaypassAlreadyLogin = () => {
-      const dayPassUserOnline1990 = dayPassUserOnline.filter(
-        (user) => FormatDateOnly(user.time_out) === "1990-01-01"
-      );
-
-      return dayPassUserOnline1990.length === 0 ? false : true;
-    };
-
-    if (isDaypassAlreadyLogin() === false) {
-      const data = {
-        dayPassId: dayPassUserId?.id,
+    if (!isAlreadyLoggedIn) {
+      postDayPassTimeRecords({
+        dayPassId: selectedUser.id,
         time_in: new Date(),
         time_out: new Date(1990, 0, 1, 0, 0),
-      };
-
-      console.log(dayPassUserId);
-
-      postDayPassTimeRecords(data);
-
-      // console.log(myDayPassUsers[0]?.subscription?.gym_rate_desc);
+      });
 
       setIsLogin(true);
-      // setDayPassName(myDayPassUsers[0].name);
-      // setIsOnGoing("on-going");
-      // setDayPassLogin(true);
-      // setSubscriptionName(myDayPassUsers[0]?.subscription?.gym_rate_desc);
-      // setMyDayPassUsers([]);
-
-      setDayPassName(dayPassUserId?.name);
+      setDayPassName(selectedUser.name);
       setIsOnGoing("on-going");
       setDayPassLogin(true);
       setIsAlreadyLogin(false);
-      setSubscriptionName(dayPassUserId?.subscription?.gym_rate_desc);
-      setMyDayPassUsers([]);
+      setSubscriptionName(selectedUser.subscription?.gym_rate_desc);
     } else {
-      // console.log("nag login pani xa karon");
-      // setDayPassLogin(true);
-      // setIsOnGoing("already-login");
-      // setIsAlreadyLogin(true);
-      // setSubscriptionName(myDayPassUsers[0]?.subscription?.gym_rate_desc);
-      // setMyDayPassUsers([]);
-      // setDayPassName(dayPassUserOnline1990[0]?.flexprouserdaypass.name)
-
-      console.log("already login");
       setIsLogin(true);
-      setDayPassName(dayPassUserId?.name);
+      setDayPassName(selectedUser.name);
       setIsOnGoing("already-login");
       setDayPassLogin(false);
       setIsAlreadyLogin(true);
-      setSubscriptionName(dayPassUserId?.subscription?.gym_rate_desc);
-      setMyDayPassUsers([]);
+      setSubscriptionName(selectedUser.subscription?.gym_rate_desc);
     }
+
+    setSelectedUserId(null);
   };
 
   return (
@@ -121,58 +102,35 @@ const DayPassLoginModal = ({ setIsOnGoing, setDayPassLogin, dayPassUsers }) => {
         className="modal fade"
         id={dayPassUserId}
         role="dialog"
-        aria-labelledby="exampleModalLongTitle"
         aria-hidden="true"
       >
         <div className="modal-dialog" role="document">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title" id="exampleModalLongTitle">
-                {modalTitle}
-              </h5>
-              <button
-                type="button"
-                className="close"
-                data-dismiss="modal"
-                aria-label="Close"
-              >
-                <span aria-hidden="true">&times;</span>
+              <h5 className="modal-title">{modalTitle}</h5>
+              <button type="button" className="close" data-dismiss="modal">
+                <span>&times;</span>
               </button>
             </div>
+
             <div className="modal-body">
               <label className="col-form-label">FlexPro Daypass Users:</label>
-              <div>
-                <select
-                  className="mySelect"
-                  name="daypassUserName"
-                  onChange={onChangeDaypassUser}
-                >
-                  <option value={0}>--- Select User ---</option>
-                  {dayPassUsers?.map(
-                    (user) =>
-                      user?.remaining > -1 && (
-                        <option value={user.id} key={user.id}>
-                          {user.name} - {user.subscription.gym_rate_desc}
-                        </option>
-                      )
-                  )}
-                </select>
-              </div>
-
-              {/* <label className="col-form-label">Training Date Started:</label>
-              <input
-                type="datetime-local"
-                className="form-control"
-                name="trainer_date_started"
-              /> */}
+              <br />
+              <select className="mySelect" onChange={onChangeDaypassUser}>
+                <option value={0}>--- Select User ---</option>
+                {dayPassUsers?.map(
+                  (user) =>
+                    user?.remaining > -1 && (
+                      <option key={user.id} value={user.id}>
+                        {user.name} - {user.subscription.gym_rate_desc}
+                      </option>
+                    )
+                )}
+              </select>
             </div>
-            <div className="modal-body">
-              <div className="dp-user-info">
-                {myDayPassUsers.length > 0 &&
-                  myDayPassUsers.map((user) => (
-                    <DpUserInfo user={user} key={user.id} />
-                  ))}
-              </div>
+
+            <div className="modal-body dp-user-info">
+              {selectedUser && <DpUserInfo user={selectedUser} />}
             </div>
 
             <div className="modal-footer">
@@ -183,7 +141,8 @@ const DayPassLoginModal = ({ setIsOnGoing, setDayPassLogin, dayPassUsers }) => {
               >
                 Close
               </button>
-              {myDayPassUsers?.length > 0 && (
+
+              {selectedUser && (
                 <button
                   type="button"
                   className="btn btn-primary"

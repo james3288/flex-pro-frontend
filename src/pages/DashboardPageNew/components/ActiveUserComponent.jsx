@@ -2,14 +2,15 @@ import { NavLink } from "react-router-dom";
 import useUsersWithRemainingDaysDatas from "../hooks/useUsersWithRemainingDaysDatas";
 
 const ActiveUserComponent = () => {
-  const { ActiveUsersComponent, NoOfActiveUsers, isLoading } =
+  const { ActiveUsersComponent, NoOfActiveUsers, isLoading, fetchStatus } =
     useUsersWithRemainingDaysDatas();
 
   return (
     <div className="col-lg-3 col-xs-12">
       <div className="dashboard-col">
         <h3 style={{ color: "yellowGreen" }}>
-          ACTIVE USER <span>{<NoOfActiveUsers />}</span>
+          ACTIVE USER{" "}
+          <span>{fetchStatus ? "waiting..." : <NoOfActiveUsers />}</span>
         </h3>
         <ActiveUsersComponent />
       </div>

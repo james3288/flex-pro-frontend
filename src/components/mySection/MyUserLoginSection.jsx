@@ -452,7 +452,7 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
               />
               <div>
                 <button
-                  className="btn btn-success"
+                  className={`btn btn-danger`}
                   onClick={() => resetRegularUserLogin()}
                 >
                   Proceed

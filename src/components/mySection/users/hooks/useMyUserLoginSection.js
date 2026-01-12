@@ -3,6 +3,7 @@ import { useDayPassStore } from "../../../../store/useDayPassStore";
 import { useUserStore } from "../../../../store/useUserStore";
 import useGetUserWithImage from "../../../../hooks/useGetUserWithImage";
 import Pic from "../../../../assets/img/dummy.png";
+import useResetLogin from "./useResetLogin";
 
 const useMyUserLoginSection = () => {
   const [play, setPlay] = useState(false);
@@ -60,6 +61,7 @@ const useMyUserLoginSection = () => {
     }));
 
   // const setIsLogin2 = useDayPassStore((state) => state.setIsLogin);
+  const { resetDayPassLogin } = useResetLogin();
 
   const handlePlayClick = () => {
     setPlay(() => !play);
@@ -83,6 +85,7 @@ const useMyUserLoginSection = () => {
     await setModalTitle("Daypass Login");
 
     resetRegularUserLogin();
+    resetDayPassLogin();
   };
 
   // props
