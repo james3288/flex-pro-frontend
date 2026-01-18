@@ -90,6 +90,7 @@ const SubscriptionComponents = ({
             type="button"
             className="btn btn-secondary btn-sm extend-subscription"
             onClick={() => {
+              console.log(typeof setShowExtendSubscriptionModal);
               clearPasswordTextField();
               handleExtendSubscriptions();
               setShowExtendSubscriptionModal(true);

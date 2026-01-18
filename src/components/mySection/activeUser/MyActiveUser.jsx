@@ -24,6 +24,7 @@ const ActiveUsersComponent = ({
   setExtendedSubId,
   setExtendedTrainerId,
   setShowAddTrainerModal,
+  setShowExtendSubscriptionModal,
 }) => {
   // if (fetchStatus === "fetching") return <LoadingEffect />;
 
@@ -60,6 +61,7 @@ const ActiveUsersComponent = ({
         trainer_date_started={userSubData.trainer_date_started}
         packages_details={userSubData.subscription.packages_details}
         sub_session_days={userSubData.sub_session_days}
+        setShowExtendSubscriptionModal={setShowExtendSubscriptionModal}
       />
     );
   });
@@ -185,6 +187,7 @@ const MyActiveUser = () => {
             setExtendedSubId={setExtendedSubId}
             setExtendedTrainerId={setExtendedTrainerId}
             setShowAddTrainerModal={setShowAddTrainerModal}
+            setShowExtendSubscriptionModal={setShowExtendSubscriptionModal}
           />
 
           {/* Modals */}

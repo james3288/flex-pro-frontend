@@ -41,6 +41,8 @@ const ExtendSubscriptionModal = ({
   const [password, setPassword] = useState("");
   const [isValid, setIsValid] = useState(false);
 
+  console.log(onHide);
+
   const [cIsClear, cSetIsClear] = useClearCredentialTextField((state) => [
     state.isClear,
     state.setIsClear,
