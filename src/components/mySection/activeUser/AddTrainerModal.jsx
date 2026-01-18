@@ -1,4 +1,5 @@
 import React, { useEffect, useReducer, useState } from "react";
+import { Modal, Button } from "react-bootstrap";
 import {
   INITIAL_STATE,
   addTrainorReducer,
@@ -12,7 +13,8 @@ import FormatDateISO from "../../../others/FormatDateISO";
 import getSpecificUserSubscription from "../../../getData/getSpecificUserSubscription";
 
 const AddTrainerModal = ({
-  id,
+  show,
+  onHide,
   userSubscriptionId,
   modalTitle,
   extendedTrainerId,
@@ -153,118 +155,91 @@ const AddTrainerModal = ({
   };
 
   return (
-    <div
-      className="modal fade"
-      id={id}
-      role="dialog"
-      aria-labelledby="exampleModalLongTitle"
-      aria-hidden="true"
-    >
-      <div className="modal-dialog" role="document">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title" id="exampleModalLongTitle">
-              {modalTitle}
-            </h5>
-            <button
-              type="button"
-              className="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
+    <Modal show={show} onHide={onHide} size="lg" centered>
+      <Modal.Header closeButton>
+        <Modal.Title>{modalTitle}</Modal.Title>
+      </Modal.Header>
 
-          <div className="modal-body">
-            <label className="col-form-label">Personal Trainer:</label>
-            <div>
-              <select
-                className="mySelect"
-                name="trainersName"
-                onChange={handleChange}
-                value={state.trainersName}
-              >
-                <option value={0}>--- Select Trainer ---</option>
-                {trainers?.map((trainer) => (
-                  <option key={trainer?.id} value={trainer?.id}>
-                    {trainer?.name}
-                  </option>
-                ))}
-              </select>
-              <br />
-              {state.trainersName == 0 && (
-                <span style={{ color: "red" }}>select trainers</span>
-              )}
-            </div>
-
-            <label className="col-form-label">
-              Personal Training Session (days):
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              name="session_days"
-              onChange={handleChange}
-              value={state.session_days}
-            />
-            {state.session_days === "" ? (
-              <span style={{ color: "red" }}>Fill session days</span>
-            ) : (
-              isNaN(state.session_days) && (
-                <span style={{ color: "red" }}>input must be day/s</span>
-              )
-            )}
-            <br />
-            <label className="col-form-label">Training Date Started:</label>
-            <input
-              type="datetime-local"
-              className="form-control"
-              name="trainer_date_started"
-              onChange={handleChange}
-              value={state.trainer_date_started || ""}
-            />
-          </div>
-
-          <div className="modal-footer">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              data-dismiss="modal"
-            >
-              Close
-            </button>
-            {modalTitle === "Add Personal Trainers" && (
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={() => handleSave("update-personal-trainer")}
-              >
-                Save changes
-              </button>
-            )}
-            {modalTitle === "Extend Personal Trainers" && (
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={() => handleSave("extend-personal-trainer")}
-              >
-                Save changes
-              </button>
-            )}
-            {modalTitle === "Update Extended Trainer" && (
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={() => handleSave("update-extended-trainer")}
-              >
-                Update
-              </button>
-            )}
-          </div>
+      <Modal.Body>
+        <label className="col-form-label">Personal Trainer:</label>
+        <div>
+          <select
+            className="mySelect"
+            name="trainersName"
+            onChange={handleChange}
+            value={state.trainersName}
+          >
+            <option value={0}>--- Select Trainer ---</option>
+            {trainers?.map((trainer) => (
+              <option key={trainer?.id} value={trainer?.id}>
+                {trainer?.name}
+              </option>
+            ))}
+          </select>
+          <br />
+          {state.trainersName == 0 && (
+            <span style={{ color: "red" }}>select trainers</span>
+          )}
         </div>
-      </div>
-    </div>
+
+        <label className="col-form-label">
+          Personal Training Session (days):
+        </label>
+        <input
+          type="text"
+          className="form-control"
+          name="session_days"
+          onChange={handleChange}
+          value={state.session_days}
+        />
+        {state.session_days === "" ? (
+          <span style={{ color: "red" }}>Fill session days</span>
+        ) : (
+          isNaN(state.session_days) && (
+            <span style={{ color: "red" }}>input must be day/s</span>
+          )
+        )}
+        <br />
+        <label className="col-form-label">Training Date Started:</label>
+        <input
+          type="datetime-local"
+          className="form-control"
+          name="trainer_date_started"
+          onChange={handleChange}
+          value={state.trainer_date_started || ""}
+        />
+      </Modal.Body>
+
+      <Modal.Footer>
+        <Button variant="secondary" onClick={onHide}>
+          Close
+        </Button>
+        {modalTitle === "Add Personal Trainers" && (
+          <Button
+            variant="primary"
+            onClick={() => handleSave("update-personal-trainer")}
+          >
+            Save changes
+          </Button>
+        )}
+        {modalTitle === "Extend Personal Trainers" && (
+          <Button
+            variant="primary"
+            onClick={() => handleSave("extend-personal-trainer")}
+          >
+            Save changes
+          </Button>
+        )}
+        {modalTitle === "Update Extended Trainer" && (
+          <Button
+            variant="primary"
+            onClick={() => handleSave("update-extended-trainer")}
+          >
+            Update
+          </Button>
+        )}
+      </Modal.Footer>
+    </Modal>
   );
 };
 

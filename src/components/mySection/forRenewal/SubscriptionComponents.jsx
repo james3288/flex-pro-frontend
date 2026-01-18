@@ -26,6 +26,7 @@ const SubscriptionComponents = ({
   handleRemoveExtendedSub,
   subscription,
   isExpired,
+  setShowExtendSubscriptionModal,
 }) => {
   const { clearPasswordTextField } = useClearPasswordTextField();
 
@@ -62,10 +63,10 @@ const SubscriptionComponents = ({
           >
             <a
               className="extendSubscript"
-              data-toggle="modal"
-              data-target="#extendSubscriptionModal"
-              data-whatever="@mdo"
-              onClick={() => handleUpdateExtendSubscriptions(ex.id)}
+              onClick={() => {
+                handleUpdateExtendSubscriptions(ex.id);
+                setShowExtendSubscriptionModal(true);
+              }}
             >
               - {ex?.subscription.gym_rate_desc} / extend{" "}
               {ex?.extended_session_day} days{" "}
@@ -73,9 +74,6 @@ const SubscriptionComponents = ({
             </a>
             <a
               className="removeExtendedSubs"
-              data-toggle="modal"
-              data-target="#removeExtendedSubModal"
-              data-whatever="@mdo"
               onClick={() => {
                 clearPasswordTextField();
                 handleRemoveExtendedSub(ex.id);
@@ -91,14 +89,11 @@ const SubscriptionComponents = ({
           <button
             type="button"
             className="btn btn-secondary btn-sm extend-subscription"
-            data-toggle="modal"
-            data-target="#extendSubscriptionModal"
-            data-whatever="@mdo"
             onClick={() => {
               clearPasswordTextField();
               handleExtendSubscriptions();
+              setShowExtendSubscriptionModal(true);
             }}
-            // onClick={clearPasswordTextField}
             style={{ width: "100%" }}
           >
             Extend Subscription

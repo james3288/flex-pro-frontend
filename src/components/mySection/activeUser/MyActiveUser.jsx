@@ -23,6 +23,7 @@ const ActiveUsersComponent = ({
   setModalTitle,
   setExtendedSubId,
   setExtendedTrainerId,
+  setShowAddTrainerModal,
 }) => {
   // if (fetchStatus === "fetching") return <LoadingEffect />;
 
@@ -54,6 +55,7 @@ const ActiveUsersComponent = ({
         setModalTitle={setModalTitle}
         setExtendedSubId={setExtendedSubId}
         setExtendedTrainerId={setExtendedTrainerId}
+        setShowAddTrainerModal={setShowAddTrainerModal}
         contactNo={userSubData.flexprouser?.contact_number}
         trainer_date_started={userSubData.trainer_date_started}
         packages_details={userSubData.subscription.packages_details}
@@ -105,6 +107,11 @@ const MyActiveUser = () => {
   const [extendedSubId, setExtendedSubId] = useState(0);
   const [extendedTrainerId, setExtendedTrainerId] = useState(0);
   const [modalTitle, setModalTitle] = useState();
+  const [showAddTrainerModal, setShowAddTrainerModal] = useState(false);
+  const [showExtendSubscriptionModal, setShowExtendSubscriptionModal] =
+    useState(false);
+  const [showCheckCredentialModal, setShowCheckCredentialModal] =
+    useState(false);
 
   const { getActiveUsers } = useGetActiveUsers();
   const { getDayPassUserActive } = useGetDayPassUsers();
@@ -134,11 +141,11 @@ const MyActiveUser = () => {
   if (error) return <NoDataFound caption="No Data has been found..." />;
 
   const countDayPassActive = data.data2?.filter(
-    (user) => user.remainingHours !== "Expired"
+    (user) => user.remainingHours !== "Expired",
   );
 
   const countMembershipActive = data.membershipData?.filter(
-    (user) => user.remainingHours !== "Expired"
+    (user) => user.remainingHours !== "Expired",
   );
 
   return (
@@ -177,18 +184,21 @@ const MyActiveUser = () => {
             setModalTitle={setModalTitle}
             setExtendedSubId={setExtendedSubId}
             setExtendedTrainerId={setExtendedTrainerId}
+            setShowAddTrainerModal={setShowAddTrainerModal}
           />
 
           {/* Modals */}
           <DayPassAddTrainerModal />
           <AddTrainerModal
-            id="addTrainerModal"
+            show={showAddTrainerModal}
+            onHide={() => setShowAddTrainerModal(false)}
             userSubscriptionId={userSubscriptionId}
             modalTitle={modalTitle}
             extendedTrainerId={extendedTrainerId}
           />
           <ExtendSubscriptionModal
-            id="extendSubscriptionModal"
+            show={showExtendSubscriptionModal}
+            onHide={() => setShowExtendSubscriptionModal(false)}
             userSubscriptionId={userSubscriptionId}
             modalTitle={modalTitle}
           />
@@ -199,7 +209,10 @@ const MyActiveUser = () => {
             modalTitle={modalTitle}
           />
           <RemoveModal />
-          <CheckCredentialModal id="checkCredentialModal" />
+          <CheckCredentialModal
+            show={showCheckCredentialModal}
+            onHide={() => setShowCheckCredentialModal(false)}
+          />
         </div>
       </div>
     </div>

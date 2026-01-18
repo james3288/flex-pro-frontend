@@ -8,6 +8,7 @@ const initialState = {
   modalTitle: "",
   removeModalTitle: "",
   removeModalId: "",
+  showRemoveModal: false,
   dayPassUserId: 0,
   trainors: [],
   addDayPassTrainer: {
@@ -30,80 +31,86 @@ export const useDayPassStore = create((set) => ({
     set(
       produce((state) => {
         state.dayPassUser = data;
-      })
+      }),
     ),
   setModalTitle: async (data) =>
     set(
       produce((state) => {
         state.modalTitle = data;
-      })
+      }),
     ),
   setSubscriptionName: async (data) =>
     set(
       produce((state) => {
         state.subscriptionName = data;
-      })
+      }),
     ),
   setRemoveModalTitle: async (data) =>
     set(
       produce((state) => {
         state.removeModalTitle = data;
-      })
+      }),
     ),
   setDayPassUserId: async (data) =>
     set(
       produce((state) => {
         state.dayPassUserId = data;
-      })
+      }),
     ),
   setRemoveModalId: async (data) =>
     set(
       produce((state) => {
         state.removeModalId = data;
-      })
+      }),
+    ),
+  setShowRemoveModal: async (data) =>
+    set(
+      produce((state) => {
+        state.showRemoveModal = data;
+      }),
     ),
   setDayPassId: async (data) =>
     set(
       produce((state) => {
         state.dayPassId = data;
-      })
+      }),
     ),
   setIsLogin: async (data) =>
     set(
       produce((state) => {
         state.isLogin = data;
-      })
+      }),
     ),
   setIsAlreadyLogin: async (data) =>
     set(
       produce((state) => {
         state.isAlreadyLogin = data;
-      })
+      }),
     ),
   setDayPassName: async (data) =>
     set(
       produce((state) => {
         state.dayPassName = data;
-      })
+      }),
     ),
   setRemainingHours: async (data) =>
     set(
       produce((state) => {
         state.remainingHours = data;
-      })
+      }),
     ),
   setPersonalTrainer: async (data) =>
     set(
       produce((state) => {
         state.personalTrainer = data;
-      })
+      }),
     ),
   setTrainors: async () => {
     const data = await getTrainors();
     set(
       produce((state) => {
         state.trainors = data;
-      })
+      }),
     );
   },
   setDayPassUserOnline: async (id) => {
@@ -111,7 +118,7 @@ export const useDayPassStore = create((set) => ({
     set(
       produce((state) => {
         state.dayPassUserOnline = data;
-      })
+      }),
     );
   },
 
@@ -123,7 +130,7 @@ export const useDayPassStore = create((set) => ({
       produce((state) => {
         state.addDayPassTrainer.trainer_id = trainer_id;
         state.addDayPassTrainer.trainingDateStarted = trainingDateStarted;
-      })
+      }),
     );
   },
 }));

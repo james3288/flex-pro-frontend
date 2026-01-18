@@ -24,6 +24,9 @@ const RenewalUsers = ({
   setModalTitle,
   setExtendedSubId,
   setExtendedTrainerId,
+  setShowAddTrainerModal,
+  setShowExtendSubscriptionModal,
+  setShowRemoveExtendedSubModal,
   contactNo,
   trainer_date_started,
   packages_details,
@@ -34,7 +37,7 @@ const RenewalUsers = ({
 
   const [state, dispatch] = useReducer(
     extendSubscriptionReducer,
-    INITIAL_STATE
+    INITIAL_STATE,
   );
 
   // Fetch extended subscription safely
@@ -46,7 +49,7 @@ const RenewalUsers = ({
         const data = await getExtendedSubscription(subscriptionId);
         if (isMounted) {
           setExtendedSubscript((prev) =>
-            JSON.stringify(prev) !== JSON.stringify(data) ? data : prev
+            JSON.stringify(prev) !== JSON.stringify(data) ? data : prev,
           );
         }
       } catch (error) {
@@ -72,15 +75,16 @@ const RenewalUsers = ({
       setModalTitle("Update Extended Subscriptions");
       setUserSubscriptionId(id);
     },
-    [setModalTitle, setUserSubscriptionId]
+    [setModalTitle, setUserSubscriptionId],
   );
 
   const handleRemoveExtendedSub = useCallback(
     (id) => {
       setModalTitle("Remove Extended Subscriptions");
       setExtendedSubId(id);
+      setShowRemoveExtendedSubModal(true);
     },
-    [setModalTitle, setExtendedSubId]
+    [setModalTitle, setExtendedSubId, setShowRemoveExtendedSubModal],
   );
 
   return (
@@ -121,6 +125,7 @@ const RenewalUsers = ({
             handleRemoveExtendedSub={handleRemoveExtendedSub}
             subscription={subscription}
             isExpired={isExpired}
+            setShowExtendSubscriptionModal={setShowExtendSubscriptionModal}
           />
           <hr />
           {/* CARD PERSONAL TRAINERS COMPONENTS */}
@@ -135,6 +140,7 @@ const RenewalUsers = ({
             subscriptionId={subscriptionId}
             setUserSubscriptionId={setUserSubscriptionId}
             setModalTitle={setModalTitle}
+            setShowAddTrainerModal={setShowAddTrainerModal}
             isExpired={isExpired}
           />
         </div>

@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Modal, Button } from "react-bootstrap";
 import useCheckCredential from "../mySection/activeUser/hooks/useCheckCredential";
 import TextFieldModalComponent from "./TextFieldModalComponent";
 import { useClearCredentialTextField } from "../../store/useClearCredentialTextField";
@@ -22,7 +23,7 @@ const InvalidCredentialComponent = ({ isValid }) => {
   );
 };
 
-const CheckCredentialModal = ({ id }) => {
+const CheckCredentialModal = ({ show, onHide }) => {
   const [userName, setUserName] = React.useState("admin");
   const [password, setPassword] = React.useState("");
   const [isValid, setIsValid] = React.useState(false);
@@ -53,68 +54,46 @@ const CheckCredentialModal = ({ id }) => {
   }, [cIsClear]);
 
   return (
-    <div
-      className="modal fade"
-      id={id}
-      role="dialog"
-      aria-labelledby="exampleModalLongTitle"
-      aria-hidden="true"
-    >
-      <div className="modal-dialog" role="document">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title" id="exampleModalLongTitle">
-              User Validation
-            </h5>
+    <Modal show={show} onHide={onHide} centered>
+      <Modal.Header closeButton>
+        <Modal.Title>User Validation</Modal.Title>
+      </Modal.Header>
 
-            <button
-              type="button"
-              className="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <InvalidCredentialComponent isValid={isValid} />
-          <TextFieldModalComponent
-            label={"Username:"}
-            id={"credential-username"}
-            name={"username"}
-            setText={setUserName}
-            text={userName}
-            type={"text"}
-            isDisable={true}
-          />
-          <TextFieldModalComponent
-            label={"Password:"}
-            id={"credential-password"}
-            name={"password"}
-            setText={setPassword}
-            text={password}
-            type={"password"}
-          />
-          <div className="modal-footer">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              data-dismiss="modal"
-            >
-              Close
-            </button>
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={() =>
-                isCredentialValid({ username: userName, password: password })
-              }
-            >
-              Validate
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+      <Modal.Body>
+        <InvalidCredentialComponent isValid={isValid} />
+        <TextFieldModalComponent
+          label={"Username:"}
+          id={"credential-username"}
+          name={"username"}
+          setText={setUserName}
+          text={userName}
+          type={"text"}
+          isDisable={true}
+        />
+        <TextFieldModalComponent
+          label={"Password:"}
+          id={"credential-password"}
+          name={"password"}
+          setText={setPassword}
+          text={password}
+          type={"password"}
+        />
+      </Modal.Body>
+
+      <Modal.Footer>
+        <Button variant="secondary" onClick={onHide}>
+          Close
+        </Button>
+        <Button
+          variant="primary"
+          onClick={() =>
+            isCredentialValid({ username: userName, password: password })
+          }
+        >
+          Validate
+        </Button>
+      </Modal.Footer>
+    </Modal>
   );
 };
 

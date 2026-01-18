@@ -23,6 +23,11 @@ const MyRenewalUser = () => {
   const [userSubscriptionId, setUserSubscriptionId] = useState(0);
   const [extendedTrainerId, setExtendedTrainerId] = useState(0);
   const [extendedSubId, setExtendedSubId] = useState(0);
+  const [showAddTrainerModal, setShowAddTrainerModal] = useState(false);
+  const [showExtendSubscriptionModal, setShowExtendSubscriptionModal] =
+    useState(false);
+  const [showRemoveExtendedSubModal, setShowRemoveExtendedSubModal] =
+    useState(false);
 
   const { getMembershipUserActive } = useGetActiveMembership();
 
@@ -87,6 +92,13 @@ const MyRenewalUser = () => {
                       setModalTitle={setModalTitle}
                       setExtendedTrainerId={setExtendedTrainerId}
                       setExtendedSubId={setExtendedSubId}
+                      setShowAddTrainerModal={setShowAddTrainerModal}
+                      setShowExtendSubscriptionModal={
+                        setShowExtendSubscriptionModal
+                      }
+                      setShowRemoveExtendedSubModal={
+                        setShowRemoveExtendedSubModal
+                      }
                       contactNo={
                         user?.usersubscription.flexprouser.contact_number
                       }
@@ -96,25 +108,28 @@ const MyRenewalUser = () => {
                       sub_session_days={user.usersubscription.sub_session_days}
                     />
                   </>
-                )
+                ),
             )}
 
             <ActiveMembershipComponent users={data?.membershipUsers} />
 
             <AddTrainerModal
-              id={"addTrainerModal"}
+              show={showAddTrainerModal}
+              onHide={() => setShowAddTrainerModal(false)}
               userSubscriptionId={userSubscriptionId}
               modalTitle={modalTitle}
               extendedTrainerId={extendedTrainerId}
             />
 
             <ExtendSubscriptionModal2
-              id={"extendSubscriptionModal"}
+              show={showExtendSubscriptionModal}
+              onHide={() => setShowExtendSubscriptionModal(false)}
               userSubscriptionId={userSubscriptionId}
               modalTitle={modalTitle}
             />
             <RemoveExtendedSub
-              id={"removeExtendedSubModal"}
+              show={showRemoveExtendedSubModal}
+              onHide={() => setShowRemoveExtendedSubModal(false)}
               extendedSubId={extendedSubId}
               extendedTrainerId={extendedTrainerId}
               modalTitle={modalTitle}

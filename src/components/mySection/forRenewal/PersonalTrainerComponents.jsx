@@ -6,26 +6,21 @@ import TrainerRemainingDays from "./TrainerRemainingDays";
 import getExtendedTrainer from "../../../getData/getExtendedTrainer";
 
 /* Small presentational components kept top-level so they are not re-created per render */
-const AddButton = React.memo(
-  ({ label, className, onClick, target = "#addTrainerModal" }) => (
-    <button
-      className={className}
-      style={{
-        padding: "3px 10px",
-        marginRight: "5px",
-        marginBottom: "5px",
-        width: "100%",
-      }}
-      onClick={onClick}
-      data-toggle="modal"
-      data-target={target}
-      data-whatever="@mdo"
-      type="button"
-    >
-      {label}
-    </button>
-  )
-);
+const AddButton = React.memo(({ label, className, onClick }) => (
+  <button
+    className={className}
+    style={{
+      padding: "3px 10px",
+      marginRight: "5px",
+      marginBottom: "5px",
+      width: "100%",
+    }}
+    onClick={onClick}
+    type="button"
+  >
+    {label}
+  </button>
+));
 
 const RecyleBinIcon = React.memo(() => (
   <svg
@@ -60,7 +55,7 @@ const ExtendedTrainerDetails = React.memo(
         </span>
       </div>
     );
-  }
+  },
 );
 
 /* Main exported component — kept name and export unchanged */
@@ -74,6 +69,7 @@ const PersonalTrainerComponents = ({
   subscriptionId,
   setUserSubscriptionId,
   setModalTitle,
+  setShowAddTrainerModal,
   isExpired,
 }) => {
   const [extendedTrainer, setExtendedTrainer] = useState([]);
@@ -85,26 +81,39 @@ const PersonalTrainerComponents = ({
       setModalTitle("Remove Extended Trainers");
       setExtendedTrainerId(id);
     },
-    [setModalTitle, setExtendedTrainerId]
+    [setModalTitle, setExtendedTrainerId],
   );
 
   const handleUpdateExtendedTrainer = useCallback(
     (id) => {
       setModalTitle("Update Extended Trainer");
       setExtendedTrainerId(id);
+      setShowAddTrainerModal(true);
     },
-    [setModalTitle, setExtendedTrainerId]
+    [setModalTitle, setExtendedTrainerId, setShowAddTrainerModal],
   );
 
   const handleAddPersonalTrainers = useCallback(() => {
     setModalTitle("Add Personal Trainers");
     setUserSubscriptionId(subscriptionId);
-  }, [setModalTitle, setUserSubscriptionId, subscriptionId]);
+    setShowAddTrainerModal(true);
+  }, [
+    setModalTitle,
+    setUserSubscriptionId,
+    subscriptionId,
+    setShowAddTrainerModal,
+  ]);
 
   const handleExtendPersonalTrainers = useCallback(() => {
     setModalTitle("Extend Personal Trainers");
     setUserSubscriptionId(subscriptionId);
-  }, [setModalTitle, setUserSubscriptionId, subscriptionId]);
+    setShowAddTrainerModal(true);
+  }, [
+    setModalTitle,
+    setUserSubscriptionId,
+    subscriptionId,
+    setShowAddTrainerModal,
+  ]);
 
   /* memoize derived display text to prevent re-computation if inputs don't change */
   const freeTrainerDisplay = useMemo(() => {
@@ -113,7 +122,7 @@ const PersonalTrainerComponents = ({
       trainers,
       "remaining-days",
       trainerRemainingDays,
-      session_days
+      session_days,
     );
     const started = trainers ? ` - ${FormatDate(trainer_date_started)}` : "";
     return `${name} - (${remaining})${started}`;
@@ -186,9 +195,6 @@ const PersonalTrainerComponents = ({
               <button
                 type="button"
                 className="extendedTrainer"
-                data-toggle="modal"
-                data-target="#addTrainerModal"
-                data-whatever="@mdo"
                 onClick={() => handleUpdateExtendedTrainer(extended.id)}
                 style={{
                   background: "transparent",
