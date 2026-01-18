@@ -1,10 +1,12 @@
 import React, { memo, useCallback } from "react";
+import { Modal } from "react-bootstrap";
 import useUserLoginModalNumpad from "../hooks/useUserLoginModalNumpad";
 import NumpadButton from "../../modals/NumpadButton";
 import { useCurrentlyLoginStore } from "../store/currentlyLoginStore";
 import { useNumpadStore } from "../store/numpadStore";
 import { useActiveCameraStore } from "../../../store/useActiveCamera";
 import useToastifyMessageComponent from "./../../../customHooks/useToastifyMessageComponent";
+import "../../../pages/userLoginPage/userLoginPage.scss";
 
 const UserFoundComponent = ({ user, onLogin, onCancel }) => {
   if (!user) return <h4 className="text-danger">No User has been found!</h4>;
@@ -21,11 +23,7 @@ const UserFoundComponent = ({ user, onLogin, onCancel }) => {
           </h3>
           <h5>{user?.usersubscription?.subscription?.gym_rate_desc}</h5>
           <div>
-            <button
-              className="btn btn-success"
-              data-dismiss="modal"
-              onClick={onLogin}
-            >
+            <button className="btn btn-success" onClick={onLogin}>
               LOGIN
             </button>{" "}
             <button className="btn btn-danger" onClick={onCancel}>
@@ -38,56 +36,40 @@ const UserFoundComponent = ({ user, onLogin, onCancel }) => {
   );
 };
 
-const UserLoginIDVerificationModal = memo(({ users }) => {
-  const {
-    handleNumpadOnClick,
-    handleDelOnClick,
-    handleClearOnClick,
-    handleEnterOnClick,
-    handleLoginOnclick,
-  } = useUserLoginModalNumpad();
+const UserLoginIDVerificationModal = memo(
+  ({ show, onHide, users, onLogin }) => {
+    const {
+      handleNumpadOnClick,
+      handleDelOnClick,
+      handleClearOnClick,
+      handleEnterOnClick,
+      handleLoginOnclick,
+    } = useUserLoginModalNumpad();
 
-  const [cUserFound] = useCurrentlyLoginStore((state) => [state.userFound]);
-  const [cNumpadResult] = useNumpadStore((state) => [state.numpadResult]);
-  const [cHasVideoOutput] = useActiveCameraStore((state) => [
-    state.hasVideoOutput,
-  ]);
+    const [cUserFound] = useCurrentlyLoginStore((state) => [state.userFound]);
+    const [cNumpadResult] = useNumpadStore((state) => [state.numpadResult]);
+    const [cHasVideoOutput] = useActiveCameraStore((state) => [
+      state.hasVideoOutput,
+    ]);
 
-  // Avoid inline recreation for Enter handler
-  const handleEnter = useCallback(() => {
-    handleEnterOnClick({
-      activeAndInactiveUsers: users?.activeAndInactiveUsers,
-      flexProUserId: cNumpadResult,
-    });
-  }, [handleEnterOnClick, users, cNumpadResult]);
+    // Avoid inline recreation for Enter handler
+    const handleEnter = useCallback(() => {
+      handleEnterOnClick({
+        activeAndInactiveUsers: users?.activeAndInactiveUsers,
+        flexProUserId: cNumpadResult,
+      });
+    }, [handleEnterOnClick, users, cNumpadResult]);
 
-  const digits = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
+    const digits = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
 
-  return (
-    <div
-      className="modal fade bd-example-modal-lg"
-      tabIndex="-1"
-      role="dialog"
-      aria-labelledby="myLargeModalLabel"
-      aria-hidden="true"
-    >
-      <div className="modal-dialog modal-lg">
-        <div className="modal-content custom-modal-dialog">
-          {/* header */}
-          <div className="modal-header">
-            <h5 className="modal-title">Enter your User ID here:</h5>
-            <button
-              type="button"
-              className="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
+    return (
+      <Modal show={show} onHide={onHide} size="lg" centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Enter your User ID here:</Modal.Title>
+        </Modal.Header>
 
-          {/* body */}
-          <div className="modal-body">
+        <Modal.Body>
+          <div className="custom-modal-dialog">
             <div className="row user-id-row">
               <div className="col-4">
                 <h4>
@@ -99,7 +81,11 @@ const UserLoginIDVerificationModal = memo(({ users }) => {
               <div className="col-8 existing-user">
                 <UserFoundComponent
                   user={cUserFound}
-                  onLogin={handleLoginOnclick}
+                  onLogin={() => {
+                    handleLoginOnclick();
+                    onLogin && onLogin();
+                    onHide();
+                  }}
                   onCancel={handleClearOnClick}
                 />
               </div>
@@ -142,12 +128,10 @@ const UserLoginIDVerificationModal = memo(({ users }) => {
               </div>
             </div>
           </div>
-
-          <div className="modal-footer"></div>
-        </div>
-      </div>
-    </div>
-  );
-});
+        </Modal.Body>
+      </Modal>
+    );
+  },
+);
 
 export default UserLoginIDVerificationModal;

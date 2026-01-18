@@ -52,6 +52,7 @@ const MyUserDaypassLoginSection = memo(function MyUserDaypassLoginSection() {
   const { handleDayPassLoginClick, setDayPassLogin, setIsOnGoing } = myLogin;
 
   const [loginError, setLoginError] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   // reset daypass and regular login hook
   const { resetDayPassLogin, resetRegularUserLogin } = useResetLogin();
@@ -120,16 +121,17 @@ const MyUserDaypassLoginSection = memo(function MyUserDaypassLoginSection() {
     ({ resetRegularUserLogin }) => (
       <button
         className="btn btn-success enabled"
-        data-toggle="modal"
-        data-target="#daypass-login-modal"
-        onClick={() => handleDayPassLoginClick({ resetRegularUserLogin })}
+        onClick={() => {
+          handleDayPassLoginClick({ resetRegularUserLogin });
+          setShowModal(true);
+        }}
         style={{ zIndex: 9999 }}
         disabled={isLoadingDayPass}
       >
         Login Daypass
       </button>
     ),
-    [handleDayPassLoginClick]
+    [handleDayPassLoginClick, isLoadingDayPass]
   );
 
   // side effects for login mutation status failed
@@ -237,6 +239,8 @@ const MyUserDaypassLoginSection = memo(function MyUserDaypassLoginSection() {
       </div>
 
       <DayPassLoginModal
+        show={showModal}
+        onHide={() => setShowModal(false)}
         setIsOnGoing={setIsOnGoing}
         setDayPassLogin={setDayPassLogin}
         dayPassUsers={dayPassActiveUsers?.dayPassUsers || []}

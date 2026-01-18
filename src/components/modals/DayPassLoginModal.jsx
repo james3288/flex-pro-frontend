@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
+import { Modal, Button } from "react-bootstrap";
 import { useDayPassStore } from "../../store/useDayPassStore";
 
 import "./daypassLoginModal.scss";
@@ -7,7 +8,13 @@ import DpUserInfo from "./DpUserInfo";
 import postDayPassTimeRecords from "../../postData/postDayPassTimeRecords";
 import FormatDateOnly from "../../others/FormatDateOnly";
 
-const DayPassLoginModal = ({ setIsOnGoing, setDayPassLogin, dayPassUsers }) => {
+const DayPassLoginModal = ({
+  show,
+  onHide,
+  setIsOnGoing,
+  setDayPassLogin,
+  dayPassUsers,
+}) => {
   const [selectedUserId, setSelectedUserId] = useState(null);
 
   const {
@@ -59,12 +66,12 @@ const DayPassLoginModal = ({ setIsOnGoing, setDayPassLogin, dayPassUsers }) => {
       setSelectedUserId(id || null);
       setDayPassUserOnline(id);
     },
-    [setDayPassUserOnline]
+    [setDayPassUserOnline],
   );
 
   const isAlreadyLoggedIn = useMemo(() => {
     return dayPassUserOnline?.some(
-      (user) => FormatDateOnly(user.time_out) === "1990-01-01"
+      (user) => FormatDateOnly(user.time_out) === "1990-01-01",
     );
   }, [dayPassUserOnline]);
 
@@ -93,70 +100,47 @@ const DayPassLoginModal = ({ setIsOnGoing, setDayPassLogin, dayPassUsers }) => {
       setSubscriptionName(selectedUser.subscription?.gym_rate_desc);
     }
 
+    onHide(); // Close the modal after login
     setSelectedUserId(null);
   };
 
   return (
-    <>
-      <div
-        className="modal fade"
-        id={dayPassUserId}
-        role="dialog"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog" role="document">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title">{modalTitle}</h5>
-              <button type="button" className="close" data-dismiss="modal">
-                <span>&times;</span>
-              </button>
-            </div>
+    <Modal show={show} onHide={onHide} centered>
+      <Modal.Header closeButton>
+        <Modal.Title>{modalTitle}</Modal.Title>
+      </Modal.Header>
 
-            <div className="modal-body">
-              <label className="col-form-label">FlexPro Daypass Users:</label>
-              <br />
-              <select className="mySelect" onChange={onChangeDaypassUser}>
-                <option value={0}>--- Select User ---</option>
-                {dayPassUsers?.map(
-                  (user) =>
-                    user?.remaining > -1 && (
-                      <option key={user.id} value={user.id}>
-                        {user.name} - {user.subscription.gym_rate_desc}
-                      </option>
-                    )
-                )}
-              </select>
-            </div>
+      <Modal.Body>
+        <label className="col-form-label">FlexPro Daypass Users:</label>
+        <br />
+        <select className="mySelect" onChange={onChangeDaypassUser}>
+          <option value={0}>--- Select User ---</option>
+          {dayPassUsers?.map(
+            (user) =>
+              user?.remaining > -1 && (
+                <option key={user.id} value={user.id}>
+                  {user.name} - {user.subscription.gym_rate_desc}
+                </option>
+              ),
+          )}
+        </select>
 
-            <div className="modal-body dp-user-info">
-              {selectedUser && <DpUserInfo user={selectedUser} />}
-            </div>
-
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-dismiss="modal"
-              >
-                Close
-              </button>
-
-              {selectedUser && (
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={handleLoginOnclick}
-                  data-dismiss="modal"
-                >
-                  Daypass Login
-                </button>
-              )}
-            </div>
-          </div>
+        <div className="dp-user-info">
+          {selectedUser && <DpUserInfo user={selectedUser} />}
         </div>
-      </div>
-    </>
+      </Modal.Body>
+
+      <Modal.Footer>
+        <Button variant="secondary" onClick={onHide}>
+          Close
+        </Button>
+        {selectedUser && (
+          <Button variant="primary" onClick={handleLoginOnclick}>
+            Daypass Login
+          </Button>
+        )}
+      </Modal.Footer>
+    </Modal>
   );
 };
 

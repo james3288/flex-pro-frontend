@@ -99,6 +99,8 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
   // local UI state
 
   const [loginError, setLoginError] = useState(null);
+  const [showUserIdModal, setShowUserIdModal] = useState(false);
+  const [showDayPassModal, setShowDayPassModal] = useState(false);
 
   // reset daypass and regular login hook
   const { resetDayPassLogin, resetRegularUserLogin } = useResetLogin();
@@ -134,10 +136,10 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
   const cSetCurrentlyLogin = useCurrentlyLoginStore((s) => s.setCurrentlyLogin);
   const cSetUserFound = useCurrentlyLoginStore((s) => s.setUserFound);
   const cSetIsAlreadyLoginInDatabase = useCurrentlyLoginStore(
-    (s) => s.setIsAlreadyLoginInDatabase
+    (s) => s.setIsAlreadyLoginInDatabase,
   );
   const cIsAlreadyLoginInDatabase = useCurrentlyLoginStore(
-    (s) => s.isAlreadyLoginInDatabase
+    (s) => s.isAlreadyLoginInDatabase,
   );
 
   // const cLoginAttempt = useCurrentlyLoginStore((s) => s.loginAttempt);
@@ -234,7 +236,7 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
 
       resetDayPassLogin();
     },
-    [cSetUserFound, cSetNumpadResult, cSetIsFound]
+    [cSetUserFound, cSetNumpadResult, cSetIsFound],
   );
 
   const handleCancelLogin = useCallback(() => {
@@ -263,15 +265,16 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
       <button
         className="btn btn-success enabled"
         disabled={isLoadingActiveAndInactiveUser}
-        data-toggle="modal"
-        data-target=".bd-example-modal-lg"
         style={{ zIndex: 9999 }}
-        onClick={() => handleUserRefresh({ resetDayPassLogin })}
+        onClick={() => {
+          handleUserRefresh({ resetDayPassLogin });
+          setShowUserIdModal(true);
+        }}
       >
         Login User ID
       </button>
     ),
-    [isLoadingActiveAndInactiveUser, handleUserRefresh]
+    [isLoadingActiveAndInactiveUser, handleUserRefresh],
   );
 
   const RefreshButton = useCallback(() => (
@@ -300,16 +303,17 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
     ({ resetRegularUserLogin }) => (
       <button
         className="btn btn-success enabled"
-        data-toggle="modal"
-        data-target="#daypass-login-modal"
-        onClick={() => handleDayPassLoginClick({ resetRegularUserLogin })}
+        onClick={() => {
+          handleDayPassLoginClick({ resetRegularUserLogin });
+          setShowDayPassModal(true);
+        }}
         style={{ zIndex: 9999 }}
         disabled={isLoadingActiveAndInactiveUser}
       >
         Login Daypass
       </button>
     ),
-    [handleDayPassLoginClick]
+    [handleDayPassLoginClick, isLoadingActiveAndInactiveUser],
   );
 
   // side effects
@@ -333,7 +337,7 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
 
     if (loginMutation.isError) {
       setLoginError(
-        loginMutation.error?.message || "Login failed. Please try again."
+        loginMutation.error?.message || "Login failed. Please try again.",
       );
     }
 
@@ -385,7 +389,7 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
       setSubscriptionRecord,
       users,
       isLoadingActiveAndInactiveUser,
-    ]
+    ],
   );
 
   const WaitForInitializingUsersComponent = useCallback(() => {
@@ -627,11 +631,15 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
       </div>
 
       <DayPassLoginModal
+        show={showDayPassModal}
+        onHide={() => setShowDayPassModal(false)}
         setIsOnGoing={setIsOnGoing}
         setDayPassLogin={setDayPassLogin}
         dayPassUsers={users?.dayPassUser || []}
       />
       <UserLoginIDVerificationModal
+        show={showUserIdModal}
+        onHide={() => setShowUserIdModal(false)}
         setUserId={setUserId}
         setIsOnGoing={setIsOnGoing}
         setIsLogin={setIsLogin}
