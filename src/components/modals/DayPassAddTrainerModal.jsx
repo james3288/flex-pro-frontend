@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useDayPassStore } from "../../store/useDayPassStore";
 import updateDayPassPersonalTrainer from "../mySection/dayPassUser/updateDayPassPersonalTrainer";
+import { Modal, Button } from "react-bootstrap";
 
-const DayPassAddTrainerModal = () => {
+const DayPassAddTrainerModal = ({ show, onHide }) => {
   // store setters
   const { setTrainors, setDayPassTrainer } = useDayPassStore((state) => ({
     setTrainors: state.setTrainors,
@@ -57,76 +58,120 @@ const DayPassAddTrainerModal = () => {
   };
 
   return (
-    <div
-      className="modal fade"
-      id={dayPassUserId}
-      role="dialog"
-      aria-labelledby="exampleModalLongTitle"
-      aria-hidden="true"
-    >
-      <div className="modal-dialog" role="document">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title" id="exampleModalLongTitle">
-              {modalTitle}
-            </h5>
-            <button
-              type="button"
-              className="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
+    // <div
+    //   className="modal fade"
+    //   id={dayPassUserId}
+    //   role="dialog"
+    //   aria-labelledby="exampleModalLongTitle"
+    //   aria-hidden="true"
+    // >
+    //   <div className="modal-dialog" role="document">
+    //     <div className="modal-content">
+    //       <div className="modal-header">
+    //         <h5 className="modal-title" id="exampleModalLongTitle">
+    //           {modalTitle}
+    //         </h5>
+    //         <button
+    //           type="button"
+    //           className="close"
+    //           data-dismiss="modal"
+    //           aria-label="Close"
+    //         >
+    //           <span aria-hidden="true">&times;</span>
+    //         </button>
+    //       </div>
 
-          <div className="modal-body">
-            <label className="col-form-label">Personal Trainer:</label>
-            <div>
-              <select
-                className="mySelect"
-                name="trainer_id"
-                value={formData.trainer_id}
-                onChange={onChangeTrainer}
-              >
-                <option value={0}>--- Select Trainer ---</option>
-                {trainors?.map((trainer) => (
-                  <option value={trainer.id} key={trainer?.id}>
-                    {trainer?.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+    //       <div className="modal-body">
+    //         <label className="col-form-label">Personal Trainer:</label>
+    //         <div>
+    //           <select
+    //             className="mySelect"
+    //             name="trainer_id"
+    //             value={formData.trainer_id}
+    //             onChange={onChangeTrainer}
+    //           >
+    //             <option value={0}>--- Select Trainer ---</option>
+    //             {trainors?.map((trainer) => (
+    //               <option value={trainer.id} key={trainer?.id}>
+    //                 {trainer?.name}
+    //               </option>
+    //             ))}
+    //           </select>
+    //         </div>
 
-            <label className="col-form-label">Training Date Started:</label>
-            <input
-              type="datetime-local"
-              className="form-control"
-              name="trainingDateStarted"
-              value={formData.trainingDateStarted}
-              onChange={onChangeTrainer}
-            />
-          </div>
+    //         <label className="col-form-label">Training Date Started:</label>
+    //         <input
+    //           type="datetime-local"
+    //           className="form-control"
+    //           name="trainingDateStarted"
+    //           value={formData.trainingDateStarted}
+    //           onChange={onChangeTrainer}
+    //         />
+    //       </div>
 
-          <div className="modal-footer">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              data-dismiss="modal"
-            >
-              Close
-            </button>
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={onSaveTrainer}
-            >
-              Save changes
-            </button>
-          </div>
+    //       <div className="modal-footer">
+    //         <button
+    //           type="button"
+    //           className="btn btn-secondary"
+    //           data-dismiss="modal"
+    //         >
+    //           Close
+    //         </button>
+    //         <button
+    //           type="button"
+    //           className="btn btn-primary"
+    //           onClick={onSaveTrainer}
+    //         >
+    //           Save changes
+    //         </button>
+    //       </div>
+    //     </div>
+    //   </div>
+    // </div>
+    <Modal show={show} onHide={onHide} size="lg" centered>
+      <Modal.Header closeButton>
+        <Modal.Title>{modalTitle}</Modal.Title>
+      </Modal.Header>
+
+      <Modal.Body>
+        <div>
+          <label className="col-form-label">Personal Trainer:</label>
+          <br />
+          <select
+            className="mySelect"
+            name="trainer_id"
+            value={formData.trainer_id}
+            onChange={onChangeTrainer}
+          >
+            <option value={0}>--- Select Trainer ---</option>
+            {trainors?.map((trainer) => (
+              <option value={trainer.id} key={trainer?.id}>
+                {trainer?.name}
+              </option>
+            ))}
+          </select>
+          <br />
+          <label className="col-form-label">Training Date Started:</label>
+          <br />
+          <input
+            type="datetime-local"
+            className="form-control"
+            name="trainingDateStarted"
+            value={formData.trainingDateStarted}
+            onChange={onChangeTrainer}
+          />
         </div>
-      </div>
-    </div>
+      </Modal.Body>
+
+      <Modal.Footer>
+        <Button variant="secondary" onClick={onHide}>
+          Close
+        </Button>
+        <Button variant="primary" onClick={onSaveTrainer}>
+          Save changes
+        </Button>
+      </Modal.Footer>
+    </Modal>
   );
 };
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import pic from "./../../../../src/assets/img/dummy.png";
 import FormatDate from "../../../others/FormatDate";
 import remainingDays from "../../../others/GetRemainingDays";
@@ -6,7 +6,7 @@ import getSubscriptionDaysLeft from "../../../getData/getSubscriptionDaysLeft";
 import DeleteIconSvg from "../../svg/deleteIconSvg";
 import { useDayPassStore } from "../../../store/useDayPassStore";
 
-const DayPassUser = ({ user }) => {
+const DayPassUser = ({ user, setShowAddPersonalTrainerModal }) => {
   const [remaining, setRemaining] = useState(0);
   const [extendedSubscript] = useState([]); // kept for consistency if used later
   const [myDaysLeft, setMyDaysLeft] = useState(null);
@@ -33,9 +33,9 @@ const DayPassUser = ({ user }) => {
         remaining,
         extendedSubscript,
         user?.date_subscribed,
-        false
+        false,
       ),
-    [remaining, extendedSubscript, user?.date_subscribed]
+    [remaining, extendedSubscript, user?.date_subscribed],
   );
 
   // update remaining days with safe interval
@@ -65,11 +65,12 @@ const DayPassUser = ({ user }) => {
   }, [user?.date_subscribed, user?.id, subDaysLeft]);
 
   // handlers
-  const handleAddPersonalTrainers = () => {
+  const handleAddPersonalTrainers = useCallback(() => {
     setModalTitle("Update Personal Trainer");
     setDayPassUserId("add-daypass-trainer");
     setDayPassId(user?.id);
-  };
+    setShowAddPersonalTrainerModal(true);
+  }, [setShowAddPersonalTrainerModal]);
 
   const handleRemoveTrainer = () => {
     setRemoveModalTitle("Remove Personal Trainer");

@@ -26,7 +26,7 @@ const RenewalUsers = ({
   setExtendedTrainerId,
   setShowAddTrainerModal,
   setShowExtendSubscriptionModal,
-  setShowRemoveExtendedSubModal,
+  setShowRemoveExtendedSubscriptionModal,
   contactNo,
   trainer_date_started,
   packages_details,
@@ -82,9 +82,9 @@ const RenewalUsers = ({
     (id) => {
       setModalTitle("Remove Extended Subscriptions");
       setExtendedSubId(id);
-      setShowRemoveExtendedSubModal(true);
+      setShowRemoveExtendedSubscriptionModal(true);
     },
-    [setModalTitle, setExtendedSubId, setShowRemoveExtendedSubModal],
+    [setModalTitle, setExtendedSubId, setShowRemoveExtendedSubscriptionModal],
   );
 
   return (

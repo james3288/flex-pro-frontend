@@ -25,6 +25,7 @@ const ActiveUsersComponent = ({
   setExtendedTrainerId,
   setShowAddTrainerModal,
   setShowExtendSubscriptionModal,
+  setShowRemoveExtendedSubscriptionModal,
 }) => {
   // if (fetchStatus === "fetching") return <LoadingEffect />;
 
@@ -62,6 +63,9 @@ const ActiveUsersComponent = ({
         packages_details={userSubData.subscription.packages_details}
         sub_session_days={userSubData.sub_session_days}
         setShowExtendSubscriptionModal={setShowExtendSubscriptionModal}
+        setShowRemoveExtendedSubscriptionModal={
+          setShowRemoveExtendedSubscriptionModal
+        }
       />
     );
   });
@@ -72,6 +76,7 @@ const ActiveDayPassUsersComponent = ({
   fetchStatus,
   setUserSubscriptionId,
   setModalTitle,
+  setShowAddPersonalTrainerModal,
 }) => {
   // if (fetchStatus === "fetching") return <LoadingEffect />;
 
@@ -81,6 +86,7 @@ const ActiveDayPassUsersComponent = ({
       user={user}
       setUserSubscriptionId={setUserSubscriptionId}
       setModalTitle={setModalTitle}
+      setShowAddPersonalTrainerModal={setShowAddPersonalTrainerModal}
     />
   ));
 };
@@ -113,6 +119,12 @@ const MyActiveUser = () => {
   const [showExtendSubscriptionModal, setShowExtendSubscriptionModal] =
     useState(false);
   const [showCheckCredentialModal, setShowCheckCredentialModal] =
+    useState(false);
+  const [
+    showRemoveExtendedSubscriptionModal,
+    setShowRemoveExtendedSubscriptionModal,
+  ] = useState(false);
+  const [showAddPersonalTrainerModal, setShowAddPersonalTrainerModal] =
     useState(false);
 
   const { getActiveUsers } = useGetActiveUsers();
@@ -177,6 +189,7 @@ const MyActiveUser = () => {
             fetchStatus={fetchStatus}
             setUserSubscriptionId={setUserSubscriptionId}
             setModalTitle={setModalTitle}
+            setShowAddPersonalTrainerModal={setShowAddPersonalTrainerModal}
           />
 
           <ActiveUsersComponent
@@ -188,10 +201,16 @@ const MyActiveUser = () => {
             setExtendedTrainerId={setExtendedTrainerId}
             setShowAddTrainerModal={setShowAddTrainerModal}
             setShowExtendSubscriptionModal={setShowExtendSubscriptionModal}
+            setShowRemoveExtendedSubscriptionModal={
+              setShowRemoveExtendedSubscriptionModal
+            }
           />
 
           {/* Modals */}
-          <DayPassAddTrainerModal />
+          <DayPassAddTrainerModal
+            show={showAddPersonalTrainerModal}
+            onHide={() => setShowAddPersonalTrainerModal(false)}
+          />
           <AddTrainerModal
             show={showAddTrainerModal}
             onHide={() => setShowAddTrainerModal(false)}
@@ -206,9 +225,11 @@ const MyActiveUser = () => {
             modalTitle={modalTitle}
           />
           <RemoveExtendedSub
+            show={showRemoveExtendedSubscriptionModal}
             id="removeExtendedSubModal"
             extendedSubId={extendedSubId}
             extendedTrainerId={extendedTrainerId}
+            onHide={() => setShowRemoveExtendedSubscriptionModal(false)}
             modalTitle={modalTitle}
           />
           <RemoveModal />
