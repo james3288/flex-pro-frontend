@@ -77,6 +77,7 @@ const ActiveDayPassUsersComponent = ({
   setUserSubscriptionId,
   setModalTitle,
   setShowAddPersonalTrainerModal,
+  setShowRemovePersonalTrainer,
 }) => {
   // if (fetchStatus === "fetching") return <LoadingEffect />;
 
@@ -87,6 +88,7 @@ const ActiveDayPassUsersComponent = ({
       setUserSubscriptionId={setUserSubscriptionId}
       setModalTitle={setModalTitle}
       setShowAddPersonalTrainerModal={setShowAddPersonalTrainerModal}
+      setShowRemovePersonalTrainer={setShowRemovePersonalTrainer}
     />
   ));
 };
@@ -125,6 +127,8 @@ const MyActiveUser = () => {
     setShowRemoveExtendedSubscriptionModal,
   ] = useState(false);
   const [showAddPersonalTrainerModal, setShowAddPersonalTrainerModal] =
+    useState(false);
+  const [showRemovePersonalTrainer, setShowRemovePersonalTrainer] =
     useState(false);
 
   const { getActiveUsers } = useGetActiveUsers();
@@ -190,6 +194,7 @@ const MyActiveUser = () => {
             setUserSubscriptionId={setUserSubscriptionId}
             setModalTitle={setModalTitle}
             setShowAddPersonalTrainerModal={setShowAddPersonalTrainerModal}
+            setShowRemovePersonalTrainer={setShowRemovePersonalTrainer}
           />
 
           <ActiveUsersComponent
@@ -232,7 +237,11 @@ const MyActiveUser = () => {
             onHide={() => setShowRemoveExtendedSubscriptionModal(false)}
             modalTitle={modalTitle}
           />
-          <RemoveModal />
+          <RemoveModal
+            show={showRemovePersonalTrainer}
+            onHide={() => setShowRemovePersonalTrainer(false)}
+            setShowRemovePersonalTrainer={setShowRemovePersonalTrainer}
+          />
           <CheckCredentialModal
             show={showCheckCredentialModal}
             onHide={() => setShowCheckCredentialModal(false)}

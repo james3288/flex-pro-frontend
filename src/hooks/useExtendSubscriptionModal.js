@@ -15,7 +15,7 @@ export default function useExtendSubscriptionModal({ userSubscriptionId }) {
 
   const [state, dispatch] = useReducer(
     extendSubscriptionReducer,
-    INITIAL_STATE
+    INITIAL_STATE,
   );
 
   const refTrainingSession = useRef(null);
@@ -31,8 +31,6 @@ export default function useExtendSubscriptionModal({ userSubscriptionId }) {
     const getSpecificExtendSub = async () => {
       let data = await getSpecificExtendedSubscription(userSubscriptionId);
       setExtendedSubscription(data);
-
-      console.log(data);
 
       refTrainingSession.current.value =
         data?.extended_session_day === undefined

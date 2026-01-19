@@ -32,7 +32,7 @@ const TrashIcon = React.memo(() => (
   </svg>
 ));
 
-const RemoveModal = () => {
+const RemoveModal = ({ show, onHide, setShowRemovePersonalTrainer }) => {
   const {
     removeModalTitle,
     removeModalId,
@@ -70,11 +70,7 @@ const RemoveModal = () => {
   };
 
   return (
-    <Modal
-      show={showRemoveModal}
-      onHide={() => setShowRemoveModal(false)}
-      centered
-    >
+    <Modal show={show} onHide={onHide} centered>
       <Modal.Header closeButton>
         <Modal.Title className="text-danger">
           <TrashIcon /> {removeModalTitle}
@@ -84,7 +80,10 @@ const RemoveModal = () => {
       <Modal.Body>{modalMessages[removeModalId]}</Modal.Body>
 
       <Modal.Footer>
-        <Button variant="secondary" onClick={() => setShowRemoveModal(false)}>
+        <Button
+          variant="secondary"
+          onClick={() => setShowRemovePersonalTrainer(false)}
+        >
           Close
         </Button>
         <Button variant="danger" onClick={handleRemoveDaypassPT}>

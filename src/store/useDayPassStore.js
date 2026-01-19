@@ -23,6 +23,11 @@ const initialState = {
   remainingHours: "",
   personalTrainer: "",
   subscriptionName: "",
+  // ✅ ADD THIS (IMPORTANT)
+  dayPassTrainer: {
+    trainer_id: 0,
+    trainingDateStarted: "",
+  },
 };
 
 export const useDayPassStore = create((set) => ({
@@ -121,6 +126,14 @@ export const useDayPassStore = create((set) => ({
       }),
     );
   },
+
+  setDayPassTrainer2: (payload) =>
+    set((state) => ({
+      dayPassTrainer: {
+        ...state.dayPassTrainer,
+        ...payload,
+      },
+    })),
 
   setDayPassTrainer: (data) => {
     const trainer_id = data.trainer_id;
