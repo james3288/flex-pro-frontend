@@ -4,17 +4,34 @@ import FormatDate from "../../../others/FormatDate";
 import formatTime from "../../../others/ReadableFormatTime";
 import TrainerRemainingDays from "./TrainerRemainingDays";
 import getExtendedTrainer from "../../../getData/getExtendedTrainer";
+import DeleteIconSvg from "../../svg/deleteIconSvg";
 
-/* Small presentational components kept top-level so they are not re-created per render */
+/* ───────────── constants ───────────── */
+const transparentButtonStyle = {
+  background: "transparent",
+  border: "none",
+  padding: 0,
+  width: "100%",
+  textAlign: "left",
+};
+
+const iconButtonStyle = {
+  background: "transparent",
+  border: "none",
+  padding: 0,
+  marginLeft: 8,
+  color: "orange",
+};
+
+/* ───────────── helpers ───────────── */
+const getExtendedTrainerLabel = (days) =>
+  days <= 0 ? "Expired" : formatTime(days, "days-hours");
+
+/* ───────────── small components ───────────── */
 const AddButton = React.memo(({ label, className, onClick }) => (
   <button
     className={className}
-    style={{
-      padding: "3px 10px",
-      marginRight: "5px",
-      marginBottom: "5px",
-      width: "100%",
-    }}
+    style={{ padding: "3px 10px", marginBottom: "5px", width: "100%" }}
     onClick={onClick}
     type="button"
   >
@@ -31,34 +48,24 @@ const RecyleBinIcon = React.memo(() => (
     className="bi bi-trash"
     viewBox="0 0 16 16"
     aria-hidden="true"
-    focusable="false"
   >
     <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-    <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+    <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1z" />
   </svg>
 ));
 
-const isExtendedTrainerExpired = (extendRemainingDays) =>
-  extendRemainingDays <= 0
-    ? "Expired"
-    : formatTime(extendRemainingDays, "days-hours");
-
-/* Move ExtendedTrainerDetails out of parent component so React.memo works */
 const ExtendedTrainerDetails = React.memo(
-  ({ trainersName, dateExtended, extendRemainingDays }) => {
-    return (
-      <div>
-        <span className="fs-4!">{trainersName}</span> -{" "}
-        {FormatDate(dateExtended)} {" - "}
-        <span style={{ color: "yellowgreen" }}>
-          {isExtendedTrainerExpired(extendRemainingDays)}
-        </span>
-      </div>
-    );
-  },
+  ({ trainersName, dateExtended, extendRemainingDays }) => (
+    <span>
+      <strong>{trainersName}</strong> – {FormatDate(dateExtended)} –{" "}
+      <span style={{ color: "yellowgreen" }}>
+        {getExtendedTrainerLabel(extendRemainingDays)}
+      </span>
+    </span>
+  ),
 );
 
-/* Main exported component — kept name and export unchanged */
+/* ───────────── main component ───────────── */
 const PersonalTrainerComponents = ({
   trainers,
   trainerRemainingDays,
@@ -73,9 +80,7 @@ const PersonalTrainerComponents = ({
   isExpired,
 }) => {
   const [extendedTrainer, setExtendedTrainer] = useState([]);
-  const [totalFreeTrainerLeft, setTotalFreeTrainerLeft] = useState(0);
 
-  /* Stable callbacks to avoid re-creating on each render */
   const handleRemoveExtendedTrainer = useCallback(
     (id) => {
       setModalTitle("Remove Extended Trainers");
@@ -115,42 +120,29 @@ const PersonalTrainerComponents = ({
     setShowAddTrainerModal,
   ]);
 
-  /* memoize derived display text to prevent re-computation if inputs don't change */
   const freeTrainerDisplay = useMemo(() => {
-    const name = trainers ? trainers.toUpperCase() : "";
-    const remaining = personalTrainerDaysLeft(
+    if (!trainers) return "";
+    return `${trainers.toUpperCase()} - (${personalTrainerDaysLeft(
       trainers,
       "remaining-days",
       trainerRemainingDays,
       session_days,
-    );
-    const started = trainers ? ` - ${FormatDate(trainer_date_started)}` : "";
-    return `${name} - (${remaining})${started}`;
-    // If personalTrainerDaysLeft is expensive, memoization helps.
+    )}) - ${FormatDate(trainer_date_started)}`;
   }, [trainers, trainerRemainingDays, session_days, trainer_date_started]);
 
-  /* Fetch extended trainer — safe cancellation */
   useEffect(() => {
     let cancelled = false;
 
     const fetchExtendedTrainer = async () => {
       try {
         const data = await getExtendedTrainer(user_id);
-        if (!cancelled) {
-          setExtendedTrainer(data || []);
-        }
-      } catch (error) {
-        if (!cancelled) {
-          console.error("Error in fetchExtendedTrainer:", error);
-        }
+        if (!cancelled) setExtendedTrainer(data || []);
+      } catch (e) {
+        if (!cancelled) console.error(e);
       }
     };
 
-    if (user_id != null) {
-      fetchExtendedTrainer();
-    } else {
-      setExtendedTrainer([]);
-    }
+    user_id ? fetchExtendedTrainer() : setExtendedTrainer([]);
 
     return () => {
       cancelled = true;
@@ -158,51 +150,34 @@ const PersonalTrainerComponents = ({
   }, [user_id]);
 
   return (
-    <>
-      {/* TRAINER REMAINING DAYS */}
+    <div style={{ marginBottom: "7px" }}>
       <h5>Extended Trainer Remaining Days:</h5>
-      {extendedTrainer?.length > 0 ? (
+      {extendedTrainer.length > 0 ? (
         <TrainerRemainingDays
           trainerRemainingDays={trainerRemainingDays}
           session_days={session_days}
           extendedTrainer={extendedTrainer}
           trainers={trainers}
-          totalFreeTrainerLeft={totalFreeTrainerLeft}
-          setTotalFreeTrainerLeft={setTotalFreeTrainerLeft}
         />
       ) : (
-        <h4 style={{ fontSize: "20px", color: "orange" }}>N/A</h4>
+        <h4 style={{ color: "orange" }}>N/A</h4>
       )}
 
-      {/* FREE PERSONAL TRAINER */}
       <h5>Free Personal Trainer:</h5>
-      <h4 style={{ color: "pink" }}>{freeTrainerDisplay}</h4>
+      <h4 style={{ color: "pink", lineHeight: "1.5rem" }}>
+        {freeTrainerDisplay}
+      </h4>
 
-      {/* EXTENDED TRAINERS */}
-      <h5 style={{ color: "white" }}>Extended Personal Trainer:</h5>
-      {extendedTrainer?.map((extended) => (
-        <div
-          key={extended.id}
-          style={{
-            display: "flex",
-            alignItems: "flex-start",
-            marginBottom: "4px",
-          }}
-        >
-          {extended.PT > 0 && (
-            /* Using button for action semantics; on click we open addTrainerModal and set the id for update */
-            <>
+      <h5>Extended Personal Trainer:</h5>
+      <div style={{ margin: "15px 0" }}>
+        {extendedTrainer.map((extended) =>
+          extended.PT > 0 ? (
+            <div key={extended.id} style={{ display: "flex" }}>
               <button
                 type="button"
                 className="extendedTrainer"
                 onClick={() => handleUpdateExtendedTrainer(extended.id)}
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  padding: 0,
-                  textAlign: "left",
-                  width: "100%",
-                }}
+                style={transparentButtonStyle}
               >
                 <ExtendedTrainerDetails
                   trainersName={extended.trainer?.name || ""}
@@ -212,30 +187,20 @@ const PersonalTrainerComponents = ({
               </button>
 
               <button
-                className="removeExtendedTrainer"
-                data-toggle="modal"
-                data-target="#removeExtendedSubModal"
-                data-whatever="@mdo"
-                onClick={() => handleRemoveExtendedTrainer(extended.id)}
                 type="button"
-                aria-label={`Remove extended trainer ${extended.trainer?.name}`}
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  padding: 0,
-                  marginLeft: 8,
-                }}
+                onClick={() => handleRemoveExtendedTrainer(extended.id)}
+                aria-label="Remove extended trainer"
+                style={iconButtonStyle}
               >
-                <RecyleBinIcon />
+                <DeleteIconSvg />
               </button>
-            </>
-          )}
-        </div>
-      ))}
+            </div>
+          ) : null,
+        )}
+      </div>
 
-      {/* BUTTONS */}
       {!isExpired && (
-        <div>
+        <>
           <AddButton
             label="Free Personal Trainer"
             className="btn btn-primary"
@@ -246,9 +211,9 @@ const PersonalTrainerComponents = ({
             className="btn btn-success"
             onClick={handleExtendPersonalTrainers}
           />
-        </div>
+        </>
       )}
-    </>
+    </div>
   );
 };
 

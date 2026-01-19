@@ -23,6 +23,11 @@ const DayPassUser = ({
   /** ───────── Remaining days ───────── */
   const [remaining, setRemaining] = React.useState(0);
 
+  const personalTrainerStyle = {
+    display: "flex",
+    gap: "5px",
+  };
+
   useEffect(() => {
     if (!user?.date_subscribed || !user?.id) return;
 
@@ -115,7 +120,7 @@ const DayPassUser = ({
           <h4 style={{ fontSize: "20px" }}>{subDaysLeft}</h4>
 
           <h5 style={{ color: "white" }}>Personal Trainer:</h5>
-          <div>
+          <div style={personalTrainerStyle}>
             {user?.personal_trainer?.name && (
               <a
                 className="removeExtendedTrainer"
