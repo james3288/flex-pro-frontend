@@ -10,6 +10,7 @@ const Users1 = ({
   setSelectedUser,
   contactNo,
   setShowUsersInfoModal,
+  setShowRemoveUserModal,
 }) => {
   const handleEdit = () => {
     setSelectedUser(() => user);
@@ -18,6 +19,7 @@ const Users1 = ({
 
   const handleRemove = () => {
     setSelectedUser(() => user);
+    setShowRemoveUserModal(true);
   };
 
   const handleDownloadPDF = () => {

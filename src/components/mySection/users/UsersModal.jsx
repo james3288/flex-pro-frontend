@@ -53,8 +53,7 @@ const UsersModal = ({
   };
 
   useEffect(() => {
-    if (option === "Update" && selectedUsers) {
-      console.log(selectedUsers);
+    if (option === "Update" && selectedUsers && show) {
       refName.current.value = selectedUsers?.flex_pro_user?.name;
       refWeight.current.value = selectedUsers?.flex_pro_user?.weights;
       refContactNo.current.value = selectedUsers?.flex_pro_user?.contact_number;

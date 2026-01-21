@@ -15,6 +15,7 @@ const MyUsers = () => {
   const [selectedUser, setSelectedUser] = useState();
   const [filterData, setFilterData] = useState([]);
   const [showUsersInfoModal, setShowUsersInfoModal] = useState(false);
+  const [showRemoveUserModal, setShowRemoveUserModal] = useState(false);
 
   const {
     isPending,
@@ -119,6 +120,7 @@ const MyUsers = () => {
                     setSelectedUser={setSelectedUser}
                     contactNo={user.flex_pro_user.contact_number}
                     setShowUsersInfoModal={setShowUsersInfoModal}
+                    setShowRemoveUserModal={setShowRemoveUserModal}
                   />
                 ))
               ) : (
@@ -146,6 +148,8 @@ const MyUsers = () => {
       <DeleteUserModal
         id={"deleteUserModal"}
         user_id={selectedUser?.flex_pro_user?.id}
+        show={showRemoveUserModal}
+        onHide={() => setShowRemoveUserModal(false)}
       />
       <UserContractModal id={"userContractModal"} user={selectedUser} />
     </>
