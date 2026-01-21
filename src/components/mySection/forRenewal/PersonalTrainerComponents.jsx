@@ -78,6 +78,8 @@ const PersonalTrainerComponents = ({
   setModalTitle,
   setShowAddTrainerModal,
   isExpired,
+  setShowRemovePersonalTrainer,
+  setShowRemoveExtendedSubscriptionModal,
 }) => {
   const [extendedTrainer, setExtendedTrainer] = useState([]);
 
@@ -85,6 +87,7 @@ const PersonalTrainerComponents = ({
     (id) => {
       setModalTitle("Remove Extended Trainers");
       setExtendedTrainerId(id);
+      setShowRemoveExtendedSubscriptionModal(true);
     },
     [setModalTitle, setExtendedTrainerId],
   );

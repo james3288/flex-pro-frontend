@@ -65,8 +65,7 @@ const RemoveModal = ({ show, onHide, setShowRemovePersonalTrainer }) => {
   }, [dayPassId, removeModalId]);
 
   const modalMessages = {
-    "remove-daypass-trainer":
-      "Are you sure you want delete daypass personal trainer?",
+    "remove-daypass-trainer": "Are you sure you want remove personal trainer?",
   };
 
   return (

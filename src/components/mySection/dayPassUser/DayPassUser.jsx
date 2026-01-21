@@ -131,10 +131,15 @@ const DayPassUser = ({
               </a>
             )}
 
-            <a className="extendedTrainer" onClick={handleAddPersonalTrainers}>
-              {user?.personal_trainer?.name || "Add Trainer"}{" "}
-              {user?.date_started && `(${FormatDate(user?.date_started)})`}
-            </a>
+            {user?.personal_trainer?.name && (
+              <a
+                className="extendedTrainer"
+                onClick={handleAddPersonalTrainers}
+              >
+                {user?.personal_trainer?.name}
+                {user?.date_started && `(${FormatDate(user?.date_started)})`}
+              </a>
+            )}
           </div>
 
           <br />

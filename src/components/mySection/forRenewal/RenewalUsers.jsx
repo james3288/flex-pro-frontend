@@ -32,6 +32,7 @@ const RenewalUsers = ({
   packages_details,
   sub_session_days,
   isExpired,
+  setShowRemovePersonalTrainer,
 }) => {
   const [extendedSubscript, setExtendedSubscript] = useState([]);
 
@@ -142,6 +143,10 @@ const RenewalUsers = ({
             setModalTitle={setModalTitle}
             setShowAddTrainerModal={setShowAddTrainerModal}
             isExpired={isExpired}
+            setShowRemovePersonalTrainer={setShowRemovePersonalTrainer}
+            setShowRemoveExtendedSubscriptionModal={
+              setShowRemoveExtendedSubscriptionModal
+            }
           />
         </div>
       </div>
