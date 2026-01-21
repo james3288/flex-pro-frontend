@@ -32,33 +32,33 @@ const getUserSubscriptionReportByAll = async (dateFrom, dateTo) => {
 
     // get user subscription by date range and gym rate desc
     const response = await instance.get(
-      `/api/get_user_subscription_report_by_all/?dateFrom=${dateFrom}&dateTo=${dateTo}`
+      `/api/get_user_subscription_report_by_all/?dateFrom=${dateFrom}&dateTo=${dateTo}`,
     );
     const data = await response.data;
 
     const response2 = await instance.get(
-      `/api/get_extended_subscription_report_by_all/?dateFrom=${dateFrom}&dateTo=${dateTo}`
+      `/api/get_extended_subscription_report_by_all/?dateFrom=${dateFrom}&dateTo=${dateTo}`,
     );
 
     const data2 = await response2.data;
 
     // get daypass subscription by date range
     const response3 = await instance.get(
-      `/api/get_daypass_subscription_report/?dateFrom=${dateFrom}&dateTo=${dateTo}`
+      `/api/get_daypass_subscription_report/?dateFrom=${dateFrom}&dateTo=${dateTo}`,
     );
 
     const data3 = await response3.data;
 
     // get membership subscription by date range
     const response4 = await instance.get(
-      `/api/get_membership_subscription_report/?dateFrom=${dateFrom}&dateTo=${dateTo}`
+      `/api/get_membership_subscription_report/?dateFrom=${dateFrom}&dateTo=${dateTo}`,
     );
 
     const data4 = await response4.data;
 
     data?.forEach((item) => {
       const object = {
-        id: $`sub-{ item.id}`,
+        id: `sub-${item.id}`,
         user: item.flexprouser.name,
         date_subscribed: item.date_subscribed,
         gym_rate_desc: item.subscription.gym_rate_desc,
@@ -81,7 +81,7 @@ const getUserSubscriptionReportByAll = async (dateFrom, dateTo) => {
 
     data2?.forEach((item) => {
       const object = {
-        id: $`ex-{item.id}`,
+        id: `ex-${item.id}`,
         user: item.user_subscription.flexprouser.name,
         date_subscribed: item.date_extend,
         gym_rate_desc: item.subscription.gym_rate_desc,
@@ -106,7 +106,7 @@ const getUserSubscriptionReportByAll = async (dateFrom, dateTo) => {
 
     data3?.forEach((item) => {
       const object = {
-        id: $`ex-{item.id}`,
+        id: `ex-${item.id}`,
         user: item.name,
         date_subscribed: item.date_subscribed,
         gym_rate_desc: item.subscription.gym_rate_desc,
@@ -124,7 +124,7 @@ const getUserSubscriptionReportByAll = async (dateFrom, dateTo) => {
 
     data4?.forEach((item) => {
       const object = {
-        id: $`ex-{item.id}`,
+        id: `ex-${item.id}`,
         user: item.name,
         date_subscribed: item.date_subscribed,
         gym_rate_desc: item.subscription.gym_rate_desc,

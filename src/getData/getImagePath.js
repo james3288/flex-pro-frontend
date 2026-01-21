@@ -6,7 +6,6 @@ const getImagePath = async (id) => {
       const response = await instance.get(`/api/get_image_path/${id}`);
       const imagepath = response.data;
 
-      console.log(imagepath);
       return imagepath;
     }
     return null;

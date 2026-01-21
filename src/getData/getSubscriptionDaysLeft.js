@@ -9,7 +9,7 @@ const timeStampAddDays = (timeStamp, extendedDays, daysonly) => {
   if (timestamp < 0) {
     return "Expired";
   }
-  console.log(daysonly);
+
   return daysonly === false
     ? formatTime(timestamp, "days-hours-minutes")
     : formatTime(timestamp, "days-only");
@@ -19,13 +19,13 @@ const getSubscriptionDaysLeft = (
   remaining,
   extendedSubscript,
   date_subscribed, // kept for compatibility, though unused
-  daysOnly
+  daysOnly,
 ) => {
   // calculate total extended session days safely
   const extendedSessionDays =
     extendedSubscript?.reduce(
       (acc, extend) => acc + (extend?.extended_session_day || 0),
-      0
+      0,
     ) || 0;
 
   // Final calculation with added extended days

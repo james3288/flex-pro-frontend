@@ -28,19 +28,19 @@ const ifPlural = (days, per) => {
 const getSubscriptionReportByFreeTrainer = async (
   dateFrom,
   dateTo,
-  trainer
+  trainer,
 ) => {
   try {
     const newUser = [];
 
     const response = await instance.get(
-      `/api/get_free_trainer_report/?dateFrom=${dateFrom}&dateTo=${dateTo}&trainer=${trainer}`
+      `/api/get_free_trainer_report/?dateFrom=${dateFrom}&dateTo=${dateTo}&trainer=${trainer}`,
     );
     const data = await response.data;
 
     data?.forEach((item) => {
       const object = {
-        id: $`sub-{ item.id}`,
+        id: `sub-${item.id}`,
         user: item.flexprouser.name,
         date_subscribed: item.date_subscribed,
         gym_rate_desc: item.subscription.gym_rate_desc,

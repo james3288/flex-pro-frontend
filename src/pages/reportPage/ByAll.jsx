@@ -11,33 +11,29 @@ const ByAll = () => {
   const { cUserSubscriptionReport } = getter();
 
   return cUserSubscriptionReport?.map((item, index) => (
-    <>
-      <div className="row body" key={item?.id}>
-        <div className="col-1">
-          <div className="body-col">{index + 1}</div>
-        </div>
-        <div className="col-2">
-          <div className="body-col">{item?.user}</div>
-        </div>
-        <div className="col-2">
-          <div className="body-col">
-            {FormatDateOnly(item?.date_subscribed)}
-          </div>
-        </div>
-        <div className="col-2">
-          <div className="body-col">{item?.gym_rate_desc}</div>
-        </div>
-        <div className="col-2">
-          <div className="body-col">{item?.trainer}</div>
-        </div>
-        <div className="col-1">
-          <div className="body-col">{item?.extended_session}</div>
-        </div>
-        <div className="col-2">
-          <div className="body-col">{item?.per}</div>
-        </div>
+    <div className="row body" key={item?.id}>
+      <div className="col-1">
+        <div className="body-col">{index + 1}</div>
       </div>
-    </>
+      <div className="col-2">
+        <div className="body-col">{item?.user}</div>
+      </div>
+      <div className="col-2">
+        <div className="body-col">{FormatDateOnly(item?.date_subscribed)}</div>
+      </div>
+      <div className="col-2">
+        <div className="body-col">{item?.gym_rate_desc}</div>
+      </div>
+      <div className="col-2">
+        <div className="body-col">{item?.trainer}</div>
+      </div>
+      <div className="col-1">
+        <div className="body-col">{item?.extended_session}</div>
+      </div>
+      <div className="col-2">
+        <div className="body-col">{item?.per}</div>
+      </div>
+    </div>
   ));
 };
 

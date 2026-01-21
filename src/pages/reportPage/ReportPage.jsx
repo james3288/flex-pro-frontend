@@ -96,6 +96,7 @@ const ExtendedTrainerColumnsComponent = () => {
 };
 
 const ReportPage = () => {
+  const [showReportsModal, setShowReportsModal] = useState(false);
   const {
     cFreeSessionTotal,
     cTotalTrainerRate,
@@ -111,6 +112,7 @@ const ReportPage = () => {
   const handleGenerateData = () => {
     cSetModalTitle("Generate Report");
     cSetModalId("generate-report-data");
+    setShowReportsModal(true);
   };
 
   return (
@@ -170,8 +172,10 @@ const ReportPage = () => {
           </h2>
         </div>
       </div>
-
-      <GenerateReportModal />
+      <GenerateReportModal
+        show={showReportsModal}
+        onHide={() => setShowReportsModal(false)}
+      />
     </div>
   );
 };

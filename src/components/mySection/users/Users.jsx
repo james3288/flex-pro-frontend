@@ -1,9 +1,10 @@
-import React, { useRef, useState } from "react";
+import React, { memo, useCallback } from "react";
 import { NavLink } from "react-router-dom";
+
+const buttonStyle = { color: "white" };
 
 const Users1 = ({
   name,
-  weight,
   image,
   user_id,
   user,
@@ -13,73 +14,71 @@ const Users1 = ({
   setShowRemoveUserModal,
   setShowContractModal,
 }) => {
-  const handleEdit = () => {
-    setSelectedUser(() => user);
-    setShowUsersInfoModal(true);
-  };
-
-  const handleRemove = () => {
-    setSelectedUser(() => user);
-    setShowRemoveUserModal(true);
-  };
-
-  const handleDownloadPDF = () => {
-    setSelectedUser(() => user);
-    setShowContractModal(true);
-  };
+  const openModal = useCallback(
+    (setModal) => {
+      setSelectedUser(user);
+      setModal(true);
+    },
+    [setSelectedUser, user],
+  );
 
   return (
     <div className="col-lg-2 col-sm-3">
       <div className="ts-item set-bg bg">
-        <img src={image} alt="" className="img" />
+        <img src={image} alt={`${name}'s profile`} className="img" />
+
         <div className="ts_text">
           <h4>
             <small style={{ color: "green" }}>{user_id}</small> {name}
           </h4>
+
           <span>Contact: {contactNo}</span>
           <br />
-          <a
+
+          <button
+            type="button"
             className="btn btn-primary ts-button"
+            style={buttonStyle}
             data-toggle="modal"
             data-target="#usersModal1"
-            data-whatever="@mdo"
-            style={{ color: "white" }}
-            onClick={handleEdit}
+            onClick={() => openModal(setShowUsersInfoModal)}
           >
             Edit
-          </a>
+          </button>
+
           <NavLink
             className="btn btn-primary ts-button"
             to={`/user-history/?q=${user_id}`}
-            style={{ color: "white" }}
+            style={buttonStyle}
           >
             History
           </NavLink>
 
-          <a
+          <button
+            type="button"
             className="btn btn-danger ts-button"
+            style={buttonStyle}
             data-toggle="modal"
             data-target="#deleteUserModal"
-            data-whatever="@mdo"
-            style={{ color: "white" }}
-            onClick={handleRemove}
+            onClick={() => openModal(setShowRemoveUserModal)}
           >
             Remove
-          </a>
-          {/* <div className="tt_social"></div> */}
-          <a
+          </button>
+
+          <button
+            type="button"
             className="btn btn-success ts-button"
-            style={{ color: "white" }}
+            style={buttonStyle}
             data-toggle="modal"
             data-target="#userContractModal"
-            onClick={handleDownloadPDF}
+            onClick={() => openModal(setShowContractModal)}
           >
             Download Contract
-          </a>
+          </button>
         </div>
       </div>
     </div>
   );
 };
 
-export default Users1;
+export default memo(Users1);
