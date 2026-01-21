@@ -14,6 +14,7 @@ const MyUsers = () => {
   const searchRef = useRef();
   const [selectedUser, setSelectedUser] = useState();
   const [filterData, setFilterData] = useState([]);
+  const [showUsersInfoModal, setShowUsersInfoModal] = useState(false);
 
   const {
     isPending,
@@ -46,8 +47,8 @@ const MyUsers = () => {
         data.filter(
           (row) =>
             row.flex_pro_user.name &&
-            row.flex_pro_user.name.toLowerCase().includes(query)
-        )
+            row.flex_pro_user.name.toLowerCase().includes(query),
+        ),
       );
     });
   };
@@ -117,6 +118,7 @@ const MyUsers = () => {
                     user={user}
                     setSelectedUser={setSelectedUser}
                     contactNo={user.flex_pro_user.contact_number}
+                    setShowUsersInfoModal={setShowUsersInfoModal}
                   />
                 ))
               ) : (
@@ -138,6 +140,8 @@ const MyUsers = () => {
         option={"Update"}
         name={selectedUser?.flex_pro_user?.name}
         selectedUsers={selectedUser}
+        show={showUsersInfoModal}
+        onHide={() => setShowUsersInfoModal(false)}
       />
       <DeleteUserModal
         id={"deleteUserModal"}

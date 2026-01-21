@@ -9,9 +9,11 @@ const Users1 = ({
   user,
   setSelectedUser,
   contactNo,
+  setShowUsersInfoModal,
 }) => {
   const handleEdit = () => {
     setSelectedUser(() => user);
+    setShowUsersInfoModal(true);
   };
 
   const handleRemove = () => {

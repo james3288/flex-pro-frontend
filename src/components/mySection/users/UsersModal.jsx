@@ -1,8 +1,17 @@
 import React, { useEffect, useReducer, useRef } from "react";
 import { INITIAL_STATE, formReducer } from "../../../reducers/usersReducer";
 import updateUsers from "./UpdateUsers";
+import { Button, Modal } from "react-bootstrap";
 
-const UsersModal = ({ id, option, name, selectedUsers }) => {
+const UsersModal = ({
+  id,
+  option,
+  name,
+  selectedUsers,
+  show,
+  onHide,
+  modalTitle,
+}) => {
   const [state, dispatch] = useReducer(formReducer, INITIAL_STATE);
   const refName = useRef(null);
   const refWeight = useRef(null);
@@ -44,8 +53,8 @@ const UsersModal = ({ id, option, name, selectedUsers }) => {
   };
 
   useEffect(() => {
-    if (option === "Update") {
-      // console.log(selectedUsers);
+    if (option === "Update" && selectedUsers) {
+      console.log(selectedUsers);
       refName.current.value = selectedUsers?.flex_pro_user?.name;
       refWeight.current.value = selectedUsers?.flex_pro_user?.weights;
       refContactNo.current.value = selectedUsers?.flex_pro_user?.contact_number;
@@ -98,144 +107,127 @@ const UsersModal = ({ id, option, name, selectedUsers }) => {
 
       // END FILL ALL DATA TO STATE
     }
-  }, [selectedUsers]);
+  }, [selectedUsers, show]);
 
   return (
-    <div
-      className="modal fade"
-      id={id}
-      role="dialog"
-      aria-labelledby="exampleModalLabel"
-      aria-hidden="true"
-    >
-      <div className="modal-dialog" role="document">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title" id="exampleModalLabel">
-              Users Info
-            </h5>
-            <button
-              type="button"
-              className="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div className="modal-body">
-            <div className="form-group">
-              <label className="col-form-label">Name:</label>
-              <input
-                type="text"
-                className="form-control"
-                id="recipient-name"
-                // value={trainersName}
-                name="name"
-                // onChange={(e) => setTrainersName(e.target.value)}
-                onChange={handleChange}
-                ref={refName}
-              />
-              {state.name == "" ? (
-                <span style={{ color: "red" }}>Fill users name</span>
-              ) : (
-                !isNaN(state.name) && (
-                  <span style={{ color: "red" }}>must not numeric</span>
-                )
-              )}
-            </div>
-            <div className="form-group">
-              <label className="col-form-label">Weight:</label>
-              <input
-                type="text"
-                className="form-control"
-                id="weightId"
-                ref={refWeight}
-                onChange={handleChange}
-                name="weight"
-              />
-              {state.weight == "" ? (
-                <span style={{ color: "red" }}>Fill weight</span>
-              ) : (
-                isNaN(state.weight) && (
-                  <span style={{ color: "red" }}>must numeric</span>
-                )
-              )}
-            </div>
-            <div className="form-group">
-              <label className="col-form-label">Contact Number:</label>
-              <input
-                type="text"
-                className="form-control"
-                id="contactNumberId"
-                // onChange={(e) => setContactNo(e.target.value)}
-                // value={contactNo}
-                ref={refContactNo}
-                onChange={handleChange}
-                name="contactNo"
-                placeholder="09+"
-              />
-              {state.contactNo == "" ? (
-                <span style={{ color: "red" }}>Fill contact No</span>
-              ) : (
-                isNaN(state.contactNo) && (
-                  <span style={{ color: "red" }}>must be numeric</span>
-                )
-              )}
-            </div>
+    <Modal show={show} onHide={onHide} size="lg" centered>
+      <Modal.Header closeButton>
+        <Modal.Title>User Information</Modal.Title>
+      </Modal.Header>
 
-            <div className="form-group">
-              <label className="col-form-label">Emergency Number:</label>
-              <input
-                type="text"
-                className="form-control"
-                id="emergencyNumberId"
-                // onChange={(e) => setContactNo(e.target.value)}
-                // value={contactNo}
-                ref={refEmergencyNo}
-                onChange={handleChange}
-                name="contact_number_ioe"
-                placeholder="09+"
-              />
-              {state.contact_number_ioe == "" ? (
-                <span style={{ color: "red" }}>Fill contact No</span>
-              ) : (
-                isNaN(state.contact_number_ioe) && (
-                  <span style={{ color: "red" }}>must be numeric</span>
-                )
-              )}
-            </div>
-
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-dismiss="modal"
-              >
-                Close
-              </button>
-              {option === "Save" ? (
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  // onClick={handleSave}
-                >
-                  Save
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={handleUpdate}
-                >
-                  Update
-                </button>
-              )}
-            </div>
-          </div>
+      <Modal.Body>
+        <div className="form-group">
+          <label className="col-form-label">Name:</label>
+          <input
+            type="text"
+            className="form-control"
+            id="recipient-name"
+            // value={trainersName}
+            name="name"
+            // onChange={(e) => setTrainersName(e.target.value)}
+            onChange={handleChange}
+            ref={refName}
+          />
+          {state.name == "" ? (
+            <span style={{ color: "red" }}>Fill users name</span>
+          ) : (
+            !isNaN(state.name) && (
+              <span style={{ color: "red" }}>must not numeric</span>
+            )
+          )}
         </div>
-      </div>
-    </div>
+        <div className="form-group">
+          <label className="col-form-label">Weight:</label>
+          <input
+            type="text"
+            className="form-control"
+            id="weightId"
+            ref={refWeight}
+            onChange={handleChange}
+            name="weight"
+          />
+          {state.weight == "" ? (
+            <span style={{ color: "red" }}>Fill weight</span>
+          ) : (
+            isNaN(state.weight) && (
+              <span style={{ color: "red" }}>must numeric</span>
+            )
+          )}
+        </div>
+        <div className="form-group">
+          <label className="col-form-label">Contact Number:</label>
+          <input
+            type="text"
+            className="form-control"
+            id="contactNumberId"
+            // onChange={(e) => setContactNo(e.target.value)}
+            // value={contactNo}
+            ref={refContactNo}
+            onChange={handleChange}
+            name="contactNo"
+            placeholder="09+"
+          />
+          {state.contactNo == "" ? (
+            <span style={{ color: "red" }}>Fill contact No</span>
+          ) : (
+            isNaN(state.contactNo) && (
+              <span style={{ color: "red" }}>must be numeric</span>
+            )
+          )}
+        </div>
+
+        <div className="form-group">
+          <label className="col-form-label">Emergency Number:</label>
+          <input
+            type="text"
+            className="form-control"
+            id="emergencyNumberId"
+            // onChange={(e) => setContactNo(e.target.value)}
+            // value={contactNo}
+            ref={refEmergencyNo}
+            onChange={handleChange}
+            name="contact_number_ioe"
+            placeholder="09+"
+          />
+          {state.contact_number_ioe == "" ? (
+            <span style={{ color: "red" }}>Fill contact No</span>
+          ) : (
+            isNaN(state.contact_number_ioe) && (
+              <span style={{ color: "red" }}>must be numeric</span>
+            )
+          )}
+        </div>
+      </Modal.Body>
+
+      <Modal.Footer>
+        <Button variant="secondary" onClick={onHide}>
+          Close
+        </Button>
+        {option === "Save" ? (
+          // <button
+          //   type="button"
+          //   className="btn btn-primary"
+          //   // onClick={handleSave}
+          // >
+          //   Save
+          // </button>
+          <Button variant="primary" onClick={handleSave}>
+            Save
+          </Button>
+        ) : (
+          <Button variant="primary" onClick={handleUpdate}>
+            Update
+          </Button>
+          // <button
+          //   type="button"
+          //   className="btn btn-primary"
+          //   onClick={handleUpdate}
+          // >
+          //   Update
+          // </button>
+        )}
+      </Modal.Footer>
+    </Modal>
   );
 };
 
