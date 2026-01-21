@@ -11,6 +11,7 @@ const Users1 = ({
   contactNo,
   setShowUsersInfoModal,
   setShowRemoveUserModal,
+  setShowContractModal,
 }) => {
   const handleEdit = () => {
     setSelectedUser(() => user);
@@ -24,6 +25,7 @@ const Users1 = ({
 
   const handleDownloadPDF = () => {
     setSelectedUser(() => user);
+    setShowContractModal(true);
   };
 
   return (

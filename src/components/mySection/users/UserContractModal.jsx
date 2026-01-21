@@ -1,35 +1,25 @@
 import React from "react";
 import PdfGenerator from "../../PDF/PdfGenerator";
+import { Modal } from "react-bootstrap";
 
-const UserContractModal = ({ id, user }) => {
+const UserContractModal = ({ id, user, show, onHide }) => {
   // console.log(id, user);
   return (
-    <div
-      className="modal fade"
-      id={id}
-      role="dialog"
-      aria-labelledby="exampleModalLabel"
-      aria-hidden="true"
-    >
-      <div className="modal-dialog modal-lg" role="document">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title" id="exampleModalLabel">
-              USER CONTRACT AGREEMENT
-            </h5>
-            <button
-              type="button"
-              className="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div className="modal-body">{<PdfGenerator user={user} />}</div>
-        </div>
-      </div>
-    </div>
+    <Modal show={show} onHide={onHide} size="lg" centered>
+      <Modal.Header closeButton>
+        <Modal.Title>
+          <h5 className="modal-title" id="exampleModalLabel">
+            USER CONTRACT AGREEMENT
+          </h5>
+        </Modal.Title>
+      </Modal.Header>
+
+      <Modal.Body>
+        <PdfGenerator user={user} />
+      </Modal.Body>
+
+      <Modal.Footer></Modal.Footer>
+    </Modal>
   );
 };
 
