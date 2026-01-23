@@ -3,6 +3,7 @@ import ListOfSubscriptions from "./Subscriptions/ListOfSubscriptions";
 import { NavLink, useLocation } from "react-router-dom";
 import instance from "../../others/axiosInstance";
 import SessionDaysField from "../subScribeNowComponents/SessionDaysField";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const MySubscribedNow = () => {
   const [planNow, setPlanNow] = useState([]);
@@ -35,6 +36,8 @@ const MySubscribedNow = () => {
   const trainerImageRef = useRef(null);
 
   const [message, setMessage] = useState("");
+
+  const queryClient = useQueryClient();
 
   // Access the query parameters from the location object
   const queryParams = new URLSearchParams(location.search);
@@ -109,7 +112,7 @@ const MySubscribedNow = () => {
   const checkIfAlreadySubscribed = async (id) => {
     try {
       const response = await instance.get(
-        `/api/user_status_for_adding_subscripton/${id}`
+        `/api/user_status_for_adding_subscripton/${id}`,
       );
       const users = response.data;
 
@@ -119,38 +122,78 @@ const MySubscribedNow = () => {
     }
   };
 
-  const handleSaveSubscription = async () => {
-    let cc = await checkIfAlreadySubscribed(subscriptionData.flexpro_id);
+  // const handleSaveSubscription = async () => {
+  //   let cc = await checkIfAlreadySubscribed(subscriptionData.flexpro_id);
 
-    if (cc.length > 0) {
-      setAlreadySubscribed(true);
-      setMessage("You're subscription has not been expired yet..");
-    } else {
-      instance
-        .post("/api/save_subscriptions/", subscriptionData)
-        .then(function (response) {
-          console.log(response.data);
-          setRegistered(true);
-          setMessage("You are successfully registered..");
-        })
-        .catch(function (error) {
-          console.log(error);
-          return;
-        });
+  //   if (cc.length > 0) {
+  //     setAlreadySubscribed(true);
+  //     setMessage("You're subscription has not been expired yet..");
+  //   } else {
+  //     instance
+  //       .post("/api/save_subscriptions/", subscriptionData)
+  //       .then(function (response) {
+  //         console.log(response.data);
+  //         setRegistered(true);
+  //         setMessage("You are successfully registered..");
+
+  //         queryClient.invalidateQueries({
+  //           queryKey: ["forActiveAndInactiveUsers"],
+  //         });
+  //       })
+  //       .catch(function (error) {
+  //         console.log(error);
+  //         return;
+  //       });
+  //   }
+
+  //   // instance
+  //   //   .post("/api/save_subscriptions/", subscriptionData)
+  //   //   .then(function (response) {
+  //   //     console.log(response.data);
+  //   //     setRegistered(true);
+  //   //     setMessage("You are successfully registered..");
+  //   //   })
+  //   //   .catch(function (error) {
+  //   //     console.log(error);
+  //   //     return;
+  //   //   });
+  // };
+
+  const handleSaveSubscription = async () => {
+    if (subscriptionData.flexpro_id === 0) {
+      setMessage("You must select a user first!");
+      return;
     }
 
-    // instance
-    //   .post("/api/save_subscriptions/", subscriptionData)
-    //   .then(function (response) {
-    //     console.log(response.data);
-    //     setRegistered(true);
-    //     setMessage("You are successfully registered..");
-    //   })
-    //   .catch(function (error) {
-    //     console.log(error);
-    //     return;
-    //   });
+    const cc = await checkIfAlreadySubscribed(subscriptionData.flexpro_id);
+
+    if (cc?.length > 0) {
+      setAlreadySubscribed(true);
+      setMessage("You're subscription has not been expired yet..");
+      return;
+    }
+
+    saveSubscriptionMutation.mutate(subscriptionData);
   };
+
+  const saveSubscriptionMutation = useMutation({
+    mutationFn: async (payload) => {
+      const res = await instance.post("/api/save_subscriptions/", payload);
+      return res.data;
+    },
+    onSuccess: () => {
+      setRegistered(true);
+      setMessage("You are successfully registered..");
+
+      // 🔥 This refetches data on OTHER pages
+      queryClient.invalidateQueries({
+        queryKey: ["forActiveAndInactiveUsers"],
+      });
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
 
   const handleCancelUser = async () => {
     userRef.current.innerText = "";
@@ -198,7 +241,7 @@ const MySubscribedNow = () => {
   // filtering users while typing
   useEffect(() => {
     const filteredUsers = flexProUsers.filter((user) =>
-      user.flex_pro_user.name.toLowerCase().includes(searchField.toLowerCase())
+      user.flex_pro_user.name.toLowerCase().includes(searchField.toLowerCase()),
     );
 
     setSearchOutput(filteredUsers);
@@ -207,7 +250,7 @@ const MySubscribedNow = () => {
   // filtering trainers while typing
   useEffect(() => {
     const filteredTrainers = flexProTrainers.filter((trainers) =>
-      trainers.name.toLowerCase().includes(trainerField.toLowerCase())
+      trainers.name.toLowerCase().includes(trainerField.toLowerCase()),
     );
 
     setTrainerSearchOutput(filteredTrainers);
@@ -326,7 +369,7 @@ const MySubscribedNow = () => {
                                   handleSelectUser(
                                     user.flex_pro_user.id,
                                     user.flex_pro_user.name,
-                                    user.image1
+                                    user.image1,
                                   )
                                 }
                               >
@@ -355,7 +398,7 @@ const MySubscribedNow = () => {
                                   handleSelectTrainer(
                                     trainer.id,
                                     trainer.name,
-                                    trainer.image
+                                    trainer.image,
                                   )
                                 }
                               >
@@ -383,8 +426,15 @@ const MySubscribedNow = () => {
                     <NavLink
                       className="primary-btn pricing-btn save-subscriptions"
                       onClick={handleSaveSubscription}
+                      style={{
+                        pointerEvents: saveSubscriptionMutation.isPending
+                          ? "none"
+                          : "auto",
+                      }}
                     >
-                      Save Subscription
+                      {saveSubscriptionMutation.isPending
+                        ? "Saving..."
+                        : "Save Subscription"}
                     </NavLink>
                   )}
                 </div>

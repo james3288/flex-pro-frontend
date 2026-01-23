@@ -16,7 +16,6 @@ import ExclamationSvg from "../svg/exclamationSvg";
 import useLoginAttempt from "../face-scanner/hooks/useLoginAttempt";
 import useLoginMutation from "../face-scanner/hooks/useLoginMutation";
 import useSaveTimeRecords from "./users/hooks/useSaveTimeRecords";
-import Loading4 from "../ui/loading4/Loading4";
 import Loader3 from "../ui/loader3/Loader3";
 import { useDayPassStore } from "../../store/useDayPassStore";
 import Pic from "@assets/img/dummy.png";
@@ -25,6 +24,7 @@ import NeonCheckBox from "../ui/check/NeonCheckBox";
 import ScanLoadingNew from "../ui/scan/ScanLoadingNew";
 import { useActiveCameraStore } from "../../store/useActiveCamera";
 import { useLoginWithoutCameraStore } from "../../store/useLoginWithoutCamera";
+import Loading6 from "../ui/loading6/Loading6";
 
 const SmallCentered = ({ children, style }) => (
   <div
@@ -93,6 +93,10 @@ const PrivateRemainingDays = memo(({ userSub }) => (
     fontSize="26px"
   />
 ));
+
+const isfetchStatus = ({ status, isLoading }) => {
+  return status === "fetching" ? true : isLoading ? true : false;
+};
 
 // 🔹 MAIN COMPONENT
 const MyUserLoginSection = memo(function MyUserLoginSection() {
@@ -239,6 +243,7 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
     [cSetUserFound, cSetNumpadResult, cSetIsFound],
   );
 
+  const handleRefresh = () => {};
   const handleCancelLogin = useCallback(() => {
     cSetCurrentlyLogin(null);
     cSetUserFound(null);
@@ -264,7 +269,10 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
     ({ resetDayPassLogin }) => (
       <button
         className="btn btn-success enabled"
-        disabled={isLoadingActiveAndInactiveUser}
+        disabled={isfetchStatus({
+          status: fetchStatus,
+          isLoading: isLoadingActiveAndInactiveUser,
+        })}
         style={{ zIndex: 9999 }}
         onClick={() => {
           handleUserRefresh({ resetDayPassLogin });
@@ -274,14 +282,17 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
         Login User ID
       </button>
     ),
-    [isLoadingActiveAndInactiveUser, handleUserRefresh],
+    [isLoadingActiveAndInactiveUser, handleUserRefresh, fetchStatus],
   );
 
   const RefreshButton = useCallback(() => (
     <button
       className="btn btn-success enabled"
       onClick={() => refetch()} //{handlePlayClick}
-      disabled={isLoadingActiveAndInactiveUser}
+      disabled={isfetchStatus({
+        status: fetchStatus,
+        isLoading: isLoadingActiveAndInactiveUser,
+      })}
       style={{ zIndex: 9999 }}
     >
       Refresh
@@ -308,12 +319,15 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
           setShowDayPassModal(true);
         }}
         style={{ zIndex: 9999 }}
-        disabled={isLoadingActiveAndInactiveUser}
+        disabled={isfetchStatus({
+          status: fetchStatus,
+          isLoading: isLoadingActiveAndInactiveUser,
+        })}
       >
         Login Daypass
       </button>
     ),
-    [handleDayPassLoginClick, isLoadingActiveAndInactiveUser],
+    [handleDayPassLoginClick, isLoadingActiveAndInactiveUser, fetchStatus],
   );
 
   // side effects

@@ -2,7 +2,7 @@ import React from "react";
 import instance from "../others/axiosInstance";
 import getRate from "../others/getRate";
 
-const customizeRateFn = (extended_session) => {
+const customizeRateFn = (extended_session, default_rate = 12) => {
   const setExtendedSession = extended_session === 0 ? 1 : extended_session;
 
   if (setExtendedSession <= 7) {
@@ -13,6 +13,8 @@ const customizeRateFn = (extended_session) => {
     return (1500 / 30) * setExtendedSession;
   } else if (setExtendedSession === 31) {
     return (1500 / 31) * setExtendedSession;
+  } else if (setExtendedSession === 365) {
+    return default_rate;
   }
 };
 
@@ -80,6 +82,8 @@ const getUserSubscriptionReportByAll = async (dateFrom, dateTo) => {
     });
 
     data2?.forEach((item) => {
+      const { rate: default_rate } = item.user_subscription.subscription;
+
       const object = {
         id: `ex-${item.id}`,
         user: item.user_subscription.flexprouser.name,
@@ -97,7 +101,7 @@ const getUserSubscriptionReportByAll = async (dateFrom, dateTo) => {
         extended_session:
           item?.options === "promo"
             ? item?.promo_rate
-            : customizeRateFn(item.extended_session_day),
+            : customizeRateFn(item.extended_session_day, default_rate),
         promo_option: item?.options,
         promo_rate: item?.promo_rate,
       };

@@ -11,7 +11,15 @@ const useGetActiveAndInactiveUsers = () => {
   const { getDayPassUserActive } = useGetDayPassUsers();
   const { getMembershipUserActive } = useGetActiveMembership();
 
-  const { isPending, error, data, fetchStatus, isLoading, refetch } = useQuery({
+  const {
+    isPending,
+    error,
+    data,
+    fetchStatus,
+    isLoading,
+    refetch,
+    isFetching,
+  } = useQuery({
     queryKey: ["forActiveAndInactiveUsers"],
     queryFn: async () => {
       const activeUser = await getActiveUsers();
@@ -26,6 +34,7 @@ const useGetActiveAndInactiveUsers = () => {
         membershipUser: membershipUser,
       };
     },
+    refetchOnWindowFocus: false,
   });
 
   return { isPending, data, fetchStatus, isLoading, refetch };
