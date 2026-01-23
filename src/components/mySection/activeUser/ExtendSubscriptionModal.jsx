@@ -41,7 +41,6 @@ const ExtendSubscriptionModal = ({
   const [password, setPassword] = useState("");
   const [isValid, setIsValid] = useState(false);
 
-
   const [cIsClear, cSetIsClear] = useClearCredentialTextField((state) => [
     state.isClear,
     state.setIsClear,
@@ -54,14 +53,16 @@ const ExtendSubscriptionModal = ({
   const setCredentialValidOrInvalid = async ({ username, password }) => {
     const result = await checkCredential({ username, password });
 
-    if (result) {
-      setIsValid(result?.valid);
+    // if (result) {
+    //   setIsValid(result?.valid);
 
-      //✅ save or update function
-      actionHandler();
-    } else {
-      setIsValid(false);
-    }
+    //   //✅ save or update function
+    //   actionHandler();
+    // } else {
+    //   setIsValid(false);
+    // }
+
+    actionHandler();
   };
 
   useEffect(() => {
@@ -150,7 +151,7 @@ const ExtendSubscriptionModal = ({
           )}
         </div>
 
-        <TextFieldModalComponent
+        {/* <TextFieldModalComponent
           label={"Username:"}
           id={"credential-username"}
           name={"username"}
@@ -167,7 +168,7 @@ const ExtendSubscriptionModal = ({
           text={password}
           type={"password"}
         />
-        <InvalidCredentialComponent isValid={isValid} />
+        <InvalidCredentialComponent isValid={isValid} /> */}
       </Modal.Body>
 
       <Modal.Footer>
