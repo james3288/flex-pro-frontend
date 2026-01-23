@@ -7,7 +7,7 @@ import PersonalTrainerComponent from "../components/PersonalTrainerComponent";
 import dayPassImage from "@assets/img/dummy.png";
 import Loader2 from "@components/ui/loader2/Loader2";
 import Loader3 from "@components/ui/loader3/loader3";
-import formatTime from "../../../others/ReadableFormatTime";
+import formatTime from "@others/ReadableFormatTime";
 
 // 🔹 Child Components moved outside for stability
 const UserImage = memo(({ src }) => (
@@ -171,12 +171,12 @@ const useUsersRenewal = () => {
               user?.usersubscription?.flexprouser?.user_id,
               user?.usersubscription?.session_days,
               user?.usersubscription?.id,
-              true
+              true,
             ).then((remaining) => ({
               ...user,
               remainingDays: remaining,
-            }))
-          )
+            })),
+          ),
         );
         if (isMounted) setUsersWithRemaining(processed);
       } catch (e) {
@@ -208,12 +208,12 @@ const useUsersRenewal = () => {
               user?.id,
               1,
               user?.subscription?.id,
-              false
+              false,
             ).then((remaining) => ({
               ...user,
               remainingDays: remaining,
-            }))
-          )
+            })),
+          ),
         );
         if (isMounted) setDayPassUserWithRemaining(processed);
       } catch (e) {
@@ -245,12 +245,12 @@ const useUsersRenewal = () => {
               user?.id,
               1,
               user?.subscription?.id,
-              false
+              false,
             ).then((remaining) => ({
               ...user,
               remainingDays: remaining,
-            }))
-          )
+            })),
+          ),
         );
         if (isMounted) setMembershipUserWithRemaining(processed);
       } catch (e) {
@@ -268,7 +268,7 @@ const useUsersRenewal = () => {
   // 🔹 Memoize filtered renewal users
   const activeUsers = useMemo(
     () => usersWithRemaining.filter((user) => user.remainingDays <= 2),
-    [usersWithRemaining]
+    [usersWithRemaining],
   );
 
   // 🔹 Memoize filtered membership renewal users
@@ -277,11 +277,11 @@ const useUsersRenewal = () => {
       membershipUserWithRemaining.filter((user) => {
         const remainingMembershipHours = formatTime(
           user?.remaining,
-          "days-only"
+          "days-only",
         );
         return remainingMembershipHours <= 2;
       }),
-    [membershipUserWithRemaining]
+    [membershipUserWithRemaining],
   );
 
   const ActiveUsersComponent = memo(() => {

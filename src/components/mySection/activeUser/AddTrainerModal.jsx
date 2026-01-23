@@ -61,8 +61,6 @@ const AddTrainerModal = ({
                   : null,
               },
             });
-
-            console.log(state.trainersName);
           } else {
             dispatch({
               type: "BULK_UPDATE",

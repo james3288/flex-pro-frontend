@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer, useState, useCallback } from "react";
-import getExtendedSubscription from "../../../getData/getExtendedSubscription";
+import getExtendedSubscription from "@getData/getExtendedSubscription";
 import RemainingDaysLeftComponent from "./RemainingDaysLeftComponent";
 import SubscriptionComponents from "./SubscriptionComponents";
 import PersonalTrainerComponents from "./PersonalTrainerComponents";
@@ -89,7 +89,7 @@ const RenewalUsers = ({
   );
 
   return (
-    <div className="col-lg-3 col-xs-12">
+    <div className="col-lg-3 col-xs-12" key={id}>
       <div className="c-col">
         <div className="c-col-name">
           <img src={blobPic} alt={`${registeredName}'s profile`} />

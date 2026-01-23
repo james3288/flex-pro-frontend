@@ -70,7 +70,10 @@ export default function useExtendSubscriptionModal({ userSubscriptionId }) {
     };
 
     getsubscript();
-    getSpecificExtendSub();
+
+    if (userSubscriptionId > 0) {
+      getSpecificExtendSub();
+    }
   }, [userSubscriptionId]);
 
   useEffect(() => {

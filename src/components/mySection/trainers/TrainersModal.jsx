@@ -2,6 +2,7 @@ import React, { useEffect, useReducer, useRef, useState } from "react";
 import SaveTrainers from "./saveTrainers";
 import { INITIAL_STATE, formReducer } from "../../../reducers/trainorsReducer";
 import UpdateTrainers from "./updateTrainers";
+import { Button, Modal } from "react-bootstrap";
 
 function toSlug(name) {
   return name
@@ -12,7 +13,7 @@ function toSlug(name) {
     .replace(/--+/g, "-"); // replace multiple hyphens with a single one
 }
 
-const TrainersModal = ({ id, option, selectedTrainer }) => {
+const TrainersModal = ({ id, option, selectedTrainer, show, onHide }) => {
   const [state, dispatch] = useReducer(formReducer, INITIAL_STATE);
   const refName = useRef(null);
   const refPosition = useRef(null);
@@ -39,7 +40,7 @@ const TrainersModal = ({ id, option, selectedTrainer }) => {
   };
 
   useEffect(() => {
-    if (option === "Update") {
+    if (option === "Update" && show) {
       // convert image to base64 file
       const filename = `${selectedTrainer?.id}.jpg`; // You can set your desired filename here
       const mimeType = "image/jpeg"; // Mime type of the image
@@ -156,135 +157,232 @@ const TrainersModal = ({ id, option, selectedTrainer }) => {
   };
 
   return (
-    <div
-      className="modal fade"
-      id={id}
-      role="dialog"
-      aria-labelledby="exampleModalLabel"
-      aria-hidden="true"
-    >
-      <div className="modal-dialog" role="document">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title" id="exampleModalLabel">
-              Trainers Info
-            </h5>
-            <button
-              type="button"
-              className="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div className="modal-body">
-            <div className="form-group">
-              <label className="col-form-label">Name:</label>
-              <input
-                type="text"
-                className="form-control"
-                id="recipient-name"
-                // value={trainersName}
-                name="trainersName"
-                // onChange={(e) => setTrainersName(e.target.value)}
-                onChange={handleChange}
-                ref={refName}
-              />
-              {state.trainersName == "" ? (
-                <span style={{ color: "red" }}>Fill trainers name</span>
-              ) : (
-                !isNaN(state.trainersName) && (
-                  <span style={{ color: "red" }}>must not numeric</span>
-                )
-              )}
-            </div>
-            <div className="form-group">
-              <label className="col-form-label">Position:</label>
-              <input
-                type="text"
-                className="form-control"
-                id="recipient-position"
-                // onChange={(e) => setPosition(e.target.value)}
-                // value={position}
-                ref={refPosition}
-                onChange={handleChange}
-                name="position"
-              />
-              {state.position == "" ? (
-                <span style={{ color: "red" }}>Fill position</span>
-              ) : (
-                !isNaN(state.position) && (
-                  <span style={{ color: "red" }}>must not numeric</span>
-                )
-              )}
-            </div>
-            <div className="form-group">
-              <label className="col-form-label">Contact Number:</label>
-              <input
-                type="text"
-                className="form-control"
-                id="recipient-position"
-                // onChange={(e) => setContactNo(e.target.value)}
-                // value={contactNo}
-                ref={refContactNo}
-                onChange={handleChange}
-                name="contactNo"
-                placeholder="09+"
-              />
-              {state.contactNo == "" ? (
-                <span style={{ color: "red" }}>Fill contact No</span>
-              ) : (
-                isNaN(state.contactNo) && (
-                  <span style={{ color: "red" }}>must be numeric</span>
-                )
-              )}
-            </div>
-            <div className="mb-3">
-              <label className="form-label">Uploage Image:</label>
-              <input
-                className="form-control"
-                type="file"
-                id="formFile"
-                name="image"
-                ref={inputRef}
-                // onChange={(e) => setImage(e.target.files[0])}
-                onChange={handleChangeImage}
-              />
-              {state.image === null || state.image === undefined ? (
-                <span style={{ color: "red" }}>Upload an image</span>
-              ) : null}
-            </div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-dismiss="modal"
-              >
-                Close
-              </button>
-              {option === "Save" ? (
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={handleSave}
-                >
-                  Save
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={handleUpdate}
-                >
-                  Update
-                </button>
-              )}
-            </div>
-          </div>
+    // <div
+    //   className="modal fade"
+    //   id={id}
+    //   role="dialog"
+    //   aria-labelledby="exampleModalLabel"
+    //   aria-hidden="true"
+    // >
+    //   <div className="modal-dialog" role="document">
+    //     <div className="modal-content">
+    //       <div className="modal-header">
+    //         <h5 className="modal-title" id="exampleModalLabel">
+    //           Trainers Info
+    //         </h5>
+    //         <button
+    //           type="button"
+    //           className="close"
+    //           data-dismiss="modal"
+    //           aria-label="Close"
+    //         >
+    //           <span aria-hidden="true">&times;</span>
+    //         </button>
+    //       </div>
+    //       <div className="modal-body">
+    //         <div className="form-group">
+    //           <label className="col-form-label">Name:</label>
+    //           <input
+    //             type="text"
+    //             className="form-control"
+    //             id="recipient-name"
+    //             // value={trainersName}
+    //             name="trainersName"
+    //             // onChange={(e) => setTrainersName(e.target.value)}
+    //             onChange={handleChange}
+    //             ref={refName}
+    //           />
+    //           {state.trainersName == "" ? (
+    //             <span style={{ color: "red" }}>Fill trainers name</span>
+    //           ) : (
+    //             !isNaN(state.trainersName) && (
+    //               <span style={{ color: "red" }}>must not numeric</span>
+    //             )
+    //           )}
+    //         </div>
+    //         <div className="form-group">
+    //           <label className="col-form-label">Position:</label>
+    //           <input
+    //             type="text"
+    //             className="form-control"
+    //             id="recipient-position"
+    //             // onChange={(e) => setPosition(e.target.value)}
+    //             // value={position}
+    //             ref={refPosition}
+    //             onChange={handleChange}
+    //             name="position"
+    //           />
+    //           {state.position == "" ? (
+    //             <span style={{ color: "red" }}>Fill position</span>
+    //           ) : (
+    //             !isNaN(state.position) && (
+    //               <span style={{ color: "red" }}>must not numeric</span>
+    //             )
+    //           )}
+    //         </div>
+    //         <div className="form-group">
+    //           <label className="col-form-label">Contact Number:</label>
+    //           <input
+    //             type="text"
+    //             className="form-control"
+    //             id="recipient-position"
+    //             // onChange={(e) => setContactNo(e.target.value)}
+    //             // value={contactNo}
+    //             ref={refContactNo}
+    //             onChange={handleChange}
+    //             name="contactNo"
+    //             placeholder="09+"
+    //           />
+    //           {state.contactNo == "" ? (
+    //             <span style={{ color: "red" }}>Fill contact No</span>
+    //           ) : (
+    //             isNaN(state.contactNo) && (
+    //               <span style={{ color: "red" }}>must be numeric</span>
+    //             )
+    //           )}
+    //         </div>
+    //         <div className="mb-3">
+    //           <label className="form-label">Uploage Image:</label>
+    //           <input
+    //             className="form-control"
+    //             type="file"
+    //             id="formFile"
+    //             name="image"
+    //             ref={inputRef}
+    //             // onChange={(e) => setImage(e.target.files[0])}
+    //             onChange={handleChangeImage}
+    //           />
+    //           {state.image === null || state.image === undefined ? (
+    //             <span style={{ color: "red" }}>Upload an image</span>
+    //           ) : null}
+    //         </div>
+    //         <div className="modal-footer">
+    //           <button
+    //             type="button"
+    //             className="btn btn-secondary"
+    //             data-dismiss="modal"
+    //           >
+    //             Close
+    //           </button>
+    //           {option === "Save" ? (
+    //             <button
+    //               type="button"
+    //               className="btn btn-primary"
+    //               onClick={handleSave}
+    //             >
+    //               Save
+    //             </button>
+    //           ) : (
+    //             <button
+    //               type="button"
+    //               className="btn btn-primary"
+    //               onClick={handleUpdate}
+    //             >
+    //               Update
+    //             </button>
+    //           )}
+    //         </div>
+    //       </div>
+    //     </div>
+    //   </div>
+    // </div>
+    <Modal show={show} onHide={onHide} size="lg" centered>
+      <Modal.Header closeButton>
+        <Modal.Title>Trainers Info</Modal.Title>
+      </Modal.Header>
+
+      <Modal.Body>
+        <div className="form-group">
+          <label className="col-form-label">Name:</label>
+          <input
+            type="text"
+            className="form-control"
+            id="recipient-name"
+            // value={trainersName}
+            name="trainersName"
+            // onChange={(e) => setTrainersName(e.target.value)}
+            onChange={handleChange}
+            ref={refName}
+          />
+          {state.trainersName == "" ? (
+            <span style={{ color: "red" }}>Fill trainers name</span>
+          ) : (
+            !isNaN(state.trainersName) && (
+              <span style={{ color: "red" }}>must not numeric</span>
+            )
+          )}
         </div>
-      </div>
-    </div>
+        <div className="form-group">
+          <label className="col-form-label">Position:</label>
+          <input
+            type="text"
+            className="form-control"
+            id="recipient-position"
+            ref={refPosition}
+            onChange={handleChange}
+            name="position"
+          />
+          {state.position == "" ? (
+            <span style={{ color: "red" }}>Fill position</span>
+          ) : (
+            !isNaN(state.position) && (
+              <span style={{ color: "red" }}>must not numeric</span>
+            )
+          )}
+        </div>
+        <div className="form-group">
+          <label className="col-form-label">Contact Number:</label>
+          <input
+            type="text"
+            className="form-control"
+            id="recipient-position"
+            // onChange={(e) => setContactNo(e.target.value)}
+            // value={contactNo}
+            ref={refContactNo}
+            onChange={handleChange}
+            name="contactNo"
+            placeholder="09+"
+          />
+          {state.contactNo == "" ? (
+            <span style={{ color: "red" }}>Fill contact No</span>
+          ) : (
+            isNaN(state.contactNo) && (
+              <span style={{ color: "red" }}>must be numeric</span>
+            )
+          )}
+        </div>
+        <div className="mb-3">
+          <label className="form-label">Uploage Image:</label>
+          <input
+            className="form-control"
+            type="file"
+            id="formFile"
+            name="image"
+            ref={inputRef}
+            // onChange={(e) => setImage(e.target.files[0])}
+            onChange={handleChangeImage}
+          />
+          {state.image === null || state.image === undefined ? (
+            <span style={{ color: "red" }}>Upload an image</span>
+          ) : null}
+        </div>
+      </Modal.Body>
+
+      <Modal.Footer>
+        <Button variant="secondary" onClick={onHide}>
+          Close
+        </Button>
+        {option === "Save" ? (
+          <Button variant="primary" onClick={handleSave}>
+            Save
+          </Button>
+        ) : (
+          <Button variant="primary" onClick={handleUpdate}>
+            Update
+          </Button>
+        )}
+      </Modal.Footer>
+    </Modal>
   );
 };
 

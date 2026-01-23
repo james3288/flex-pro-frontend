@@ -63,7 +63,13 @@ const UserLoginIDVerificationModal = memo(
     const digits = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
 
     return (
-      <Modal show={show} onHide={onHide} size="lg" centered>
+      <Modal
+        show={show}
+        onHide={onHide}
+        size="lg"
+        centered
+        style={{ zIndex: "9999" }}
+      >
         <Modal.Header closeButton>
           <Modal.Title>Enter your User ID here:</Modal.Title>
         </Modal.Header>

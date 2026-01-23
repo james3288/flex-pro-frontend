@@ -105,7 +105,7 @@ const DayPassLoginModal = ({
   };
 
   return (
-    <Modal show={show} onHide={onHide} centered>
+    <Modal show={show} onHide={onHide} style={{ zIndex: "9999" }} centered>
       <Modal.Header closeButton>
         <Modal.Title>{modalTitle}</Modal.Title>
       </Modal.Header>

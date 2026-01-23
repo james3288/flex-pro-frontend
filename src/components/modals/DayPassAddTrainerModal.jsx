@@ -18,8 +18,6 @@ const DayPassAddTrainerModal = ({ show, onHide }) => {
     }),
   );
 
-  console.log("Zustand trainer:", dayPassTrainer);
-
   /** ───────── Local form state ───────── */
   const [formData, setFormData] = useState({
     trainer_id: 0,

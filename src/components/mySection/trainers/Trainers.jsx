@@ -8,13 +8,17 @@ const Trainers = ({
   trainer_id,
   trainor,
   setSelectedTrainer,
+  setShowTrainerModal,
+  setShowDeleteTrainerModal,
 }) => {
   const handleEdit = () => {
     setSelectedTrainer(trainor);
+    setShowTrainerModal(true);
   };
 
   const handleRemove = () => {
     setSelectedTrainer(trainor);
+    setShowDeleteTrainerModal(true);
   };
 
   return (

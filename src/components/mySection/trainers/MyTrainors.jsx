@@ -1,16 +1,17 @@
 import React, { useEffect, useMemo, useState } from "react";
-import Pic1 from "./../../../assets/img/team/team-2.jpg";
-import Pic2 from "./../../../assets/img/hero/hero-1.jpg";
-import Pic3 from "./../../../assets/img/team/team-3.jpg";
 import Trainers from "./Trainers";
 // import TrainersModal from "./trainersModal";
-import getTrainors from "../../../getData/getTrainors";
+import getTrainors from "@getData/getTrainors";
 import { useQuery } from "@tanstack/react-query";
 import TrainersModal from "./TrainersModal";
 import DeleteTrainerModal from "./DeleteTrainerModal";
 
 const MyTrainors = () => {
   const [selectedTrainer, setSelectedTrainer] = useState();
+  const [showTrainerModal, setShowTrainerModal] = useState();
+  const [showCreateTrainerModal, setShowCreateTrainerModal] = useState();
+  const [showDeleteTrainerModal, setShowDeleteTrainerModal] = useState();
+
   const queryKey = useMemo(() => ["forTrainorsData"], []);
   const { isPending, error, data } = useQuery({
     queryKey,
@@ -26,8 +27,6 @@ const MyTrainors = () => {
     );
 
   if (error) return "An error has occurred: " + error.message;
-
-  console.log(data);
 
   return (
     <>
@@ -48,6 +47,7 @@ const MyTrainors = () => {
                   data-toggle="modal"
                   data-target="#trainersModal"
                   data-whatever="@mdo"
+                  onClick={() => setShowCreateTrainerModal(true)}
                 >
                   Add Trainor
                 </button>
@@ -65,23 +65,34 @@ const MyTrainors = () => {
                   trainer_id={trainor.id}
                   trainor={trainor}
                   setSelectedTrainer={setSelectedTrainer}
+                  setShowTrainerModal={setShowTrainerModal}
+                  setShowDeleteTrainerModal={setShowDeleteTrainerModal}
                 />
-              )
+              ),
               // console.log(trainor)
             )}
           </div>
         </div>
       </section>
 
-      <TrainersModal id={"trainersModal"} option={"Save"} />
+      <TrainersModal
+        id={"trainersModal"}
+        option={"Save"}
+        show={showCreateTrainerModal}
+        onHide={() => setShowCreateTrainerModal(false)}
+      />
       <TrainersModal
         id={"trainersModal2"}
         option={"Update"}
         selectedTrainer={selectedTrainer}
+        show={showTrainerModal}
+        onHide={() => setShowTrainerModal(false)}
       />
       <DeleteTrainerModal
         id={"deleteTrainersModal"}
         trainer_id={selectedTrainer?.id}
+        show={showDeleteTrainerModal}
+        onHide={() => setShowDeleteTrainerModal(false)}
       />
     </>
   );
