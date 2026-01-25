@@ -9,12 +9,12 @@ const useRemainingDaysLeft = (
   flexProUserId,
   sub_session_days,
   userSubscriptionId,
-  daysOnly = false
+  daysOnly = false,
 ) => {
   // Normalize once at the start
   const normalizedSessionDays = sub_session_days === 0 ? 1 : sub_session_days;
 
-  const queryKey = [`extendedSubData_${flexProUserId}`];
+  const queryKey = [`extendedSubData_${flexProUserId}_${userSubscriptionId}`];
 
   const { isPending, error, data, isLoading } = useQuery({
     queryKey,
@@ -26,7 +26,7 @@ const useRemainingDaysLeft = (
           date_subscribed,
           per,
           flexProUserId,
-          normalizedSessionDays
+          normalizedSessionDays,
         ),
       ]);
 
@@ -38,7 +38,7 @@ const useRemainingDaysLeft = (
     // ⚡ Optimize fetching strategy
     staleTime: 1000 * 60, // cache 1 min
     refetchOnWindowFocus: true, // refresh only when focus
-    retry: 1, // avoid endless retries
+    // retry: 1, // avoid endless retries
   });
 
   // Keep your original return signature
@@ -48,7 +48,7 @@ const useRemainingDaysLeft = (
       data.remainingDays,
       data.extendedSub,
       date_subscribed,
-      daysOnly
+      daysOnly,
     );
   };
 

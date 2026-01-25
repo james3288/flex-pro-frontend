@@ -8,13 +8,19 @@ const useUserLoginModalNumpad = () => {
   // const [numpadResult, setNumpadResult] = useState("");
   // const [userFound, setUserFound] = useState(0);
   const [flexProUserIdStorage, setFlexProUserIdStorage] = useState(0);
-  const [cSetCurrentlyLogin, cSetUserFound, cUserFound, cSetLoginAttempt] =
-    useCurrentlyLoginStore((state) => [
-      state.setCurrentlyLogin,
-      state.setUserFound,
-      state.userFound,
-      state.setLoginAttempt,
-    ]);
+  const [
+    cSetCurrentlyLogin,
+    cSetUserFound,
+    cUserFound,
+    cSetLoginAttempt,
+    cSetUserSubscriptionFound,
+  ] = useCurrentlyLoginStore((state) => [
+    state.setCurrentlyLogin,
+    state.setUserFound,
+    state.userFound,
+    state.setLoginAttempt,
+    state.setUserSubscriptionFound,
+  ]);
 
   const cSetNumpadResult = useNumpadStore((state) => state.setNumpadResult);
   const [cHasVideoOutput] = useActiveCameraStore((state) => [
@@ -42,6 +48,7 @@ const useUserLoginModalNumpad = () => {
     // setNumpadResult("");
     cSetNumpadResult("");
     cSetUserFound(null);
+    cSetUserSubscriptionFound([]);
   };
 
   const handleEnterOnClick = useCallback(
@@ -49,22 +56,34 @@ const useUserLoginModalNumpad = () => {
       const newUser = await activeAndInactiveUsers?.find(
         (user) =>
           String(user.usersubscription.flexprouser?.id) ===
-          String(flexProUserId)
+          String(flexProUserId),
       );
 
       // setUserFound(newUser);
       cSetUserFound(newUser);
-    }
+    },
   );
 
-  const handleLoginOnclick = async () => {
+  const handleEnterOnClick2 = useCallback(
+    async ({ activeAndInactiveUsers, flexProUserId }) => {
+      const newUsers = await activeAndInactiveUsers?.filter(
+        (user) =>
+          String(user.usersubscription.flexprouser?.id) ===
+          String(flexProUserId),
+      );
+
+      cSetUserSubscriptionFound(newUsers);
+    },
+  );
+
+  const handleLoginOnclick = async ({ userFound }) => {
     if (cUserFound && cHasVideoOutput) {
       setFlexProUserIdStorage(cUserFound?.usersubscription.flexprouser?.id);
-      cSetCurrentlyLogin(cUserFound);
+      cSetCurrentlyLogin(userFound);
     } else if (cUserFound && !cHasVideoOutput) {
       // alert("No camera found on this device.");
       setFlexProUserIdStorage(cUserFound?.usersubscription.flexprouser?.id);
-      cSetCurrentlyLogin(cUserFound);
+      cSetCurrentlyLogin(userFound);
       cSetIsLoginWithoutCamera(true);
     }
   };
@@ -77,6 +96,7 @@ const useUserLoginModalNumpad = () => {
     handleDelOnClick,
     handleClearOnClick,
     handleEnterOnClick,
+    handleEnterOnClick2,
     handleLoginOnclick,
   };
 };

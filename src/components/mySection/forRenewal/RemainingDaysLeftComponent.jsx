@@ -4,6 +4,7 @@ import instance from "../../../others/axiosInstance";
 import "react-toastify/dist/ReactToastify.css";
 import useToastifyMessage from "../../../hooks/useToastifyMessage";
 import { useLocation } from "react-router-dom";
+import remainingDays from "../../../others/GetRemainingDays";
 
 const RemainingDaysLeftComponent = ({
   date_subscribed,
@@ -27,7 +28,7 @@ const RemainingDaysLeftComponent = ({
     user_id,
     session_days,
     subscriptionId,
-    daysOnly
+    daysOnly,
   );
 
   const message = useMemo(() => {
@@ -59,6 +60,7 @@ const RemainingDaysLeftComponent = ({
     const fetchRemaining = async () => {
       try {
         const days = await remainingDaysLeft();
+
         if (isMounted) {
           setRemaining(days);
         }

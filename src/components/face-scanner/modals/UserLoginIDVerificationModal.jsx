@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from "react";
+import React, { memo, useCallback, useEffect } from "react";
 import { Modal } from "react-bootstrap";
 import useUserLoginModalNumpad from "../hooks/useUserLoginModalNumpad";
 import NumpadButton from "../../modals/NumpadButton";
@@ -8,7 +8,43 @@ import { useActiveCameraStore } from "../../../store/useActiveCamera";
 import useToastifyMessageComponent from "./../../../customHooks/useToastifyMessageComponent";
 import "../../../pages/userLoginPage/userLoginPage.scss";
 
-const UserFoundComponent = ({ user, onLogin, onCancel }) => {
+const UserSubscriptionFoundComponent = ({ users, onLogin, onCancel }) => {
+  if (!users)
+    return <h4 className="text-danger">No Subscription has been found!</h4>;
+
+  return (
+    <>
+      <h5>Check your subscription</h5>
+      <div className="existing-subscription-result">
+        {users.map((user) => (
+          <div key={user.id} style={{ marginBottom: "10px" }}>
+            <h3>
+              {user?.usersubscription?.flexprouser?.id} -{" "}
+              {user?.usersubscription?.flexprouser?.name}
+            </h3>
+            <h5>{user?.usersubscription?.subscription?.gym_rate_desc}</h5>
+            <div>
+              <button className="btn btn-success" onClick={onLogin}>
+                LOGIN
+              </button>{" "}
+              <button className="btn btn-danger" onClick={onCancel}>
+                CANCEL
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+};
+
+const UserFoundComponent = ({
+  user,
+  onLogin,
+  onCancel,
+  users,
+  handleLoginOnclick,
+}) => {
   if (!user) return <h4 className="text-danger">No User has been found!</h4>;
 
   return (
@@ -21,15 +57,36 @@ const UserFoundComponent = ({ user, onLogin, onCancel }) => {
             {user?.usersubscription?.flexprouser?.id} -{" "}
             {user?.usersubscription?.flexprouser?.name}
           </h3>
-          <h5>{user?.usersubscription?.subscription?.gym_rate_desc}</h5>
-          <div>
+          <div className="existing-subscription-result">
+            {users?.map((user) => (
+              <div key={user.id} style={{ marginBottom: "10px" }}>
+                <h5>{user?.usersubscription?.subscription?.gym_rate_desc}</h5>
+                <div style={{ display: "flex", gap: "5px" }}>
+                  <button
+                    className="btn btn-success"
+                    onClick={() => {
+                      handleLoginOnclick({ userFound: user });
+                      onLogin && onLogin();
+                    }}
+                  >
+                    LOGIN
+                  </button>
+                  <button className="btn btn-danger" onClick={onCancel}>
+                    CANCEL
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+          {/* <h5>{user?.usersubscription?.subscription?.gym_rate_desc}</h5> */}
+          {/* <div>
             <button className="btn btn-success" onClick={onLogin}>
               LOGIN
             </button>{" "}
             <button className="btn btn-danger" onClick={onCancel}>
               CANCEL
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     </>
@@ -43,10 +100,13 @@ const UserLoginIDVerificationModal = memo(
       handleDelOnClick,
       handleClearOnClick,
       handleEnterOnClick,
+      handleEnterOnClick2,
       handleLoginOnclick,
     } = useUserLoginModalNumpad();
 
-    const [cUserFound] = useCurrentlyLoginStore((state) => [state.userFound]);
+    const [cUserFound, cUserSubscriptionFound] = useCurrentlyLoginStore(
+      (state) => [state.userFound, state.userSubscriptionFound],
+    );
     const [cNumpadResult] = useNumpadStore((state) => [state.numpadResult]);
     const [cHasVideoOutput] = useActiveCameraStore((state) => [
       state.hasVideoOutput,
@@ -59,6 +119,19 @@ const UserLoginIDVerificationModal = memo(
         flexProUserId: cNumpadResult,
       });
     }, [handleEnterOnClick, users, cNumpadResult]);
+
+    // Avoid inline recreation for Enter handler
+    const handleEnter2 = useCallback(() => {
+      handleEnterOnClick2({
+        activeAndInactiveUsers: users?.activeAndInactiveUsers,
+        flexProUserId: cNumpadResult,
+      });
+
+      handleEnterOnClick({
+        activeAndInactiveUsers: users?.activeAndInactiveUsers,
+        flexProUserId: cNumpadResult,
+      });
+    }, [handleEnterOnClick2, handleEnterOnClick, users, cNumpadResult]);
 
     const digits = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
 
@@ -88,12 +161,24 @@ const UserLoginIDVerificationModal = memo(
                 <UserFoundComponent
                   user={cUserFound}
                   onLogin={() => {
+                    // handleLoginOnclick();
+                    // onLogin && onLogin();
+                    onHide();
+                  }}
+                  onCancel={handleClearOnClick}
+                  users={cUserSubscriptionFound}
+                  handleLoginOnclick={handleLoginOnclick}
+                />
+
+                {/* <UserSubscriptionFoundComponent
+                  users={cUserSubscriptionFound}
+                  onLogin={() => {
                     handleLoginOnclick();
                     onLogin && onLogin();
                     onHide();
                   }}
                   onCancel={handleClearOnClick}
-                />
+                /> */}
               </div>
             </div>
 
@@ -127,7 +212,7 @@ const UserLoginIDVerificationModal = memo(
               <div className="col-6 numpad-col">
                 <button
                   className="btn btn-warning numpad"
-                  onClick={handleEnter}
+                  onClick={handleEnter2}
                 >
                   Enter
                 </button>

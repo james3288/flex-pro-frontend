@@ -18,25 +18,31 @@ const useGetLabelFaceDescription = ({ flexProUser, fetchImage, faceapi }) => {
   }, []);
 
   const getSpecificUser = useCallback(
-    async (id) => {
+    async ({ id, user_subscription_id }) => {
       const userResult = flexProUser?.find(
-        (user) => String(user.usersubscription?.flexprouser?.id) === String(id)
+        (user) =>
+          String(user.usersubscription?.flexprouser?.id) === String(id) &&
+          String(user.usersubscription.id) === String(user_subscription_id),
       );
+
       return userResult;
     },
-    [flexProUser]
+    [flexProUser],
   );
 
   const getLabeledFaceDescriptions = useCallback(
-    async ({ flexProUserId }) => {
+    async ({ flexProUserId, user_subscription_id }) => {
       const descriptions = [];
 
       const img = await convertBlogToImage({ flexProUserId: flexProUserId });
-      const user = await getSpecificUser(flexProUserId);
+      const user = await getSpecificUser({
+        id: flexProUserId,
+        user_subscription_id: user_subscription_id,
+      });
 
       // Load the face detection model if not already loaded
       await faceapi.nets.tinyFaceDetector.loadFromUri(
-        window.location.origin + "/models"
+        window.location.origin + "/models",
       );
 
       // Detect faces, landmarks, and compute descriptors
@@ -51,14 +57,14 @@ const useGetLabelFaceDescription = ({ flexProUser, fetchImage, faceapi }) => {
 
           return new faceapi.LabeledFaceDescriptors(
             user?.usersubscription?.flexprouser?.name,
-            descriptions
+            descriptions,
           );
         }
       }
 
       return undefined;
     },
-    [flexProUser]
+    [flexProUser],
   );
 
   return { getLabeledFaceDescriptions };

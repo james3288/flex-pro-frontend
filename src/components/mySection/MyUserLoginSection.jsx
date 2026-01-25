@@ -80,7 +80,7 @@ const DaypassUserInfo = ({ user }) => {
   );
 };
 
-const PrivateRemainingDays = memo(({ userSub }) => (
+const PrivateRemainingDays = ({ userSub }) => (
   <RemainingDaysLeftComponent
     date_subscribed={userSub?.date_subscribed}
     per={userSub?.subscription?.per?.per}
@@ -92,7 +92,7 @@ const PrivateRemainingDays = memo(({ userSub }) => (
     fontColor={"orange"}
     fontSize="26px"
   />
-));
+);
 
 const isfetchStatus = ({ status, isLoading }) => {
   return status === "fetching" ? true : isLoading ? true : false;
@@ -258,6 +258,7 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
     cSetIsFound,
     cSetIsAlreadyLoginInDatabase,
     setIsThisYourFace,
+    cCurrentlyLogin,
   ]);
 
   const handleLoginWithoutCamera = () => {

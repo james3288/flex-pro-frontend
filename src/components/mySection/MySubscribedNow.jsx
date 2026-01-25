@@ -122,6 +122,10 @@ const MySubscribedNow = () => {
     }
   };
 
+  const checkIfSelectedSubscriptionIsMembership = async () => {
+    return planNow.gym_rate_desc === "MEMBERSHIP" ? true : false;
+  };
+
   // const handleSaveSubscription = async () => {
   //   let cc = await checkIfAlreadySubscribed(subscriptionData.flexpro_id);
 
@@ -166,11 +170,16 @@ const MySubscribedNow = () => {
     }
 
     const cc = await checkIfAlreadySubscribed(subscriptionData.flexpro_id);
+    const isMembership = await checkIfSelectedSubscriptionIsMembership();
 
     if (cc?.length > 0) {
-      setAlreadySubscribed(true);
-      setMessage("You're subscription has not been expired yet..");
-      return;
+      // check if user has active subscription
+      if (!isMembership) {
+        // only check for non-membership subscriptions
+        setAlreadySubscribed(true);
+        setMessage("You're subscription has not been expired yet..");
+        return;
+      }
     }
 
     saveSubscriptionMutation.mutate(subscriptionData);
@@ -198,6 +207,7 @@ const MySubscribedNow = () => {
   const handleCancelUser = async () => {
     userRef.current.innerText = "";
     setMyImage(null);
+    setAlreadySubscribed(false);
 
     setSubscriptionData((prev) => ({
       ...prev,
@@ -265,6 +275,8 @@ const MySubscribedNow = () => {
       imageRef.current.src = myImage;
     }
   }, [myImage]);
+
+  console.log(planNow);
 
   return (
     <>

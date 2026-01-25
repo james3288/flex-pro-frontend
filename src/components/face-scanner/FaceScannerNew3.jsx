@@ -33,7 +33,7 @@ const FaceScannerNew3 = ({
   //   state.currentlyLogin,
   // ]);
 
-  const { flexProUserId } = useGetIdFromCurrentlyLogin();
+  const { flexProUserId, user_subscription_id } = useGetIdFromCurrentlyLogin();
 
   const intervalRef = useRef(null);
   // const flexProUserId = cCurrentlyLogin?.usersubscription?.flexprouser?.id || 0;
@@ -83,6 +83,7 @@ const FaceScannerNew3 = ({
       const triggerFaceLabelDescription = async () => {
         const labeledFaceDescriptors = await getLabeledFaceDescriptions({
           flexProUserId: flexProUserId,
+          user_subscription_id: user_subscription_id,
         });
 
         if (intervalRef.current) {
@@ -92,7 +93,7 @@ const FaceScannerNew3 = ({
         if (labeledFaceDescriptors) {
           const faceMatcher = new faceapi.FaceMatcher(
             labeledFaceDescriptors,
-            0.4
+            0.4,
           );
 
           intervalRef.current = setInterval(() => {

@@ -1,4 +1,3 @@
-
 import { useCurrentlyLoginStore } from "../components/face-scanner/store/currentlyLoginStore";
 
 const useGetIdFromCurrentlyLogin = () => {
@@ -7,8 +6,9 @@ const useGetIdFromCurrentlyLogin = () => {
   ]);
 
   const flexProUserId = cCurrentlyLogin?.usersubscription?.flexprouser?.id || 0;
+  const user_subscription_id = cCurrentlyLogin?.usersubscription?.id || 0;
 
-  return { flexProUserId };
+  return { flexProUserId, user_subscription_id };
 };
 
 export default useGetIdFromCurrentlyLogin;

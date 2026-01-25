@@ -2,9 +2,12 @@ const remainingDays = (
   date_log,
   per,
   personal_training_session = 1,
-  sub_session_days = 1
+  sub_session_days = 1,
 ) => {
   const baseDate = new Date(date_log);
+
+  console.log(date_log);
+
   if (isNaN(baseDate)) {
     throw new Error("Invalid date_log provided");
   }

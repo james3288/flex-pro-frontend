@@ -8,6 +8,7 @@ const initialState = {
   isFound: false,
   loginAttempt: 0,
   isAlreadyLoginInDatabase: false,
+  userSubscriptionFound: [],
 };
 
 export const useCurrentlyLoginStore = create((set) => ({
@@ -16,13 +17,19 @@ export const useCurrentlyLoginStore = create((set) => ({
     set(
       produce((state) => {
         state.currentlyLogin = data;
-      })
+      }),
     ),
   setUserFound: async (data) =>
     set(
       produce((state) => {
         state.userFound = data;
-      })
+      }),
+    ),
+  setUserSubscriptionFound: async (data) =>
+    set(
+      produce((state) => {
+        state.userSubscriptionFound = data;
+      }),
     ),
   setIsFound: (data) =>
     set(() => ({
