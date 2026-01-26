@@ -172,15 +172,15 @@ const MySubscribedNow = () => {
     const cc = await checkIfAlreadySubscribed(subscriptionData.flexpro_id);
     const isMembership = await checkIfSelectedSubscriptionIsMembership();
 
-    if (cc?.length > 0) {
-      // check if user has active subscription
-      if (!isMembership) {
-        // only check for non-membership subscriptions
-        setAlreadySubscribed(true);
-        setMessage("You're subscription has not been expired yet..");
-        return;
-      }
-    }
+    // if (cc?.length > 0) {
+    //   // check if user has active subscription
+    //   if (!isMembership) {
+    //     // only check for non-membership subscriptions
+    //     setAlreadySubscribed(true);
+    //     setMessage("You're subscription has not been expired yet..");
+    //     return;
+    //   }
+    // }
 
     saveSubscriptionMutation.mutate(subscriptionData);
   };

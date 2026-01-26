@@ -11,7 +11,7 @@ const useLoginAttempt = () => {
       state.setLoginAttempt,
       state.setIsFound,
       state.isFound,
-    ]
+    ],
   );
 
   useEffect(() => {
