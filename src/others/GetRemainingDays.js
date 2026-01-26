@@ -6,8 +6,6 @@ const remainingDays = (
 ) => {
   const baseDate = new Date(date_log);
 
-  console.log(date_log);
-
   if (isNaN(baseDate)) {
     throw new Error("Invalid date_log provided");
   }

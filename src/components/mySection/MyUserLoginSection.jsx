@@ -52,7 +52,7 @@ const CheckStatus = memo(() => (
 const AlreadyLoginStatus = memo(() => (
   <h3 style={{ color: "red" }}>
     <ExclamationSvg />
-    {"  "} Already login...
+    {"  "} You are currently logged in.
   </h3>
 ));
 
@@ -465,7 +465,9 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
                   {loginError}
                 </h6>
               )}
-
+              <h2 style={{ color: "yellowgreen", fontSize: "1.5rem" }}>
+                {cCurrentlyLogin?.usersubscription?.subscription?.gym_rate_desc}
+              </h2>
               <PrivateRemainingDays
                 userSub={cCurrentlyLogin?.usersubscription}
               />

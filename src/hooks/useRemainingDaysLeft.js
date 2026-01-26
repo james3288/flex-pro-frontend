@@ -38,7 +38,7 @@ const useRemainingDaysLeft = (
     // ⚡ Optimize fetching strategy
     staleTime: 1000 * 60, // cache 1 min
     refetchOnWindowFocus: true, // refresh only when focus
-    // retry: 1, // avoid endless retries
+    retry: 1, // avoid endless retries
   });
 
   // Keep your original return signature
