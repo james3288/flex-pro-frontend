@@ -4,7 +4,7 @@ import UserHistory from "./UserHistory";
 import { UserHistoryContext } from "../../../context/UserHistoryContext";
 import LoadingEffect from "../loadingEffect/LoadingEffect";
 import getExtendedTrainerForUserHistory from "../../../getData/getExtendedTrainerForUserHistory";
-import formatTime from "../../../others/ReadableFormatTime";
+import formatTime from "@others/ReadableFormatTime";
 
 const ListOfUserHistory = () => {
   const { userSubscriptionDatas, userHistoryDatas } =
@@ -17,7 +17,6 @@ const ListOfUserHistory = () => {
   const fetchExtendedTrainers = async (user_subscription_id) => {
     const data = await getExtendedTrainerForUserHistory(user_subscription_id);
     setExtendedTrainers((prev) => ({ ...prev, [user_subscription_id]: data }));
-    console.log(extendedTrainers);
   };
 
   // Fetch extended trainers when userSubscriptionDatas changes
@@ -109,7 +108,7 @@ const ListOfUserHistory = () => {
           (user) =>
             user2.id === user.usersubscription?.id && (
               <UserHistory user={user} key={user.id} />
-            )
+            ),
         )}
       </div>
       <hr />

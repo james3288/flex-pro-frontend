@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import deleteUser from "../../../deleteData/deleteUser";
 import { Button, Modal } from "react-bootstrap";
+import TextFieldModalComponent from "../../modals/TextFieldModalComponent";
+import useCheckCredential from "../activeUser/hooks/useCheckCredential";
 
 const DeleteIcon = () => {
   return (
@@ -17,10 +19,43 @@ const DeleteIcon = () => {
   );
 };
 
+const ErrorMessage = ({ msg }) => (
+  <div className="alert alert-warning mt-2">
+    <span style={{ color: "red" }}>{msg}</span>
+  </div>
+);
+
+const { checkCredential } = useCheckCredential();
+
+const InvalidCredentialComponent = ({ isValid }) => {
+  return !isValid && <ErrorMessage msg={"Invalid Admin Credentials..."} />;
+};
+
 const DeleteUserModal = ({ id, user_id, show, onHide }) => {
+  const [userName, setUserName] = useState("admin");
+  const [password, setPassword] = useState("");
+  const [isValid, setIsValid] = useState(false);
+
   const handleDeleteUser = (user_id) => {
     // deleteUser(user_id);
     deleteUser(user_id);
+  };
+
+  const setCredentialValidOrInvalid = async ({
+    username,
+    password,
+    user_id,
+  }) => {
+    const result = await checkCredential({ username, password });
+
+    if (result) {
+      setIsValid(result?.valid);
+
+      //✅ delete function
+      handleDeleteUser(user_id);
+    } else {
+      setIsValid(false);
+    }
   };
 
   return (
@@ -36,13 +71,44 @@ const DeleteUserModal = ({ id, user_id, show, onHide }) => {
 
       <Modal.Body>
         <div className="modal-body">Are you sure you want delete User?</div>
+        <TextFieldModalComponent
+          label={"Username:"}
+          id={"credential-username"}
+          name={"username"}
+          setText={setUserName}
+          text={userName}
+          type={"text"}
+          isDisable={true}
+        />
+        <TextFieldModalComponent
+          label={"Password:"}
+          id={"credential-password"}
+          name={"password"}
+          setText={setPassword}
+          text={password}
+          type={"password"}
+        />
+        <InvalidCredentialComponent isValid={isValid} />
       </Modal.Body>
 
       <Modal.Footer>
         <Button variant="secondary" onClick={onHide}>
           Close
         </Button>
-        <Button variant="danger" onClick={() => handleDeleteUser(user_id)}>
+        {/* <Button variant="danger" onClick={() => handleDeleteUser(user_id)}>
+          Delete
+        </Button> */}
+
+        <Button
+          variant="danger"
+          onClick={() =>
+            setCredentialValidOrInvalid({
+              username: userName,
+              password: password,
+              user_id: user_id,
+            })
+          }
+        >
           Delete
         </Button>
       </Modal.Footer>

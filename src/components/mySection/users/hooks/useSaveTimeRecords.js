@@ -1,11 +1,10 @@
-import instance from "../../../../others/axiosInstance";
+import instance from "@others/axiosInstance";
 
 const useSaveTimeRecords = () => {
   const saveTimeRecords = async (timeRecordData) => {
     instance
       .post("/api/save_time_record/", timeRecordData)
       .then(function (response) {
-        console.log(response);
         return response;
       })
       .catch(function (error) {

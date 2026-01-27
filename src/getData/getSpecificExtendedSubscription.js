@@ -1,4 +1,4 @@
-import instance from "../others/axiosInstance";
+import instance from "@others/axiosInstance";
 
 const getSpecificExtendedSubscription = async (id) => {
   try {
@@ -6,7 +6,7 @@ const getSpecificExtendedSubscription = async (id) => {
       return null;
     } else {
       const response = await instance.get(
-        `/api/get_specific_extended_subscription/${id}`
+        `/api/get_specific_extended_subscription/${id}`,
       );
       const specificExtendedSubscription = await response.data;
 

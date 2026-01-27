@@ -276,8 +276,6 @@ const MySubscribedNow = () => {
     }
   }, [myImage]);
 
-  console.log(planNow);
-
   return (
     <>
       {/* <!-- Pricing Section Begin --> */}
