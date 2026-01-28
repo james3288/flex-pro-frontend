@@ -4,16 +4,19 @@ import { NavLink, useLocation } from "react-router-dom";
 import instance from "../../others/axiosInstance";
 import SessionDaysField from "../subScribeNowComponents/SessionDaysField";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ListOfUsers } from "./userSubscriptionComponents/ListOfUsers";
+import { ListOfTrainers } from "./userSubscriptionComponents/ListOfTrainers";
+import SearchUsers from "./userSubscriptionComponents/SearchUsers";
 
 const MySubscribedNow = () => {
   const [planNow, setPlanNow] = useState([]);
   const location = useLocation();
 
-  const [searchField, setSearchField] = useState("");
+  // const [searchField, setSearchField] = useState("");
   const [trainerField, setTrainerField] = useState("");
-  const [sessionDays, setSessionDays] = useState();
+  // const [sessionDays, setSessionDays] = useState();
 
-  const [flexProUsers, setFlexProUsers] = useState([]);
+  // const [flexProUsers, setFlexProUsers] = useState([]);
   const [flexProTrainers, setFlexProTrainers] = useState([]);
   const [searchOutput, setSearchOutput] = useState([]);
   const [trainerSearchOutput, setTrainerSearchOutput] = useState([]);
@@ -50,14 +53,14 @@ const MySubscribedNow = () => {
     return response.data;
   };
 
-  //   get users here
-  let getUsers = async () => {
-    await instance.get(`/api/users/`).then((res) => {
-      const users = res.data;
+  // //   get users here
+  // let getUsers = async () => {
+  //   await instance.get(`/api/users/`).then((res) => {
+  //     const users = res.data;
 
-      setFlexProUsers(users);
-    });
-  };
+  //     setFlexProUsers(users);
+  //   });
+  // };
 
   let getTrainers = async () => {
     await instance.get(`/api/get_trainers/`).then((res) => {
@@ -70,7 +73,7 @@ const MySubscribedNow = () => {
   const handleSelectUser = (flexpro_id, name, path) => {
     getImage(path, "user");
     userRef.current.innerText = name;
-    setSearchField("");
+    // setSearchField("");
     setAlreadySubscribed(false);
 
     setSubscriptionData((prev) => ({
@@ -225,12 +228,12 @@ const MySubscribedNow = () => {
     }));
   };
 
-  // ### USE EFFECT FUNCTION HERE ####
-  //   load all users here
-  useEffect(() => {
-    console.log("load user here");
-    getUsers();
-  }, []);
+  // // ### USE EFFECT FUNCTION HERE ####
+  // //   load all users here
+  // useEffect(() => {
+  //   console.log("load user here");
+  //   getUsers();
+  // }, []);
 
   //   load all trainers here
   useEffect(() => {
@@ -248,14 +251,14 @@ const MySubscribedNow = () => {
     }, 50);
   }, [id]); // Include id as a dependency to fetch data when id changes
 
-  // filtering users while typing
-  useEffect(() => {
-    const filteredUsers = flexProUsers.filter((user) =>
-      user.flex_pro_user.name.toLowerCase().includes(searchField.toLowerCase()),
-    );
+  // // filtering users while typing
+  // useEffect(() => {
+  //   const filteredUsers = flexProUsers.filter((user) =>
+  //     user.flex_pro_user.name.toLowerCase().includes(searchField.toLowerCase()),
+  //   );
 
-    setSearchOutput(filteredUsers);
-  }, [searchField]);
+  //   setSearchOutput(filteredUsers);
+  // }, [searchField]);
 
   // filtering trainers while typing
   useEffect(() => {
@@ -341,7 +344,7 @@ const MySubscribedNow = () => {
                     )}
                   </div>
                 </div>
-                <div className="row search-users">
+                {/* <div className="row search-users">
                   <div className="col-lg-12">
                     {planNow.per.per === "day" && (
                       <SessionDaysField
@@ -364,65 +367,26 @@ const MySubscribedNow = () => {
                       onChange={(e) => setTrainerField(e.target.value)}
                     />
 
-                    <div className="list-of-user">
-                      {searchField != "" ? (
-                        <ul className="list-group">
-                          {searchOutput.map((user) => (
-                            <li
-                              className="list-group-item d-flex justify-content-between align-items-center"
-                              key={user.flex_pro_user.id}
-                            >
-                              {user.flex_pro_user.name.toUpperCase()}
-                              <span
-                                className="badge badge-primary badge-pill dreg"
-                                onClick={() =>
-                                  handleSelectUser(
-                                    user.flex_pro_user.id,
-                                    user.flex_pro_user.name,
-                                    user.image1,
-                                  )
-                                }
-                              >
-                                Select
-                              </span>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        ""
-                      )}
-                    </div>
-
-                    <div className="list-of-trainers">
-                      {trainerField != "" ? (
-                        <ul className="list-group">
-                          {trainerSearchOutput.map((trainer) => (
-                            <li
-                              className="list-group-item d-flex justify-content-between align-items-center"
-                              key={trainer.id}
-                            >
-                              {trainer.name.toUpperCase()}
-                              <span
-                                className="badge badge-primary badge-pill dreg"
-                                onClick={() =>
-                                  handleSelectTrainer(
-                                    trainer.id,
-                                    trainer.name,
-                                    trainer.image,
-                                  )
-                                }
-                              >
-                                Select
-                              </span>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        ""
-                      )}
-                    </div>
+                    <ListOfUsers
+                      users={searchOutput}
+                      searchField={searchField}
+                      handleSelectUser={handleSelectUser}
+                    />
+                    <ListOfTrainers
+                      trainers={trainerSearchOutput}
+                      trainerField={trainerField}
+                      handleSelectTrainer={handleSelectTrainer}
+                    />
                   </div>
-                </div>
+                </div> */}
+                <SearchUsers
+                  searchOutput={searchOutput}
+                  trainerSearchOutput={trainerSearchOutput}
+                  handleSelectUser={handleSelectUser}
+                  handleSelectTrainer={handleSelectTrainer}
+                  setSubscriptionData={setSubscriptionData}
+                  planNow={planNow}
+                />
 
                 <div className="">
                   {registered === true ? (
