@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import instance from "../../../others/axiosInstance";
 
-export const ListOfUsers = ({ searchField, handleSelectUser, isShow }) => {
-  const [onShow, setOnShow] = React.useState(isShow);
+const useUsersServices = ({ setOnShow, searchField, onShow }) => {
+  // const [onShow, setOnShow] = React.useState(isShow);
   const [flexProUsers, setFlexProUsers] = useState([]);
   const [searchOutput, setSearchOutput] = useState([]);
 
@@ -28,6 +28,14 @@ export const ListOfUsers = ({ searchField, handleSelectUser, isShow }) => {
     setSearchOutput(filteredUsers);
     setOnShow(true);
   }, [searchField]);
+
+  return { onShow, searchOutput };
+};
+
+export const ListOfUsers = ({ searchField, handleSelectUser, isShow }) => {
+  const [onShow, setOnShow] = React.useState(isShow);
+
+  const { searchOutput } = useUsersServices({ setOnShow, searchField, onShow });
 
   return (
     <div className="list-of-user">

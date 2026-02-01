@@ -7,6 +7,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ListOfUsers } from "./userSubscriptionComponents/ListOfUsers";
 import { ListOfTrainers } from "./userSubscriptionComponents/ListOfTrainers";
 import SearchUsers from "./userSubscriptionComponents/SearchUsers";
+import z from "zod";
 
 const MySubscribedNow = () => {
   const [planNow, setPlanNow] = useState([]);
@@ -16,8 +17,6 @@ const MySubscribedNow = () => {
   const [trainerField, setTrainerField] = useState("");
   // const [sessionDays, setSessionDays] = useState();
 
-  // const [flexProUsers, setFlexProUsers] = useState([]);
-  const [flexProTrainers, setFlexProTrainers] = useState([]);
   const [searchOutput, setSearchOutput] = useState([]);
   const [trainerSearchOutput, setTrainerSearchOutput] = useState([]);
   const [subscriptionData, setSubscriptionData] = useState({
@@ -51,23 +50,6 @@ const MySubscribedNow = () => {
     const response = await instance.get(`/api/specific_subscription/${id}`);
     setPlanNow(response.data);
     return response.data;
-  };
-
-  // //   get users here
-  // let getUsers = async () => {
-  //   await instance.get(`/api/users/`).then((res) => {
-  //     const users = res.data;
-
-  //     setFlexProUsers(users);
-  //   });
-  // };
-
-  let getTrainers = async () => {
-    await instance.get(`/api/get_trainers/`).then((res) => {
-      const trainers = res.data;
-
-      setFlexProTrainers(trainers);
-    });
   };
 
   const handleSelectUser = (flexpro_id, name, path) => {
@@ -129,43 +111,6 @@ const MySubscribedNow = () => {
     return planNow.gym_rate_desc === "MEMBERSHIP" ? true : false;
   };
 
-  // const handleSaveSubscription = async () => {
-  //   let cc = await checkIfAlreadySubscribed(subscriptionData.flexpro_id);
-
-  //   if (cc.length > 0) {
-  //     setAlreadySubscribed(true);
-  //     setMessage("You're subscription has not been expired yet..");
-  //   } else {
-  //     instance
-  //       .post("/api/save_subscriptions/", subscriptionData)
-  //       .then(function (response) {
-  //         console.log(response.data);
-  //         setRegistered(true);
-  //         setMessage("You are successfully registered..");
-
-  //         queryClient.invalidateQueries({
-  //           queryKey: ["forActiveAndInactiveUsers"],
-  //         });
-  //       })
-  //       .catch(function (error) {
-  //         console.log(error);
-  //         return;
-  //       });
-  //   }
-
-  //   // instance
-  //   //   .post("/api/save_subscriptions/", subscriptionData)
-  //   //   .then(function (response) {
-  //   //     console.log(response.data);
-  //   //     setRegistered(true);
-  //   //     setMessage("You are successfully registered..");
-  //   //   })
-  //   //   .catch(function (error) {
-  //   //     console.log(error);
-  //   //     return;
-  //   //   });
-  // };
-
   const handleSaveSubscription = async () => {
     if (subscriptionData.flexpro_id === 0) {
       setMessage("You must select a user first!");
@@ -174,16 +119,6 @@ const MySubscribedNow = () => {
 
     const cc = await checkIfAlreadySubscribed(subscriptionData.flexpro_id);
     const isMembership = await checkIfSelectedSubscriptionIsMembership();
-
-    // if (cc?.length > 0) {
-    //   // check if user has active subscription
-    //   if (!isMembership) {
-    //     // only check for non-membership subscriptions
-    //     setAlreadySubscribed(true);
-    //     setMessage("You're subscription has not been expired yet..");
-    //     return;
-    //   }
-    // }
 
     saveSubscriptionMutation.mutate(subscriptionData);
   };
@@ -228,19 +163,6 @@ const MySubscribedNow = () => {
     }));
   };
 
-  // // ### USE EFFECT FUNCTION HERE ####
-  // //   load all users here
-  // useEffect(() => {
-  //   console.log("load user here");
-  //   getUsers();
-  // }, []);
-
-  //   load all trainers here
-  useEffect(() => {
-    console.log("load trainers here");
-    getTrainers();
-  }, []);
-
   useEffect(() => {
     setTimeout(() => {
       const fetchData = async () => {
@@ -250,24 +172,6 @@ const MySubscribedNow = () => {
       fetchData();
     }, 50);
   }, [id]); // Include id as a dependency to fetch data when id changes
-
-  // // filtering users while typing
-  // useEffect(() => {
-  //   const filteredUsers = flexProUsers.filter((user) =>
-  //     user.flex_pro_user.name.toLowerCase().includes(searchField.toLowerCase()),
-  //   );
-
-  //   setSearchOutput(filteredUsers);
-  // }, [searchField]);
-
-  // filtering trainers while typing
-  useEffect(() => {
-    const filteredTrainers = flexProTrainers.filter((trainers) =>
-      trainers.name.toLowerCase().includes(trainerField.toLowerCase()),
-    );
-
-    setTrainerSearchOutput(filteredTrainers);
-  }, [trainerField]);
 
   useEffect(() => {
     console.log(registered);
@@ -296,11 +200,11 @@ const MySubscribedNow = () => {
                 <h3>{message}</h3>
               </div>
             )}
-            {subscriptionData.flexpro_id === 0 && (
+            {/* {subscriptionData.flexpro_id === 0 && (
               <div className="row messageBox1">
                 <h3>{"You must select a user first!"}</h3>
               </div>
-            )}
+            )} */}
 
             <div className="row">
               {/* selected user and trainer */}
@@ -309,7 +213,12 @@ const MySubscribedNow = () => {
                   <span>SELECTED USER</span>
                   <div className="selected-user">
                     {myImage != null && (
-                      <img ref={imageRef} src={myImage} alt="" />
+                      <img
+                        ref={imageRef}
+                        src={myImage}
+                        alt=""
+                        style={{ border: "3px solid yellowGreen" }}
+                      />
                     )}
 
                     <h2 ref={userRef}></h2>
@@ -329,7 +238,12 @@ const MySubscribedNow = () => {
                   <span>SELECTED TRAINER</span>
                   <div className="selected-user">
                     {myImage2 != null && (
-                      <img ref={trainerImageRef} src={myImage2} alt="" />
+                      <img
+                        ref={trainerImageRef}
+                        src={myImage2}
+                        alt=""
+                        style={{ border: "3px solid yellowGreen" }}
+                      />
                     )}
 
                     <h2 ref={trainerRef}></h2>
@@ -344,51 +258,16 @@ const MySubscribedNow = () => {
                     )}
                   </div>
                 </div>
-                {/* <div className="row search-users">
-                  <div className="col-lg-12">
-                    {planNow.per.per === "day" && (
-                      <SessionDaysField
-                        per={planNow.per.per}
-                        sessionDays={sessionDays}
-                        setSessionDays={setSessionDays}
-                        setSubscriptionData={setSubscriptionData}
-                      />
-                    )}
 
-                    <input
-                      type="text"
-                      placeholder="Search User Here..."
-                      onChange={(e) => setSearchField(e.target.value)}
-                    />
-
-                    <input
-                      type="text"
-                      placeholder="Search Trainor Here..."
-                      onChange={(e) => setTrainerField(e.target.value)}
-                    />
-
-                    <ListOfUsers
-                      users={searchOutput}
-                      searchField={searchField}
-                      handleSelectUser={handleSelectUser}
-                    />
-                    <ListOfTrainers
-                      trainers={trainerSearchOutput}
-                      trainerField={trainerField}
-                      handleSelectTrainer={handleSelectTrainer}
-                    />
-                  </div>
-                </div> */}
                 <SearchUsers
-                  searchOutput={searchOutput}
-                  trainerSearchOutput={trainerSearchOutput}
                   handleSelectUser={handleSelectUser}
                   handleSelectTrainer={handleSelectTrainer}
                   setSubscriptionData={setSubscriptionData}
                   planNow={planNow}
+                  subscriptionData={subscriptionData}
                 />
 
-                <div className="">
+                {/* <div className="">
                   {registered === true ? (
                     <NavLink
                       className="primary-btn pricing-btn save-subscriptions-successfully"
@@ -411,7 +290,7 @@ const MySubscribedNow = () => {
                         : "Save Subscription"}
                     </NavLink>
                   )}
-                </div>
+                </div> */}
               </div>
 
               <div className="col-lg-6 right-column">
