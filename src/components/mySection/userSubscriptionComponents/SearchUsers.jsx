@@ -46,6 +46,7 @@ const SearchUsers = ({
   setSubscriptionData,
   planNow,
   subscriptionData,
+  membershipData,
 }) => {
   const [searchField, setSearchField] = useState("");
   const [trainerField, setTrainerField] = useState("");
@@ -80,6 +81,9 @@ const SearchUsers = ({
   return (
     <div className="row search-users">
       <div className="col-lg-12">
+        <h2 style={{ color: "yellow" }}>
+          {membershipData?.usersubscription?.subscription?.gym_rate_desc}
+        </h2>
         {planNow.per.per === "day" && (
           <SessionDaysField
             per={planNow.per.per}

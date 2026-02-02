@@ -1,16 +1,46 @@
 import React, { useEffect, useState, useRef } from "react";
 import ListOfSubscriptions from "./Subscriptions/ListOfSubscriptions";
-import { NavLink, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import instance from "../../others/axiosInstance";
-import SessionDaysField from "../subScribeNowComponents/SessionDaysField";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ListOfUsers } from "./userSubscriptionComponents/ListOfUsers";
-import { ListOfTrainers } from "./userSubscriptionComponents/ListOfTrainers";
+import { useQueryClient } from "@tanstack/react-query";
 import SearchUsers from "./userSubscriptionComponents/SearchUsers";
-import z from "zod";
 
-const MySubscribedNow = () => {
+const useSubscribeNowServices = ({ flexProId }) => {
+  //   get specific plan or subscription
   const [planNow, setPlanNow] = useState([]);
+
+  const getPlan = async () => {
+    const response = await instance.get(
+      `/api/specific_subscription/${flexProId}`,
+    );
+
+    setPlanNow(response.data);
+  };
+
+  useEffect(() => {
+    getPlan();
+  }, []);
+  return { planNow };
+};
+
+const useMembershipServices = () => {
+  const [membershipData, setMembershipData] = useState({});
+
+  const getMembershipByFlexProId = async ({ flexProId }) => {
+    try {
+      const response = await instance.get(`/api/get_membership/${flexProId}`);
+      setMembershipData(response.data);
+    } catch (error) {
+      console.log(error.message);
+      setMembershipData({});
+    }
+  };
+
+  return { getMembershipByFlexProId, membershipData, setMembershipData };
+};
+
+// MAIN COMPONENT
+const MySubscribedNow = () => {
   const location = useLocation();
 
   // const [searchField, setSearchField] = useState("");
@@ -45,12 +75,9 @@ const MySubscribedNow = () => {
   const queryParams = new URLSearchParams(location.search);
   const id = queryParams.get("q");
 
-  //   get specific plan or subscription
-  const getPlan = async () => {
-    const response = await instance.get(`/api/specific_subscription/${id}`);
-    setPlanNow(response.data);
-    return response.data;
-  };
+  const { planNow } = useSubscribeNowServices({ flexProId: id });
+  const { getMembershipByFlexProId, membershipData, setMembershipData } =
+    useMembershipServices();
 
   const handleSelectUser = (flexpro_id, name, path) => {
     getImage(path, "user");
@@ -63,6 +90,8 @@ const MySubscribedNow = () => {
       flexpro_id: flexpro_id,
       subscription_id: parseInt(id),
     }));
+
+    getMembershipByFlexProId({ flexProId: flexpro_id });
   };
 
   const handleSelectTrainer = (trainer_id, name, path) => {
@@ -76,7 +105,6 @@ const MySubscribedNow = () => {
     }));
   };
 
-  // path = "/media/images/26/26.png"
   const getImage = async (path, selected) => {
     try {
       const response = await instance.get(path, { responseType: "blob" });
@@ -94,53 +122,53 @@ const MySubscribedNow = () => {
     }
   };
 
-  const checkIfAlreadySubscribed = async (id) => {
-    try {
-      const response = await instance.get(
-        `/api/user_status_for_adding_subscripton/${id}`,
-      );
-      const users = response.data;
+  // const checkIfAlreadySubscribed = async (id) => {
+  //   try {
+  //     const response = await instance.get(
+  //       `/api/user_status_for_adding_subscripton/${id}`,
+  //     );
+  //     const users = response.data;
 
-      return users;
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-  };
+  //     return users;
+  //   } catch (error) {
+  //     console.error("Error fetching users:", error);
+  //   }
+  // };
 
-  const checkIfSelectedSubscriptionIsMembership = async () => {
-    return planNow.gym_rate_desc === "MEMBERSHIP" ? true : false;
-  };
+  // const checkIfSelectedSubscriptionIsMembership = async () => {
+  //   return planNow.gym_rate_desc === "MEMBERSHIP" ? true : false;
+  // };
 
-  const handleSaveSubscription = async () => {
-    if (subscriptionData.flexpro_id === 0) {
-      setMessage("You must select a user first!");
-      return;
-    }
+  // const handleSaveSubscription = async () => {
+  //   if (subscriptionData.flexpro_id === 0) {
+  //     setMessage("You must select a user first!");
+  //     return;
+  //   }
 
-    const cc = await checkIfAlreadySubscribed(subscriptionData.flexpro_id);
-    const isMembership = await checkIfSelectedSubscriptionIsMembership();
+  //   const cc = await checkIfAlreadySubscribed(subscriptionData.flexpro_id);
+  //   const isMembership = await checkIfSelectedSubscriptionIsMembership();
 
-    saveSubscriptionMutation.mutate(subscriptionData);
-  };
+  //   saveSubscriptionMutation.mutate(subscriptionData);
+  // };
 
-  const saveSubscriptionMutation = useMutation({
-    mutationFn: async (payload) => {
-      const res = await instance.post("/api/save_subscriptions/", payload);
-      return res.data;
-    },
-    onSuccess: () => {
-      setRegistered(true);
-      setMessage("You are successfully registered..");
+  // const saveSubscriptionMutation = useMutation({
+  //   mutationFn: async (payload) => {
+  //     const res = await instance.post("/api/save_subscriptions/", payload);
+  //     return res.data;
+  //   },
+  //   onSuccess: () => {
+  //     setRegistered(true);
+  //     setMessage("You are successfully registered..");
 
-      // 🔥 This refetches data on OTHER pages
-      queryClient.invalidateQueries({
-        queryKey: ["forActiveAndInactiveUsers"],
-      });
-    },
-    onError: (error) => {
-      console.error(error);
-    },
-  });
+  //     // 🔥 This refetches data on OTHER pages
+  //     queryClient.invalidateQueries({
+  //       queryKey: ["forActiveAndInactiveUsers"],
+  //     });
+  //   },
+  //   onError: (error) => {
+  //     console.error(error);
+  //   },
+  // });
 
   const handleCancelUser = async () => {
     userRef.current.innerText = "";
@@ -151,6 +179,8 @@ const MySubscribedNow = () => {
       ...prev,
       flexpro_id: 0,
     }));
+
+    setMembershipData({});
   };
 
   const handleCancelTrainer = async () => {
@@ -162,16 +192,6 @@ const MySubscribedNow = () => {
       trainer_id: 0,
     }));
   };
-
-  useEffect(() => {
-    setTimeout(() => {
-      const fetchData = async () => {
-        await getPlan();
-      };
-
-      fetchData();
-    }, 50);
-  }, [id]); // Include id as a dependency to fetch data when id changes
 
   useEffect(() => {
     console.log(registered);
@@ -200,11 +220,6 @@ const MySubscribedNow = () => {
                 <h3>{message}</h3>
               </div>
             )}
-            {/* {subscriptionData.flexpro_id === 0 && (
-              <div className="row messageBox1">
-                <h3>{"You must select a user first!"}</h3>
-              </div>
-            )} */}
 
             <div className="row">
               {/* selected user and trainer */}
@@ -265,6 +280,7 @@ const MySubscribedNow = () => {
                   setSubscriptionData={setSubscriptionData}
                   planNow={planNow}
                   subscriptionData={subscriptionData}
+                  membershipData={membershipData}
                 />
 
                 {/* <div className="">
