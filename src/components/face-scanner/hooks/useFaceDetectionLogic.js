@@ -9,7 +9,7 @@ const useFaceDetectionLogic = ({ canvasRef, faceapi, videoRef }) => {
   let counter = 0;
 
   const [cSetIsFound, cLoginAttempt, cSetLoginAttempt] = useCurrentlyLoginStore(
-    (state) => [state.setIsFound, state.loginnAttempt, state.setLoginAttempt]
+    (state) => [state.setIsFound, state.loginnAttempt, state.setLoginAttempt],
   );
 
   const isFaceDetected = (result, count) => {
@@ -32,7 +32,7 @@ const useFaceDetectionLogic = ({ canvasRef, faceapi, videoRef }) => {
         const detections = await faceapi
           .detectAllFaces(
             videoRef.current,
-            new faceapi.TinyFaceDetectorOptions()
+            new faceapi.TinyFaceDetectorOptions(),
           )
           .withFaceLandmarks()
           .withFaceExpressions()
@@ -40,7 +40,7 @@ const useFaceDetectionLogic = ({ canvasRef, faceapi, videoRef }) => {
 
         const resizedDetections = faceapi.resizeResults(
           detections,
-          displaySize
+          displaySize,
         );
 
         // Clear canvas before drawing
@@ -75,7 +75,7 @@ const useFaceDetectionLogic = ({ canvasRef, faceapi, videoRef }) => {
         });
       }
     },
-    [canvasRef, faceapi, videoRef]
+    [canvasRef, faceapi, videoRef],
   );
 
   return { faceDetectionLogic };

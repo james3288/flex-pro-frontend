@@ -11,6 +11,7 @@ import SubscribedButton from "./components/subscribedButton/SubscribedButton";
 import { is } from "zod/v4/locales";
 import BackToDashboardButton from "./components/subscribedButton/BackToDashBoardButton";
 import RefreshSubscription from "./components/subscribedButton/RefreshSubscription";
+import { Button, Modal } from "react-bootstrap";
 
 const useSaveSubscriptionServices = ({ data, isValid }) => {
   const [isSuccessfullySaved, setIsSuccessfullySaved] = useState(false);
@@ -40,6 +41,58 @@ const useSaveSubscriptionServices = ({ data, isValid }) => {
   return { saveSubscription, isSuccessfullySaved, refreshSubscription };
 };
 
+const IssueComponent = ({ countError }) => {
+  if (countError > 0) {
+    return (
+      <span style={{ color: "red" }}>
+        you need to select a user first before saving....
+      </span>
+    );
+  }
+};
+
+const MessageBoxModal = React.memo(
+  ({ show, onHide, saveSubscription, setShowMessageAlert, result }) => {
+    const [errorAlert, setErrorAlert] = useState(false);
+
+    const countError = result?.error?.issues.length;
+
+    return (
+      <Modal show={show} onHide={onHide} style={{ zIndex: "9999" }} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Subscription Message</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <h5>Are you sure you want to save the subscription?</h5>
+          <span>
+            {errorAlert && <IssueComponent countError={countError} />}
+          </span>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button variant="secondary" onClick={onHide}>
+            No
+          </Button>
+          <Button
+            variant="success"
+            onClick={() => {
+              if (countError === undefined) {
+                saveSubscription();
+                setShowMessageAlert(false);
+              } else {
+                setErrorAlert(true);
+              }
+            }}
+          >
+            Yes
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  },
+);
+
 const SearchUsers = ({
   handleSelectUser,
   handleSelectTrainer,
@@ -51,6 +104,7 @@ const SearchUsers = ({
   const [searchField, setSearchField] = useState("");
   const [trainerField, setTrainerField] = useState("");
   const [sessionDays, setSessionDays] = useState();
+  const [showMessageAlert, setShowMessageAlert] = useState(false);
 
   const subscriptionDataSchema = z.object({
     flexpro_id: z.number().gt(0, "Please select a user"),
@@ -73,8 +127,6 @@ const SearchUsers = ({
       data: result.data,
       isValid: result.success,
     });
-
-  const navigateToDashboard = useNavigate("/");
 
   const fieldStyle = { display: "flex", flexDirection: "column", gap: "3px" };
 
@@ -156,11 +208,24 @@ const SearchUsers = ({
             </NavLink>
           </div>
         ) : (
-          <NavLink onClick={saveSubscription}>
+          // <NavLink onClick={saveSubscription}>
+          <NavLink
+            onClick={() => {
+              setShowMessageAlert(true);
+            }}
+          >
             <SubscribedButton />
           </NavLink>
         )}
       </div>
+
+      <MessageBoxModal
+        show={showMessageAlert}
+        onHide={() => setShowMessageAlert(false)}
+        saveSubscription={saveSubscription}
+        setShowMessageAlert={setShowMessageAlert}
+        result={result}
+      />
     </div>
   );
 };

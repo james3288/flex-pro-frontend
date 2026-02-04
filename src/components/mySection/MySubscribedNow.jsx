@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 import instance from "../../others/axiosInstance";
 import { useQueryClient } from "@tanstack/react-query";
 import SearchUsers from "./userSubscriptionComponents/SearchUsers";
+import { Button, Modal } from "react-bootstrap";
 
 const useSubscribeNowServices = ({ flexProId }) => {
   //   get specific plan or subscription
