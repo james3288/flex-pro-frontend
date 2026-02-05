@@ -97,6 +97,107 @@ const ActiveUserCard = memo(({ user }) => {
   );
 });
 
+const CardSkeleton2 = memo(() => {
+  return (
+    <div className="scrollable-list-of-user">
+      {" "}
+      <div className="skeleton-card">
+        <div className="skeleton skeleton-img"></div>
+
+        <div className="skeleton-body">
+          <div className="skeleton skeleton-title"></div>
+          <div className="skeleton skeleton-text"></div>
+          <div className="skeleton skeleton-text short"></div>
+          <div className="skeleton skeleton-btn"></div>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+const ActiveUserCardSkeleton = memo(({ index: index }) => {
+  return (
+    <div className="clients-online" key={index}>
+      <div className="row row3">
+        <div className="img-skeleton"></div>
+        {/* <UserImage src={user?.image} /> */}
+        <div className="col-7">
+          <div className="clients-flex">
+            <div
+              style={{
+                backgroundColor: "rgb(22,22,22)",
+                width: "100%",
+                height: "10px",
+              }}
+            ></div>
+            <div style={{ display: "flex", width: "100%" }}>
+              <div
+                style={{
+                  width: "10px",
+                  height: "10px",
+                  marginTop: "5px",
+                  backgroundColor: "rgb(22,22,22)",
+                }}
+              ></div>
+              <div
+                style={{
+                  width: "50px",
+                  height: "10px",
+                  marginTop: "5px",
+                  marginLeft: "2px",
+                  backgroundColor: "rgb(22,22,22)",
+                }}
+              ></div>
+            </div>
+            <p
+              style={{
+                backgroundColor: "rgb(22,22,22)",
+                fontSize: "18px",
+                lineHeight: "19px",
+                height: "15px",
+                marginTop: "8px",
+                width: "180px",
+              }}
+            ></p>
+            <p
+              style={{
+                backgroundColor: "rgb(22,22,22)",
+                fontSize: "18px",
+                lineHeight: "19px",
+                height: "15px",
+                marginTop: "8px",
+              }}
+            ></p>
+            <p
+              style={{
+                backgroundColor: "rgb(22,22,22)",
+                fontSize: "18px",
+                lineHeight: "19px",
+                height: "15px",
+                marginTop: "-10px",
+              }}
+            ></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+const ListOfActiveUserCardSkeleton = memo(() => {
+  // [1, 2, 3, 4, 5].map((x) => {
+  //   return <ActiveUserCardSkeleton index={x} />;
+  // });
+  const skeleton = [1, 2];
+  return (
+    <div className="scrollable-list-of-user">
+      {skeleton.map((index) => {
+        return <ActiveUserCardSkeleton key={index} />;
+      })}
+    </div>
+  );
+});
+
 const ActiveDayPassUserCard = memo(({ user }) => {
   const sub = user;
   return (
@@ -169,12 +270,12 @@ const useUsersWithRemainingDaysDatas = () => {
               user?.usersubscription?.flexprouser?.user_id,
               user?.usersubscription?.session_days,
               user?.usersubscription?.id,
-              false
+              false,
             ).then((remaining) => ({
               ...user,
               remainingDays: remaining,
-            }))
-          )
+            })),
+          ),
         );
         if (isMounted) setUsersWithRemaining(processed);
       } catch (e) {
@@ -206,12 +307,12 @@ const useUsersWithRemainingDaysDatas = () => {
               user?.id,
               1,
               user?.subscription?.id,
-              false
+              false,
             ).then((remaining) => ({
               ...user,
               remainingDays: remaining,
-            }))
-          )
+            })),
+          ),
         );
         if (isMounted) setDayPassUserWithRemaining(processed);
       } catch (e) {
@@ -243,12 +344,12 @@ const useUsersWithRemainingDaysDatas = () => {
               user?.id,
               1,
               user?.subscription?.id,
-              false
+              false,
             ).then((remaining) => ({
               ...user,
               remainingDays: remaining,
-            }))
-          )
+            })),
+          ),
         );
         if (isMounted) setMembershipUserWithRemaining(processed);
       } catch (e) {
@@ -266,29 +367,29 @@ const useUsersWithRemainingDaysDatas = () => {
   // 🔹 Memoize filtered active users
   const activeUsers = useMemo(
     () => usersWithRemaining.filter((user) => user.remainingDays !== "Expired"),
-    [usersWithRemaining]
+    [usersWithRemaining],
   );
 
   // 🔹 Memoize filtered daypass users
   const activeDayPassUser = useMemo(
     () =>
       dayPassUserWithRemaining.filter(
-        (user) => user.remainingDays !== "Expired"
+        (user) => user.remainingDays !== "Expired",
       ),
-    [usersWithRemaining]
+    [usersWithRemaining],
   );
 
   // 🔹 Memoize filtered  membership users
   const activeMembershipUser = useMemo(
     () =>
       membershipUserWithRemaining.filter(
-        (user) => user.remainingDays !== "Expired"
+        (user) => user.remainingDays !== "Expired",
       ),
-    [membershipUserWithRemaining]
+    [membershipUserWithRemaining],
   );
 
   const ActiveUsersComponent = memo(() => {
-    if (isLoading || isPending) return <LoadingEffect />;
+    if (isLoading || isPending) return <CardSkeleton2 />;
     return (
       <div className="scrollable-list-of-user">
         {membershipUser.map((user) => (

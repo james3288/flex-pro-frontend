@@ -16,8 +16,8 @@
   background-image: url("./../../assets/img/hero/hero-8.jpg");
   height: 100vh;
   box-sizing: border-box;
-  font-family: "Muli", "Franklin Gothic Medium", "Arial Narrow", Arial,
-    sans-serif;
+  font-family:
+    "Muli", "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
   padding-top: 10em;
 
   .dashboard-col {
@@ -121,7 +121,79 @@
           }
         }
       }
+      .row3 {
+        display: flex;
+        width: 100%;
+        padding: 10px 0;
+
+        justify-content: center;
+        align-items: center;
+        .img-skeleton {
+          width: 25px;
+          height: 25px;
+          border-radius: 100%;
+          background-color: rgb(22, 22, 22);
+        }
+      }
     }
+  }
+}
+
+.skeleton-card {
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  align-items: center;
+  justify-content: flex-start;
+  padding: 20px;
+  background: rgba(7, 7, 7, 0.5);
+  margin: 10px 0;
+  border-radius: 5px;
+  // min-height: 100%;
+}
+
+.skeleton-img {
+  height: 20px;
+}
+
+.skeleton-body {
+  padding: 16px;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #131212 25%, #141414 37%, #0f0f0f 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+  border-radius: 8px;
+}
+
+.skeleton-title {
+  height: 20px;
+  width: 70%;
+  margin-bottom: 12px;
+}
+
+.skeleton-text {
+  height: 14px;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.skeleton-text.short {
+  width: 60%;
+}
+
+.skeleton-btn {
+  height: 36px;
+  width: 40%;
+  margin-top: 16px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
   }
 }
 
