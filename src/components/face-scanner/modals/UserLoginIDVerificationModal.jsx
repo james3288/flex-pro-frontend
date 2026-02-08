@@ -87,7 +87,15 @@ const UserFoundComponent = ({
               const userSub = user?.usersubscription;
               return (
                 <div key={user.id} style={{ marginBottom: "10px" }}>
-                  <h5 style={{ color: "green" }}>
+                  <h5
+                    style={{
+                      color: isMembership({
+                        subscription: userSub?.subscription?.gym_rate_desc,
+                      })
+                        ? "orange"
+                        : "green",
+                    }}
+                  >
                     {userSub?.subscription?.gym_rate_desc}
                   </h5>
                   <PrivateRemainingDays userSub={userSub} />
@@ -109,6 +117,7 @@ const UserFoundComponent = ({
                       </button>
                     </div>
                   )}
+                  <hr />
                 </div>
               );
             })}

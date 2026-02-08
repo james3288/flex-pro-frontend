@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ListOfUsers } from "./ListOfUsers";
 import { ListOfTrainers } from "./ListOfTrainers";
 import SessionDaysField from "../../subScribeNowComponents/SessionDaysField";
@@ -41,12 +41,18 @@ const useSaveSubscriptionServices = ({ data, isValid }) => {
   return { saveSubscription, isSuccessfullySaved, refreshSubscription };
 };
 
-const IssueComponent = ({ countError }) => {
+const IssueComponent = ({ countError, result }) => {
   if (countError > 0) {
     return (
-      <span style={{ color: "red" }}>
-        you need to select a user first before saving....
-      </span>
+      <div style={{ display: "flex", marginLeft: "20px" }}>
+        <ul>
+          {result?.error?.issues.map((issue) => (
+            <li key={issue.path[0]} style={{ color: "red", fontSize: "14px" }}>
+              {issue.message}
+            </li>
+          ))}
+        </ul>
+      </div>
     );
   }
 };
@@ -86,7 +92,9 @@ const MessageBoxModal = React.memo(
             Are you sure you want to save the subscription?
           </h5>
           <span>
-            {errorAlert && <IssueComponent countError={countError} />}
+            {errorAlert && (
+              <IssueComponent countError={countError} result={result} />
+            )}
           </span>
         </Modal.Body>
 
@@ -113,6 +121,11 @@ const MessageBoxModal = React.memo(
   },
 );
 
+const isObjectNotEmpty = (obj) => {
+  return Object.keys(obj).length > 0 ? true : false;
+};
+
+// main components
 const SearchUsers = ({
   handleSelectUser,
   handleSelectTrainer,
@@ -125,6 +138,7 @@ const SearchUsers = ({
   const [trainerField, setTrainerField] = useState("");
   const [sessionDays, setSessionDays] = useState(0);
   const [showMessageAlert, setShowMessageAlert] = useState(false);
+  const [promoRate, setPromoRate] = useState(0);
 
   const subscriptionDataSchema = z.object({
     flexpro_id: z.number().gt(0, "Please select a user."),
@@ -132,15 +146,23 @@ const SearchUsers = ({
     date_subscribed: z.date(),
     trainer_id: z.number(),
     sub_session_days: z.number("session days must be a number.").min(0),
+    promo_rate: z.number("promo rate must be a number").min(0),
   });
 
-  const result = subscriptionDataSchema.safeParse({
+  const validationData = {
     flexpro_id: subscriptionData?.flexpro_id,
     subscription_id: subscriptionData?.subscription_id,
     date_subscribed: subscriptionData?.date_subscribed,
     trainer_id: subscriptionData?.trainer_id,
     sub_session_days: parseInt(sessionDays),
-  });
+    promo_rate: isObjectNotEmpty(membershipData)
+      ? /^\d+(\.\d+)?$/.test(String(promoRate).trim())
+        ? parseFloat(promoRate)
+        : NaN
+      : 0,
+  };
+
+  const result = subscriptionDataSchema.safeParse(validationData);
 
   const { saveSubscription, isSuccessfullySaved, refreshSubscription } =
     useSaveSubscriptionServices({
@@ -149,7 +171,6 @@ const SearchUsers = ({
     });
 
   const fieldStyle = { display: "flex", flexDirection: "column", gap: "3px" };
-
   return (
     <div className="row search-users">
       <div className="col-lg-12">
@@ -193,6 +214,19 @@ const SearchUsers = ({
             disabled={isSuccessfullySaved ? true : false}
           />
         </div>
+
+        {isObjectNotEmpty(membershipData) && (
+          <div style={fieldStyle}>
+            <label style={{ color: "orange" }}>Promo Rate:</label>
+            <input
+              type="text"
+              placeholder="Promo Rate..."
+              onChange={(e) => setPromoRate(e.target.value)}
+              disabled={isSuccessfullySaved ? true : false}
+            />
+          </div>
+        )}
+
         <div>
           <ul>
             {result?.error?.issues.map((issue) => (
