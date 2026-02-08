@@ -75,8 +75,8 @@ const getUserSubscriptionReportByAll = async (dateFrom, dateTo) => {
           item?.subscription.per.per === "day"
             ? customizeRateFn(item.sub_session_days)
             : item?.subscription?.rate,
-        promo_option: "",
-        promo_rate: 0,
+        promo_option: item?.options,
+        promo_rate: item?.promo_rate,
       };
       newUser.push(object);
     });
@@ -163,6 +163,8 @@ const getUserSubscriptionReportByAll = async (dateFrom, dateTo) => {
       const dateB = new Date(b.date_subscribed);
       return dateB - dateA;
     });
+
+    console.log(sortedUsers);
 
     return sortedUsers;
   } catch (error) {

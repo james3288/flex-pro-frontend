@@ -283,31 +283,6 @@ const MySubscribedNow = () => {
                   subscriptionData={subscriptionData}
                   membershipData={membershipData}
                 />
-
-                {/* <div className="">
-                  {registered === true ? (
-                    <NavLink
-                      className="primary-btn pricing-btn save-subscriptions-successfully"
-                      to={"/"}
-                    >
-                      Back to Dashboard
-                    </NavLink>
-                  ) : (
-                    <NavLink
-                      className="primary-btn pricing-btn save-subscriptions"
-                      onClick={handleSaveSubscription}
-                      style={{
-                        pointerEvents: saveSubscriptionMutation.isPending
-                          ? "none"
-                          : "auto",
-                      }}
-                    >
-                      {saveSubscriptionMutation.isPending
-                        ? "Saving..."
-                        : "Save Subscription"}
-                    </NavLink>
-                  )}
-                </div> */}
               </div>
 
               <div className="col-lg-6 right-column">

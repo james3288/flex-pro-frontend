@@ -1,7 +1,7 @@
 import "./reportPage.scss";
 import logo from "./../../assets/img/logo-2.png";
 import GenerateReportModal from "../../components/modals/GenerateReportModal";
-import { useState } from "react";
+import React, { useState } from "react";
 import ByAll from "./ByAll";
 import ByExtendedTrainer from "./ByExtendedTrainer";
 import ByFreeTrainer from "./ByFreeTrainer";
@@ -95,6 +95,70 @@ const ExtendedTrainerColumnsComponent = () => {
   );
 };
 
+const CustomDataGridviewColumn = React.memo(({ typeOfSubscription }) => {
+  switch (typeOfSubscription) {
+    case "all":
+      return <AllSubscriptionColumnsCompontent />;
+    case "free-trainer":
+      return <FreeTrainerColumnsComponent />;
+    case "clients-on-workout":
+      return <ClientsOnWorkoutColumnsComponent />;
+
+    default:
+      return <ExtendedTrainerColumnsComponent />;
+  }
+});
+
+const CustomDataGridviewBody = React.memo(({ typeOfSubscription }) => {
+  switch (typeOfSubscription) {
+    case "all":
+      return <ByAll />;
+    case "free-trainer":
+      return <ByFreeTrainer />;
+    case "clients-on-workout":
+      return <ByClientsOnWorkout />;
+    default:
+      return <ByExtendedTrainer />;
+  }
+});
+
+const CustomDataGridviewGrandTotal = React.memo(
+  ({
+    subscription,
+    totalIncome,
+    totalExtendedTrainerSession,
+    totalFreeSession,
+    totalTrainerRate,
+  }) => {
+    return (
+      <div className="row total">
+        <div className="col-1 total-col"></div>
+        <div className="col-1 total-col"></div>
+        <div className="col-2 total-col"></div>
+        <div className="col-2 total-col"></div>
+        <div className="col-2 total-col">
+          <h2>TOTAL:</h2>
+        </div>
+        <div className="col-2 total-col">
+          <GrandTotalComponent
+            subscription={subscription}
+            totalIncome={totalIncome?.toLocaleString()}
+            freeSessionTotal={totalFreeSession}
+            extendedTrainerTotalSession={totalExtendedTrainerSession}
+          />
+        </div>
+        <div className="col-2 total-col">
+          <h2>
+            {subscription === "extended-trainer" &&
+              totalTrainerRate.toLocaleString()}
+          </h2>
+        </div>
+      </div>
+    );
+  },
+);
+
+// Main Components
 const ReportPage = () => {
   const [showReportsModal, setShowReportsModal] = useState(false);
   const {
@@ -129,52 +193,21 @@ const ReportPage = () => {
           Generate
         </button>
       </div>
-      {cSubscription === "all" ? (
-        <AllSubscriptionColumnsCompontent />
-      ) : cSubscription === "free-trainer" ? (
-        <FreeTrainerColumnsComponent />
-      ) : cSubscription === "clients-on-workout" ? (
-        <ClientsOnWorkoutColumnsComponent />
-      ) : (
-        <ExtendedTrainerColumnsComponent />
-      )}
 
-      {cSubscription === "all" ? (
-        <ByAll />
-      ) : cSubscription === "free-trainer" ? (
-        <ByFreeTrainer />
-      ) : cSubscription === "clients-on-workout" ? (
-        <ByClientsOnWorkout />
-      ) : (
-        <ByExtendedTrainer />
-      )}
+      <CustomDataGridviewColumn typeOfSubscription={cSubscription} />
+      <CustomDataGridviewBody typeOfSubscription={cSubscription} />
+      <CustomDataGridviewGrandTotal
+        subscription={cSubscription}
+        totalIncome={cSubscriptionTotalIncome}
+        totalExtendedTrainerSession={cExtendedTrainerTotalSession}
+        totalFreeSession={cFreeSessionTotal}
+        totalTrainerRate={cTotalTrainerRate}
+      />
 
-      <div className="row total">
-        <div className="col-1 total-col"></div>
-        <div className="col-1 total-col"></div>
-        <div className="col-2 total-col"></div>
-        <div className="col-2 total-col"></div>
-        <div className="col-2 total-col">
-          <h2>TOTAL:</h2>
-        </div>
-        <div className="col-2 total-col">
-          <GrandTotalComponent
-            subscription={cSubscription}
-            totalIncome={cSubscriptionTotalIncome?.toLocaleString()}
-            freeSessionTotal={cFreeSessionTotal}
-            extendedTrainerTotalSession={cExtendedTrainerTotalSession}
-          />
-        </div>
-        <div className="col-2 total-col">
-          <h2>
-            {cSubscription === "extended-trainer" &&
-              cTotalTrainerRate.toLocaleString()}
-          </h2>
-        </div>
-      </div>
       <GenerateReportModal
         show={showReportsModal}
         onHide={() => setShowReportsModal(false)}
+        setShowReportsModal={setShowReportsModal}
       />
     </div>
   );

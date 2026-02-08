@@ -8,6 +8,7 @@ import { useActiveCameraStore } from "../../../store/useActiveCamera";
 import useToastifyMessageComponent from "./../../../customHooks/useToastifyMessageComponent";
 import "../../../pages/userLoginPage/userLoginPage.scss";
 import RemainingDaysLeftComponent from "../../mySection/forRenewal/RemainingDaysLeftComponent";
+import { toUpperCase } from "zod";
 
 const UserSubscriptionFoundComponent = ({ users, onLogin, onCancel }) => {
   if (!users)
@@ -39,6 +40,14 @@ const UserSubscriptionFoundComponent = ({ users, onLogin, onCancel }) => {
   );
 };
 
+const isMembership = ({ subscription }) => {
+  if (subscription.toUpperCase() === "MEMBERSHIP") {
+    return true;
+  }
+
+  return false;
+};
+
 const PrivateRemainingDays = ({ userSub }) => (
   <RemainingDaysLeftComponent
     date_subscribed={userSub?.date_subscribed}
@@ -62,6 +71,8 @@ const UserFoundComponent = ({
 }) => {
   if (!user) return <h4 className="text-danger">No User has been found!</h4>;
 
+  const userInfo = user?.usersubscription?.flexprouser;
+
   return (
     <>
       <h5>Check if it's you?</h5>
@@ -69,32 +80,38 @@ const UserFoundComponent = ({
         <img src={user?.image} alt="" className="existing-user-result-img" />
         <div>
           <h3>
-            {user?.usersubscription?.flexprouser?.id} -{" "}
-            {user?.usersubscription?.flexprouser?.name}
+            {userInfo?.id} -{userInfo?.name}
           </h3>
           <div className="existing-subscription-result">
-            {users?.map((user) => (
-              <div key={user.id} style={{ marginBottom: "10px" }}>
-                <h5 style={{ color: "green" }}>
-                  {user?.usersubscription?.subscription?.gym_rate_desc}
-                </h5>
-                <PrivateRemainingDays userSub={user?.usersubscription} />
-                <div style={{ display: "flex", gap: "5px" }}>
-                  <button
-                    className="btn btn-success"
-                    onClick={() => {
-                      handleLoginOnclick({ userFound: user });
-                      onLogin && onLogin();
-                    }}
-                  >
-                    LOGIN
-                  </button>
-                  <button className="btn btn-danger" onClick={onCancel}>
-                    CANCEL
-                  </button>
+            {users?.map((user) => {
+              const userSub = user?.usersubscription;
+              return (
+                <div key={user.id} style={{ marginBottom: "10px" }}>
+                  <h5 style={{ color: "green" }}>
+                    {userSub?.subscription?.gym_rate_desc}
+                  </h5>
+                  <PrivateRemainingDays userSub={userSub} />
+                  {!isMembership({
+                    subscription: userSub?.subscription?.gym_rate_desc,
+                  }) && (
+                    <div style={{ display: "flex", gap: "5px" }}>
+                      <button
+                        className="btn btn-success"
+                        onClick={() => {
+                          handleLoginOnclick({ userFound: user });
+                          onLogin && onLogin();
+                        }}
+                      >
+                        LOGIN
+                      </button>
+                      <button className="btn btn-danger" onClick={onCancel}>
+                        CANCEL
+                      </button>
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
           {/* <h5>{user?.usersubscription?.subscription?.gym_rate_desc}</h5> */}
           {/* <div>
