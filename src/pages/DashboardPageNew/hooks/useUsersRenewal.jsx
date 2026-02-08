@@ -8,6 +8,7 @@ import dayPassImage from "@assets/img/dummy.png";
 import Loader2 from "@components/ui/loader2/Loader2";
 import Loader3 from "@components/ui/loader3/loader3";
 import formatTime from "@others/ReadableFormatTime";
+import CardSkeleton from "@components/ui/CardSkeleton/CardSkeleton";
 
 // 🔹 Child Components moved outside for stability
 const UserImage = memo(({ src }) => (
@@ -109,27 +110,6 @@ const ActiveMembershipUserCard = memo(({ user }) => {
         <div className="col-7">
           <div className="clients-flex">
             <MembershipUserInfo
-              name={sub?.name}
-              id={sub?.id}
-              gymRate={sub?.subscription?.gym_rate_desc}
-            />
-            <RemainingDaysDayPassWrapper userSub={sub} />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-});
-
-const ActiveDayPassUserCard = memo(({ user }) => {
-  const sub = user;
-  return (
-    <div className="clients-online">
-      <div className="row row2">
-        <UserImage src={dayPassImage} />
-        <div className="col-7">
-          <div className="clients-flex">
-            <UserInfo
               name={sub?.name}
               id={sub?.id}
               gymRate={sub?.subscription?.gym_rate_desc}
@@ -285,7 +265,7 @@ const useUsersRenewal = () => {
   );
 
   const ActiveUsersComponent = memo(() => {
-    if (isLoading || isPending) return <LoadingEffect />;
+    if (isLoading || isPending) return <CardSkeleton />;
     return (
       <div className="scrollable-list-of-user">
         {activeUsers.map((user) => (

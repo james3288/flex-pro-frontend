@@ -123,15 +123,15 @@ const SearchUsers = ({
 }) => {
   const [searchField, setSearchField] = useState("");
   const [trainerField, setTrainerField] = useState("");
-  const [sessionDays, setSessionDays] = useState();
+  const [sessionDays, setSessionDays] = useState(0);
   const [showMessageAlert, setShowMessageAlert] = useState(false);
 
   const subscriptionDataSchema = z.object({
-    flexpro_id: z.number().gt(0, "Please select a user"),
+    flexpro_id: z.number().gt(0, "Please select a user."),
     subscription_id: z.number(),
     date_subscribed: z.date(),
     trainer_id: z.number(),
-    sub_session_days: z.number().min(0),
+    sub_session_days: z.number("session days must be a number.").min(0),
   });
 
   const result = subscriptionDataSchema.safeParse({
@@ -139,7 +139,7 @@ const SearchUsers = ({
     subscription_id: subscriptionData?.subscription_id,
     date_subscribed: subscriptionData?.date_subscribed,
     trainer_id: subscriptionData?.trainer_id,
-    sub_session_days: subscriptionData?.sub_session_days,
+    sub_session_days: parseInt(sessionDays),
   });
 
   const { saveSubscription, isSuccessfullySaved, refreshSubscription } =
@@ -157,12 +157,21 @@ const SearchUsers = ({
           {membershipData?.usersubscription?.subscription?.gym_rate_desc}
         </h2>
         {planNow.per.per === "day" && (
-          <SessionDaysField
-            per={planNow.per.per}
-            sessionDays={sessionDays}
-            setSessionDays={setSessionDays}
-            setSubscriptionData={setSubscriptionData}
-          />
+          // <SessionDaysField
+          //   per={planNow.per.per}
+          //   sessionDays={sessionDays}
+          //   setSessionDays={setSessionDays}
+          //   setSubscriptionData={setSubscriptionData}
+          // />
+          <div style={fieldStyle}>
+            <label style={{ color: "orange" }}>Session days:</label>
+            <input
+              type="text"
+              placeholder="Session days...."
+              onChange={(e) => setSessionDays(e.target.value)}
+              disabled={isSuccessfullySaved ? true : false}
+            />
+          </div>
         )}
 
         <div style={fieldStyle}>

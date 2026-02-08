@@ -7,6 +7,7 @@ import { useNumpadStore } from "../store/numpadStore";
 import { useActiveCameraStore } from "../../../store/useActiveCamera";
 import useToastifyMessageComponent from "./../../../customHooks/useToastifyMessageComponent";
 import "../../../pages/userLoginPage/userLoginPage.scss";
+import RemainingDaysLeftComponent from "../../mySection/forRenewal/RemainingDaysLeftComponent";
 
 const UserSubscriptionFoundComponent = ({ users, onLogin, onCancel }) => {
   if (!users)
@@ -38,6 +39,20 @@ const UserSubscriptionFoundComponent = ({ users, onLogin, onCancel }) => {
   );
 };
 
+const PrivateRemainingDays = ({ userSub }) => (
+  <RemainingDaysLeftComponent
+    date_subscribed={userSub?.date_subscribed}
+    per={userSub?.subscription?.per?.per}
+    user_id={userSub?.flexprouser?.id}
+    session_days={userSub?.sub_session_days}
+    subscriptionId={userSub?.id}
+    id={userSub?.flexprouser?.id}
+    fullname={userSub?.flexprouser?.name}
+    fontColor={"#499c0d"}
+    fontSize="18px"
+  />
+);
+
 const UserFoundComponent = ({
   user,
   onLogin,
@@ -60,7 +75,10 @@ const UserFoundComponent = ({
           <div className="existing-subscription-result">
             {users?.map((user) => (
               <div key={user.id} style={{ marginBottom: "10px" }}>
-                <h5>{user?.usersubscription?.subscription?.gym_rate_desc}</h5>
+                <h5 style={{ color: "green" }}>
+                  {user?.usersubscription?.subscription?.gym_rate_desc}
+                </h5>
+                <PrivateRemainingDays userSub={user?.usersubscription} />
                 <div style={{ display: "flex", gap: "5px" }}>
                   <button
                     className="btn btn-success"
@@ -156,7 +174,6 @@ const UserLoginIDVerificationModal = memo(
                   <span style={{ fontSize: "2em" }}>{cNumpadResult}</span>
                 </h4>
               </div>
-
               <div className="col-8 existing-user">
                 <UserFoundComponent
                   user={cUserFound}
@@ -169,16 +186,6 @@ const UserLoginIDVerificationModal = memo(
                   users={cUserSubscriptionFound}
                   handleLoginOnclick={handleLoginOnclick}
                 />
-
-                {/* <UserSubscriptionFoundComponent
-                  users={cUserSubscriptionFound}
-                  onLogin={() => {
-                    handleLoginOnclick();
-                    onLogin && onLogin();
-                    onHide();
-                  }}
-                  onCancel={handleClearOnClick}
-                /> */}
               </div>
             </div>
 
