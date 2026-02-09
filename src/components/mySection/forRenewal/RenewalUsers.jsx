@@ -147,6 +147,7 @@ const RenewalUsers = ({
             setShowRemoveExtendedSubscriptionModal={
               setShowRemoveExtendedSubscriptionModal
             }
+            subscription={subscription}
           />
         </div>
       </div>

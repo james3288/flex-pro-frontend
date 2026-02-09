@@ -194,9 +194,7 @@ const MySubscribedNow = () => {
     }));
   };
 
-  useEffect(() => {
-    console.log(registered);
-  }, [registered, alreadySubscribed]);
+  useEffect(() => {}, [registered, alreadySubscribed]);
 
   useEffect(() => {
     if (myImage != null && myImage.current) {
@@ -279,6 +277,8 @@ const MySubscribedNow = () => {
                   handleSelectUser={handleSelectUser}
                   handleSelectTrainer={handleSelectTrainer}
                   setSubscriptionData={setSubscriptionData}
+                  handleCancelUser={handleCancelUser}
+                  handleCancelTrainer={handleCancelTrainer}
                   planNow={planNow}
                   subscriptionData={subscriptionData}
                   membershipData={membershipData}

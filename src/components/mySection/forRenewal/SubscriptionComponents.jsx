@@ -85,7 +85,7 @@ const SubscriptionComponents = ({
         ))}
 
         {/* EXTEND SUBSCRIPTION BUTTON */}
-        {!isExpired && (
+        {!isExpired && subscription != "MEMBERSHIP" && (
           <button
             type="button"
             className="btn btn-secondary btn-sm extend-subscription"

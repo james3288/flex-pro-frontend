@@ -133,12 +133,14 @@ const SearchUsers = ({
   planNow,
   subscriptionData,
   membershipData,
+  handleCancelUser,
+  handleCancelTrainer,
 }) => {
   const [searchField, setSearchField] = useState("");
   const [trainerField, setTrainerField] = useState("");
   const [sessionDays, setSessionDays] = useState(0);
   const [showMessageAlert, setShowMessageAlert] = useState(false);
-  const [promoRate, setPromoRate] = useState(0);
+  const [promoRate, setPromoRate] = useState("");
 
   const subscriptionDataSchema = z.object({
     flexpro_id: z.number().gt(0, "Please select a user."),
@@ -147,6 +149,7 @@ const SearchUsers = ({
     trainer_id: z.number(),
     sub_session_days: z.number("session days must be a number.").min(0),
     promo_rate: z.number("promo rate must be a number").min(0),
+    promo_option: z.string(),
   });
 
   const validationData = {
@@ -160,6 +163,7 @@ const SearchUsers = ({
         ? parseFloat(promoRate)
         : NaN
       : 0,
+    promo_option: isObjectNotEmpty(membershipData) ? "promo" : "",
   };
 
   const result = subscriptionDataSchema.safeParse(validationData);
@@ -265,6 +269,8 @@ const SearchUsers = ({
                 refreshSubscription();
                 setSearchField("");
                 setTrainerField("");
+                handleCancelUser();
+                handleCancelTrainer();
               }}
             >
               <RefreshSubscription />

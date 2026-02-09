@@ -80,6 +80,7 @@ const PersonalTrainerComponents = ({
   isExpired,
   setShowRemovePersonalTrainer,
   setShowRemoveExtendedSubscriptionModal,
+  subscription,
 }) => {
   const [extendedTrainer, setExtendedTrainer] = useState([]);
 
@@ -202,7 +203,7 @@ const PersonalTrainerComponents = ({
         )}
       </div>
 
-      {!isExpired && (
+      {!isExpired && subscription != "MEMBERSHIP" && (
         <>
           <AddButton
             label="Free Personal Trainer"
