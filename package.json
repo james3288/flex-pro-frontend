@@ -28,6 +28,7 @@
     "react-owl-carousel": "^2.3.3",
     "react-router-dom": "^6.22.1",
     "react-scroll": "^1.9.0",
+    "react-select": "^5.10.2",
     "react-time-ago": "^7.2.1",
     "react-toastify": "^11.0.5",
     "react-webcam": "^7.2.0",

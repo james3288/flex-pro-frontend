@@ -7,6 +7,7 @@ import ByExtendedTrainer from "./ByExtendedTrainer";
 import ByFreeTrainer from "./ByFreeTrainer";
 import getter from "../../getter/getter";
 import ByClientsOnWorkout from "./ByClientsOnWorkout";
+import ReportsFilterModal from "../../components/modals/ReportsFilterModal";
 
 const GrandTotalInfo = ({ children }) => {
   return <h2>{children}</h2>;
@@ -161,6 +162,7 @@ const CustomDataGridviewGrandTotal = React.memo(
 // Main Components
 const ReportPage = () => {
   const [showReportsModal, setShowReportsModal] = useState(false);
+  const [showFilterModal, setShowFilterModal] = useState(false);
   const {
     cFreeSessionTotal,
     cTotalTrainerRate,
@@ -179,19 +181,28 @@ const ReportPage = () => {
     setShowReportsModal(true);
   };
 
+  const handleFilterData = () => {
+    setShowFilterModal(true);
+  };
+
   return (
     <div className="container wrapper">
       <div className="banner">
         <img src={logo} alt="" />
-        <button
-          className="btn btn-danger"
-          onClick={handleGenerateData}
-          data-toggle="modal"
-          data-target="#generate-report-data"
-          data-whatever="@mdo"
-        >
-          Generate
-        </button>
+        <div>
+          <button className="btn btn-primary" onClick={handleFilterData}>
+            Filter
+          </button>
+          <button
+            className="btn btn-danger"
+            onClick={handleGenerateData}
+            data-toggle="modal"
+            data-target="#generate-report-data"
+            data-whatever="@mdo"
+          >
+            Generate
+          </button>
+        </div>
       </div>
 
       <CustomDataGridviewColumn typeOfSubscription={cSubscription} />
@@ -208,6 +219,11 @@ const ReportPage = () => {
         show={showReportsModal}
         onHide={() => setShowReportsModal(false)}
         setShowReportsModal={setShowReportsModal}
+      />
+      <ReportsFilterModal
+        show={showFilterModal}
+        onHide={() => setShowFilterModal(false)}
+        setShowReportsModal={setShowFilterModal}
       />
     </div>
   );
