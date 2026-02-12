@@ -21,6 +21,8 @@ const initialState = {
   userSubscriptionReportByFreeTrainer: [],
   totalTrainerRate: 0,
   listOfSubscription: [],
+  selectedUsers: [],
+  selectedSubsriptions: [],
 };
 
 const totalIncome = ({ item }) => {
@@ -29,6 +31,23 @@ const totalIncome = ({ item }) => {
     : parseFloat(item.extended_session);
 };
 
+const getSubTotalIncome = ({ subReports, _selectedUsers }) => {
+  if (_selectedUsers?.length) {
+    return subReports
+      ?.filter((x) =>
+        _selectedUsers.some((name) => x.user.includes(name.value)),
+      )
+      .reduce(
+        (total, item) => total + totalIncome({ item }),
+        0.0, // Start accumulating from 0
+      );
+  }
+
+  return subReports.reduce(
+    (total, item) => total + totalIncome({ item }),
+    0.0, // Start accumulating from 0
+  );
+};
 export const useReportStore = create((set) => ({
   ...initialState,
   setModalTitle: (data) => set((state) => ({ modalTitle: data })),
@@ -73,10 +92,10 @@ export const useReportStore = create((set) => ({
     ),
   setSubscriptionTotalIncome: async () =>
     set((state) => ({
-      subscriptionTotalIncome: state?.userSubscriptionReport.reduce(
-        (total, item) => total + totalIncome({ item }),
-        0.0, // Start accumulating from 0
-      ),
+      subscriptionTotalIncome: getSubTotalIncome({
+        subReports: state?.userSubscriptionReport,
+        _selectedUsers: state?.selectedUsers,
+      }),
     })),
 
   setExtendedTrainerTotalSession: async () =>
@@ -122,4 +141,11 @@ export const useReportStore = create((set) => ({
         0,
       ),
     })),
+
+  setSelectedUsers: async (data) =>
+    set(
+      produce((state) => {
+        state.selectedUsers = data;
+      }),
+    ),
 }));

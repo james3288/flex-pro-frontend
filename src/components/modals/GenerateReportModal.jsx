@@ -9,7 +9,7 @@ import getSubscriptionReportByFreeTrainer from "../../getData/getSubscriptionRep
 import getUserSubscriptionReportByAll from "../../getData/getUserSubscriptionReportByAll";
 import { Button, Modal } from "react-bootstrap";
 
-const GenerateReportModal = ({ show, onHide, setShowReportsModal }) => {
+const GenerateReportModal = ({ show, onHide }) => {
   const cModalTitle = useReportStore((state) => state.modalTitle);
   const cModalId = useReportStore((state) => state.modalId);
 
@@ -181,7 +181,7 @@ const GenerateReportModal = ({ show, onHide, setShowReportsModal }) => {
     } else if (subscription === "select-all") {
     }
 
-    setShowReportsModal(false);
+    // setShowReportsModal(false);
   };
 
   // const formatDateTimeLocal = (date) => {

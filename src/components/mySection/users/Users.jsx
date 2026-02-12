@@ -1,5 +1,6 @@
-import React, { memo, useCallback } from "react";
+import React, { memo, Suspense, useCallback } from "react";
 import { NavLink } from "react-router-dom";
+import Loader3 from "../../ui/loader3/Loader3";
 
 const buttonStyle = { color: "white" };
 
@@ -25,7 +26,14 @@ const Users1 = ({
   return (
     <div className="col-lg-2 col-sm-3">
       <div className="ts-item set-bg bg">
-        <img src={image} alt={`${name}'s profile`} className="img" />
+        <div>
+          <img
+            src={image}
+            alt={`${name}'s profile`}
+            className="img"
+            loading="lazy"
+          />
+        </div>
 
         <div className="ts_text">
           <h4>

@@ -1,75 +1,118 @@
-import FormatDateOnly from "../../others/FormatDateOnly";
-import Loader3 from "../../components/ui/loader3/Loader3";
-import JollyShapeLoading from "../../components/ui/jollyShapeLoading/JollyShapeLoading";
-import formatTimeToString from "@others/formatTimeToString";
+import React, { memo } from "react";
+import { shallow } from "zustand/shallow";
 import { useReportStore } from "../../store/useReportStore";
 import useOnWorkOutDataByDateRange from "../../hooks/useOnWorkOutDataByDateRange";
+
+import FormatDateOnly from "../../others/FormatDateOnly";
+import formatTimeToString from "@others/formatTimeToString";
 import Loading5 from "../../components/ui/loading5/Loading5";
 
-const isExpired = (value) => {
-  return value === "Expired" ? "red" : "green";
-};
+/* ======================================================
+   Utility Helpers (Pure Functions)
+====================================================== */
 
-const is1990 = (value) => {
-  return value?.includes("1990") ? "--:--" : formatTimeToString(value);
-};
+const getExpiryColor = (value) =>
+  value === "Expired" ? "red" : "green";
 
-const ByClientsOnWorkout = ({ index }) => {
-  const [cDateFrom, cDateTo] = useReportStore((state) => [
-    state.reportData.dateFrom,
-    state.reportData.dateTo,
-  ]);
+const formatTimeOut = (value) =>
+  value?.includes("1990")
+    ? "--:--"
+    : formatTimeToString(value);
 
-  const { data, isLoading, error, isPending } = useOnWorkOutDataByDateRange({
-    dateFrom: cDateFrom,
-    dateTo: cDateTo,
-    trigger: false,
-  });
+/* ======================================================
+   Row Component (Memoized)
+====================================================== */
 
-  if (isLoading) {
-    return <Loading5 />;
-  }
+const WorkoutRow = memo(({ user, index }) => {
+  const {
+    id,
+    date_log,
+    time_in,
+    time_out,
+    extendedSubDays,
+    usersubscription,
+  } = user;
 
-  const { usersOnline, dayPassUsersOnline } = data;
+  const name = usersubscription?.flexprouser?.name;
+  const rateDesc =
+    usersubscription?.subscription?.gym_rate_desc;
 
-  //   dayPassUsersOnline
+  const formattedDate = FormatDateOnly(date_log);
+  const formattedTimeIn = formatTimeToString(time_in);
+  const formattedTimeOut = formatTimeOut(time_out);
+  const expiryColor = getExpiryColor(extendedSubDays);
 
-  return usersOnline?.map((user, index) => (
-    <>
-      <div className="row body" key={user?.id}>
-        <div className="col-1">
-          <div className="body-col">{index + 1}</div>
-        </div>
-        <div className="col-2">
-          <div className="body-col">
-            {user?.usersubscription?.flexprouser?.name}
-          </div>
-        </div>
-        <div className="col-2">
-          <div className="body-col">{FormatDateOnly(user?.date_log)}</div>
-        </div>
-        <div className="col-2">
-          <div className="body-col">
-            {user?.usersubscription?.subscription?.gym_rate_desc}
-          </div>
-        </div>
-        <div className="col-2">
-          <div className="body-col">{formatTimeToString(user?.time_in)}</div>
-        </div>
-        <div className="col-1">
-          <div className="body-col">{is1990(user?.time_out)}</div>
-        </div>
-        <div className="col-2">
-          <div
-            className="body-col"
-            style={{ color: isExpired(user?.extendedSubDays) }}
-          >
-            {user?.extendedSubDays}
-          </div>
+  return (
+    <div className="row body">
+      <div className="col-1">
+        <div className="body-col">{index + 1}</div>
+      </div>
+
+      <div className="col-2">
+        <div className="body-col">{name}</div>
+      </div>
+
+      <div className="col-2">
+        <div className="body-col">{formattedDate}</div>
+      </div>
+
+      <div className="col-2">
+        <div className="body-col">{rateDesc}</div>
+      </div>
+
+      <div className="col-2">
+        <div className="body-col">{formattedTimeIn}</div>
+      </div>
+
+      <div className="col-1">
+        <div className="body-col">{formattedTimeOut}</div>
+      </div>
+
+      <div className="col-2">
+        <div
+          className="body-col"
+          style={{ color: expiryColor }}
+        >
+          {extendedSubDays}
         </div>
       </div>
-    </>
+    </div>
+  );
+});
+
+/* ======================================================
+   Main Component
+====================================================== */
+
+const ByClientsOnWorkout = () => {
+  const { dateFrom, dateTo } = useReportStore(
+    (state) => ({
+      dateFrom: state.reportData.dateFrom,
+      dateTo: state.reportData.dateTo,
+    }),
+    shallow
+  );
+
+  const { data, isLoading } =
+    useOnWorkOutDataByDateRange({
+      dateFrom,
+      dateTo,
+      trigger: false,
+    });
+
+  if (isLoading) return <Loading5 />;
+
+  const usersOnline = data?.usersOnline ?? [];
+
+  if (!usersOnline.length) return null;
+
+  return usersOnline.map((user, index) => (
+    <WorkoutRow
+      key={user?.id ?? `${index}-${user?.date_log}`}
+      user={user}
+      index={index}
+    />
   ));
 };
 
-export default ByClientsOnWorkout;
+export default memo(ByClientsOnWorkout);

@@ -8,16 +8,8 @@ import DeleteUserModal from "./DeleteUserModal";
 import UserContractModal from "./UserContractModal";
 import NoDataFound from "../noDataFound/NoDataFound";
 import Loader3 from "../../ui/loader3/Loader3";
-
-const MyUsers = () => {
-  const [isPending2, startTransition] = useTransition();
-  const searchRef = useRef();
-  const [selectedUser, setSelectedUser] = useState();
-  const [filterData, setFilterData] = useState([]);
-  const [showUsersInfoModal, setShowUsersInfoModal] = useState(false);
-  const [showRemoveUserModal, setShowRemoveUserModal] = useState(false);
-  const [showContractModal, setShowContractModal] = useState(false);
-
+import "./myUsers.scss";
+const useUsersInfrastructure = () => {
   const {
     isPending,
     error,
@@ -28,13 +20,12 @@ const MyUsers = () => {
     staleTime: 1000 * 60, // cache for 1 minute
   });
 
-  if (isPending) {
-    return (
-      <div id="preloder">
-        <div className="loader"></div>
-      </div>
-    );
-  }
+  return { isPending, error, data };
+};
+
+const useUsersServices = ({ data }) => {
+  const [isPending2, startTransition] = useTransition();
+  const [filterData, setFilterData] = useState([]);
 
   const handleOnChange = (e) => {
     const query = e.target.value.toLowerCase();
@@ -54,6 +45,31 @@ const MyUsers = () => {
       );
     });
   };
+
+  return { handleOnChange, filterData, isPending2 };
+};
+
+// MAIN COMPONENTS
+const MyUsers = () => {
+  const searchRef = useRef();
+  const [selectedUser, setSelectedUser] = useState();
+  const [showUsersInfoModal, setShowUsersInfoModal] = useState(false);
+  const [showRemoveUserModal, setShowRemoveUserModal] = useState(false);
+  const [showContractModal, setShowContractModal] = useState(false);
+
+  const { isPending, error, data } = useUsersInfrastructure();
+
+  const { handleOnChange, filterData, isPending2 } = useUsersServices({
+    data: data,
+  });
+
+  // if (isPending) {
+  //   return (
+  //     <div id="preloder">
+  //       <div className="loader"></div>
+  //     </div>
+  //   );
+  // }
 
   // Decide which dataset to render: filtered or all
   const usersToRender =

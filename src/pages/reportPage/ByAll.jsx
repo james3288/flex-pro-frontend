@@ -1,65 +1,99 @@
-import React, { useState } from "react";
+import React, { memo } from "react";
 import { useReportStore } from "../../store/useReportStore";
 import FormatDateOnly from "../../others/FormatDateOnly";
-import getter from "../../getter/getter";
 
-const CustomRate = ({ option, promo_rate, defaultRate }) => {
-  if (option === "promo") {
-    return parseFloat(promo_rate);
-  }
-  return parseFloat(defaultRate);
-};
+/* ======================================================
+   Pure Helper Functions (No React Component Overhead)
+====================================================== */
 
-const CustomPer = ({ options, per }) => {
-  if (options === "promo") {
-    return `${per} (PROMO)`;
-  }
-  return per;
-};
+const getRate = (option, promoRate, defaultRate) =>
+  option === "promo" ? Number(promoRate || 0) : Number(defaultRate || 0);
 
-const ByAll = React.memo(() => {
-  // const cUserSubscriptionReport = useReportStore(
-  //   (state) => state.userSubscriptionReport
-  // );
+const getPerLabel = (option, per) =>
+  option === "promo" ? `${per} (PROMO)` : per;
 
-  const { cUserSubscriptionReport } = getter();
+/* ======================================================
+   Row Component (Memoized)
+====================================================== */
 
-  console.log(cUserSubscriptionReport);
+const ByAllRow = memo(({ item, index }) => {
+  const {
+    user,
+    date_subscribed,
+    gym_rate_desc,
+    trainer,
+    promo_option,
+    promo_rate,
+    extended_session,
+    per,
+  } = item;
 
-  return cUserSubscriptionReport?.map((item, index) => (
-    <div className="row body" key={item?.id}>
+  const formattedDate = FormatDateOnly(date_subscribed);
+  const rate = getRate(promo_option, promo_rate, extended_session);
+  const perLabel = getPerLabel(promo_option, per);
+
+  return (
+    <div className="row body">
       <div className="col-1">
         <div className="body-col">{index + 1}</div>
       </div>
       <div className="col-2">
-        <div className="body-col">{item?.user}</div>
+        <div className="body-col">{user}</div>
       </div>
       <div className="col-2">
-        <div className="body-col">{FormatDateOnly(item?.date_subscribed)}</div>
+        <div className="body-col">{formattedDate}</div>
       </div>
       <div className="col-2">
-        <div className="body-col">{item?.gym_rate_desc}</div>
+        <div className="body-col">{gym_rate_desc}</div>
       </div>
       <div className="col-2">
-        <div className="body-col">{item?.trainer}</div>
+        <div className="body-col">{trainer}</div>
       </div>
       <div className="col-1">
-        {/*{item?.extended_session} */}
-        <div className="body-col">
-          <CustomRate
-            option={item?.promo_option}
-            promo_rate={item?.promo_rate}
-            defaultRate={item?.extended_session}
-          />
-        </div>
+        <div className="body-col">{rate}</div>
       </div>
       <div className="col-2">
-        <div className="body-col">
-          <CustomPer options={item?.promo_option} per={item?.per} />
-        </div>
+        <div className="body-col">{perLabel}</div>
       </div>
     </div>
-  ));
+  );
 });
 
-export default ByAll;
+/* ======================================================
+   Main Component
+====================================================== */
+
+const ByAll = () => {
+  const [userSubscriptionReport, cSelectedUsers] = useReportStore((state) => [
+    state.userSubscriptionReport,
+    state.selectedUsers,
+  ]);
+
+  if (!userSubscriptionReport?.length) return null;
+
+  if (cSelectedUsers?.length) {
+    const subNew = userSubscriptionReport
+      ?.filter((x) =>
+        cSelectedUsers.some((name) => x.user.includes(name.value)),
+      )
+      .map((item, index) => (
+        <ByAllRow
+          key={item?.id ?? `${item?.user}-${index}`}
+          item={item}
+          index={index}
+        />
+      ));
+
+    return subNew;
+  }
+
+  return userSubscriptionReport.map((item, index) => (
+    <ByAllRow
+      key={item?.id ?? `${item?.user}-${index}`}
+      item={item}
+      index={index}
+    />
+  ));
+};
+
+export default memo(ByAll);

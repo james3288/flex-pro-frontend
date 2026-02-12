@@ -1,34 +1,71 @@
-import React, { useEffect, useState } from "react";
+import React, { useMemo, useState, useCallback, useEffect } from "react";
 import { Button, Modal } from "react-bootstrap";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import getter from "../../getter/getter";
+import { useReportStore } from "../../store/useReportStore";
 
 const animatedComponents = makeAnimated();
 
-const options = [
-  { value: "chocolate", label: "Chocolate" },
-  { value: "strawberry", label: "Strawberry" },
-  { value: "vanilla", label: "Vanilla" },
-];
-
-const ReportsFilterModal = ({ show, onHide }) => {
+const ReportsFilterModal = ({ show, onHide, onSearch }) => {
   const [selectedUser, setSelectedUser] = useState([]);
-  const { cUserSubscriptionReport } = getter();
-  const [myOptions, setMyOptions] = useState(null);
+  const [selectedSubscription, setSelectedSubscription] = useState([]);
 
-  useEffect(() => {
-    setMyOptions([
-      {
-        value: cUserSubscriptionReport[0].user,
-        label: cUserSubscriptionReport[0].user,
-      },
-    ]);
+  const { cUserSubscriptionReport = [] } = getter();
+  const [cSetSelectedUsers, cSetSubscriptionTotalIncome] = useReportStore(
+    (state) => {
+      return [state.setSelectedUsers, state.setSubscriptionTotalIncome];
+    },
+  );
+
+  const myOptions = useMemo(() => {
+    if (!Array.isArray(cUserSubscriptionReport)) return [];
+
+    const uniqueUsers = [
+      ...new Set(
+        cUserSubscriptionReport
+          .filter((item) => item?.user)
+          .map((item) => item.user),
+      ),
+    ];
+
+    return uniqueUsers.map((user) => ({
+      value: user,
+      label: user.toUpperCase(),
+    }));
   }, [cUserSubscriptionReport]);
 
-  const handleOnchange = (option) => {
-    setSelectedUser(option);
-  };
+  const mySubscriptions = useMemo(() => {
+    if (!Array.isArray(cUserSubscriptionReport)) return [];
+
+    const uniqueSubscriptions = [
+      ...new Set(
+        cUserSubscriptionReport
+          .filter((item) => item?.gym_rate_desc)
+          .map((item) => item.gym_rate_desc),
+      ),
+    ];
+
+    return uniqueSubscriptions.map((gym_sub) => ({
+      value: gym_sub,
+      label: gym_sub.toUpperCase(),
+    }));
+  }, [cUserSubscriptionReport]);
+
+  const handleUserOnchange = useCallback((option) => {
+    setSelectedUser(option ?? []);
+    cSetSelectedUsers(option ?? []);
+
+    cSetSubscriptionTotalIncome();
+  }, []);
+
+  const handleSubscriptionOnchange = useCallback((sub) => {
+    setSelectedSubscription(sub ?? []);
+  }, []);
+
+  const handleSearch = useCallback(() => {
+    onSearch?.(selectedUser);
+  }, [onSearch, selectedUser]);
 
   return (
     <Modal show={show} onHide={onHide} size="lg" centered>
@@ -37,13 +74,31 @@ const ReportsFilterModal = ({ show, onHide }) => {
       </Modal.Header>
 
       <Modal.Body>
-        <label className="col-form-label">Category</label>
+        <label htmlFor="users-select" className="col-form-label">
+          Users
+        </label>
+
         <Select
+          inputId="users-select"
           closeMenuOnSelect={false}
           components={animatedComponents}
           isMulti
           options={myOptions}
-          onChange={handleOnchange}
+          value={selectedUser}
+          onChange={handleUserOnchange}
+        />
+
+        <label htmlFor="subscription-select" className="col-form-label">
+          Subscription
+        </label>
+        <Select
+          inputId="subscription-select"
+          closeMenuOnSelect={false}
+          components={animatedComponents}
+          isMulti
+          options={mySubscriptions}
+          value={selectedSubscription}
+          onChange={handleSubscriptionOnchange}
         />
       </Modal.Body>
 
@@ -51,10 +106,12 @@ const ReportsFilterModal = ({ show, onHide }) => {
         <Button variant="secondary" onClick={onHide}>
           Close
         </Button>
-        <Button variant="primary">Search</Button>
+        <Button variant="primary" onClick={handleSearch}>
+          Search
+        </Button>
       </Modal.Footer>
     </Modal>
   );
 };
 
-export default ReportsFilterModal;
+export default React.memo(ReportsFilterModal);
