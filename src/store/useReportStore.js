@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { produce } from "immer";
 import getSubscriptions from "../getData/getSubscriptions";
-import { useMemo } from "react";
 
 const initialState = {
   reportData: {
@@ -22,7 +21,7 @@ const initialState = {
   totalTrainerRate: 0,
   listOfSubscription: [],
   selectedUsers: [],
-  selectedSubsriptions: [],
+  selectedSubscriptions: [],
 };
 
 const totalIncome = ({ item }) => {
@@ -31,16 +30,35 @@ const totalIncome = ({ item }) => {
     : parseFloat(item.extended_session);
 };
 
-const getSubTotalIncome = ({ subReports, _selectedUsers }) => {
+const filterSubReports = ({ selected }) => {
+  return subReports?.filter((x) =>
+    selected.some((name) => x.user.includes(name.value)),
+  );
+};
+
+const getSubTotalIncome = ({
+  subReports,
+  _selectedUsers,
+  _selectedSubscriptions,
+}) => {
   if (_selectedUsers?.length) {
     return subReports
-      ?.filter((x) =>
-        _selectedUsers.some((name) => x.user.includes(name.value)),
-      )
-      .reduce(
-        (total, item) => total + totalIncome({ item }),
-        0.0, // Start accumulating from 0
-      );
+      ?.filter((x) => {
+        const userMatch =
+          !_selectedUsers?.length ||
+          _selectedUsers.some((name) => x.user.includes(name.value));
+
+        const subscriptionMatch =
+          !_selectedSubscriptions?.length ||
+          _selectedSubscriptions.some((name) =>
+            x.gym_rate_desc.includes(name.value),
+          );
+
+        console.log(userMatch, subscriptionMatch);
+
+        return userMatch && subscriptionMatch;
+      })
+      .reduce((total, item) => total + totalIncome({ item }), 0);
   }
 
   return subReports.reduce(
@@ -48,6 +66,7 @@ const getSubTotalIncome = ({ subReports, _selectedUsers }) => {
     0.0, // Start accumulating from 0
   );
 };
+
 export const useReportStore = create((set) => ({
   ...initialState,
   setModalTitle: (data) => set((state) => ({ modalTitle: data })),
@@ -95,9 +114,9 @@ export const useReportStore = create((set) => ({
       subscriptionTotalIncome: getSubTotalIncome({
         subReports: state?.userSubscriptionReport,
         _selectedUsers: state?.selectedUsers,
+        _selectedSubscriptions: state?.selectedSubscriptions,
       }),
     })),
-
   setExtendedTrainerTotalSession: async () =>
     set((state) => ({
       extendedTrainerTotalSession: state?.extendedTrainerReport?.reduce(
@@ -141,11 +160,16 @@ export const useReportStore = create((set) => ({
         0,
       ),
     })),
-
   setSelectedUsers: async (data) =>
     set(
       produce((state) => {
         state.selectedUsers = data;
+      }),
+    ),
+  setSelectedSubscriptions: async (data) =>
+    set(
+      produce((state) => {
+        state.selectedSubscriptions = data;
       }),
     ),
 }));

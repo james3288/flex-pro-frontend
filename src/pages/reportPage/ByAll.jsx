@@ -64,25 +64,65 @@ const ByAllRow = memo(({ item, index }) => {
 ====================================================== */
 
 const ByAll = () => {
-  const [userSubscriptionReport, cSelectedUsers] = useReportStore((state) => [
-    state.userSubscriptionReport,
-    state.selectedUsers,
-  ]);
+  const [userSubscriptionReport, cSelectedUsers, cSelectedSubscriptions] =
+    useReportStore((state) => [
+      state.userSubscriptionReport,
+      state.selectedUsers,
+      state.selectedSubscriptions,
+    ]);
 
   if (!userSubscriptionReport?.length) return null;
 
+  let { filterA, filterB } = [];
+
   if (cSelectedUsers?.length) {
-    const subNew = userSubscriptionReport
-      ?.filter((x) =>
-        cSelectedUsers.some((name) => x.user.includes(name.value)),
-      )
-      .map((item, index) => (
-        <ByAllRow
-          key={item?.id ?? `${item?.user}-${index}`}
-          item={item}
-          index={index}
-        />
-      ));
+    filterA = userSubscriptionReport?.filter((x) =>
+      cSelectedUsers.some((name) => x.user.includes(name.value)),
+    );
+  }
+
+  if (cSelectedSubscriptions?.length) {
+    filterB = filterA?.filter((x) =>
+      cSelectedSubscriptions.some((name) =>
+        x.gym_rate_desc.includes(name.value),
+      ),
+    );
+  }
+
+  if (filterA?.length && filterB === undefined) {
+    const subNew = filterA.map((item, index) => (
+      <ByAllRow
+        key={item?.id ?? `${item?.user}-${index}`}
+        item={item}
+        index={index}
+      />
+    ));
+
+    return subNew;
+  } else if (filterA?.length && filterB?.length) {
+    const subNew = filterB.map((item, index) => (
+      <ByAllRow
+        key={item?.id ?? `${item?.user}-${index}`}
+        item={item}
+        index={index}
+      />
+    ));
+
+    return subNew;
+  } else if (cSelectedSubscriptions.length && cSelectedUsers.length === 0) {
+    const filterC = userSubscriptionReport?.filter((x) =>
+      cSelectedSubscriptions.some((name) =>
+        x.gym_rate_desc.includes(name.value),
+      ),
+    );
+
+    const subNew = filterC.map((item, index) => (
+      <ByAllRow
+        key={item?.id ?? `${item?.user}-${index}`}
+        item={item}
+        index={index}
+      />
+    ));
 
     return subNew;
   }

@@ -12,11 +12,17 @@ const ReportsFilterModal = ({ show, onHide, onSearch }) => {
   const [selectedSubscription, setSelectedSubscription] = useState([]);
 
   const { cUserSubscriptionReport = [] } = getter();
-  const [cSetSelectedUsers, cSetSubscriptionTotalIncome] = useReportStore(
-    (state) => {
-      return [state.setSelectedUsers, state.setSubscriptionTotalIncome];
-    },
-  );
+  const [
+    cSetSelectedUsers,
+    cSetSubscriptionTotalIncome,
+    cSetSelectedSubscriptions,
+  ] = useReportStore((state) => {
+    return [
+      state.setSelectedUsers,
+      state.setSubscriptionTotalIncome,
+      state.setSelectedSubscriptions,
+    ];
+  });
 
   const myOptions = useMemo(() => {
     if (!Array.isArray(cUserSubscriptionReport)) return [];
@@ -61,6 +67,9 @@ const ReportsFilterModal = ({ show, onHide, onSearch }) => {
 
   const handleSubscriptionOnchange = useCallback((sub) => {
     setSelectedSubscription(sub ?? []);
+    cSetSelectedSubscriptions(sub ?? []);
+
+    cSetSubscriptionTotalIncome();
   }, []);
 
   const handleSearch = useCallback(() => {
