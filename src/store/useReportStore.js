@@ -30,18 +30,12 @@ const totalIncome = ({ item }) => {
     : parseFloat(item.extended_session);
 };
 
-const filterSubReports = ({ selected }) => {
-  return subReports?.filter((x) =>
-    selected.some((name) => x.user.includes(name.value)),
-  );
-};
-
 const getSubTotalIncome = ({
   subReports,
   _selectedUsers,
   _selectedSubscriptions,
 }) => {
-  if (_selectedUsers?.length) {
+  if (_selectedUsers?.length || _selectedSubscriptions?.length) {
     return subReports
       ?.filter((x) => {
         const userMatch =
@@ -53,8 +47,6 @@ const getSubTotalIncome = ({
           _selectedSubscriptions.some((name) =>
             x.gym_rate_desc.includes(name.value),
           );
-
-        console.log(userMatch, subscriptionMatch);
 
         return userMatch && subscriptionMatch;
       })

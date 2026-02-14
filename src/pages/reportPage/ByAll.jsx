@@ -73,24 +73,27 @@ const ByAll = () => {
 
   if (!userSubscriptionReport?.length) return null;
 
-  let { filterA, filterB } = [];
+  let { usersFilter, gymRateDescFilter } = [];
 
+  // FILTER BY SELECTED USERS
   if (cSelectedUsers?.length) {
-    filterA = userSubscriptionReport?.filter((x) =>
+    usersFilter = userSubscriptionReport?.filter((x) =>
       cSelectedUsers.some((name) => x.user.includes(name.value)),
     );
   }
 
+  // FILTER BY SELECTED USERS & SELECTED SUBSCRIPTIONS
   if (cSelectedSubscriptions?.length) {
-    filterB = filterA?.filter((x) =>
+    gymRateDescFilter = usersFilter?.filter((x) =>
       cSelectedSubscriptions.some((name) =>
         x.gym_rate_desc.includes(name.value),
       ),
     );
   }
 
-  if (filterA?.length && filterB === undefined) {
-    const subNew = filterA.map((item, index) => (
+  // MAP BY SELECTED USERS ONLY
+  if (usersFilter?.length && gymRateDescFilter === undefined) {
+    const subNew = usersFilter.map((item, index) => (
       <ByAllRow
         key={item?.id ?? `${item?.user}-${index}`}
         item={item}
@@ -99,8 +102,10 @@ const ByAll = () => {
     ));
 
     return subNew;
-  } else if (filterA?.length && filterB?.length) {
-    const subNew = filterB.map((item, index) => (
+
+    // MAP BY SELECTED USERS AND SELECTED SUBSCRIPTION
+  } else if (usersFilter?.length && gymRateDescFilter?.length) {
+    const subNew = gymRateDescFilter.map((item, index) => (
       <ByAllRow
         key={item?.id ?? `${item?.user}-${index}`}
         item={item}
@@ -109,6 +114,8 @@ const ByAll = () => {
     ));
 
     return subNew;
+
+    // MAP BY SELECTED SUBSCRIPTION ONLY
   } else if (cSelectedSubscriptions.length && cSelectedUsers.length === 0) {
     const filterC = userSubscriptionReport?.filter((x) =>
       cSelectedSubscriptions.some((name) =>
@@ -127,6 +134,7 @@ const ByAll = () => {
     return subNew;
   }
 
+  // MAP BY DEFAULT
   return userSubscriptionReport.map((item, index) => (
     <ByAllRow
       key={item?.id ?? `${item?.user}-${index}`}

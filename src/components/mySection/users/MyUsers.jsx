@@ -9,6 +9,7 @@ import UserContractModal from "./UserContractModal";
 import NoDataFound from "../noDataFound/NoDataFound";
 import Loader3 from "../../ui/loader3/Loader3";
 import "./myUsers.scss";
+import Loading4 from "../../ui/loading4/Loading4";
 const useUsersInfrastructure = () => {
   const {
     isPending,
@@ -83,6 +84,8 @@ const MyUsers = () => {
       >
         {error ? (
           <NoDataFound />
+        ) : isPending ? (
+          <Loader3 />
         ) : (
           <div className="container-fluid">
             <div className="row">
@@ -125,6 +128,7 @@ const MyUsers = () => {
                   <Loader3 />
                 </div>
               )}
+
               {usersToRender.length > 0 ? (
                 usersToRender.map((user) => (
                   <Users

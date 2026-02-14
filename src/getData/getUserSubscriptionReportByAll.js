@@ -1,6 +1,6 @@
 import React from "react";
-import instance from "../others/axiosInstance";
-import getRate from "../others/getRate";
+import instance from "@others/axiosInstance";
+import getRate from "@others/getRate";
 
 const customizeRateFn = (extended_session, default_rate = 12) => {
   const setExtendedSession = extended_session === 0 ? 1 : extended_session;
@@ -164,7 +164,7 @@ const getUserSubscriptionReportByAll = async (dateFrom, dateTo) => {
       return dateB - dateA;
     });
 
-    console.log(sortedUsers);
+    // console.log(sortedUsers);
 
     return sortedUsers;
   } catch (error) {

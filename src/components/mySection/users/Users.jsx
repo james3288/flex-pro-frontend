@@ -26,33 +26,24 @@ const Users1 = ({
   return (
     <div className="col-lg-2 col-sm-3">
       <div className="ts-item set-bg bg">
-        <div>
-          <img
-            src={image}
-            alt={`${name}'s profile`}
-            className="img"
-            loading="lazy"
-          />
-        </div>
-
+        <img src={image} alt={`${name}'s profile`} className="img" />
         <div className="ts_text">
           <h4>
             <small style={{ color: "green" }}>{user_id}</small> {name}
           </h4>
-
           <span>Contact: {contactNo}</span>
           <br />
-
-          <button
+          <a
             type="button"
             className="btn btn-primary ts-button"
             style={buttonStyle}
             data-toggle="modal"
             data-target="#usersModal1"
+            data-whatever="@mdo"
             onClick={() => openModal(setShowUsersInfoModal)}
           >
             Edit
-          </button>
+          </a>
 
           <NavLink
             className="btn btn-primary ts-button"

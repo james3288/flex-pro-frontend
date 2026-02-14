@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import useRemainingDaysLeft from "../../../hooks/useRemainingDaysLeft";
-import instance from "../../../others/axiosInstance";
+import instance from "@others/axiosInstance";
 import "react-toastify/dist/ReactToastify.css";
 import useToastifyMessage from "../../../hooks/useToastifyMessage";
 import { useLocation } from "react-router-dom";
