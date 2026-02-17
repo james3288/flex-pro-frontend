@@ -48,19 +48,26 @@ const isMembership = ({ subscription }) => {
   return false;
 };
 
-const PrivateRemainingDays = ({ userSub }) => (
-  <RemainingDaysLeftComponent
-    date_subscribed={userSub?.date_subscribed}
-    per={userSub?.subscription?.per?.per}
-    user_id={userSub?.flexprouser?.id}
-    session_days={userSub?.sub_session_days}
-    subscriptionId={userSub?.id}
-    id={userSub?.flexprouser?.id}
-    fullname={userSub?.flexprouser?.name}
-    fontColor={"#499c0d"}
-    fontSize="18px"
-  />
-);
+const PrivateRemainingDays = ({ userSub }) => {
+  const sub_desc = userSub?.subscription?.gym_rate_desc;
+  if (isMembership({ subscription: sub_desc })) {
+    return null;
+  }
+
+  return (
+    <RemainingDaysLeftComponent
+      date_subscribed={userSub?.date_subscribed}
+      per={userSub?.subscription?.per?.per}
+      user_id={userSub?.flexprouser?.id}
+      session_days={userSub?.sub_session_days}
+      subscriptionId={userSub?.id}
+      id={userSub?.flexprouser?.id}
+      fullname={userSub?.flexprouser?.name}
+      fontColor={"#499c0d"}
+      fontSize="18px"
+    />
+  );
+};
 
 const UserFoundComponent = ({
   user,
@@ -79,9 +86,7 @@ const UserFoundComponent = ({
       <div className="existing-user-result">
         <img src={user?.image} alt="" className="existing-user-result-img" />
         <div>
-          <h3>
-            {userInfo?.id} -{userInfo?.name}
-          </h3>
+          <h3 style={{ color: "yellowGreen" }}>{userInfo?.name}</h3>
           <div className="existing-subscription-result">
             {users?.map((user) => {
               const userSub = user?.usersubscription;
@@ -94,6 +99,7 @@ const UserFoundComponent = ({
                       })
                         ? "orange"
                         : "green",
+                      fontSize: "22px",
                     }}
                   >
                     {userSub?.subscription?.gym_rate_desc}
