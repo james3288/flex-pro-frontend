@@ -14,6 +14,18 @@ const isExpired = ({ user }) => {
   return user?.extendedSubDays === "Expired" ? true : false;
 };
 
+const isSubscriptionDatasPendingOrError = ({
+  subscriptionDatas,
+  historyDatas,
+}) => {
+  return subscriptionDatas?.error ||
+    subscriptionDatas?.pending ||
+    historyDatas?.error ||
+    historyDatas?.pending
+    ? true
+    : false;
+};
+// DATE SUBSCRIBED
 const DateSubscribedComponent = memo(({ user }) => {
   return (
     <div style={{ marginBottom: "5px" }}>
@@ -37,6 +49,7 @@ const MembershipCard = ({ user }) => {
   );
 };
 
+// USER SUBSCRIPTION INFO
 const UserSubscriptionInfoCard = memo(({ user }) => {
   if (isMembership({ subscription_desc: user?.subscription.gym_rate_desc })) {
     return <MembershipCard user={user} />;
@@ -70,6 +83,7 @@ const UserSubscriptionInfoCard = memo(({ user }) => {
   );
 });
 
+// TRAINERS INFO
 const TrainersInfoCard = memo(({ user, extendedTrainers }) => {
   const sub_desc = user.subscription.gym_rate_desc;
   if (isMembership({ subscription_desc: sub_desc })) {
@@ -101,6 +115,7 @@ const TrainersInfoCard = memo(({ user, extendedTrainers }) => {
   );
 });
 
+// HISTORY LOG
 const UserHistoryLogCard = memo(({ userHistoryDatas, user2 }) => {
   if (userHistoryDatas.error || userHistoryDatas.pending) {
     return <LoadingEffect />;
@@ -113,6 +128,108 @@ const UserHistoryLogCard = memo(({ userHistoryDatas, user2 }) => {
   );
 });
 
+// USERS NAME
+const UsersNameComponent = memo(({ user }) => {
+  return <h3 style={{ color: "white" }}>{user?.flexprouser.name}</h3>;
+});
+
+const UserSubscriptionComponent = ({
+  datas,
+  historyDatas,
+  extendedTrainers,
+  isNotIncludeMembership,
+}) => {
+  return datas?.userSubscriptionData?.map((user2) => {
+    if (
+      isMembership({ subscription_desc: user2?.subscription.gym_rate_desc }) &&
+      isNotIncludeMembership
+    ) {
+      return null;
+    }
+
+    if (
+      isExpired({ user: user2 }) &&
+      isMembership({ subscription_desc: user2?.subscription.gym_rate_desc })
+    ) {
+      return null;
+    }
+
+    return (
+      <div key={user2.id}>
+        {/* USER NAME */}
+        <UsersNameComponent user={user2} />
+
+        {/* USER LOGS */}
+        {isSubscriptionDatasPendingOrError({
+          subscriptionDatas: datas,
+          historyDatas: historyDatas,
+        }) ? (
+          <LoadingEffect />
+        ) : (
+          <div
+            className="row subInfo"
+            style={{
+              border: isExpired({ user: user2 })
+                ? "2px dashed maroon"
+                : "2px dashed yellowGreen",
+              marginBottom: "1px",
+            }}
+          >
+            {/* SUBSCRIPTION INFO */}
+            <UserSubscriptionInfoCard user={user2} />
+
+            {/* TRAINERS */}
+            <TrainersInfoCard
+              user={user2}
+              extendedTrainers={extendedTrainers}
+            />
+          </div>
+        )}
+        <div className="row subInfo">
+          <UserHistoryLogCard userHistoryDatas={historyDatas} user2={user2} />
+        </div>
+        <hr />
+      </div>
+    );
+  });
+};
+
+const UserSubscriptionWithoutMembershipComponents = memo(
+  ({ subscriptionDatas, historyDatas, extendedTrainers }) => {
+    return (
+      <UserSubscriptionComponent
+        datas={subscriptionDatas}
+        historyDatas={historyDatas}
+        extendedTrainers={extendedTrainers}
+        isNotIncludeMembership={true}
+      />
+    );
+  },
+);
+
+const UserSubscriptionWithMembershipComponents = memo(
+  ({ subscriptionDatas, historyDatas, extendedTrainers }) => {
+    const result = subscriptionDatas?.userSubscriptionData?.find(
+      (x) => x.subscription.gym_rate_desc === "MEMBERSHIP",
+    );
+
+    const datas = {
+      userSubscriptionData: [result],
+    };
+
+    if (result) {
+      return (
+        <UserSubscriptionComponent
+          datas={datas}
+          historyDatas={historyDatas}
+          extendedTrainers={extendedTrainers}
+        />
+      );
+    }
+  },
+);
+
+// MAIN COMPONENTS
 const ListOfUserHistory = () => {
   const { userSubscriptionDatas, userHistoryDatas } =
     useContext(UserHistoryContext);
@@ -135,48 +252,20 @@ const ListOfUserHistory = () => {
     }
   }, [userSubscriptionDatas]);
 
-  const result = userSubscriptionDatas?.userSubscriptionData?.map((user2) => (
-    <div key={user2.id}>
-      {/* USER NAME */}
-      <h3 style={{ color: "white" }}>{user2?.flexprouser.name}</h3>
-
-      {userSubscriptionDatas.error ||
-      userSubscriptionDatas.pending ||
-      userHistoryDatas.error ||
-      userHistoryDatas.pending ? (
-        <div className="row subInfo">
-          <div className="col-lg-12">
-            <LoadingEffect />
-          </div>
-        </div>
-      ) : (
-        <div
-          className="row subInfo"
-          style={{
-            border: isExpired({ user: user2 })
-              ? "2px dashed maroon"
-              : "2px dashed yellowGreen",
-            marginBottom: "1px",
-          }}
-        >
-          {/* SUBSCRIPTION INFO */}
-          <UserSubscriptionInfoCard user={user2} />
-
-          {/* TRAINERS */}
-          <TrainersInfoCard user={user2} extendedTrainers={extendedTrainers} />
-        </div>
-      )}
-
-      {/* USER LOGS */}
-
-      <div className="row subInfo">
-        <UserHistoryLogCard userHistoryDatas={userHistoryDatas} user2={user2} />
-      </div>
-      <hr />
-    </div>
-  ));
-
-  return result;
+  return (
+    <>
+      <UserSubscriptionWithMembershipComponents
+        subscriptionDatas={userSubscriptionDatas}
+        historyDatas={userHistoryDatas}
+        extendedTrainers={extendedTrainers}
+      />
+      <UserSubscriptionWithoutMembershipComponents
+        subscriptionDatas={userSubscriptionDatas}
+        historyDatas={userHistoryDatas}
+        extendedTrainers={extendedTrainers}
+      />
+    </>
+  );
 };
 
 export default ListOfUserHistory;
