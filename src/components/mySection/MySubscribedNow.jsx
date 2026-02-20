@@ -123,54 +123,6 @@ const MySubscribedNow = () => {
     }
   };
 
-  // const checkIfAlreadySubscribed = async (id) => {
-  //   try {
-  //     const response = await instance.get(
-  //       `/api/user_status_for_adding_subscripton/${id}`,
-  //     );
-  //     const users = response.data;
-
-  //     return users;
-  //   } catch (error) {
-  //     console.error("Error fetching users:", error);
-  //   }
-  // };
-
-  // const checkIfSelectedSubscriptionIsMembership = async () => {
-  //   return planNow.gym_rate_desc === "MEMBERSHIP" ? true : false;
-  // };
-
-  // const handleSaveSubscription = async () => {
-  //   if (subscriptionData.flexpro_id === 0) {
-  //     setMessage("You must select a user first!");
-  //     return;
-  //   }
-
-  //   const cc = await checkIfAlreadySubscribed(subscriptionData.flexpro_id);
-  //   const isMembership = await checkIfSelectedSubscriptionIsMembership();
-
-  //   saveSubscriptionMutation.mutate(subscriptionData);
-  // };
-
-  // const saveSubscriptionMutation = useMutation({
-  //   mutationFn: async (payload) => {
-  //     const res = await instance.post("/api/save_subscriptions/", payload);
-  //     return res.data;
-  //   },
-  //   onSuccess: () => {
-  //     setRegistered(true);
-  //     setMessage("You are successfully registered..");
-
-  //     // 🔥 This refetches data on OTHER pages
-  //     queryClient.invalidateQueries({
-  //       queryKey: ["forActiveAndInactiveUsers"],
-  //     });
-  //   },
-  //   onError: (error) => {
-  //     console.error(error);
-  //   },
-  // });
-
   const handleCancelUser = async () => {
     userRef.current.innerText = "";
     setMyImage(null);

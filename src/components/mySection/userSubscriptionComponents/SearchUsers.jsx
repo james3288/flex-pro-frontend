@@ -16,7 +16,6 @@ import { Button, Modal } from "react-bootstrap";
 const useSaveSubscriptionServices = ({ data, isValid }) => {
   const [isSuccessfullySaved, setIsSuccessfullySaved] = useState(false);
 
-
   const saveSubscriptionMutation = useMutation({
     mutationFn: async (payload) => {
       const res = await instance.post("/api/save_subscriptions/", payload);
@@ -180,7 +179,8 @@ const SearchUsers = ({
     <div className="row search-users">
       <div className="col-lg-12">
         <h2 style={{ color: "yellow" }}>
-          {membershipData?.usersubscription?.subscription?.gym_rate_desc}
+          {membershipData?.status === "on-going" &&
+            membershipData?.usersubscription?.subscription?.gym_rate_desc}
         </h2>
         {planNow.per.per === "day" && (
           // <SessionDaysField
