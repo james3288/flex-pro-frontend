@@ -9,6 +9,7 @@ import useToastifyMessageComponent from "./../../../customHooks/useToastifyMessa
 import "../../../pages/userLoginPage/userLoginPage.scss";
 import RemainingDaysLeftComponent from "../../mySection/forRenewal/RemainingDaysLeftComponent";
 import { toUpperCase } from "zod";
+import logo from "@assets/img/logo-2.png";
 
 const UserSubscriptionFoundComponent = ({ users, onLogin, onCancel }) => {
   if (!users)
@@ -69,20 +70,53 @@ const PrivateRemainingDays = ({ userSub }) => {
   );
 };
 
-const UserFoundComponent = ({
-  user,
-  onLogin,
-  onCancel,
-  users,
-  handleLoginOnclick,
-}) => {
-  if (!user) return <h4 className="text-danger">No User has been found!</h4>;
-
+const MembershipComponent = memo(({ users, user }) => {
   const userInfo = user?.usersubscription?.flexprouser;
-
   return (
-    <>
-      <h5>Check if it's you?</h5>
+    <div>
+      <div className="existing-subscription-result">
+        {users?.map((user) => {
+          const userSub = user?.usersubscription;
+
+          if (
+            isMembership({
+              subscription: userSub?.subscription?.gym_rate_desc,
+            })
+          ) {
+            return (
+              <div
+                key={user.id}
+                style={{ marginBottom: "10px", display: "flex", gap: "5px" }}
+              >
+                <img src={logo} alt="" style={{ width: "30px" }} />
+                <h5
+                  style={{
+                    color: isMembership({
+                      subscription: userSub?.subscription?.gym_rate_desc,
+                    })
+                      ? "orange"
+                      : "green",
+                    fontSize: "22px",
+                  }}
+                >
+                  {userSub?.subscription?.gym_rate_desc}
+                </h5>
+
+                <hr />
+              </div>
+            );
+          }
+        })}
+      </div>
+    </div>
+  );
+});
+
+const ListOfUserSubscriptionComponent = memo(
+  ({ user, users, handleLoginOnclick, onLogin, onCancel }) => {
+    const userInfo = user?.usersubscription?.flexprouser;
+
+    return (
       <div className="existing-user-result">
         <img src={user?.image} alt="" className="existing-user-result-img" />
         <div>
@@ -90,6 +124,16 @@ const UserFoundComponent = ({
           <div className="existing-subscription-result">
             {users?.map((user) => {
               const userSub = user?.usersubscription;
+
+              // dis-regard membership
+              if (
+                isMembership({
+                  subscription: userSub?.subscription?.gym_rate_desc,
+                })
+              ) {
+                return null;
+              }
+
               return (
                 <div key={user.id} style={{ marginBottom: "10px" }}>
                   <h5
@@ -128,21 +172,37 @@ const UserFoundComponent = ({
               );
             })}
           </div>
-          {/* <h5>{user?.usersubscription?.subscription?.gym_rate_desc}</h5> */}
-          {/* <div>
-            <button className="btn btn-success" onClick={onLogin}>
-              LOGIN
-            </button>{" "}
-            <button className="btn btn-danger" onClick={onCancel}>
-              CANCEL
-            </button>
-          </div> */}
         </div>
       </div>
+    );
+  },
+);
+
+const UserFoundComponent = ({
+  user,
+  onLogin,
+  onCancel,
+  users,
+  handleLoginOnclick,
+}) => {
+  if (!user) return <h4 className="text-danger">No User has been found!</h4>;
+
+  return (
+    <>
+      <h5>Check if it's you?</h5>
+      <MembershipComponent users={users} user={user} />
+      <ListOfUserSubscriptionComponent
+        user={user}
+        users={users}
+        handleLoginOnclick={handleLoginOnclick}
+        onLogin={onLogin}
+        onCancel={onCancel}
+      />
     </>
   );
 };
 
+// MAIN COMPONENT
 const UserLoginIDVerificationModal = memo(
   ({ show, onHide, users, onLogin }) => {
     const {
