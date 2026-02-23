@@ -291,13 +291,13 @@ const useUsersWithRemainingDaysDatas = () => {
     if (isLoading || isPending) return <CardSkeleton />;
     return (
       <div className="scrollable-list-of-user">
-        {membershipUser.map((user) => (
+        {membershipUser?.slice(0, 3).map((user) => (
           <ActiveMembershipUserCard user={user} key={user?.id} />
         ))}
-        {activeUsers.map((user) => (
+        {activeUsers?.slice(0, 3).map((user) => (
           <ActiveUserCard user={user} key={user?.id} />
         ))}
-        {activeDayPassUser.map((user) => (
+        {activeDayPassUser?.slice(0, 3).map((user) => (
           <ActiveDayPassUserCard user={user} key={user?.id} />
         ))}
       </div>

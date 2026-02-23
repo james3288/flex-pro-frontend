@@ -45,7 +45,7 @@ const LoginTimeStatus = memo(({ user }) => {
   // Stable timestamp
   const timestamp = useMemo(
     () => new Date(user?.date_log).getTime(),
-    [user?.date_log]
+    [user?.date_log],
   );
 
   const isOnline = isUserOnline({ user });
@@ -129,10 +129,10 @@ const useOnlineUsersData = () => {
     if (isLoading || isPending) return <span>initializing...</span>;
     return (
       <div className="scrollable-list-of-user">
-        {onlineUsers.map((user) => (
+        {onlineUsers?.slice(0, 3).map((user) => (
           <OnlineUserCard user={user} key={user?.id} />
         ))}
-        {onlineDayPassUsers.map((user) => (
+        {onlineDayPassUsers?.slice(0, 3).map((user) => (
           <OnlineDayPassCard user={user} key={user?.id} />
         ))}
       </div>
@@ -141,11 +141,11 @@ const useOnlineUsersData = () => {
 
   const NoOfOnlineUsers = () => {
     const countOnlineUsers = onlineUsers?.filter((user) =>
-      isUserOnline({ user })
+      isUserOnline({ user }),
     );
 
     const countDaypassUsers = onlineDayPassUsers?.filter((user) =>
-      isUserOnline({ user })
+      isUserOnline({ user }),
     );
 
     return countOnlineUsers?.length + countDaypassUsers?.length;
