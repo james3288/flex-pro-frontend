@@ -45,10 +45,11 @@ const SUBSCRIPTION_CONFIG = {
     columns: [
       { label: "#", col: 1 },
       { label: "User", col: 2 },
-      { label: "Date Login", col: 2 },
+      { label: "Date Login", col: 1 },
       { label: "Subscription", col: 2 },
-      { label: "Time In", col: 2 },
+      { label: "Time In", col: 1 },
       { label: "Time Out", col: 1 },
+      { label: "Date Subscribed", col: 2 },
       { label: "Remaining Days Left", col: 2 },
     ],
     BodyComponent: ByClientsOnWorkout,
@@ -171,6 +172,7 @@ const ReportPage = () => {
   }, []);
 
   const BodyComponent = subscriptionConfig.BodyComponent;
+  const col = subscriptionConfig.columns;
 
   return (
     <div className="container wrapper">
@@ -191,7 +193,7 @@ const ReportPage = () => {
       <HeaderRow columns={subscriptionConfig.columns} />
 
       {/* Dynamic Body */}
-      <BodyComponent />
+      <BodyComponent col={col} />
 
       {/* Grand Total */}
       <GrandTotalRow
