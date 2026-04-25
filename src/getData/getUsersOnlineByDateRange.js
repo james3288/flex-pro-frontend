@@ -21,7 +21,7 @@ const getUsersOnlineByDateRange = async (dateFrom, dateTo) => {
     const cleanDateTo = dateTo.split("T")[0];
 
     const response = await instance.get(
-      `/api/get_clients_on_workout_report/?dateFrom=${cleanDateFrom}&dateTo=${cleanDateTo}`
+      `/api/get_clients_on_workout_report/?dateFrom=${cleanDateFrom}&dateTo=${cleanDateTo}`,
     );
 
     const users = response.data;
@@ -36,7 +36,9 @@ const getUsersOnlineByDateRange = async (dateFrom, dateTo) => {
           const [remainingDaysResult, extendedSubDaysData] = await Promise.all([
             remainingDays(
               userSub.date_subscribed,
-              userSub.subscription.per.per
+              userSub.subscription.per.per,
+              0,
+              userSub.sub_session_days,
             ),
             extendedSub(userSub.id),
           ]);
@@ -45,7 +47,7 @@ const getUsersOnlineByDateRange = async (dateFrom, dateTo) => {
             remainingDaysResult,
             extendedSubDaysData,
             userSub.date_subscribed,
-            false
+            false,
           );
 
           return {
@@ -57,7 +59,7 @@ const getUsersOnlineByDateRange = async (dateFrom, dateTo) => {
           console.error("Error processing user:", user, userError);
           return { ...user, image: "/media/image/default.jpg" }; // fallback
         }
-      })
+      }),
     );
 
     return newUser;

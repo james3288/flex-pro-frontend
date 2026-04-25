@@ -53,7 +53,7 @@ const Users1 = ({
             History
           </NavLink>
 
-          <button
+          <a
             type="button"
             className="btn btn-danger ts-button"
             style={buttonStyle}
@@ -62,7 +62,7 @@ const Users1 = ({
             onClick={() => openModal(setShowRemoveUserModal)}
           >
             Remove
-          </button>
+          </a>
 
           <button
             type="button"

@@ -39,6 +39,8 @@ const AddButton = React.memo(({ label, className, onClick }) => (
   </button>
 ));
 
+const isMembership = (subscription) => subscription === "MEMBERSHIP";
+
 const RecyleBinIcon = React.memo(() => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -152,6 +154,8 @@ const PersonalTrainerComponents = ({
       cancelled = true;
     };
   }, [user_id]);
+
+  if (isMembership(subscription)) return null;
 
   return (
     <div style={{ marginBottom: "7px" }}>
