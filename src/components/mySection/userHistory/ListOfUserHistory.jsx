@@ -25,6 +25,8 @@ const isSubscriptionDatasPendingOrError = ({
     ? true
     : false;
 };
+
+
 // DATE SUBSCRIBED
 const DateSubscribedComponent = memo(({ user }) => {
   return (
@@ -48,6 +50,51 @@ const MembershipCard = ({ user }) => {
     </div>
   );
 };
+
+const getExtendedRemainingMs = (extended) => {
+  const dateExtend = new Date(extended?.date_extend);
+  if (isNaN(dateExtend)) {
+    return 0;
+  }
+
+  const targetDate = new Date(dateExtend);
+  targetDate.setDate(targetDate.getDate() + Number(extended?.extended_session_day || 0));
+
+  return targetDate.getTime() - Date.now();
+};
+
+const TotalTrainerRemainingDaysCard = memo(({ extendedTrainers, userId }) => {
+  const totalRemainingMs = useMemo(() => {
+    if (!extendedTrainers?.[userId]) {
+      return null;
+    }
+
+    return extendedTrainers[userId].reduce((sum, extended) => {
+      const remainingMs = getExtendedRemainingMs(extended);
+      return sum + Math.max(0, remainingMs);
+    }, 0);
+  }, [extendedTrainers, userId]);
+
+  if (totalRemainingMs === null) {
+    return (
+      <div className="col-lg-6">
+        <LoadingEffect />
+      </div>
+    );
+  }
+
+  const totalRemaining = Math.max(0, totalRemainingMs);
+  const totalRemainingText = formatTime(totalRemaining, "days-hours-minutes");
+
+  return (
+    <div className="">
+      <h4 style={{ color: "gray", marginTop: "15px" }}>
+        Total Extended Remaining Days:
+      </h4>
+      <h5 style={{ color: "yellowgreen" }}>{totalRemainingText}</h5>
+    </div>
+  );
+});
 
 // USER SUBSCRIPTION INFO
 const UserSubscriptionInfoCard = memo(({ user }) => {
@@ -90,7 +137,8 @@ const TrainersInfoCard = memo(({ user, extendedTrainers }) => {
     return null;
   }
   return (
-    <div className="col-lg-6">
+
+     <div className="col-lg-6">
       <h4 style={{ color: "gray", marginTop: "15px" }}>Main Trainer:</h4>
       <h5 style={{ color: "pink" }}>{user.trainer?.name}</h5>
       <h4 style={{ color: "gray", marginTop: "15px" }}>Extended Trainers:</h4>
@@ -111,7 +159,10 @@ const TrainersInfoCard = memo(({ user, extendedTrainers }) => {
       ) : (
         <LoadingEffect />
       )}
-    </div>
+
+       {/* TOTAL EXTENDED REMAINING DAYS */}
+      <TotalTrainerRemainingDaysCard extendedTrainers={extendedTrainers} userId={user.id} />
+    </div> 
   );
 });
 

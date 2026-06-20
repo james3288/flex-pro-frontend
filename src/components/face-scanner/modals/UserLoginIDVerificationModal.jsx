@@ -12,6 +12,7 @@ import { toUpperCase } from "zod";
 import logo from "@assets/img/logo-2.png";
 
 const UserSubscriptionFoundComponent = ({ users, onLogin, onCancel }) => {
+
   if (!users)
     return <h4 className="text-danger">No Subscription has been found!</h4>;
 
@@ -183,9 +184,26 @@ const UserFoundComponent = ({
   onLogin,
   onCancel,
   users,
+  userPool = [],
+  typedId,
   handleLoginOnclick,
+  listOfUsers,
 }) => {
-  if (!user) return <h4 className="text-danger">No User has been found!</h4>;
+  // pool: prefer explicit userPool, fallback to listOfUsers
+  const pool = userPool ?? listOfUsers ?? [];
+  const id = String(typedId ?? "").trim();
+
+
+  // If typed id exists in pool but the matched entry has no subscription object or subscription details
+  const matched = pool.find((entry) =>
+    String(entry?.usersubscription?.flexprouser?.id) === id,
+  );
+
+  if(!user && !id) return <h4 className="text-danger">User ID is required</h4>
+
+  if(matched && id && !user) return <h4 className="text-success">Active user found, do you want to login?</h4>;
+
+  if (!user && id) return <h6 className="text-danger">if user is actively registered in subscription, it will say <span style={{ color: 'green' }}>Active user found</span></h6>;
 
   return (
     <>
@@ -224,23 +242,20 @@ const UserLoginIDVerificationModal = memo(
 
     // Avoid inline recreation for Enter handler
     const handleEnter = useCallback(() => {
-      handleEnterOnClick({
-        activeAndInactiveUsers: users?.activeAndInactiveUsers,
-        flexProUserId: cNumpadResult,
-      });
+      const pool = users?.activeAndInactiveUsers ?? users ?? [];
+      const id = String(cNumpadResult ?? "").trim();
+
+      handleEnterOnClick({ activeAndInactiveUsers: pool, flexProUserId: id });
     }, [handleEnterOnClick, users, cNumpadResult]);
 
     // Avoid inline recreation for Enter handler
     const handleEnter2 = useCallback(() => {
-      handleEnterOnClick2({
-        activeAndInactiveUsers: users?.activeAndInactiveUsers,
-        flexProUserId: cNumpadResult,
-      });
+      const pool = users?.activeAndInactiveUsers ?? users ?? [];
+      const id = String(cNumpadResult ?? "").trim();
 
-      handleEnterOnClick({
-        activeAndInactiveUsers: users?.activeAndInactiveUsers,
-        flexProUserId: cNumpadResult,
-      });
+      handleEnterOnClick2({ activeAndInactiveUsers: pool, flexProUserId: id });
+
+      handleEnterOnClick({ activeAndInactiveUsers: pool, flexProUserId: id });
     }, [handleEnterOnClick2, handleEnterOnClick, users, cNumpadResult]);
 
     const digits = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
@@ -276,7 +291,10 @@ const UserLoginIDVerificationModal = memo(
                   }}
                   onCancel={handleClearOnClick}
                   users={cUserSubscriptionFound}
+                  userPool={users?.activeAndInactiveUsers ?? users ?? []}
+                  typedId={cNumpadResult}
                   handleLoginOnclick={handleLoginOnclick}
+                  listOfUsers={users?.activeAndInactiveUsers ?? users}
                 />
               </div>
             </div>

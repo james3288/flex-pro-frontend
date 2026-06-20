@@ -1,6 +1,7 @@
 // Refactored MyUserLoginSection (keeps same exported name)
 import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import DayPassLoginModal from "../modals/DayPassLoginModal";
+import StaffBypassModal from "../modals/StaffBypassModal";
 import useMyUserLoginSection from "./users/hooks/useMyUserLoginSection";
 import FaceScannerNew3 from "../face-scanner/FaceScannerNew3";
 import UserLoginIDVerificationModal from "../face-scanner/modals/UserLoginIDVerificationModal";
@@ -105,6 +106,7 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
   const [loginError, setLoginError] = useState(null);
   const [showUserIdModal, setShowUserIdModal] = useState(false);
   const [showDayPassModal, setShowDayPassModal] = useState(false);
+    const [showStaffModal, setShowStaffModal] = useState(false);
 
   // reset daypass and regular login hook
   const { resetDayPassLogin, resetRegularUserLogin } = useResetLogin();
@@ -512,6 +514,7 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
                   >
                     Cancel Login
                   </button>
+                  <button className="btn btn-info" onClick={() => setShowStaffModal(true)}>Bypass By Staff</button>
                   {cIsLoginWithoutCamera && !cHasVideoOutput && (
                     <button
                       className="btn btn-success"
@@ -664,6 +667,19 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
         setUserFound={setUserFound}
         setSubscriptionRecord={setSubscriptionRecord}
         users={users}
+      />
+      <StaffBypassModal
+        show={showStaffModal}
+        onHide={() => setShowStaffModal(false)}
+        onConfirm={() => {
+          // Perform the same login action as face-auth success
+          try {
+            loginMutation && loginMutation.mutate();
+          } catch (e) {
+            console.error("Staff bypass login error:", e);
+          }
+          setShowStaffModal(false);
+        }}
       />
     </>
   );

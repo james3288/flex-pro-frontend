@@ -4,6 +4,7 @@ import remainingDays from "../others/GetRemainingDays";
 // Fetch extended trainer data
 const getExtendedTrainer = async (user_id) => {
   try {
+
     const now = new Date();
     const dateTo = new Date(now.getTime() + 24 * 60 * 60 * 1000); // add 1 day
     const dateFrom = new Date(2024, 1, 1); // Feb 1, 2024

@@ -3,7 +3,7 @@ import "./scanloadingnew.scss";
 
 const ScanLoadingNew = () => {
   return (
-    <p class="scan-loader">
+    <p className="scan-loader">
       <span>Scanning</span>
     </p>
   );
