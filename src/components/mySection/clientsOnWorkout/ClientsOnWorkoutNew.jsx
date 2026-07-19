@@ -1,130 +1,123 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import YearValidation from "../../../others/YearValidation";
 import FormatDate from "../../../others/FormatDate";
 import ReactTimeAgo from "react-time-ago";
 import formatTimeToString from "../../../others/formatTimeToString";
-import getSubscriptionDaysLeft from "../../../getData/getSubscriptionDaysLeft";
-import remainingDays from "../../../others/GetRemainingDays";
-import getExtendedSubscription from "../../../getData/getExtendedSubscription";
 import { useLogoutStore } from "../../../store/useLogoutStore";
 import LogoutButton from "./LogoutButton";
 import useRemainingDaysLeft from "../../../hooks/useRemainingDaysLeft";
 import LoadingEffect from "../loadingEffect/LoadingEffect";
 
 const ClientsOnWorkoutNew = ({ online }) => {
-  const [remaining, setRemaining] = useState(0);
-  const [extendedSubscript, setExtendedSubscript] = useState([]);
-  const [isButtonLoading, setIsButtonLoading] = useState(false);
+  const [remainingDaysLeftNew, setRemainingDaysLeftNew] = useState();
+  const [localTimeOut, setLocalTimeOut] = useState(online.time_out);
+  const [isLoggedOut, setIsLoggedOut] = useState(false);
+
+  // Early destructuring for performance and clarity
+  const userSub = online?.usersubscription;
+  const user = userSub?.flexprouser;
+  const subscription = userSub?.subscription;
+
   const yearValidation = YearValidation(online.time_out);
-  const dateObj = new Date(online.date_log);
-  const timestamp = dateObj.getTime(); // Convert Date object to timestamp in milliseconds
 
-  const trigger = useLogoutStore((state) => state.trigger);
+  // Stable timestamp
+  const timestamp = useMemo(
+    () => new Date(online.date_log).getTime(),
+    [online.date_log]
+  );
 
-  const { data, error, isPending, isLoading, remainingDaysLeft } =
-    useRemainingDaysLeft(
-      online.usersubscription.date_subscribed,
-      online.usersubscription.subscription.per.per,
-      online.usersubscription.flexprouser.id,
-      online.usersubscription.sub_session_days,
-      online.usersubscription.id
-    );
+  // Custom hook for remaining days
+  const { isLoading, remainingDaysLeft } = useRemainingDaysLeft(
+    userSub?.date_subscribed,
+    subscription?.per?.per,
+    user?.id,
+    userSub?.sub_session_days,
+    userSub?.id
+  );
 
-  console.log(isLoading);
-
-  // // get the remaining days
-  // const getRemainingDays = async () => {
-  //   const rd = await remainingDays(
-  //     online.usersubscription.date_subscribed,
-  //     online.usersubscription.subscription.per.per,
-  //     online.usersubscription.flexprouser.id,
-  //     online.usersubscription.sub_session_days === 0
-  //       ? 1
-  //       : online.usersubscription.sub_session_days
-  //   );
-
-  //   // console.log(rd);
-  //   setRemaining(rd);
-  // };
-
-  // const extendedSub = async () => {
-  //   const data = await getExtendedSubscription(online.usersubscription.id);
-  //   setExtendedSubscript(data);
-  // };
-
-  // useEffect(() => {
-  //   const intervalId = setInterval(() => {
-  //     // Your code to be executed every 1000ms
-  //     getRemainingDays();
-  //     extendedSub();
-  //   }, 1000);
-
-  //   // Cleanup function to clear the interval when the component unmounts
-  //   return () => clearInterval(intervalId);
-  // }, []); // Add dependencies as needed
-
+  // Async fetch remaining days safely
   useEffect(() => {
-    console.log(isButtonLoading);
-  }, [isButtonLoading]);
+    let isMounted = true;
 
-  // online/offline class
-  const onlineOfflineClass = () => {
-    return yearValidation === 1990 ? "online" : "offline";
+    const fetchDays = async () => {
+      try {
+        const result = await remainingDaysLeft();
+        if (isMounted) setRemainingDaysLeftNew(result);
+      } catch (err) {
+        console.error("Failed to fetch remaining days:", err);
+      }
+    };
+
+    fetchDays();
+    return () => {
+      isMounted = false;
+    };
+  }, [remainingDaysLeft]);
+
+  const isFromOnlineToLogout = () => {
+    return isOnline && !isLoggedOut;
   };
-  //online/offline button class
-  const onlineOfflineBtnClass = () => {
-    return remainingDaysLeft() === "Expired" && yearValidation === 1990
+
+  const isOnline = yearValidation === 1990;
+
+  // Memoized computed values
+  const styles = useMemo(() => {
+    const base = {};
+    if (remainingDaysLeftNew === "Expired" && isOnline)
+      base.border = "2px solid red";
+    return base;
+  }, [remainingDaysLeftNew, isOnline]);
+
+  const imageStyle = useMemo(
+    () =>
+      isFromOnlineToLogout() ? { color: "green" } : { border: "2px solid red" },
+    [isOnline, isLoggedOut]
+  );
+
+  const onlineOfflineClass = isFromOnlineToLogout() ? "online" : "offline";
+  const onlineOfflineBtnClass =
+    remainingDaysLeftNew === "Expired" && isFromOnlineToLogout()
       ? "btn btn-danger"
       : "btn btn-warning";
-  };
 
-  //expired class
-  const expiredStyle = () => {
-    return remainingDaysLeft() === "Expired" && yearValidation === 1990
-      ? { border: "2px solid red" }
-      : { border: "0px solid black" };
-  };
-
-  // const remainingDaysLeft = () => {
-  //   return getSubscriptionDaysLeft(
-  //     remaining,
-  //     extendedSubscript,
-  //     online.usersubscription.date_subscribed,
-  //     false
-  //   );
-  // };
+  // Memoize extended subscriptions to prevent re-render
+  const extendedSubs = useMemo(
+    () =>
+      online.extendedSubscriptions?.map((extended, idx) => (
+        <p key={idx} style={{ color: "yellowgreen", margin: 0 }}>
+          - {extended.subscription.gym_rate_desc} / extend{" "}
+          {extended.extended_session_day} day/s
+        </p>
+      )),
+    [online.extendedSubscriptions]
+  );
 
   return (
     <div className="col-lg-3 col-xs-12">
-      <div className="c-col" style={expiredStyle()}>
-        <div className={onlineOfflineClass()}></div>
+      <div className="c-col" style={styles}>
+        <div className={onlineOfflineClass}></div>
+
         <div className="c-col-name">
-          <img
-            src={online.image}
-            alt=""
-            style={
-              yearValidation === 1990
-                ? { color: "green" }
-                : { border: "2px solid red" }
-            }
-          />
+          <img src={online.image} alt="" style={imageStyle} />
           <div className="col-name">
             <h4>
-              <span>ID:{online.usersubscription.flexprouser.id}</span>{" "}
-              {online.usersubscription.flexprouser.name}
+              <span>ID:{user?.id}</span> {user?.name}
             </h4>
           </div>
         </div>
+
         <div className="c-col-time-in-out">
           <h4>
-            Time In: {formatTimeToString(online.time_in)} <br /> Time Out:{" "}
-            {yearValidation === 1990
+            Time In: {formatTimeToString(online.time_in)} <br />
+            Time Out:{" "}
+            {isFromOnlineToLogout()
               ? "--:--"
               : formatTimeToString(online.time_out)}
           </h4>
+
           <p>{FormatDate(online.date_log)}</p>
 
-          {yearValidation === 1990 && (
+          {isFromOnlineToLogout() && (
             <p>
               <ReactTimeAgo
                 date={timestamp}
@@ -136,43 +129,44 @@ const ClientsOnWorkoutNew = ({ online }) => {
           )}
 
           <h3 style={{ color: "yellowgreen" }}>
-            {online.usersubscription.subscription.gym_rate_desc}
+            {subscription?.gym_rate_desc}
           </h3>
-          {online.extendedSubscriptions?.map((extended) => (
-            <p style={{ color: "yellowgreen", margin: "0" }}>
-              {" "}
-              - {extended.subscription.gym_rate_desc} / extend{" "}
-              {extended.extended_session_day} day/s
-            </p>
-          ))}
+
+          {extendedSubs}
+
           <h5>Remaining Days:</h5>
           <RemainingDaysComponent
-            remainingDaysLeft={remainingDaysLeft}
+            remainingDaysLeft={remainingDaysLeftNew}
             isLoading={isLoading}
           />
         </div>
 
         <LogoutButton
-          onlineOfflineBtnClass={onlineOfflineBtnClass()}
+          onlineOfflineBtnClass={onlineOfflineBtnClass}
           id={online.id}
           time_in={online.time_in}
           yearValidation={yearValidation}
+          setLocalTimeOut={setLocalTimeOut}
+          setIsLoggedOut={setIsLoggedOut}
+          isFromOnlineToLogout={isFromOnlineToLogout}
         />
       </div>
     </div>
   );
 };
 
-const RemainingDaysComponent = ({ remainingDaysLeft, isLoading }) => {
-  return isLoading ? (
-    <LoadingEffect />
-  ) : (
-    <h5 style={{ color: "orange" }}>
-      {remainingDaysLeft() === "0 day, 0 hours"
-        ? "initializing..."
-        : remainingDaysLeft()}
-    </h5>
-  );
-};
+// ✅ Memoized child avoids unnecessary re-renders
+const RemainingDaysComponent = React.memo(
+  ({ remainingDaysLeft, isLoading }) => {
+    if (isLoading) return <LoadingEffect />;
+    return (
+      <h5 style={{ color: "orange" }}>
+        {remainingDaysLeft === "0 day, 0 hours"
+          ? "initializing..."
+          : remainingDaysLeft}
+      </h5>
+    );
+  }
+);
 
 export default ClientsOnWorkoutNew;

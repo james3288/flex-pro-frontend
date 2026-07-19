@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import * as faceapi from "face-api.js";
 import LoadingEffect from "../mySection/loadingEffect/LoadingEffect";
-import getActiveUsers from "./../../getData/getActiveUsers";
 import instance from "../../others/axiosInstance";
 import getImagePath from "../../getData/getImagePath";
 import loadImageData from "../../getData/loadImageData";
@@ -11,20 +10,22 @@ import getSubscriptionDaysLeft from "../../getData/getSubscriptionDaysLeft";
 import getExtendedTrainer from "../../getData/getExtendedTrainer";
 import { useUserStore } from "../../store/useUserStore";
 import getActiveAndInactiveUsers from "../../getData/getActiveAndInactiveUsers";
+import useFaceScannerNew from "../../customHooks/useFaceScannerNew";
+import useFetchImage from "../../hooks/useFetchImage";
+import useCheckIfAlreadyLogin from "../../hooks/useCheckIfAlreadyLogin";
+import useFetchUserStatus from "../../hooks/useFetchUserStatus";
+import useGetActiveAndInactiveUsers from "../../hooks/useGetActiveAndInactiveUsers";
+import useFetchImageRefactor from "../../hooks/useFetchImageRefactor";
 
 const FaceScannerNew = ({
-  playNow,
-  stopNow,
   setPlay,
   setUserId,
-  labels,
-  setUserFound,
   setIsOnGoing,
-  isOnGoing,
   setIsLogin,
   setTrainers,
   isLogin,
   setIsExpired,
+  setSubscriptionRecord,
 }) => {
   const [modelsLoaded, setModelsLoaded] = React.useState(false);
   const [captureVideo, setCaptureVideo] = React.useState(false);
@@ -33,8 +34,8 @@ const FaceScannerNew = ({
   const [waiting, setWaiting] = React.useState(false);
   const [savedTimeRecord, setSavedTimeRecord] = React.useState(false);
   const [isLogin2, setIsLogin2] = React.useState(false);
+  const [videoStarted, setVideostarted] = React.useState(false);
   const numberOfDetection = 3;
-  const refreshMinutes = 120;
 
   let count = 0;
   let loginstatus = false;
@@ -44,17 +45,19 @@ const FaceScannerNew = ({
   const videoHeight = 480;
   const videoWidth = 640;
 
-  const cSetUser = useUserStore((state) => state.setUser);
-  const cSetTrainerRemainingDays = useUserStore(
-    (state) => state.setTrainerRemainingDays
-  );
-  const cSetSessionDays = useUserStore((state) => state.setSessionDays);
+  const [
+    cSetUser,
+    cSetTrainerRemainingDays,
+    cSetSessionDays,
+    cSetExtendedTrainer,
+  ] = useUserStore((state) => [
+    state.setUser,
+    state.setTrainerRemainingDays,
+    state.setSessionDays,
+    state.setExtendedTrainer,
+  ]);
 
-  const cUser = useUserStore((state) => state.user);
-  const cSetExtendedTrainer = useUserStore((state) => state.setExtendedTrainer);
-  const cSetSubscriptionRemainingDays = useUserStore(
-    (state) => state.setSubscriptionRemainingDays
-  );
+  const [cUser] = useUserStore((state) => [state.user]);
 
   const loadModels = async () => {
     const MODEL_URL = window.location.origin + "/models";
@@ -70,17 +73,33 @@ const FaceScannerNew = ({
   // function for starting video
   const startVideo = async () => {
     setCaptureVideo(true);
-    await navigator.mediaDevices
-      .getUserMedia({ video: { width: 300 } })
-      .then((stream) => {
-        let video = videoRef.current;
+
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const hasVideoInput = devices.some(
+      (device) => device.kind === "videoinput"
+    );
+
+    if (!hasVideoInput) {
+      console.error("No video input devices found.");
+      alert("No camera found on this device.");
+      return;
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { width: 300 },
+      });
+
+      let video = videoRef.current;
+      if (video) {
         video.srcObject = stream;
         video.play();
         console.log("video has been played");
-      })
-      .catch((err) => {
-        console.error("error:", err);
-      });
+      }
+    } catch (err) {
+      console.error("getUserMedia error:", err);
+      alert(`Camera access failed: ${err.message}`);
+    }
   };
 
   // function for closing webcam
@@ -97,140 +116,129 @@ const FaceScannerNew = ({
     // tracks.forEach((track) => track.stop());
   };
 
-  const fetchImage = async (label) => {
-    try {
-      const response = await instance.get(
-        `/media/images/${label}/${label}.png`,
-        { responseType: "blob" }
-      );
+  // const extendedSub = async (subscriptionId) => {
+  //   try {
+  //     const data = await getExtendedSubscription(subscriptionId);
+  //     return await data;
+  //   } catch (error) {
+  //     console.error("Error in fetching Extended Subscription:", error);
+  //   }
+  // };
 
-      return await response.data;
-    } catch (error) {
-      console.error("Error fetching image:", error);
-    }
-  };
+  // const fetchUserStatus = async (id) => {
+  //   try {
+  //     const response = await instance.get(`/api/user_status/${id}`);
+  //     const users = response.data;
 
-  const extendedSub = async (subscriptionId) => {
-    try {
-      const data = await getExtendedSubscription(subscriptionId);
-      return await data;
-    } catch (error) {
-      console.error("Error in fetching Extended Subscription:", error);
-    }
-  };
+  //     const newUser = await Promise.all(
+  //       users.map(async (user) => {
+  //         // Call getImagePath asynchronously for each user
+  //         const imgpath = await getImagePath(
+  //           user.usersubscription.flexprouser?.id === null
+  //             ? 0
+  //             : user.usersubscription.flexprouser?.id
+  //         );
 
-  const fetchUserStatus = async (id) => {
-    try {
-      const response = await instance.get(`/api/user_status/${id}`);
-      const users = response.data;
+  //         const imageDataUrl = await loadImageData(imgpath.image1);
 
-      const newUser = await Promise.all(
-        users.map(async (user) => {
-          // Call getImagePath asynchronously for each user
-          const imgpath = await getImagePath(
-            user.usersubscription.flexprouser?.id === null
-              ? 0
-              : user.usersubscription.flexprouser?.id
-          );
+  //         // get the remaining days
+  //         const getRemainingDays = await remainingDays(
+  //           user.usersubscription.date_subscribed,
+  //           user.usersubscription.subscription.per.per,
+  //           0,
+  //           user.usersubscription.sub_session_days === 0
+  //             ? 1
+  //             : user.usersubscription.sub_session_days
+  //         );
 
-          const imageDataUrl = await loadImageData(imgpath.image1);
+  //         const getExtendedSubscriptionDays = await extendedSub(
+  //           user.usersubscription.id
+  //         );
 
-          // get the remaining days
-          const getRemainingDays = await remainingDays(
-            user.usersubscription.date_subscribed,
-            user.usersubscription.subscription.per.per,
-            0,
-            user.usersubscription.sub_session_days === 0
-              ? 1
-              : user.usersubscription.sub_session_days
-          );
+  //         // get extended subscription days left and main subscription days
+  //         const extendedSubDays = getSubscriptionDaysLeft(
+  //           getRemainingDays,
+  //           getExtendedSubscriptionDays,
+  //           user.usersubscription.date_subscribed,
+  //           false
+  //         );
 
-          const getExtendedSubscriptionDays = await extendedSub(
-            user.usersubscription.id
-          );
+  //         const extendedTrainer = await getExtendedTrainer(
+  //           user.usersubscription.id
+  //         );
 
-          // get extended subscription days left and main subscription days
-          const extendedSubDays = getSubscriptionDaysLeft(
-            getRemainingDays,
-            getExtendedSubscriptionDays,
-            user.usersubscription.date_subscribed,
-            false
-          );
+  //         return {
+  //           ...user,
+  //           image: imageDataUrl || "/media/image/default.jpg",
+  //           extendedSubDays: extendedSubDays,
+  //           extendedSubscriptions: getExtendedSubscriptionDays,
+  //           extendedTrainer: extendedTrainer,
+  //         }; // If imgpath is null, use default image
+  //       })
+  //     );
 
-          const extendedTrainer = await getExtendedTrainer(
-            user.usersubscription.id
-          );
+  //     // console.log("userStatus", newUser);
+  //     return newUser;
+  //   } catch (error) {
+  //     console.error("Error fetching data:", error);
+  //     return null; // or handle the error appropriately based on your application's needs
+  //   }
+  // };
 
-          return {
-            ...user,
-            image: imageDataUrl || "/media/image/default.jpg",
-            extendedSubDays: extendedSubDays,
-            extendedSubscriptions: getExtendedSubscriptionDays,
-            extendedTrainer: extendedTrainer,
-          }; // If imgpath is null, use default image
-        })
-      );
-
-      // console.log("userStatus", newUser);
-      return newUser;
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      return null; // or handle the error appropriately based on your application's needs
-    }
-  };
-
-  // check if already in function
-  const checkIfAlreadyIn = async (user_id) => {
-    try {
-      const response = await instance.get(
-        `/api/user_time_record_get/${user_id}`
-      );
-
-      return await response.data;
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      return null; // or handle the error appropriately based on your application's needs
-    }
-  };
+  const { fetchUserStatus } = useFetchUserStatus();
+  const { checkIfAlreadyIn } = useCheckIfAlreadyLogin();
+  const { fetchImage } = useFetchImage();
+  const {
+    data: activeAndInactive,
+    isPending,
+    isLoading: isLoadingActiveAndInactive,
+  } = useGetActiveAndInactiveUsers();
 
   async function getLabeledFaceDescriptions() {
+    // Load the face detection model once
+    await faceapi.nets.tinyFaceDetector.loadFromUri(
+      window.location.origin + "/models"
+    );
+
     const labeledFaceDescriptors = await Promise.all(
       flexProUser?.map(async (label) => {
-        const descriptions = [];
+        try {
+          const descriptions = [];
+          const flexProUserName = label.usersubscription?.flexprouser?.name;
+          const flexProUserId = label.usersubscription?.flexprouser?.id;
 
-        // Load the image from the server
-        const imgBlob = await fetchImage(
-          `${label.usersubscription?.flexprouser?.id}`
-        );
-        const img = await faceapi.bufferToImage(imgBlob); // Convert Blob to Image
+          // const { isLoading: isLoadingUserImages, data: userImages } =
+          //   useFetchImageRefactor(flexProUserId);
 
-        // Load the face detection model if not already loaded
-        await faceapi.nets.tinyFaceDetector.loadFromUri(
-          window.location.origin + "/models"
-        );
+          const imgBlob = await fetchImage(flexProUserId);
+          const img = await faceapi.bufferToImage(imgBlob);
 
-        // Detect faces, landmarks, and compute descriptors
-        const detections = await faceapi
-          .detectSingleFace(img, new faceapi.TinyFaceDetectorOptions())
-          .withFaceLandmarks()
-          .withFaceDescriptor();
+          const detections = await faceapi
+            .detectSingleFace(img, new faceapi.TinyFaceDetectorOptions())
+            .withFaceLandmarks()
+            .withFaceDescriptor();
 
-        if (detections) {
-          descriptions.push(detections.descriptor);
-
-          // console.log("agoy", label.flexprouser?.name);
-          return new faceapi.LabeledFaceDescriptors(
-            label.usersubscription?.flexprouser?.name,
-            descriptions
+          if (detections) {
+            descriptions.push(detections.descriptor);
+            return new faceapi.LabeledFaceDescriptors(
+              flexProUserName,
+              descriptions
+            );
+          }
+          return undefined;
+        } catch (error) {
+          console.error(
+            `Error processing user ${label.usersubscription?.flexprouser?.name}:`,
+            error
           );
+          return undefined;
         }
-        // }
       })
     );
+
     setWaiting(true);
-    // console.log(labeledFaceDescriptors.filter((item) => item != undefined));
-    // console.log(labeledFaceDescriptors);
-    return labeledFaceDescriptors.filter((item) => item != undefined);
+
+    return labeledFaceDescriptors.filter(Boolean);
   }
 
   // save time record functions
@@ -251,7 +259,7 @@ const FaceScannerNew = ({
       });
   };
 
-  const extendedT = async (userSubscriptionId) => {
+  const _setExtendedTrainer = async (userSubscriptionId) => {
     try {
       const data = await getExtendedTrainer(userSubscriptionId);
       cSetExtendedTrainer(data);
@@ -278,8 +286,20 @@ const FaceScannerNew = ({
     };
 
     loadFaceModels();
-    loadUser();
+    // loadUser();
   }, []);
+
+  // start video
+  useEffect(() => {
+    const startVideoIfReady = async () => {
+      await startVideo();
+      console.log("Video started successfully");
+    };
+
+    if (isLoadingActiveAndInactive === false) {
+      startVideoIfReady();
+    }
+  }, [isLoadingActiveAndInactive]);
 
   const faceRecognitionLogic = async () => {
     const labeledFaceDescriptors = await getLabeledFaceDescriptions();
@@ -309,6 +329,7 @@ const FaceScannerNew = ({
       const results = resizedDetections.map((d) => {
         return faceMatcher.findBestMatch(d.descriptor);
       });
+
       //  COUNT UPTO numberOfDetection TO FIND OUT THAT THIS USER IS YOU
       loginstatus === false &&
         isLogin === false &&
@@ -323,12 +344,9 @@ const FaceScannerNew = ({
               result.label === label.usersubscription?.flexprouser?.name
             ) {
               setUserId(label.usersubscription.flexprouser?.id);
-              // cSetUser(label.usersubscription?.flexprouser);
               cSetTrainerRemainingDays(label.trainersRemainingDays);
               cSetSessionDays(label.usersubscription.session_days);
-              extendedT(label?.usersubscription?.flexprouser?.id);
-
-              console.log(label);
+              _setExtendedTrainer(label?.usersubscription?.flexprouser?.id);
 
               console.log(
                 label.usersubscription?.flexprouser?.name +
@@ -367,6 +385,13 @@ const FaceScannerNew = ({
                 id: userStatus.usersubscription?.id,
                 time_in: new Date(),
                 time_out: new Date(1990, 0, 1, 0, 0),
+                date_subscribed: userStatus.usersubscription?.date_subscribed,
+                per: userStatus.usersubscription?.subscription?.per?.per,
+                flexProUserId: userStatus?.usersubscription?.flexprouser?.id,
+                session_days: userStatus?.usersubscription?.session_days,
+                userSubscriptionId: userStatus?.usersubscription?.id,
+                sub_session_days:
+                  userStatus?.usersubscription?.sub_session_days,
               };
 
               setTrainers(() => userStatus); // old set but don't remove
@@ -387,12 +412,12 @@ const FaceScannerNew = ({
           loginstatus = false;
 
           setIsOnGoing("already-login");
+          setSubscriptionRecord(userStatusResult);
           return;
         } // if naka login na diri ra taman
 
         // proceed here og wala pa ka login
         if (userStatusResult != null && savedTimeRecord === false) {
-          // console.log("wow", loginstatus);
           loginstatus = false;
           const saved = await handleSaveTimeRecords(
             userStatusResult,
@@ -402,10 +427,10 @@ const FaceScannerNew = ({
           setIsOnGoing("on-going");
           setTimeInStatus(true);
           setIsLogin(true);
-          // setIsLogin(true);
-          // setIsLogin2(true);
+
           setIsExpired(cUser.status);
           setSavedTimeRecord(saved);
+          setSubscriptionRecord(userStatusResult);
         } else {
           loginstatus = false;
           const saved = await handleSaveTimeRecords(
@@ -416,6 +441,7 @@ const FaceScannerNew = ({
           setTimeInStatus(false);
           setIsExpired(cUser.status);
           setSavedTimeRecord(saved);
+          setSubscriptionRecord(userStatusResult);
         }
       }
     }
@@ -425,7 +451,6 @@ const FaceScannerNew = ({
     if (isLogin2) {
       const ff = async () => {
         const labeledFaceDescriptors = await getLabeledFaceDescriptions();
-
         const faceMatcher = new faceapi.FaceMatcher(
           labeledFaceDescriptors,
           0.4
@@ -438,10 +463,14 @@ const FaceScannerNew = ({
         }, 1000);
         return () => clearInterval(intervalId);
       };
-
       ff();
     }
-  }, [isLogin2]);
+  }, [isLogin2, isLoadingActiveAndInactive]);
+
+  // load users
+  useEffect(() => {
+    setFlexProUser(activeAndInactive);
+  }, [isLoadingActiveAndInactive, activeAndInactive]);
 
   const handleVideoOnPlay = async () => {
     setIsLogin2(true);
@@ -453,15 +482,16 @@ const FaceScannerNew = ({
     }
   };
 
-  const content = () => {
+  const CameraComponent = () => {
     return (
       <>
         <div style={{ textAlign: "center" }}>
-          {waiting === false && (
-            // <h3 style={{ color: "orange" }}>Face initializing...</h3>
+          {isLoadingActiveAndInactive === true && (
             <>
               <LoadingEffect />
-              <h3 style={{ color: "gray" }}>Wait for a seconds...</h3>
+              <h3 style={{ color: "gray" }}>
+                This may take 2 to 4 minutes. Please wait.
+              </h3>
             </>
           )}
         </div>
@@ -473,8 +503,6 @@ const FaceScannerNew = ({
         >
           <video
             ref={videoRef}
-            // height={videoHeight}
-            // width={videoWidth}
             onPlay={handleVideoLoadedMetadata}
             className="camera-stream"
             style={{ borderRadius: "10px" }}
@@ -487,7 +515,8 @@ const FaceScannerNew = ({
 
   return (
     <>
-      <div>
+      <div>{captureVideo ? CameraComponent() : <LoadingEffect />}</div>
+      {/* <div>
         {captureVideo ? (
           modelsLoaded ? (
             flexProUser?.length > 0 ? (
@@ -501,7 +530,7 @@ const FaceScannerNew = ({
         ) : (
           <LoadingEffect />
         )}
-      </div>
+      </div> */}
     </>
   );
 };

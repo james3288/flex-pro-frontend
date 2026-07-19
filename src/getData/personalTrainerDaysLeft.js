@@ -1,8 +1,9 @@
-import React from "react";
 import formatTime from "../others/ReadableFormatTime";
 
+// Calculate base trainer days
 const trd = (trainerRemainingDays, session_days) => {
-  return formatTime(trainerRemainingDays, "days-only") + session_days + 1;
+  const base = Number(formatTime(trainerRemainingDays, "days-only")) || 0;
+  return base + (session_days || 0) + 1;
 };
 
 const personalTrainerDaysLeft = (
@@ -10,74 +11,39 @@ const personalTrainerDaysLeft = (
   option,
   trainerRemainingDays,
   session_days,
-  extendedTrainerRemainingDays,
+  extendedTrainerRemainingDays = 0,
   applyFormat
 ) => {
-  // trainers == null
-  // ? "N/A"
-  // : "- Expired"
-
   const TRDAYS = trd(trainerRemainingDays, session_days);
 
-  const FINAL_RESULT = (result, option) => {
-    if (option === "free-trainer") {
-      let calc = result < 0 ? 0 : result;
-
-      return "EXPIRED";
-    } else if (option === "extended-trainer") {
-      // return formatTime(result, "days-only");
-      return result;
-    }
-  };
-
   if (option === "trainer-remaining-days") {
-    // const result = trainers == null ? "N/A" : "- Expired";
-    const trdays = trainerRemainingDays === undefined ? 0 : TRDAYS;
+    const freeDays = Math.max(
+      0,
+      trainerRemainingDays === undefined ? 0 : TRDAYS
+    );
+    const extendedDays = Number(extendedTrainerRemainingDays) || 0;
+    const totalDays = freeDays + extendedDays;
 
-    // check sa og ang 3 days nga free expire na ba
-    var totalFreeTrainingDaysLeft = 0;
-    var totalExtendedTrainingDaysLeft = 0;
-    var grandTotalTrainingDaysLeft = 0;
-
-    // if less than 0 it means expire na ang days nga free training
-    if (trdays <= 0) {
-      totalFreeTrainingDaysLeft += 0;
-
-      // kwaon ang nabilin nga free training days
-    } else {
-      totalFreeTrainingDaysLeft += trdays;
+    if (totalDays <= 0) {
+      // No days left
+      return trainers == null ? "N/A" : "N/A"; // Could be "EXPIRED" if desired
     }
 
-    // kwaon ang tanan total sa extended training days
-    totalExtendedTrainingDaysLeft += extendedTrainerRemainingDays;
-
-    // e add tanan ang total sa extended training days og sa free training days
-    grandTotalTrainingDaysLeft =
-      totalExtendedTrainingDaysLeft + totalFreeTrainingDaysLeft;
-
-    // convert to string format or default format
-    let result =
-      applyFormat === true
-        ? formatTime(grandTotalTrainingDaysLeft, "days-hours") // with format example: 2 days, 2 hours
-        : grandTotalTrainingDaysLeft; //without format example: 1,3,5,6,7....
-
-    return grandTotalTrainingDaysLeft <= 0 // if total training days is less than 0
-      ? trainers == null // if trainer is null
-        ? "N/A"
-        : // if trainer is not null
-          //FINAL_RESULT(result, "free-trainer")
-          "N/A"
-      : FINAL_RESULT(result, "extended-trainer"); // if total training days is greater than 0
-  } else if (option === "remaining-days") {
-    const result =
-      trainers == null
-        ? "N/A"
-        : TRDAYS <= 0 // if free training days is less than 0 it means expired
-        ? "Free Training Expired"
-        : `${TRDAYS} ${TRDAYS > 1 ? "days" : "day"} left`; // if free training days is greater than 0
-
-    return result;
+    // Return formatted or raw days
+    return applyFormat ? formatTime(totalDays, "days-hours") : totalDays;
   }
+
+  if (option === "remaining-days") {
+    if (trainers == null) return "N/A";
+
+    if (TRDAYS <= 0) {
+      return "Free Training Expired";
+    }
+
+    return `${TRDAYS} ${TRDAYS > 1 ? "days" : "day"} left`;
+  }
+
+  return "N/A"; // fallback for unexpected option
 };
 
 export default personalTrainerDaysLeft;

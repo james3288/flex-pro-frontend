@@ -1,4 +1,3 @@
-
 import instance from "../others/axiosInstance";
 
 const getDayPassUserOnline2 = async (id) => {
@@ -11,7 +10,7 @@ const getDayPassUserOnline2 = async (id) => {
         return {
           ...user,
         }; // If imgpath is null, use default image
-      })
+      }),
     );
 
     return newUser;

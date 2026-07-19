@@ -20,6 +20,43 @@ const initialState = {
   userSubscriptionReportByFreeTrainer: [],
   totalTrainerRate: 0,
   listOfSubscription: [],
+  selectedUsers: [],
+  selectedSubscriptions: [],
+};
+
+const totalIncome = ({ item }) => {
+  return item?.promo_option === "promo"
+    ? parseFloat(item.promo_rate)
+    : parseFloat(item.extended_session);
+};
+
+const getSubTotalIncome = ({
+  subReports,
+  _selectedUsers,
+  _selectedSubscriptions,
+}) => {
+  if (_selectedUsers?.length || _selectedSubscriptions?.length) {
+    return subReports
+      ?.filter((x) => {
+        const userMatch =
+          !_selectedUsers?.length ||
+          _selectedUsers.some((name) => x.user.includes(name.value));
+
+        const subscriptionMatch =
+          !_selectedSubscriptions?.length ||
+          _selectedSubscriptions.some((name) =>
+            x.gym_rate_desc.includes(name.value),
+          );
+
+        return userMatch && subscriptionMatch;
+      })
+      .reduce((total, item) => total + totalIncome({ item }), 0);
+  }
+
+  return subReports.reduce(
+    (total, item) => total + totalIncome({ item }),
+    0.0, // Start accumulating from 0
+  );
 };
 
 export const useReportStore = create((set) => ({
@@ -30,31 +67,31 @@ export const useReportStore = create((set) => ({
     set(
       produce((state) => {
         state.reportData.subscription = data;
-      })
+      }),
     ),
   setSelectSubscription: (data) =>
     set(
       produce((state) => {
         state.reportData.selectSubscription = data;
-      })
+      }),
     ),
   setTrainer: (data) =>
     set(
       produce((state) => {
         state.reportData.trainer = data;
-      })
+      }),
     ),
   setDateFrom: (data) =>
     set(
       produce((state) => {
         state.reportData.dateFrom = data;
-      })
+      }),
     ),
   setDateTo: (data) =>
     set(
       produce((state) => {
         state.reportData.dateTo = data;
-      })
+      }),
     ),
   // setUserSubscriptionReport: async (data) =>
   //   set((state) => ({ userSubscriptionReport: data })),
@@ -62,32 +99,28 @@ export const useReportStore = create((set) => ({
     set(
       produce((state) => {
         state.userSubscriptionReport = data;
-      })
+      }),
     ),
   setSubscriptionTotalIncome: async () =>
     set((state) => ({
-      subscriptionTotalIncome: state?.userSubscriptionReport.reduce(
-        (total, item) =>
-          total +
-          (item?.promo_option === "promo"
-            ? parseFloat(item.promo_rate)
-            : parseFloat(item.extended_session)),
-        0.0 // Start accumulating from 0
-      ),
+      subscriptionTotalIncome: getSubTotalIncome({
+        subReports: state?.userSubscriptionReport,
+        _selectedUsers: state?.selectedUsers,
+        _selectedSubscriptions: state?.selectedSubscriptions,
+      }),
     })),
-
   setExtendedTrainerTotalSession: async () =>
     set((state) => ({
       extendedTrainerTotalSession: state?.extendedTrainerReport?.reduce(
         (total1, item) => total1 + parseFloat(item.extended_session_day),
-        0
+        0,
       ),
     })),
   setFreeTotalSession: async () =>
     set((state) => ({
       freeTotalSession: state?.userSubscriptionReportByFreeTrainer?.reduce(
         (total2, item) => total2 + parseFloat(item.free_session_days),
-        0
+        0,
       ),
     })),
   // setExtendedTrainerReport: async (data) =>
@@ -96,27 +129,39 @@ export const useReportStore = create((set) => ({
     set(
       produce((state) => {
         state.extendedTrainerReport = data;
-      })
+      }),
     ),
   setUserSubscriptionReportByFreeTrainer: async (data) =>
     set(
       produce((state) => {
         state.userSubscriptionReportByFreeTrainer = data;
-      })
+      }),
     ),
   setListOfSubscription: async (data) => {
     const subscriptions = await getSubscriptions();
     set(
       produce((state) => {
         state.listOfSubscription = subscriptions;
-      })
+      }),
     );
   },
   setTotalTrainerRate: async () =>
     set((state) => ({
       totalTrainerRate: state?.extendedTrainerReport?.reduce(
         (total3, item) => total3 + parseFloat(item.trainer_rate),
-        0
+        0,
       ),
     })),
+  setSelectedUsers: async (data) =>
+    set(
+      produce((state) => {
+        state.selectedUsers = data;
+      }),
+    ),
+  setSelectedSubscriptions: async (data) =>
+    set(
+      produce((state) => {
+        state.selectedSubscriptions = data;
+      }),
+    ),
 }));

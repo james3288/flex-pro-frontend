@@ -10,6 +10,7 @@ const getter = () => {
     cSubscriptionTotalIncome,
     cSetModalTitle,
     cSetModalId,
+    cSelectedUser,
   } = useReportStore((state) => ({
     cFreeSessionTotal: state.freeTotalSession,
     cTotalTrainerRate: state.totalTrainerRate,
@@ -19,6 +20,7 @@ const getter = () => {
     cSubscriptionTotalIncome: state.subscriptionTotalIncome,
     cSetModalTitle: state.setModalTitle,
     cSetModalId: state.setModalId,
+    cSelectedUser: state.selectedUser,
   }));
 
   return {
@@ -30,6 +32,7 @@ const getter = () => {
     cSubscriptionTotalIncome,
     cSetModalTitle,
     cSetModalId,
+    cSelectedUser,
   };
 };
 

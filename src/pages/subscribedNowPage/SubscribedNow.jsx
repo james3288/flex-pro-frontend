@@ -1,15 +1,11 @@
-import React from "react";
+import { PageName } from "../../constants/enum";
 import DashboardPage from "../DashboardPage";
-import MyHeader from "../../components/myHeader/MyHeader";
 import "./subscribedNow.scss";
 
 const SubscribedNow = () => {
   return (
     <>
-      {/* Header */}
-      <MyHeader />
-      {/* End Header */}
-      <DashboardPage dashboardBg="subscribeNow" page="subscribeNow" />
+      <DashboardPage dashboardBg="subscribeNow" page={PageName.SUBSCRIBE_NOW} />
     </>
   );
 };

@@ -35,30 +35,37 @@ const getUserSubscriptionReport = async (dateFrom, dateTo, gym_rate_desc) => {
     // get user subscription by date range and gym rate desc
     const response = await instance.get(
       `/api/get_user_subscription_report/?dateFrom=${dateFrom}&dateTo=${dateTo}&gym_rate_desc=${encodeURIComponent(
-        gym_rate_desc
-      )}`
+        gym_rate_desc,
+      )}`,
     );
     const data = await response.data;
 
     // get extended subscription by date range
     const response2 = await instance.get(
       `/api/get_extended_subscription_report/?dateFrom=${dateFrom}&dateTo=${dateTo}&gym_rate_desc=${encodeURIComponent(
-        gym_rate_desc
-      )}`
+        gym_rate_desc,
+      )}`,
     );
 
     const data2 = await response2.data;
 
     // get daypass subscription by date range
     const response3 = await instance.get(
-      `/api/get_daypass_subscription_report/?dateFrom=${dateFrom}&dateTo=${dateTo}`
+      `/api/get_daypass_subscription_report/?dateFrom=${dateFrom}&dateTo=${dateTo}`,
     );
 
     const data3 = await response3.data;
 
+    // get membership subscription by date range
+    const response4 = await instance.get(
+      `/api/get_membership_subscription_report/?dateFrom=${dateFrom}&dateTo=${dateTo}`,
+    );
+
+    const data4 = await response4.data;
+
     data?.forEach((item) => {
       const object = {
-        id: $`sub-{ item.id}`,
+        id: `sub-${item.id}`,
         user: item.flexprouser.name,
         date_subscribed: item.date_subscribed,
         gym_rate_desc: item.subscription.gym_rate_desc,
@@ -81,7 +88,7 @@ const getUserSubscriptionReport = async (dateFrom, dateTo, gym_rate_desc) => {
 
     data2?.forEach((item) => {
       const object = {
-        id: $`ex-{item.id}`,
+        id: `ex-${item.id}`,
         user: item.user_subscription.flexprouser.name,
         date_subscribed: item.date_extend,
         gym_rate_desc: item.subscription.gym_rate_desc,
@@ -106,7 +113,7 @@ const getUserSubscriptionReport = async (dateFrom, dateTo, gym_rate_desc) => {
 
     data3?.forEach((item) => {
       const object = {
-        id: $`ex-{item.id}`,
+        id: `ex-${item.id}`,
         user: item.name,
         date_subscribed: item.date_subscribed,
         gym_rate_desc: item.subscription.gym_rate_desc,
@@ -116,6 +123,24 @@ const getUserSubscriptionReport = async (dateFrom, dateTo, gym_rate_desc) => {
         per: "day",
         category: "",
         extended_session: item.subscription.rate,
+        promo_option: "",
+        promo_rate: 0,
+      };
+      newUser.push(object);
+    });
+
+    data4?.forEach((item) => {
+      const object = {
+        id: `ex-${item.id}`,
+        user: item.name,
+        date_subscribed: item.date_subscribed,
+        gym_rate_desc: item.subscription.gym_rate_desc,
+        trainer: item.personal_trainer?.name,
+        // rate: item.user_subscription.subscription.rate,
+        rate: item.rate,
+        per: "year",
+        category: "",
+        extended_session: item.rate,
         promo_option: "",
         promo_rate: 0,
       };
@@ -133,8 +158,9 @@ const getUserSubscriptionReport = async (dateFrom, dateTo, gym_rate_desc) => {
     // });
 
     // filter by subscription
-    const filterBySubscription = newUser.filter((user) =>
-      user.gym_rate_desc.toLowerCase().includes(gym_rate_desc.toLowerCase())
+    const filterBySubscription = newUser.filter(
+      (user) =>
+        user.gym_rate_desc.toLowerCase().includes(gym_rate_desc.toLowerCase()), //(gym_rate_desc.toLowerCase())
     );
 
     // sort by date
@@ -144,7 +170,6 @@ const getUserSubscriptionReport = async (dateFrom, dateTo, gym_rate_desc) => {
       return dateB - dateA;
     });
 
-    console.log(sortedUsers);
     return sortedUsers;
   } catch (error) {
     console.error("Error in fetching User Subscription Report:", error);

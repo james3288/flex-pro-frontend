@@ -1,159 +1,160 @@
-import React, { useEffect, useState } from "react";
-import pic from "./../../../../src/assets/img/dummy.png";
+import React, { useEffect, useMemo, useCallback } from "react";
+import pic from "../../../../src/assets/img/dummy.png";
 import FormatDate from "../../../others/FormatDate";
 import remainingDays from "../../../others/GetRemainingDays";
 import getSubscriptionDaysLeft from "../../../getData/getSubscriptionDaysLeft";
 import DeleteIconSvg from "../../svg/deleteIconSvg";
 import { useDayPassStore } from "../../../store/useDayPassStore";
-import LoadingEffect from "../loadingEffect/LoadingEffect";
 
-const DayPassUser = ({ user }) => {
-  const [remaining, setRemaining] = useState(0);
-  const [counter, setCounter] = useState(0);
-  const [extendedTrainer, setExtendedTrainer] = useState([]);
-  const [extendedSubscript, setExtendedSubscript] = useState([]);
-  const [totalFreeTrainerLeft, setTotalFreeTrainerLeft] = useState(0);
-  const [myDaysLeft, setMyDaysLeft] = useState();
+const DayPassUser = ({
+  user,
+  setShowAddPersonalTrainerModal,
+  setShowRemovePersonalTrainer,
+}) => {
+  /** ───────── Zustand actions (atomic subscriptions) ───────── */
+  const setModalTitle = useDayPassStore((s) => s.setModalTitle);
+  const setDayPassUserId = useDayPassStore((s) => s.setDayPassUserId);
+  const setDayPassId = useDayPassStore((s) => s.setDayPassId);
+  const setRemoveModalTitle = useDayPassStore((s) => s.setRemoveModalTitle);
+  const setRemoveModalId = useDayPassStore((s) => s.setRemoveModalId);
+  // const setDayPassTrainer = useDayPassStore((s) => s.setDayPassTrainer);
+  const setDayPassTrainer2 = useDayPassStore((s) => s.setDayPassTrainer2);
 
-  //setter
-  const {
-    setModalTitle,
-    setDayPassUserId,
-    setDayPassId,
-    setRemoveModalId,
-    setRemoveModalTitle,
-  } = useDayPassStore((state) => ({
-    setModalTitle: state.setModalTitle,
-    setDayPassUserId: state.setDayPassUserId,
-    setDayPassId: state.setDayPassId,
-    setRemoveModalTitle: state.setRemoveModalTitle,
-    setRemoveModalId: state.setRemoveModalId,
-  }));
+  /** ───────── Remaining days ───────── */
+  const [remaining, setRemaining] = React.useState(0);
 
-  // get the remaining days
-  const getRemainingDays = async () => {
-    setRemaining(await remainingDays(user?.date_subscribed, "day", user.id));
+  const personalTrainerStyle = {
+    display: "flex",
+    gap: "5px",
   };
 
-  // checked expired subscription and set from on-going to expired
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      let daysleft = getSubscriptionDaysLeft(
-        remaining,
-        extendedSubscript,
-        user?.date_subscribed,
-        false
-      );
+    if (!user?.date_subscribed || !user?.id) return;
 
-      if (daysleft === "Expired") {
-        // setRefresher2(true)
-        // counter == 0 && handleExpired();
-        setMyDaysLeft(daysleft);
+    let cancelled = false;
 
-        clearInterval(intervalId);
-      } else {
-        getRemainingDays();
-      }
-    }, 1000);
+    const fetchRemaining = async () => {
+      const value = await remainingDays(user.date_subscribed, "day", user.id);
+      if (!cancelled) setRemaining(value);
+    };
 
-    // Clean up the interval when the component sunmounts
-    return () => clearInterval(intervalId);
-  }, [remaining]);
+    fetchRemaining();
 
-  // HANDLE ADD PERSONAL TRAINERS
-  const handleAddPersonalTrainers = () => {
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.date_subscribed, user?.id]);
+
+  /** ───────── Subscription days left (derived) ───────── */
+  const subDaysLeft = useMemo(() => {
+    return getSubscriptionDaysLeft(remaining, [], user?.date_subscribed, false);
+  }, [remaining, user?.date_subscribed]);
+
+  /** ───────── Handlers ───────── */
+
+  const toDateTimeLocal = (date) => {
+    if (!date) return "";
+    const d = new Date(date);
+    return d.toISOString().slice(0, 16);
+  };
+
+  const handleAddPersonalTrainers = useCallback(() => {
     setModalTitle("Update Personal Trainer");
     setDayPassUserId("add-daypass-trainer");
     setDayPassId(user?.id);
-  };
 
-  const handleRemoveTrainer = () => {
+    // 🔥 THIS IS THE KEY
+    setDayPassTrainer2({
+      trainer_id: user?.personal_trainer?.id ?? 0,
+      trainingDateStarted: toDateTimeLocal(user?.date_started),
+    });
+    setShowAddPersonalTrainerModal(true);
+  }, [
+    setModalTitle,
+    setDayPassUserId,
+    setDayPassId,
+    setDayPassTrainer2,
+    setShowAddPersonalTrainerModal,
+    user?.id,
+    user?.personal_trainer,
+    user?.date_started,
+  ]);
+
+  const handleRemoveTrainer = useCallback(() => {
     setRemoveModalTitle("Remove Personal Trainer");
     setRemoveModalId("remove-daypass-trainer");
     setDayPassId(user?.id);
-  };
+    setShowRemovePersonalTrainer(true);
+  }, [
+    setRemoveModalTitle,
+    setRemoveModalId,
+    setDayPassId,
+    setShowRemovePersonalTrainer,
+    user?.id,
+  ]);
 
-  const context = (
-    <>
-      <div className="col-lg-3 col-xs-12">
-        <div className="c-col">
-          <div className="c-col-name">
-            <img src={pic} alt="" />
-            <div className="col-name">
-              <h4>
-                <span style={{ color: "yellowgreen" }}>ID:{user?.id}</span>{" "}
-                {user?.name}
-              </h4>
-            </div>
-          </div>
-          <div className="c-col-time-in-out">
-            <h5>DATE SUBSCRIBED</h5>
-            <h4>{FormatDate(user?.date_subscribed)}</h4>
+  /** ───────── Don't render expired users ───────── */
+  if (subDaysLeft === "Expired") return null;
 
-            {/* MAIN SUBSCRIPTION */}
-            <h3>{user?.subscription?.gym_rate_desc}</h3>
-
-            <h5>Remaining Hours:</h5>
-            <h4 style={{ fontSize: "20px" }}>
-              {getSubscriptionDaysLeft(
-                remaining,
-                extendedSubscript,
-                user?.date_subscribed,
-                false
-              )}
+  /** ───────── Render ───────── */
+  return (
+    <div className="col-lg-3 col-xs-12">
+      <div className="c-col">
+        <div className="c-col-name">
+          <img src={pic} alt="User avatar" />
+          <div className="col-name">
+            <h4>
+              <span style={{ color: "yellowgreen" }}>ID:{user?.id}</span>{" "}
+              {user?.name}
             </h4>
-
-            <h5 style={{ color: "white" }}>Personal Trainer:</h5>
-            <div>
-              <a
-                className="removeExtendedTrainer"
-                data-toggle="modal"
-                data-target="#remove-daypass-trainer"
-                data-whatever="@mdo"
-                onClick={handleRemoveTrainer}
-              >
-                {user?.personal_trainer?.name && <DeleteIconSvg />}
-              </a>
-              <a
-                className="extendedTrainer"
-                data-toggle="modal"
-                data-target="#add-daypass-trainer"
-                data-whatever="@mdo"
-              >
-                {user?.personal_trainer?.name}{" "}
-                {user?.personal_trainer?.name && FormatDate(user?.date_started)}
-              </a>
-            </div>
-            <br />
-
-            <div className="">
-              <button
-                className="btn btn-success"
-                style={{ padding: "3px 10px", marginBottom: "5px" }}
-                data-toggle="modal"
-                data-target="#add-daypass-trainer"
-                data-whatever="@mdo"
-                onClick={handleAddPersonalTrainers}
-              >
-                Personal Trainer
-              </button>
-            </div>
-
-            {/* )} */}
           </div>
         </div>
+
+        <div className="c-col-time-in-out">
+          <h5>DATE SUBSCRIBED</h5>
+          <h4>{FormatDate(user?.date_subscribed)}</h4>
+
+          <h3>{user?.subscription?.gym_rate_desc}</h3>
+
+          <h5>Remaining Hours:</h5>
+          <h4 style={{ fontSize: "20px" }}>{subDaysLeft}</h4>
+
+          <h5 style={{ color: "white" }}>Personal Trainer:</h5>
+          <div style={personalTrainerStyle}>
+            {user?.personal_trainer?.name && (
+              <a
+                className="removeExtendedTrainer"
+                onClick={handleRemoveTrainer}
+                aria-label="Remove personal trainer"
+              >
+                <DeleteIconSvg />
+              </a>
+            )}
+
+            {user?.personal_trainer?.name && (
+              <a
+                className="extendedTrainer"
+                onClick={handleAddPersonalTrainers}
+              >
+                {user?.personal_trainer?.name}
+                {user?.date_started && `(${FormatDate(user?.date_started)})`}
+              </a>
+            )}
+          </div>
+
+          <br />
+
+          <button
+            className="btn btn-success"
+            style={{ padding: "3px 10px", marginBottom: "5px" }}
+            onClick={handleAddPersonalTrainers}
+          >
+            Personal Trainer
+          </button>
+        </div>
       </div>
-    </>
+    </div>
   );
-
-  const subDaysLeft = getSubscriptionDaysLeft(
-    remaining,
-    extendedSubscript,
-    user?.date_subscribed,
-    false
-  );
-
-  return subDaysLeft === "Expired" ? "" : subDaysLeft != "Expired" && context;
 };
 
 export default DayPassUser;

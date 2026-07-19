@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
 import logoImage from "./../../assets/img/logo-2.png";
 import { NavLink } from "react-router-dom";
 import "./myHeader.scss";
-import RightMenu from "../rightMenu/RightMenu";
+import { ToastContainer } from "react-toastify";
 
 function MyHeader({ setIsOpen, setLeftMenuOpen, setOffCanvasMenu }) {
   const handleClick = () => {
@@ -90,7 +89,17 @@ function MyHeader({ setIsOpen, setLeftMenuOpen, setOffCanvasMenu }) {
                         </NavLink>
                         {/* <a href="">MEMBER LOGIN</a> */}
                       </li>
-
+                      <li>
+                        <NavLink
+                          to={`/user-login-daypass`}
+                          className={({ isActive, isPending }) =>
+                            isActive ? "active" : isPending ? "pending" : ""
+                          }
+                          target="_blank"
+                        >
+                          DAYPASS LOGIN
+                        </NavLink>
+                      </li>
                       <li>
                         <NavLink
                           to={`/user-subscription`}
@@ -167,6 +176,7 @@ function MyHeader({ setIsOpen, setLeftMenuOpen, setOffCanvasMenu }) {
           </div>
         </div>
       </header>
+      <ToastContainer />
     </>
   );
 }

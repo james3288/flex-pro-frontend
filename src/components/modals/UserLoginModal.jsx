@@ -17,6 +17,7 @@ const UserLoginModal = ({
   setIsLogin,
   setTrainers,
   setUserFound,
+  setSubscriptionRecord,
 }) => {
   const [numpadResult, setNumpadResult] = useState("");
   const [activeUser, setActiveUser] = useState(null);
@@ -70,7 +71,7 @@ const UserLoginModal = ({
     );
     setActiveUser(newUser);
 
-    console.log("ACTIVE USER", newUser);
+    // console.log("ACTIVE USER", newUser);
     setIsLoading(false);
   };
 
@@ -84,19 +85,7 @@ const UserLoginModal = ({
       activeUser[0]?.usersubscription.flexprouser?.id
     );
 
-    // already login function
-    const isAlreadyLogin = await CheckIfAlreadyIn(
-      activeUser[0]?.usersubscription.flexprouser?.id
-    );
-
-    // check if already login
-    if (isAlreadyLogin?.length > 0) {
-      setIsLogin(true);
-      setIsOnGoing("already-login");
-      return;
-    }
-
-    // og wala pa ka login
+    // GET USER STATUS FUNCTION
     const getUserStatus = async () => {
       let record = null;
       get_userStatus.map((userStatus) => {
@@ -108,6 +97,12 @@ const UserLoginModal = ({
             id: userStatus.usersubscription?.id,
             time_in: new Date(),
             time_out: new Date(1990, 0, 1, 0, 0),
+            date_subscribed: userStatus.usersubscription?.date_subscribed,
+            per: userStatus.usersubscription?.subscription?.per?.per,
+            flexProUserId: userStatus?.usersubscription?.flexprouser?.id,
+            session_days: userStatus?.usersubscription?.session_days,
+            userSubscriptionId: userStatus?.usersubscription?.id,
+            sub_session_days: userStatus?.usersubscription?.sub_session_days,
           };
 
           // setTrainers(() => userStatus);
@@ -121,11 +116,27 @@ const UserLoginModal = ({
 
     const userStatusResult = await getUserStatus();
 
+    // already login function
+    const isAlreadyLogin = await CheckIfAlreadyIn(
+      activeUser[0]?.usersubscription.flexprouser?.id
+    );
+
+    // check if already login
+    if (isAlreadyLogin?.length > 0) {
+      setIsLogin(true);
+      setIsOnGoing("already-login");
+      // setSubscriptionRecord(userStatusResult);
+
+      // const userStatusResult = await getUserStatus();
+      setSubscriptionRecord(userStatusResult);
+      return;
+    }
+
+    // og wala pa ka login
     if (
       userStatusResult != null &&
       (savedTimeRecord === false || savedTimeRecord === undefined)
     ) {
-      console.log(userStatusResult);
       const saved = await PostSaveTimeRecords(
         userStatusResult,
         setTimeInStatus,
@@ -135,9 +146,15 @@ const UserLoginModal = ({
       setIsOnGoing("on-going");
       setSavedTimeRecord(saved);
 
+      // get specific user subscription data to be use in getting remaining days
+      // in login status
+      setSubscriptionRecord(userStatusResult);
+
       return;
     } else {
+      const userStatusResult = await getUserStatus();
       setIsOnGoing("expired");
+      setSubscriptionRecord(userStatusResult);
     }
   };
   //== END LOGIN FUNCTION

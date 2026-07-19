@@ -1,9 +1,10 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import TrainerRemainingDays from "../mySection/forRenewal/TrainerRemainingDays";
 import personalTrainerDaysLeft from "../../getData/personalTrainerDaysLeft";
 import CheckCircleFillSvg from "../svg/checkCircleFillSvg";
 import FormatDate from "../../others/FormatDate";
 import ExclamationSvg from "../svg/exclamationSvg";
+import useRemainingDaysLeft from "../../hooks/useRemainingDaysLeft";
 
 const style1 = {
   color: "orange",
@@ -50,7 +51,7 @@ const LoginMessageAlert = (props) => {
                 ) : (
                   <CheckCircleFillSvg />
                 )}{" "}
-                {props.userFoundWithImage.flex_pro_user?.name}
+                {props.userFoundWithImage?.flex_pro_user?.name}
               </h5>
             </div>
           </div>
@@ -102,7 +103,7 @@ const LoginMessageAlert = (props) => {
           </div>
 
           <div className="personal-trainer">
-            <h5>Subscription Status:</h5>
+            {/* <h5>Subscription Status:</h5>
             <h2
               style={{
                 color: props.cUser.status === "expired" ? "red" : "orange",
@@ -110,27 +111,70 @@ const LoginMessageAlert = (props) => {
               }}
             >
               {props.cUser.status}
-            </h2>
-            {props.cUser.status === "expired" && (
+            </h2> */}
+            {/* {props.cUser.status === "expired" && (
               <p style={style1}>
                 kindly contact the attendant to extend your subscription, thank
                 you.
               </p>
-            )}
+            )} */}
+          </div>
+          <div className="personal-trainer">
+            <div style={{ color: "white !important" }}>
+              {
+                <RemainingDaysLeftComponent
+                  date_subscribed={props.subscriptionRecord?.date_subscribed}
+                  per={props.subscriptionRecord?.per}
+                  user_id={props.subscriptionRecord?.flexProUserId}
+                  session_days={props.subscriptionRecord?.sub_session_days}
+                  subscriptionId={props.subscriptionRecord?.userSubscriptionId}
+                  fontColor={"orange"}
+                />
+              }
+            </div>
           </div>
         </div>
         <div class="back-to-dashboard">
-          {/* <NavLink className="btn btn-danger" to={"/"}>
-          Back to Dashboard
-        </NavLink> */}
-          {/* <form action=""> */}
           <button className="btn btn-success" onClick={props.handleRefresh}>
             PROCEED
           </button>
-          {/* </form> */}
         </div>
       </>
     </div>
+  );
+};
+
+const RemainingDaysLeftComponent = ({
+  date_subscribed,
+  per,
+  user_id,
+  session_days,
+  subscriptionId,
+  fontColor,
+}) => {
+  // function for expired subscription
+  const [remaining, setRemaining] = useState(0);
+  const { data, remainingDaysLeft } = useRemainingDaysLeft(
+    date_subscribed,
+    per,
+    user_id,
+    session_days,
+    subscriptionId
+  );
+
+  useEffect(() => {
+    const setTheRemaining = async () => {
+      const rd = await remainingDaysLeft();
+      setRemaining(rd);
+    };
+    setTheRemaining();
+  }, [data]);
+
+  return (
+    <>
+      <h5>Subscription Remaining Days:</h5>
+      <h4 style={{ fontSize: "20px", color: fontColor }}>{remaining}</h4>
+    </>
   );
 };
 

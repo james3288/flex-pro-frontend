@@ -95,7 +95,7 @@ const MyUserHistory = () => {
               <div className="team-title">
                 <div className="section-title">
                   <span>Flex Pro</span>
-                  <h2>CLIENTS/USERS HISTORY</h2>
+                  <h2 style={{ color: "gray" }}>CLIENTS/USERS HISTORY</h2>
                 </div>
               </div>
             </div>

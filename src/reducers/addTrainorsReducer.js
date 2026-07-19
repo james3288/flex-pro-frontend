@@ -13,8 +13,11 @@ export const addTrainorReducer = (state, action) => {
         [action.payload.name]: action.payload.value,
       };
 
-    default:
-      return state;
+    case "BULK_UPDATE":
+      return {
+        ...state,
+        ...action.payload, // payload must be an object of updates
+      };
 
     case "CLEAR":
       return {
@@ -23,5 +26,8 @@ export const addTrainorReducer = (state, action) => {
         session_days: 0,
         trainer_date_started: null,
       };
+
+    default:
+      return state;
   }
 };

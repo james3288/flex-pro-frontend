@@ -11,9 +11,11 @@ import updateExtendSubscription from "../components/mySection/activeUser/updateE
 export default function useExtendSubscriptionModal({ userSubscriptionId }) {
   const [subscription, setSubscription] = useState([]);
   const [extendedSubcription, setExtendedSubscription] = useState({});
+  const [promoRateEnable, setPromoRateEnable] = useState(false);
+
   const [state, dispatch] = useReducer(
     extendSubscriptionReducer,
-    INITIAL_STATE
+    INITIAL_STATE,
   );
 
   const refTrainingSession = useRef(null);
@@ -38,8 +40,6 @@ export default function useExtendSubscriptionModal({ userSubscriptionId }) {
       refPromoRate.current.value =
         data?.promo_rate === undefined ? 0 : data?.promo_rate;
 
-      // refOption.current.value = data?.promo_option;
-
       // userSubscriptionId: 0,
       // subscriptionId: 0,
       // session_days: 0,
@@ -55,6 +55,14 @@ export default function useExtendSubscriptionModal({ userSubscriptionId }) {
       dispatch({
         type: "CHANGE_INPUT",
         payload: {
+          name: "promo_option",
+          value: data?.options,
+        },
+      });
+
+      dispatch({
+        type: "CHANGE_INPUT",
+        payload: {
           name: "session_days",
           value: data?.extended_session_day,
         },
@@ -62,8 +70,17 @@ export default function useExtendSubscriptionModal({ userSubscriptionId }) {
     };
 
     getsubscript();
-    getSpecificExtendSub();
-  }, [userSubscriptionId, state.promo_option]);
+
+    if (userSubscriptionId > 0) {
+      getSpecificExtendSub();
+    }
+  }, [userSubscriptionId]);
+
+  useEffect(() => {
+    state?.promo_option == "promo"
+      ? setPromoRateEnable(false)
+      : setPromoRateEnable(true);
+  }, [state.promo_option]);
 
   //   handle change input text
   const handleChange = (e) => {
@@ -114,7 +131,7 @@ export default function useExtendSubscriptionModal({ userSubscriptionId }) {
       return;
     }
 
-    if (state.promo_option === "promo") {
+    if (promoRateEnable == "promo") {
       if (isNaN(state.promo_rate)) {
         return;
       }
@@ -138,6 +155,7 @@ export default function useExtendSubscriptionModal({ userSubscriptionId }) {
     refPromoRate,
     refOption,
     state,
+    promoRateEnable,
     handleChange,
     handleSave,
     handleUpdate,

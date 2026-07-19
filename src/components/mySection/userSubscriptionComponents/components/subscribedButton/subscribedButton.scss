@@ -1,0 +1,166 @@
+.Btn {
+  width: 300px;
+  height: 40px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(
+    to right,
+    #77530a,
+    #ffd277,
+    #77530a,
+    #77530a,
+    #ffd277,
+    #77530a
+  );
+  background-size: 250%;
+  background-position: left;
+  color: #ffd277;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition-duration: 1s;
+  overflow: hidden;
+}
+
+.Btn::before {
+  position: absolute;
+  content: "SAVE SUBSCRIPTION";
+  color: #ffd277;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 97%;
+  height: 90%;
+  border-radius: 8px;
+  transition-duration: 1s;
+  background-color: rgba(0, 0, 0, 0.842);
+  background-size: 200%;
+}
+
+.Btn:hover {
+  background-position: right;
+  transition-duration: 1s;
+}
+
+.Btn:hover::before {
+  background-position: right;
+  transition-duration: 1s;
+}
+
+.Btn:active {
+  transform: scale(0.95);
+}
+
+// successful button
+.Btn2 {
+  width: 300px;
+  height: 40px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(
+    to right,
+    #abc32f,
+    #ececa3,
+    #607c3c,
+    #607c3c,
+    #b5e550,
+    #607c3c
+  );
+  background-size: 250%;
+  background-position: left;
+  color: #ffffff;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition-duration: 1s;
+  overflow: hidden;
+}
+
+.Btn2::before {
+  position: absolute;
+  content: "BACK TO DASHBOARD";
+  color: #ececa3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 97%;
+  height: 90%;
+  border-radius: 8px;
+  transition-duration: 1s;
+  background-color: rgba(0, 0, 0, 0.842);
+  background-size: 200%;
+}
+
+.Btn2:hover {
+  background-position: right;
+  transition-duration: 1s;
+}
+
+.Btn2:hover::before {
+  background-position: right;
+  transition-duration: 1s;
+}
+
+.Btn2:active {
+  transform: scale(0.95);
+}
+
+// refresh button
+.RefreshBtn {
+  width: 200px;
+  height: 40px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(
+    to right,
+    #f7db91,
+    #f075ae,
+    #f075ae,
+    #f075ae,
+    #fffdce,
+    #f075ae
+  );
+  background-size: 250%;
+  background-position: left;
+  color: #ffffff;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition-duration: 1s;
+  overflow: hidden;
+}
+
+.RefreshBtn::before {
+  position: absolute;
+  content: "REFRESH";
+  color: #ececa3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 97%;
+  height: 90%;
+  border-radius: 8px;
+  transition-duration: 1s;
+  background-color: rgba(0, 0, 0, 0.842);
+  background-size: 200%;
+}
+
+.RefreshBtn:hover {
+  background-position: right;
+  transition-duration: 1s;
+}
+
+.RefreshBtn:hover::before {
+  background-position: right;
+  transition-duration: 1s;
+}
+
+.RefreshBtn:active {
+  transform: scale(0.95);
+}

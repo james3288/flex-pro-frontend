@@ -1,5 +1,6 @@
-.userLogin {
-  background-image: url("./../../assets/img/hero/hero-3.jpg");
+.userLogin,
+.userDaypassLogin {
+  background-image: url("./../../assets/img/hero/hero-5.jpg");
   height: 100vh;
   box-sizing: border-box;
   font-family: "Muli", Arial;
@@ -179,52 +180,64 @@
       font-size: 30px;
     }
   }
+}
+.custom-modal-dialog {
+  background: rgb(255, 255, 255);
+  .user-id-row {
+    padding: 10px;
 
-  .custom-modal-dialog {
-    background: rgb(245, 238, 240);
-    .user-id-row {
-      padding: 10px;
+    .existing-user {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
 
-      .existing-user {
+      h5 {
+        color: rgb(60, 60, 60);
+      }
+      h3 {
+        color: green;
+      }
+
+      .existing-user-result {
         display: flex;
-        align-items: center;
+        gap: 10px;
         justify-content: center;
+        align-items: center;
+
+        .existing-user-result-img {
+          width: 120px;
+          height: 120px;
+          border-radius: 50%;
+          border: 4px solid yellowgreen;
+          object-fit: cover;
+        }
+      }
+      .existing-subscription-result {
+        display: flex;
         flex-direction: column;
-
-        h5 {
-          color: rgb(60, 60, 60);
-        }
+        gap: 10px;
+        // justify-content: center;
+        // align-items: center;
         h3 {
-          color: green;
+          font-size: 18px;
         }
-
-        .existing-user-result {
-          display: flex;
-          gap: 10px;
-          justify-content: center;
-          align-items: center;
-
-          .existing-user-result-img {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 2px solid yellowgreen;
-            object-fit: cover;
-          }
+        h5 {
+          font-size: 16px;
         }
       }
     }
-    .numpad-col {
-      margin-bottom: 20px;
-      .numpad {
-        font-size: 3vh;
-        text-align: center;
-        border-radius: 10px;
-        width: 100%;
-        height: 100%;
-        font-weight: 800;
-        color: rgb(255, 255, 255);
-      }
+  }
+  .numpad-col {
+    margin-bottom: 20px;
+    .numpad {
+      font-size: 3vh;
+      text-align: center;
+      border-radius: 10px;
+      width: 100%;
+      height: 100%;
+      font-weight: 800;
+      color: rgb(255, 255, 255);
     }
   }
 }

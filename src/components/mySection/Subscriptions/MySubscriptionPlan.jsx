@@ -5,6 +5,7 @@ import SubscriptionModal from "./subscriptionModal";
 
 const MySubscriptionPlan = () => {
   const [plans, setPlan] = useState([]);
+  const exempted_plans = ["DAY PASS", "DAY PASS + PT"];
 
   const get_subscription = async () => {
     const response = await instance.get(`/api/subscription/`);
@@ -26,26 +27,21 @@ const MySubscriptionPlan = () => {
             <div className="section-title">
               <span>Our Plan</span>
               <h2>Choose your pricing plan</h2>
-              {/* <button
-                className="btn btn-primary"
-                data-toggle="modal"
-                data-target="#subscriptionModal"
-                data-whatever="@mdo"
-              >
-                Add Pricing Plan
-              </button> */}
             </div>
           </div>
         </div>
         <div className="row justify-content-center">
-          {plans.map((plan) => (
-            <ListOfSubscriptions
-              plan={plan}
-              key={plan.id}
-              option={true}
-              per={plan.per.per}
-            />
-          ))}
+          {plans.map(
+            (plan) =>
+              !exempted_plans.includes(plan?.gym_rate_desc) && (
+                <ListOfSubscriptions
+                  plan={plan}
+                  key={plan.id}
+                  option={true}
+                  per={plan.per.per}
+                />
+              )
+          )}
         </div>
       </div>
       <SubscriptionModal id="subscriptionModal" />

@@ -1,5 +1,5 @@
 .active-user {
-  background-image: url("./../../assets/img/hero/hero-10.jpg");
+  background-image: url("./../../assets/img/hero/hero-11.png");
   height: 100vh;
   box-sizing: border-box;
   font-family: "Muli", Arial;
@@ -46,6 +46,7 @@
       border-radius: 5px;
       // border: 1px solid black;
       position: relative;
+      backdrop-filter: blur(19px) saturate(180%);
 
       .c-col-name {
         display: flex;

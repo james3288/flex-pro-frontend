@@ -8,57 +8,59 @@ import loadImageData from "./loadImageData";
 // get extended subscription
 const extendedSub = async (subscriptionId) => {
   try {
-    const data = await getExtendedSubscription(subscriptionId);
-    return await data;
+    return await getExtendedSubscription(subscriptionId); // no double await
   } catch (error) {
     console.error("Error in fetching Extended Subscription:", error);
+    return null; // return null to prevent undefined
   }
 };
 
 const getUsersOnlineByDate = async (dateLog) => {
   try {
     const response = await instance.get(`/api/user_online_by_date/${dateLog}`);
+
     const users = response.data;
 
     const newUser = await Promise.all(
       users.map(async (user) => {
-        // Call getImagePath asynchronously for each user
-        const imgpath = await getImagePath(
-          user.usersubscription.flexprouser.id
-        );
+        try {
+          // Run independent async calls in parallel
+          const [imgpath, remainingDaysResult, extendedSubDaysData] =
+            await Promise.all([
+              getImagePath(user.usersubscription.flexprouser.id),
+              remainingDays(
+                user.usersubscription.date_subscribed,
+                user.usersubscription.subscription.per.per
+              ),
+              extendedSub(user.usersubscription.id),
+            ]);
 
-        const imageDataUrl = await loadImageData(imgpath.image1);
+          const imageDataUrl = await loadImageData(imgpath?.image1);
 
-        // get the remaining days
-        const getRemainingDays = await remainingDays(
-          user.usersubscription.date_subscribed,
-          user.usersubscription.subscription.per.per
-        );
+          const extendedSubDays = getSubscriptionDaysLeft(
+            remainingDaysResult,
+            extendedSubDaysData,
+            user.usersubscription.date_subscribed,
+            true
+          );
 
-        const getExtendedSubscriptionDays = await extendedSub(
-          user.usersubscription.id
-        );
-
-        // get extended subscription days left and main subscription days
-        const extendedSubDays = getSubscriptionDaysLeft(
-          getRemainingDays,
-          getExtendedSubscriptionDays,
-          user.usersubscription.date_subscribed,
-          true
-        );
-
-        return {
-          ...user,
-          image: imageDataUrl || "/media/image/default.jpg",
-          extendedSubDays: extendedSubDays,
-          extendedSubscriptions: getExtendedSubscriptionDays,
-        }; // If imgpath is null, use default image
+          return {
+            ...user,
+            image: imageDataUrl || "/media/image/default.jpg",
+            extendedSubDays,
+            extendedSubscriptions: extendedSubDaysData,
+          };
+        } catch (userError) {
+          console.error("Error processing user:", user, userError);
+          return { ...user, image: "/media/image/default.jpg" }; // fallback
+        }
       })
     );
 
     return newUser;
   } catch (error) {
     console.error("Error fetching users:", error);
+    return []; // prevent returning undefined
   }
 };
 

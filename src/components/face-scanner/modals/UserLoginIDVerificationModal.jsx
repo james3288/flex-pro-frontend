@@ -1,0 +1,345 @@
+import React, { memo, useCallback, useEffect } from "react";
+import { Modal } from "react-bootstrap";
+import useUserLoginModalNumpad from "../hooks/useUserLoginModalNumpad";
+import NumpadButton from "../../modals/NumpadButton";
+import { useCurrentlyLoginStore } from "../store/currentlyLoginStore";
+import { useNumpadStore } from "../store/numpadStore";
+import { useActiveCameraStore } from "../../../store/useActiveCamera";
+import useToastifyMessageComponent from "./../../../customHooks/useToastifyMessageComponent";
+import "../../../pages/userLoginPage/userLoginPage.scss";
+import RemainingDaysLeftComponent from "../../mySection/forRenewal/RemainingDaysLeftComponent";
+import { toUpperCase } from "zod";
+import logo from "@assets/img/logo-2.png";
+
+const UserSubscriptionFoundComponent = ({ users, onLogin, onCancel }) => {
+
+  if (!users)
+    return <h4 className="text-danger">No Subscription has been found!</h4>;
+
+  return (
+    <>
+      <h5>Check your subscription</h5>
+      <div className="existing-subscription-result">
+        {users.map((user) => (
+          <div key={user.id} style={{ marginBottom: "10px" }}>
+            <h3>
+              {user?.usersubscription?.flexprouser?.id} -{" "}
+              {user?.usersubscription?.flexprouser?.name}
+            </h3>
+            <h5>{user?.usersubscription?.subscription?.gym_rate_desc}</h5>
+            <div>
+              <button className="btn btn-success" onClick={onLogin}>
+                LOGIN
+              </button>{" "}
+              <button className="btn btn-danger" onClick={onCancel}>
+                CANCEL
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+};
+
+const isMembership = ({ subscription }) => {
+  if (subscription.toUpperCase() === "MEMBERSHIP") {
+    return true;
+  }
+
+  return false;
+};
+
+const PrivateRemainingDays = ({ userSub }) => {
+  const sub_desc = userSub?.subscription?.gym_rate_desc;
+  if (isMembership({ subscription: sub_desc })) {
+    return null;
+  }
+
+  return (
+    <RemainingDaysLeftComponent
+      date_subscribed={userSub?.date_subscribed}
+      per={userSub?.subscription?.per?.per}
+      user_id={userSub?.flexprouser?.id}
+      session_days={userSub?.sub_session_days}
+      subscriptionId={userSub?.id}
+      id={userSub?.flexprouser?.id}
+      fullname={userSub?.flexprouser?.name}
+      fontColor={"#499c0d"}
+      fontSize="18px"
+    />
+  );
+};
+
+const MembershipComponent = memo(({ users, user }) => {
+  const userInfo = user?.usersubscription?.flexprouser;
+  return (
+    <div>
+      <div className="existing-subscription-result">
+        {users?.map((user) => {
+          const userSub = user?.usersubscription;
+
+          if (
+            isMembership({
+              subscription: userSub?.subscription?.gym_rate_desc,
+            })
+          ) {
+            return (
+              <div
+                key={user.id}
+                style={{ marginBottom: "10px", display: "flex", gap: "5px" }}
+              >
+                <img src={logo} alt="" style={{ width: "30px" }} />
+                <h5
+                  style={{
+                    color: isMembership({
+                      subscription: userSub?.subscription?.gym_rate_desc,
+                    })
+                      ? "orange"
+                      : "green",
+                    fontSize: "22px",
+                  }}
+                >
+                  {userSub?.subscription?.gym_rate_desc}
+                </h5>
+
+                <hr />
+              </div>
+            );
+          }
+        })}
+      </div>
+    </div>
+  );
+});
+
+const ListOfUserSubscriptionComponent = memo(
+  ({ user, users, handleLoginOnclick, onLogin, onCancel }) => {
+    const userInfo = user?.usersubscription?.flexprouser;
+
+    return (
+      <div className="existing-user-result">
+        <img src={user?.image} alt="" className="existing-user-result-img" />
+        <div>
+          <h3 style={{ color: "yellowGreen" }}>{userInfo?.name}</h3>
+          <div className="existing-subscription-result">
+            {users?.map((user) => {
+              const userSub = user?.usersubscription;
+
+              // dis-regard membership
+              if (
+                isMembership({
+                  subscription: userSub?.subscription?.gym_rate_desc,
+                })
+              ) {
+                return null;
+              }
+
+              return (
+                <div key={user.id} style={{ marginBottom: "10px" }}>
+                  <h5
+                    style={{
+                      color: isMembership({
+                        subscription: userSub?.subscription?.gym_rate_desc,
+                      })
+                        ? "orange"
+                        : "green",
+                      fontSize: "22px",
+                    }}
+                  >
+                    {userSub?.subscription?.gym_rate_desc}
+                  </h5>
+                  <PrivateRemainingDays userSub={userSub} />
+                  {!isMembership({
+                    subscription: userSub?.subscription?.gym_rate_desc,
+                  }) && (
+                    <div style={{ display: "flex", gap: "5px" }}>
+                      <button
+                        className="btn btn-success"
+                        onClick={() => {
+                          handleLoginOnclick({ userFound: user });
+                          onLogin && onLogin();
+                        }}
+                      >
+                        LOGIN
+                      </button>
+                      <button className="btn btn-danger" onClick={onCancel}>
+                        CANCEL
+                      </button>
+                    </div>
+                  )}
+                  <hr />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  },
+);
+
+const UserFoundComponent = ({
+  user,
+  onLogin,
+  onCancel,
+  users,
+  userPool = [],
+  typedId,
+  handleLoginOnclick,
+  listOfUsers,
+}) => {
+  // pool: prefer explicit userPool, fallback to listOfUsers
+  const pool = userPool ?? listOfUsers ?? [];
+  const id = String(typedId ?? "").trim();
+
+
+  // If typed id exists in pool but the matched entry has no subscription object or subscription details
+  const matched = pool.find((entry) =>
+    String(entry?.usersubscription?.flexprouser?.id) === id,
+  );
+
+  if(!user && !id) return <h4 className="text-danger">User ID is required</h4>
+
+  if(matched && id && !user) return <h4 className="text-success">Active user found, do you want to login?</h4>;
+
+  if (!user && id) return <h6 className="text-danger">if user is actively registered in subscription, it will say <span style={{ color: 'green' }}>Active user found</span></h6>;
+
+  return (
+    <>
+      <h5>Check if it's you?</h5>
+      <MembershipComponent users={users} user={user} />
+      <ListOfUserSubscriptionComponent
+        user={user}
+        users={users}
+        handleLoginOnclick={handleLoginOnclick}
+        onLogin={onLogin}
+        onCancel={onCancel}
+      />
+    </>
+  );
+};
+
+// MAIN COMPONENT
+const UserLoginIDVerificationModal = memo(
+  ({ show, onHide, users, onLogin }) => {
+    const {
+      handleNumpadOnClick,
+      handleDelOnClick,
+      handleClearOnClick,
+      handleEnterOnClick,
+      handleEnterOnClick2,
+      handleLoginOnclick,
+    } = useUserLoginModalNumpad();
+
+    const [cUserFound, cUserSubscriptionFound] = useCurrentlyLoginStore(
+      (state) => [state.userFound, state.userSubscriptionFound],
+    );
+    const [cNumpadResult] = useNumpadStore((state) => [state.numpadResult]);
+    const [cHasVideoOutput] = useActiveCameraStore((state) => [
+      state.hasVideoOutput,
+    ]);
+
+    // Avoid inline recreation for Enter handler
+    const handleEnter = useCallback(() => {
+      const pool = users?.activeAndInactiveUsers ?? users ?? [];
+      const id = String(cNumpadResult ?? "").trim();
+
+      handleEnterOnClick({ activeAndInactiveUsers: pool, flexProUserId: id });
+    }, [handleEnterOnClick, users, cNumpadResult]);
+
+    // Avoid inline recreation for Enter handler
+    const handleEnter2 = useCallback(() => {
+      const pool = users?.activeAndInactiveUsers ?? users ?? [];
+      const id = String(cNumpadResult ?? "").trim();
+
+      handleEnterOnClick2({ activeAndInactiveUsers: pool, flexProUserId: id });
+
+      handleEnterOnClick({ activeAndInactiveUsers: pool, flexProUserId: id });
+    }, [handleEnterOnClick2, handleEnterOnClick, users, cNumpadResult]);
+
+    const digits = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
+
+    return (
+      <Modal
+        show={show}
+        onHide={onHide}
+        size="lg"
+        centered
+        style={{ zIndex: "9999" }}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Enter your User ID here:</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <div className="custom-modal-dialog">
+            <div className="row user-id-row">
+              <div className="col-4">
+                <h4>
+                  USER ID:{" "}
+                  <span style={{ fontSize: "2em" }}>{cNumpadResult}</span>
+                </h4>
+              </div>
+              <div className="col-8 existing-user">
+                <UserFoundComponent
+                  user={cUserFound}
+                  onLogin={() => {
+                    // handleLoginOnclick();
+                    // onLogin && onLogin();
+                    onHide();
+                  }}
+                  onCancel={handleClearOnClick}
+                  users={cUserSubscriptionFound}
+                  userPool={users?.activeAndInactiveUsers ?? users ?? []}
+                  typedId={cNumpadResult}
+                  handleLoginOnclick={handleLoginOnclick}
+                  listOfUsers={users?.activeAndInactiveUsers ?? users}
+                />
+              </div>
+            </div>
+
+            {/* numpad */}
+            <div className="row">
+              {digits.map((digit) => (
+                <NumpadButton
+                  key={digit}
+                  number={digit}
+                  handleNumpadOnClick={handleNumpadOnClick}
+                />
+              ))}
+
+              {/* control buttons */}
+              <div className="col-3 numpad-col">
+                <button
+                  className="btn btn-secondary numpad"
+                  onClick={handleDelOnClick}
+                >
+                  Del
+                </button>
+              </div>
+              <div className="col-3 numpad-col">
+                <button
+                  className="btn btn-success numpad"
+                  onClick={handleClearOnClick}
+                >
+                  Clear
+                </button>
+              </div>
+              <div className="col-6 numpad-col">
+                <button
+                  className="btn btn-warning numpad"
+                  onClick={handleEnter2}
+                >
+                  Enter
+                </button>
+              </div>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
+    );
+  },
+);
+
+export default UserLoginIDVerificationModal;

@@ -1,0 +1,180 @@
+import { createBrowserRouter } from "react-router-dom";
+
+import App from "../App.jsx";
+import ErrorPage from "../pages/ErrorPage.jsx";
+
+// User-related pages
+import UserRegistrationPage from "../pages/userRegistrationPage/UserRegistrationPage.jsx";
+import UserLoginPage from "../pages/userLoginPage/UserLoginPage.jsx";
+import UserSubscription from "../pages/userSubscriptionPage/UserSubscription.jsx";
+import SubscribedNow from "../pages/subscribedNowPage/SubscribedNow.jsx";
+import UsersPage from "../pages/usersPage/UsersPage.jsx";
+import UserHistoryPage from "../pages/userHistory/UserHistoryPage.jsx";
+
+// Trainer-related pages
+import TrainorPage from "../pages/trainorPage/TrainorPage.jsx";
+import TrainerHistoryPage from "../pages/trainorHistory/trainerHistoryPage.jsx";
+
+// Client/workout pages
+import ClientsOnWorkoutPage from "../pages/clientOnWorkOutPage/ClientsOnWorkoutPage.jsx";
+import ForRenewalPage from "../pages/forRenewalPage/ForRenewalPage.jsx";
+import ActiveUserPage from "../pages/activeUserPage/ActiveUserPage.jsx";
+
+// Expired User Page
+import ExpiredUserPage from "../pages/expiredUserPage/ExpiredUserPage.jsx";
+
+// Reports
+import ReportPage from "../pages/reportPage/ReportPage.jsx";
+import MainLayout from "../components/layout/mainLayout.jsx";
+import { PageName } from "../constants/enum.js";
+import MainLayoutNew from "../layouts/MainLayout.jsx";
+import DashboardPage from "../pages/DashboardPage.jsx";
+import DashboardPageNew from "../pages/DashboardPageNew/DashboardPageNew.jsx";
+import UserDaypassLoginPage from "../pages/userLoginPage/UserDaypassLoginPage.jsx";
+const routes = [
+  {
+    path: "/",
+    element: (
+      <>
+        {/* <MainLayout>
+          <App />
+        </MainLayout> */}
+        <MainLayoutNew>
+          <DashboardPageNew />
+        </MainLayoutNew>
+      </>
+    ),
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/user-registration",
+    element: (
+      <MainLayout>
+        <UserRegistrationPage />
+      </MainLayout>
+    ),
+  },
+  {
+    path: "/user-image-registration",
+    element: (
+      <>
+        <DashboardPage
+          dashboardBg="userImageRegistration"
+          page={PageName.USER_IMAGE_REGISTRATION_NEW}
+        />
+      </>
+    ),
+  },
+  {
+    path: "/user-login",
+    element: <UserLoginPage />,
+  },
+  {
+    path: "/user-login-daypass",
+    element: <UserDaypassLoginPage />,
+  },
+  {
+    path: "/user-subscription",
+    element: (
+      <>
+        <MainLayout>
+          <UserSubscription />
+        </MainLayout>
+      </>
+    ),
+  },
+  {
+    path: "/subscribed-now",
+    element: (
+      <>
+        <MainLayout>
+          <SubscribedNow />
+        </MainLayout>
+      </>
+    ),
+  },
+  {
+    path: "/clients-on-workout",
+    element: (
+      <>
+        <MainLayout>
+          <ClientsOnWorkoutPage />
+        </MainLayout>
+      </>
+    ),
+  },
+  {
+    path: "/for-renewal-users",
+    element: (
+      <>
+        <MainLayout>
+          <ForRenewalPage />
+        </MainLayout>
+      </>
+    ),
+  },
+  {
+    path: "/trainors",
+    element: (
+      <MainLayout>
+        <TrainorPage />
+      </MainLayout>
+    ),
+  },
+  {
+    path: "/active-users",
+    element: (
+      <>
+        <MainLayout>
+          <ActiveUserPage />
+        </MainLayout>
+      </>
+    ),
+  },
+  {
+    path: "/expired-users",
+    element: (
+      <>
+        <MainLayout>
+          <ExpiredUserPage />
+        </MainLayout>
+      </>
+    ),
+  },
+  {
+    path: "/users",
+    element: (
+      <>
+        <MainLayout>
+          <UsersPage />
+        </MainLayout>
+      </>
+    ),
+  },
+  {
+    path: "/user-history",
+    element: (
+      <>
+        <MainLayout>
+          <UserHistoryPage />
+        </MainLayout>
+      </>
+    ),
+  },
+  {
+    path: "/trainer-history",
+    element: (
+      <>
+        <MainLayout>
+          <TrainerHistoryPage />
+        </MainLayout>
+      </>
+    ),
+  },
+  {
+    path: "/reports",
+    element: <ReportPage />,
+  },
+];
+
+export const router = createBrowserRouter(routes);

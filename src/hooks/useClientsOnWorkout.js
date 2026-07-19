@@ -1,4 +1,4 @@
-import { useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import {
   clientsOnWorkOutReducer,
   INITIAL_STATE,
@@ -6,6 +6,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import getDayPassUserOnline from "../getData/getDayPassUserOnline";
 import getUsersOnlineByDate from "../getData/getUserOnlineByDate";
+import useDebounce from "./useDebounce";
 
 function getFormattedDate() {
   const currentDate = new Date();
@@ -37,40 +38,48 @@ const useClientsOnWorkout = () => {
     refetchInterval: 1000,
   });
 
-  const data1 = data?.usersOnline?.filter((user) =>
-    user?.date_log.includes(date)
-  );
-
-  const data3 = data?.dayPassUsersOnline?.filter((user) =>
-    user?.date_log.includes(date)
-  );
-
   function handleChange(e) {
     const value = e.target.value;
     setDate(value); // Update state with the new value
   }
 
   const handleSearchOnWorkout = (e) => {
+    // use reducer
     dispatch({
       type: "CHANGE_INPUT",
       payload: { name: e.target.name, value: e.target.value },
     });
+  };
 
-    const filterData1 = data1.filter((user) =>
+  // subscribed online users
+  const data1 = data?.usersOnline?.filter((user) =>
+    user?.date_log.includes(date)
+  );
+
+  // daypass online users
+  const data3 = data?.dayPassUsersOnline?.filter((user) =>
+    user?.date_log.includes(date)
+  );
+
+  let delay = 6000;
+  const debounceValue = useDebounce(state.name, delay);
+
+  useEffect(() => {
+    // filter data from subscribed online users
+    const filterData1 = data1?.filter((user) =>
       user.usersubscription.flexprouser.name
         .toLowerCase()
-        .includes(e.target.value.toLowerCase())
+        .includes(debounceValue.toLowerCase())
     );
-
-    const filterData2 = data3.filter((user) =>
+    // filter data from daypass online users
+    const filterData2 = data3?.filter((user) =>
       user.flexprouserdaypass.name
         .toLowerCase()
-        .includes(e.target.value.toLowerCase())
+        .includes(debounceValue.toLowerCase())
     );
-
     setNewData(filterData1);
     setNewData2(filterData2);
-  };
+  }, [debounceValue, delay]);
 
   return {
     date,

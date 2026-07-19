@@ -2,27 +2,60 @@ import React, { useEffect, useReducer, useRef, useState } from "react";
 import SaveTrainers from "./saveTrainers";
 import { INITIAL_STATE, formReducer } from "../../../reducers/trainorsReducer";
 import UpdateTrainers from "./updateTrainers";
+import { Button, Modal } from "react-bootstrap";
 
-const TrainersModal = ({ id, option, selectedTrainer }) => {
+function toSlug(name) {
+  return name
+    .toLowerCase() // convert to lowercase
+    .trim() // remove whitespace from start/end
+    .replace(/[^\w\s-]/g, "") // remove all non-word characters except spaces and hyphens
+    .replace(/\s+/g, "-") // replace spaces with hyphens
+    .replace(/--+/g, "-"); // replace multiple hyphens with a single one
+}
+
+const TrainersModal = ({ id, option, selectedTrainer, show, onHide }) => {
   const [state, dispatch] = useReducer(formReducer, INITIAL_STATE);
   const refName = useRef(null);
   const refPosition = useRef(null);
   const refContactNo = useRef(null);
   const refImage = useRef(null);
+  const inputRef = useRef(null);
+
+  const setFileInput = async (blobUrl, filename) => {
+    // Fetch the blob from the blob URL
+    const response = await fetch(blobUrl);
+    const blob = await response.blob();
+
+    // Convert blob to a File
+    const file = new File([blob], filename, { type: blob.type });
+
+    // Create a DataTransfer to set files programmatically
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+
+    // Assign files to input
+    if (inputRef.current) {
+      inputRef.current.files = dataTransfer.files;
+    }
+  };
 
   useEffect(() => {
-    if (option === "Update") {
+    if (option === "Update" && show) {
       // convert image to base64 file
-      const filename = "1.jpg"; // You can set your desired filename here
+      const filename = `${selectedTrainer?.id}.jpg`; // You can set your desired filename here
       const mimeType = "image/jpeg"; // Mime type of the image
       const base64String = selectedTrainer?.image;
-      const file =
-        selectedTrainer?.image != undefined &&
-        base64toFile(base64String, filename, mimeType);
+
+      // const file =
+      //   selectedTrainer?.image != undefined &&
+      //   base64toFile(base64String, filename, mimeType);
 
       refName.current.value = selectedTrainer?.name;
       refPosition.current.value = selectedTrainer?.position;
       refContactNo.current.value = selectedTrainer?.contact_no;
+
+      setFileInput(base64String, filename);
+
       // refImage.current.value = file;
 
       // console.log(file);
@@ -59,8 +92,8 @@ const TrainersModal = ({ id, option, selectedTrainer }) => {
       dispatch({
         type: "CHANGE_IMAGE",
         payload: {
-          name: refImage.current.name,
-          value: file,
+          name: "image",
+          value: inputRef.current.files,
         },
       });
       // END FILL ALL DATA TO STATE
@@ -103,7 +136,7 @@ const TrainersModal = ({ id, option, selectedTrainer }) => {
     uploadData.append("id", state.id);
     uploadData.append("trainersName", state.trainersName);
     uploadData.append("position", state.position);
-    uploadData.append("image", state.image);
+    uploadData.append("image", inputRef.current.files[0]);
     uploadData.append("contactNo", state.contactNo);
     UpdateTrainers(uploadData);
     dispatch({ type: "CLEAR" });
@@ -123,150 +156,233 @@ const TrainersModal = ({ id, option, selectedTrainer }) => {
     });
   };
 
-  // Function to convert base64 to File object
-  const base64toFile = (base64String, filename, mimeType) => {
-    const byteCharacters = atob(base64String.split(",")[1]);
-    const byteNumbers = new Array(byteCharacters.length);
-    for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
-    }
-    const byteArray = new Uint8Array(byteNumbers);
-    const file = new File([byteArray], filename, { type: mimeType });
-    return file;
-  };
-
-  // console.log(state);
-
   return (
-    <div
-      className="modal fade"
-      id={id}
-      role="dialog"
-      aria-labelledby="exampleModalLabel"
-      aria-hidden="true"
-    >
-      <div className="modal-dialog" role="document">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title" id="exampleModalLabel">
-              Trainers Info
-            </h5>
-            <button
-              type="button"
-              className="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div className="modal-body">
-            <div className="form-group">
-              <label className="col-form-label">Name:</label>
-              <input
-                type="text"
-                className="form-control"
-                id="recipient-name"
-                // value={trainersName}
-                name="trainersName"
-                // onChange={(e) => setTrainersName(e.target.value)}
-                onChange={handleChange}
-                ref={refName}
-              />
-              {state.trainersName == "" ? (
-                <span style={{ color: "red" }}>Fill trainers name</span>
-              ) : (
-                !isNaN(state.trainersName) && (
-                  <span style={{ color: "red" }}>must not numeric</span>
-                )
-              )}
-            </div>
-            <div className="form-group">
-              <label className="col-form-label">Position:</label>
-              <input
-                type="text"
-                className="form-control"
-                id="recipient-position"
-                // onChange={(e) => setPosition(e.target.value)}
-                // value={position}
-                ref={refPosition}
-                onChange={handleChange}
-                name="position"
-              />
-              {state.position == "" ? (
-                <span style={{ color: "red" }}>Fill position</span>
-              ) : (
-                !isNaN(state.position) && (
-                  <span style={{ color: "red" }}>must not numeric</span>
-                )
-              )}
-            </div>
-            <div className="form-group">
-              <label className="col-form-label">Contact Number:</label>
-              <input
-                type="text"
-                className="form-control"
-                id="recipient-position"
-                // onChange={(e) => setContactNo(e.target.value)}
-                // value={contactNo}
-                ref={refContactNo}
-                onChange={handleChange}
-                name="contactNo"
-                placeholder="09+"
-              />
-              {state.contactNo == "" ? (
-                <span style={{ color: "red" }}>Fill contact No</span>
-              ) : (
-                isNaN(state.contactNo) && (
-                  <span style={{ color: "red" }}>must be numeric</span>
-                )
-              )}
-            </div>
-            <div className="mb-3">
-              <label className="form-label">Uploage Image:</label>
-              <input
-                className="form-control"
-                type="file"
-                id="formFile"
-                name="image"
-                ref={refImage}
-                // onChange={(e) => setImage(e.target.files[0])}
-                onChange={handleChangeImage}
-              />
-              {state.image === null || state.image === undefined ? (
-                <span style={{ color: "red" }}>Upload an image</span>
-              ) : null}
-            </div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-dismiss="modal"
-              >
-                Close
-              </button>
-              {option === "Save" ? (
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={handleSave}
-                >
-                  Save
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={handleUpdate}
-                >
-                  Update
-                </button>
-              )}
-            </div>
-          </div>
+    // <div
+    //   className="modal fade"
+    //   id={id}
+    //   role="dialog"
+    //   aria-labelledby="exampleModalLabel"
+    //   aria-hidden="true"
+    // >
+    //   <div className="modal-dialog" role="document">
+    //     <div className="modal-content">
+    //       <div className="modal-header">
+    //         <h5 className="modal-title" id="exampleModalLabel">
+    //           Trainers Info
+    //         </h5>
+    //         <button
+    //           type="button"
+    //           className="close"
+    //           data-dismiss="modal"
+    //           aria-label="Close"
+    //         >
+    //           <span aria-hidden="true">&times;</span>
+    //         </button>
+    //       </div>
+    //       <div className="modal-body">
+    //         <div className="form-group">
+    //           <label className="col-form-label">Name:</label>
+    //           <input
+    //             type="text"
+    //             className="form-control"
+    //             id="recipient-name"
+    //             // value={trainersName}
+    //             name="trainersName"
+    //             // onChange={(e) => setTrainersName(e.target.value)}
+    //             onChange={handleChange}
+    //             ref={refName}
+    //           />
+    //           {state.trainersName == "" ? (
+    //             <span style={{ color: "red" }}>Fill trainers name</span>
+    //           ) : (
+    //             !isNaN(state.trainersName) && (
+    //               <span style={{ color: "red" }}>must not numeric</span>
+    //             )
+    //           )}
+    //         </div>
+    //         <div className="form-group">
+    //           <label className="col-form-label">Position:</label>
+    //           <input
+    //             type="text"
+    //             className="form-control"
+    //             id="recipient-position"
+    //             // onChange={(e) => setPosition(e.target.value)}
+    //             // value={position}
+    //             ref={refPosition}
+    //             onChange={handleChange}
+    //             name="position"
+    //           />
+    //           {state.position == "" ? (
+    //             <span style={{ color: "red" }}>Fill position</span>
+    //           ) : (
+    //             !isNaN(state.position) && (
+    //               <span style={{ color: "red" }}>must not numeric</span>
+    //             )
+    //           )}
+    //         </div>
+    //         <div className="form-group">
+    //           <label className="col-form-label">Contact Number:</label>
+    //           <input
+    //             type="text"
+    //             className="form-control"
+    //             id="recipient-position"
+    //             // onChange={(e) => setContactNo(e.target.value)}
+    //             // value={contactNo}
+    //             ref={refContactNo}
+    //             onChange={handleChange}
+    //             name="contactNo"
+    //             placeholder="09+"
+    //           />
+    //           {state.contactNo == "" ? (
+    //             <span style={{ color: "red" }}>Fill contact No</span>
+    //           ) : (
+    //             isNaN(state.contactNo) && (
+    //               <span style={{ color: "red" }}>must be numeric</span>
+    //             )
+    //           )}
+    //         </div>
+    //         <div className="mb-3">
+    //           <label className="form-label">Uploage Image:</label>
+    //           <input
+    //             className="form-control"
+    //             type="file"
+    //             id="formFile"
+    //             name="image"
+    //             ref={inputRef}
+    //             // onChange={(e) => setImage(e.target.files[0])}
+    //             onChange={handleChangeImage}
+    //           />
+    //           {state.image === null || state.image === undefined ? (
+    //             <span style={{ color: "red" }}>Upload an image</span>
+    //           ) : null}
+    //         </div>
+    //         <div className="modal-footer">
+    //           <button
+    //             type="button"
+    //             className="btn btn-secondary"
+    //             data-dismiss="modal"
+    //           >
+    //             Close
+    //           </button>
+    //           {option === "Save" ? (
+    //             <button
+    //               type="button"
+    //               className="btn btn-primary"
+    //               onClick={handleSave}
+    //             >
+    //               Save
+    //             </button>
+    //           ) : (
+    //             <button
+    //               type="button"
+    //               className="btn btn-primary"
+    //               onClick={handleUpdate}
+    //             >
+    //               Update
+    //             </button>
+    //           )}
+    //         </div>
+    //       </div>
+    //     </div>
+    //   </div>
+    // </div>
+    <Modal show={show} onHide={onHide} size="lg" centered>
+      <Modal.Header closeButton>
+        <Modal.Title>Trainers Info</Modal.Title>
+      </Modal.Header>
+
+      <Modal.Body>
+        <div className="form-group">
+          <label className="col-form-label">Name:</label>
+          <input
+            type="text"
+            className="form-control"
+            id="recipient-name"
+            // value={trainersName}
+            name="trainersName"
+            // onChange={(e) => setTrainersName(e.target.value)}
+            onChange={handleChange}
+            ref={refName}
+          />
+          {state.trainersName == "" ? (
+            <span style={{ color: "red" }}>Fill trainers name</span>
+          ) : (
+            !isNaN(state.trainersName) && (
+              <span style={{ color: "red" }}>must not numeric</span>
+            )
+          )}
         </div>
-      </div>
-    </div>
+        <div className="form-group">
+          <label className="col-form-label">Position:</label>
+          <input
+            type="text"
+            className="form-control"
+            id="recipient-position"
+            ref={refPosition}
+            onChange={handleChange}
+            name="position"
+          />
+          {state.position == "" ? (
+            <span style={{ color: "red" }}>Fill position</span>
+          ) : (
+            !isNaN(state.position) && (
+              <span style={{ color: "red" }}>must not numeric</span>
+            )
+          )}
+        </div>
+        <div className="form-group">
+          <label className="col-form-label">Contact Number:</label>
+          <input
+            type="text"
+            className="form-control"
+            id="recipient-position"
+            // onChange={(e) => setContactNo(e.target.value)}
+            // value={contactNo}
+            ref={refContactNo}
+            onChange={handleChange}
+            name="contactNo"
+            placeholder="09+"
+          />
+          {state.contactNo == "" ? (
+            <span style={{ color: "red" }}>Fill contact No</span>
+          ) : (
+            isNaN(state.contactNo) && (
+              <span style={{ color: "red" }}>must be numeric</span>
+            )
+          )}
+        </div>
+        <div className="mb-3">
+          <label className="form-label">Uploage Image:</label>
+          <input
+            className="form-control"
+            type="file"
+            id="formFile"
+            name="image"
+            ref={inputRef}
+            // onChange={(e) => setImage(e.target.files[0])}
+            onChange={handleChangeImage}
+          />
+          {state.image === null || state.image === undefined ? (
+            <span style={{ color: "red" }}>Upload an image</span>
+          ) : null}
+        </div>
+      </Modal.Body>
+
+      <Modal.Footer>
+        <Button variant="secondary" onClick={onHide}>
+          Close
+        </Button>
+        {option === "Save" ? (
+          <Button variant="primary" onClick={handleSave}>
+            Save
+          </Button>
+        ) : (
+          <Button variant="primary" onClick={handleUpdate}>
+            Update
+          </Button>
+        )}
+      </Modal.Footer>
+    </Modal>
   );
 };
 
