@@ -18,7 +18,7 @@ export const UserHistoryProvider = ({ children, id }) => {
     error: userSubscriptionError,
     data: data,
   } = useQuery({
-    queryKey,
+    queryKey:queryKey,
     queryFn: async () => await getUserSubscription(id),
     // refetchInterval: 1000,
   });
@@ -28,7 +28,7 @@ export const UserHistoryProvider = ({ children, id }) => {
     error: userHistoryError,
     data: data2,
   } = useQuery({
-    queryKey2,
+    queryKey: queryKey2,
     queryFn: async () => await getUserHistory(id),
     // refetchInterval: 1000,
   });
@@ -63,7 +63,14 @@ export const UserHistoryProvider = ({ children, id }) => {
 
   return (
     <UserHistoryContext.Provider
-      value={{ userSubscriptionDatas, userHistoryDatas,countActiveExtendedTrainer,setCountActiveExtendedTrainer,isSubExpired, setIsSubExpired }}
+      value={{
+        userSubscriptionDatas,
+        userHistoryDatas,
+        countActiveExtendedTrainer,
+        setCountActiveExtendedTrainer,
+        isSubExpired,
+        setIsSubExpired,
+      }}
     >
       {children}
     </UserHistoryContext.Provider>

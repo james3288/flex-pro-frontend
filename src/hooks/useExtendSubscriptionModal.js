@@ -32,13 +32,27 @@ export default function useExtendSubscriptionModal({ userSubscriptionId }) {
       let data = await getSpecificExtendedSubscription(userSubscriptionId);
       setExtendedSubscription(data);
 
-      refTrainingSession.current.value =
-        data?.extended_session_day === undefined
-          ? 0
-          : data?.extended_session_day;
+      // refTrainingSession.current.value =
+      //   data?.extended_session_day === undefined
+      //     ? 0
+      //     : data?.extended_session_day;
 
-      refPromoRate.current.value =
-        data?.promo_rate === undefined ? 0 : data?.promo_rate;
+      // refPromoRate.current.value =
+      //   data?.promo_rate === undefined ? 0 : data?.promo_rate;
+
+      // SAFE GUARD: Check if the ref element exists before setting its value
+      if (refTrainingSession.current) {
+        refTrainingSession.current.value =
+          data?.extended_session_day === undefined
+            ? 0
+            : data?.extended_session_day;
+      }
+
+      // SAFE GUARD: Check if the ref element exists before setting its value
+      if (refPromoRate.current) {
+        refPromoRate.current.value =
+          data?.promo_rate === undefined ? 0 : data?.promo_rate;
+      }
 
       // userSubscriptionId: 0,
       // subscriptionId: 0,

@@ -203,10 +203,12 @@ const TrainersInfoCard = memo(({ user, extendedTrainers }) => {
             {trainer?.PT < 0 ? (
               <>
                 <span style={{ color: "red" }}>Expired</span>
-                <h6 className="text-secondary">
-                  date extend: {FormatDate(trainer?.date_extend)}
-                </h6>
+                <br/>
+                <span className="text-secondary">
+                  date started: {FormatDate(trainer?.date_extend)}
+                </span>
                 <br />
+                <br/>
               </>
             ) : (
               <span style={{ color: "orange" }}>

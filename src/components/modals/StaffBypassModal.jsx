@@ -16,7 +16,7 @@ const StaffBypassModal = ({ show, onHide, onConfirm, staticPassword = "STAFFPASS
       setError("Incorrect password");
     }
   };
-
+  
   return (
     <Modal show={show} onHide={() => { setPassword(""); setError(null); onHide && onHide(); }} centered style={{ zIndex: 9999 }}>
       <Modal.Header closeButton>

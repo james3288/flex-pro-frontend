@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Modal, Button } from "react-bootstrap";
 import { useDayPassStore } from "../../store/useDayPassStore";
 import deleteDayPassPT from "../../deleteData/deleteDayPassPT";
-import shallow from "zustand/shallow";
+import { shallow } from "zustand/shallow";
 
 const TrashIcon = React.memo(() => (
   <svg
