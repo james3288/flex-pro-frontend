@@ -112,7 +112,7 @@ function MyHeader({ setIsOpen, setLeftMenuOpen, setOffCanvasMenu }) {
                         {/* <a href="">MEMBER LOGIN</a> */}
                       </li>
                       <li>
-                        <a
+                        {/* <a
                           href="http://127.0.0.1:8000/admin/"
                           className={({ isActive, isPending }) =>
                             isActive ? "active" : isPending ? "pending" : ""
@@ -120,7 +120,16 @@ function MyHeader({ setIsOpen, setLeftMenuOpen, setOffCanvasMenu }) {
                           target="_blank"
                         >
                           ADMIN
-                        </a>
+                        </a> */}
+                        <NavLink
+                          to="http://127.0.0.1:8000/admin/"
+                          className={({ isActive, isPending }) =>
+                            isActive ? "active" : isPending ? "pending" : ""
+                          }
+                          target="_blank"
+                        >
+                          ADMIN
+                        </NavLink>
                       </li>
                       <li>
                         <NavLink

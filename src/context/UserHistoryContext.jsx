@@ -6,9 +6,9 @@ import getUserSubscription from "../getData/getUserSubscription";
 export const UserHistoryContext = createContext();
 
 export const UserHistoryProvider = ({ children, id }) => {
-  const queryKey = useMemo(() => ["forUserSubscription1"], []);
-  const queryKey2 = useMemo(() => ["forUserHistory1"], []);
-  const queryKey3 = useMemo(() => ["forExtendedTrainer1"], []);
+  const queryKey = useMemo(() => ["forUserSubscription1"], [id]);
+  const queryKey2 = useMemo(() => ["forUserHistory1"], [id]);
+  const queryKey3 = useMemo(() => ["forExtendedTrainer1"], [id]);
 
   const {
     isLoading: userSubscriptionPending,

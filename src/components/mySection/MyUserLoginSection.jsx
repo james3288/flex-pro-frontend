@@ -549,6 +549,7 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
       subscription: cDayPassSubscription,
       remainingHours: cDayPassRH,
     };
+    
     return (
       <div
         style={{
@@ -674,7 +675,8 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
         onConfirm={() => {
           // Perform the same login action as face-auth success
           try {
-            loginMutation && loginMutation.mutate();
+            // loginMutation && loginMutation.mutate();
+            setIsThisYourFace(true);
           } catch (e) {
             console.error("Staff bypass login error:", e);
           }

@@ -5,6 +5,8 @@ import { UserHistoryContext } from "../../../context/UserHistoryContext";
 import LoadingEffect from "../loadingEffect/LoadingEffect";
 import getExtendedTrainerForUserHistory from "../../../getData/getExtendedTrainerForUserHistory";
 import formatTime from "@others/ReadableFormatTime";
+import formatTimeToString from "../../../others/formatTimeToString";
+import FormatDateOnly from "../../../others/FormatDateOnly";
 
 const isMembership = ({ subscription_desc }) => {
   return subscription_desc?.toUpperCase() === "MEMBERSHIP" ? true : false;
@@ -25,7 +27,6 @@ const isSubscriptionDatasPendingOrError = ({
     ? true
     : false;
 };
-
 
 // DATE SUBSCRIBED
 const DateSubscribedComponent = memo(({ user }) => {
@@ -58,7 +59,9 @@ const getExtendedRemainingMs = (extended) => {
   }
 
   const targetDate = new Date(dateExtend);
-  targetDate.setDate(targetDate.getDate() + Number(extended?.extended_session_day || 0));
+  targetDate.setDate(
+    targetDate.getDate() + Number(extended?.extended_session_day || 0),
+  );
 
   return targetDate.getTime() - Date.now();
 };
@@ -136,9 +139,9 @@ const TrainersInfoCard = memo(({ user, extendedTrainers }) => {
   if (isMembership({ subscription_desc: sub_desc })) {
     return null;
   }
-  return (
 
-     <div className="col-lg-6">
+  return (
+    <div className="col-lg-6">
       <h4 style={{ color: "gray", marginTop: "15px" }}>Main Trainer:</h4>
       <h5 style={{ color: "pink" }}>{user.trainer?.name}</h5>
       <h4 style={{ color: "gray", marginTop: "15px" }}>Extended Trainers:</h4>
@@ -148,7 +151,14 @@ const TrainersInfoCard = memo(({ user, extendedTrainers }) => {
           <h5 key={trainer.id} style={{ color: "pink" }}>
             {trainer.trainer?.name} -{" "}
             {trainer?.PT < 0 ? (
-              <span style={{ color: "red" }}>Expired</span>
+              <>
+                <span style={{ color: "red" }}>Expired</span>
+                <h6 className="text-secondary">
+                  date extend:{" "}
+                  {FormatDate(trainer?.date_extend)}
+                </h6>
+                <br/>
+              </>
             ) : (
               <span style={{ color: "orange" }}>
                 {formatTime(trainer?.PT, "days-hours-minutes")}
@@ -160,9 +170,12 @@ const TrainersInfoCard = memo(({ user, extendedTrainers }) => {
         <LoadingEffect />
       )}
 
-       {/* TOTAL EXTENDED REMAINING DAYS */}
-      <TotalTrainerRemainingDaysCard extendedTrainers={extendedTrainers} userId={user.id} />
-    </div> 
+      {/* TOTAL EXTENDED REMAINING DAYS */}
+      <TotalTrainerRemainingDaysCard
+        extendedTrainers={extendedTrainers}
+        userId={user.id}
+      />
+    </div>
   );
 });
 

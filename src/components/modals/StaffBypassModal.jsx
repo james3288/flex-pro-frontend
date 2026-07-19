@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 
 const StaffBypassModal = ({ show, onHide, onConfirm, staticPassword = "STAFFPASS" }) => {
@@ -8,8 +8,10 @@ const StaffBypassModal = ({ show, onHide, onConfirm, staticPassword = "STAFFPASS
   const handleConfirm = () => {
     if (password === staticPassword) {
       setError(null);
+
       onConfirm && onConfirm();
       setPassword("");
+
     } else {
       setError("Incorrect password");
     }
@@ -21,13 +23,19 @@ const StaffBypassModal = ({ show, onHide, onConfirm, staticPassword = "STAFFPASS
         <Modal.Title>Staff Bypass</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form>
+        <Form onSubmit={(e) => { e.preventDefault(); handleConfirm(); }}>
           <Form.Group>
             <Form.Label>Enter staff password to bypass</Form.Label>
             <Form.Control
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleConfirm();
+                }
+              }}
               placeholder="Staff password"
               autoFocus
             />
