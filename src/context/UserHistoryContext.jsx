@@ -1,4 +1,4 @@
-import { createContext, useMemo } from "react";
+import { createContext, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import getUserHistory from "../getData/getUserHistory";
 import getUserSubscription from "../getData/getUserSubscription";
@@ -9,6 +9,9 @@ export const UserHistoryProvider = ({ children, id }) => {
   const queryKey = useMemo(() => ["forUserSubscription1"], [id]);
   const queryKey2 = useMemo(() => ["forUserHistory1"], [id]);
   const queryKey3 = useMemo(() => ["forExtendedTrainer1"], [id]);
+
+  const [countActiveExtendedTrainer, setCountActiveExtendedTrainer] = useState(0);
+  const [isSubExpired, setIsSubExpired] = useState(false);
 
   const {
     isLoading: userSubscriptionPending,
@@ -60,7 +63,7 @@ export const UserHistoryProvider = ({ children, id }) => {
 
   return (
     <UserHistoryContext.Provider
-      value={{ userSubscriptionDatas, userHistoryDatas }}
+      value={{ userSubscriptionDatas, userHistoryDatas,countActiveExtendedTrainer,setCountActiveExtendedTrainer,isSubExpired, setIsSubExpired }}
     >
       {children}
     </UserHistoryContext.Provider>

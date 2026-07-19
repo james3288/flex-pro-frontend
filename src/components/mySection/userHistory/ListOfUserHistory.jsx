@@ -66,17 +66,17 @@ const getExtendedRemainingMs = (extended) => {
   return targetDate.getTime() - Date.now();
 };
 
-const TotalTrainerRemainingDaysCard = memo(({ extendedTrainers, userId }) => {
+const TotalTrainerRemainingDaysCard = memo(({ extendedTrainer = [] }) => {
   const totalRemainingMs = useMemo(() => {
-    if (!extendedTrainers?.[userId]) {
+    if (extendedTrainer == null) {
       return null;
     }
 
-    return extendedTrainers[userId].reduce((sum, extended) => {
+    return extendedTrainer.reduce((sum, extended) => {
       const remainingMs = getExtendedRemainingMs(extended);
       return sum + Math.max(0, remainingMs);
     }, 0);
-  }, [extendedTrainers, userId]);
+  }, [extendedTrainer]);
 
   if (totalRemainingMs === null) {
     return (
@@ -98,6 +98,50 @@ const TotalTrainerRemainingDaysCard = memo(({ extendedTrainers, userId }) => {
     </div>
   );
 });
+
+const ActiveExtendedTrainerSubscriptionsCard = memo(
+  ({ extendedTrainer = [],user }) => {
+    const { countActiveExtendedTrainer, setCountActiveExtendedTrainer } =
+      useContext(UserHistoryContext);
+
+    if (extendedTrainer == null) {
+      return (
+        <div className="col-lg-6">
+          <LoadingEffect />
+        </div>
+      );
+    }
+
+    const activeExtendedTrainers = extendedTrainer.filter(
+      (trainer) => trainer?.PT >= 0,
+    );
+
+    const hasActiveExtendedTrainer = useMemo(
+      () => activeExtendedTrainers.length > 0,
+      [activeExtendedTrainers],
+    );
+
+    useEffect(() => {
+      if (hasActiveExtendedTrainer) {
+        setCountActiveExtendedTrainer(
+          activeExtendedTrainers.reduce(
+            (sum, trainer) => sum + (trainer.PT ?? 0),
+            0,
+          ),
+        );
+      }
+    }, [hasActiveExtendedTrainer, countActiveExtendedTrainer]);
+
+    return !isExpired({user}) && (
+      <div className="mt-5">
+        <h4 className="text-secondary">
+          Active Extended Trainer Subscriptions:
+        </h4>
+        <h5 className="text-warning">{formatTime(countActiveExtendedTrainer,"days-hours-minutes") }</h5>
+      </div>
+    );
+  },
+);
 
 // USER SUBSCRIPTION INFO
 const UserSubscriptionInfoCard = memo(({ user }) => {
@@ -136,9 +180,13 @@ const UserSubscriptionInfoCard = memo(({ user }) => {
 // TRAINERS INFO
 const TrainersInfoCard = memo(({ user, extendedTrainers }) => {
   const sub_desc = user.subscription.gym_rate_desc;
+  const { countActiveExtendedTrainer } = useContext(UserHistoryContext);
+
   if (isMembership({ subscription_desc: sub_desc })) {
     return null;
   }
+
+  const userExtendedTrainers = extendedTrainers?.[user.id];
 
   return (
     <div className="col-lg-6">
@@ -146,18 +194,19 @@ const TrainersInfoCard = memo(({ user, extendedTrainers }) => {
       <h5 style={{ color: "pink" }}>{user.trainer?.name}</h5>
       <h4 style={{ color: "gray", marginTop: "15px" }}>Extended Trainers:</h4>
 
-      {extendedTrainers[user.id] ? (
-        extendedTrainers[user.id].map((trainer) => (
+      {userExtendedTrainers == null ? (
+        <LoadingEffect />
+      ) : userExtendedTrainers.length > 0 ? (
+        userExtendedTrainers.map((trainer) => (
           <h5 key={trainer.id} style={{ color: "pink" }}>
             {trainer.trainer?.name} -{" "}
             {trainer?.PT < 0 ? (
               <>
                 <span style={{ color: "red" }}>Expired</span>
                 <h6 className="text-secondary">
-                  date extend:{" "}
-                  {FormatDate(trainer?.date_extend)}
+                  date extend: {FormatDate(trainer?.date_extend)}
                 </h6>
-                <br/>
+                <br />
               </>
             ) : (
               <span style={{ color: "orange" }}>
@@ -167,13 +216,15 @@ const TrainersInfoCard = memo(({ user, extendedTrainers }) => {
           </h5>
         ))
       ) : (
-        <LoadingEffect />
+        <h5 style={{ color: "yellowgreen" }}>None</h5>
       )}
 
       {/* TOTAL EXTENDED REMAINING DAYS */}
-      <TotalTrainerRemainingDaysCard
-        extendedTrainers={extendedTrainers}
-        userId={user.id}
+      <TotalTrainerRemainingDaysCard extendedTrainer={userExtendedTrainers} />
+
+      <ActiveExtendedTrainerSubscriptionsCard
+        extendedTrainer={userExtendedTrainers}
+        user={user}
       />
     </div>
   );
@@ -298,16 +349,13 @@ const ListOfUserHistory = () => {
   const { userSubscriptionDatas, userHistoryDatas } =
     useContext(UserHistoryContext);
 
-  // State to store extended trainers for each user
   const [extendedTrainers, setExtendedTrainers] = useState({});
 
-  // Fetch extended trainers for each user subscription
   const fetchExtendedTrainers = async (user_subscription_id) => {
     const data = await getExtendedTrainerForUserHistory(user_subscription_id);
     setExtendedTrainers((prev) => ({ ...prev, [user_subscription_id]: data }));
   };
 
-  // Fetch extended trainers when userSubscriptionDatas changes
   useEffect(() => {
     if (userSubscriptionDatas?.userSubscriptionData) {
       userSubscriptionDatas.userSubscriptionData.forEach((user) => {
