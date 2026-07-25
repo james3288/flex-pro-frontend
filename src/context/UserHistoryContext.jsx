@@ -30,6 +30,7 @@ export const UserHistoryProvider = ({ children, id }) => {
   } = useQuery({
     queryKey: queryKey2,
     queryFn: async () => await getUserHistory(id),
+    // refetchOnWindowFocus: true,
     // refetchInterval: 1000,
   });
 

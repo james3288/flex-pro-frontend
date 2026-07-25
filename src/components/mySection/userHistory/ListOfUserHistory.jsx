@@ -99,8 +99,30 @@ const TotalTrainerRemainingDaysCard = memo(({ extendedTrainer = [] }) => {
   );
 });
 
+const RefreshButton = () => {
+  return (
+    <svg
+      width="30px"
+      height="30px"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M3.46447 3.46447C2 4.92893 2 7.28595 2 12C2 16.714 2 19.0711 3.46447 20.5355C4.92893 22 7.28595 22 12 22C16.714 22 19.0711 22 20.5355 20.5355C22 19.0711 22 16.714 22 12C22 7.28595 22 4.92893 20.5355 3.46447C19.0711 2 16.714 2 12 2C7.28595 2 4.92893 2 3.46447 3.46447ZM5.46058 11.0833C5.83333 7.79988 8.62406 5.25 12.0096 5.25C13.9916 5.25 15.7702 6.12471 16.9775 7.50653C17.25 7.81846 17.2181 8.29226 16.9061 8.56479C16.5942 8.83733 16.1204 8.80539 15.8479 8.49347C14.9136 7.42409 13.541 6.75 12.0096 6.75C9.45215 6.75 7.33642 8.63219 6.97332 11.0833H7.33654C7.63998 11.0833 7.91353 11.2662 8.02955 11.5466C8.14558 11.8269 8.08122 12.1496 7.86651 12.364L6.69825 13.5307C6.40544 13.8231 5.93113 13.8231 5.63832 13.5307L4.47005 12.364C4.25534 12.1496 4.19099 11.8269 4.30701 11.5466C4.42304 11.2662 4.69658 11.0833 5.00002 11.0833H5.46058ZM17.3018 10.4693C17.5947 10.1769 18.069 10.1769 18.3618 10.4693L19.53 11.636C19.7448 11.8504 19.8091 12.1731 19.6931 12.4534C19.5771 12.7338 19.3035 12.9167 19.0001 12.9167H18.5395C18.1668 16.2001 15.376 18.75 11.9905 18.75C10.0085 18.75 8.22995 17.8753 7.02263 16.4935C6.7501 16.1815 6.78203 15.7077 7.09396 15.4352C7.40589 15.1627 7.87968 15.1946 8.15222 15.5065C9.08654 16.5759 10.4591 17.25 11.9905 17.25C14.548 17.25 16.6637 15.3678 17.0268 12.9167H16.6636C16.3601 12.9167 16.0866 12.7338 15.9705 12.4534C15.8545 12.1731 15.9189 11.8504 16.1336 11.636L17.3018 10.4693Z"
+        fill="#1C274C"
+      />
+    </svg>
+  );
+}
+
+{/* ACTIVE EXTENDED TRAINER INCLUDING PREVIOUS */}
 const ActiveExtendedTrainerSubscriptionsCard = memo(
-  ({ extendedTrainer = [],user }) => {
+  ({ extendedTrainer = [], user, user_subscription_id, isHavingMembership, noOfSubscription }) => {
+    const [ref,setRef] = useState(false);
+
     const { countActiveExtendedTrainer, setCountActiveExtendedTrainer } =
       useContext(UserHistoryContext);
 
@@ -112,32 +134,47 @@ const ActiveExtendedTrainerSubscriptionsCard = memo(
       );
     }
 
-    const activeExtendedTrainers = extendedTrainer.filter(
-      (trainer) => trainer?.PT >= 0,
+    if(isHavingMembership && noOfSubscription === 2){
+      return "";
+    }
+
+    const activeExtendedTrainers = useMemo(
+      () => (Array.isArray(extendedTrainer) ? extendedTrainer.filter((trainer) => (trainer?.PT ?? -1) >= 0) : []),
+      [extendedTrainer],
     );
 
-    const hasActiveExtendedTrainer = useMemo(
-      () => activeExtendedTrainers.length > 0,
-      [activeExtendedTrainers],
-    );
+    const hasActiveExtendedTrainer = activeExtendedTrainers.length > 0;
 
     useEffect(() => {
-      if (hasActiveExtendedTrainer) {
-        setCountActiveExtendedTrainer(
-          activeExtendedTrainers.reduce(
-            (sum, trainer) => sum + (trainer.PT ?? 0),
-            0,
-          ),
-        );
-      }
-    }, [hasActiveExtendedTrainer, countActiveExtendedTrainer]);
+      const nextCount = activeExtendedTrainers.reduce(
+        (sum, trainer) => sum + (trainer.PT ?? 0),
+        0,
+      );
 
-    return !isExpired({user}) && (
+      setCountActiveExtendedTrainer(nextCount);
+    }, [countActiveExtendedTrainer,ref]);
+
+    if (isExpired({ user }) || !hasActiveExtendedTrainer) {
+      return null;
+    }
+
+    return (
       <div className="mt-5">
-        <h4 className="text-secondary">
+        {/* <h4 className="text-secondary">
           Active Extended Trainer Subscriptions:
-        </h4>
-        <h5 className="text-warning">{formatTime(countActiveExtendedTrainer,"days-hours-minutes") }</h5>
+        </h4> */}
+        <h6 style={{color:"gray"}}>Previous Subscription training days left:</h6>
+        <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+          <h5 className="text-warning">
+            {formatTime(countActiveExtendedTrainer, "days-hours-minutes")}
+          </h5>
+          <button
+            onClick={() => setRef((prev) => !prev)}
+            style={{ backgroundColor: "yellowGreen", border: "none", outline: "none", borderRadius:'5px',color:"black" }}
+          >
+            <RefreshButton /> Refresh
+          </button>
+        </div>
       </div>
     );
   },
@@ -177,14 +214,46 @@ const UserSubscriptionInfoCard = memo(({ user }) => {
   );
 });
 
+const ExtendedTrainerInfo = ({trainer}) => {
+
+  const isPTexpired = (pt) =>{
+    return pt?.PT < 0;
+  }
+
+  return (
+    <div style={{ display: "flex",flexDirection:"column", gap: "0px" }}>
+      <h5 key={trainer.id} style={{ color: "pink" }}>
+        {trainer.trainer?.name}
+      </h5>
+      {isPTexpired(trainer) ? (
+        <span style={{ color: "yellowGreen" }}>Date Subscribed: <i style={{color:"red"}}>{FormatDate(trainer?.date_extend)}</i> - Expired</span>
+      ) : (
+        <span style={{ fontSize: "14px !important", color: "yellowGreen" }}>
+          date started: {FormatDate(trainer?.date_extend)}
+        </span>
+      )}
+
+      {!isPTexpired(trainer) && (
+        <span style={{ color: "orange" }}>
+          <i style={{color:"yellowGreen",fontWeight:"bold"}}>days left:</i> {formatTime(trainer?.PT, "days-hours-minutes")}
+        </span>
+      )}
+      <hr/>
+    </div>
+  );
+}
+
 // TRAINERS INFO
-const TrainersInfoCard = memo(({ user, extendedTrainers }) => {
+const TrainersInfoCard = memo(({ user, extendedTrainers, user_subscription_id, noOfSubscription, isHavingMembership }) => {
+  
   const sub_desc = user.subscription.gym_rate_desc;
   const { countActiveExtendedTrainer } = useContext(UserHistoryContext);
 
   if (isMembership({ subscription_desc: sub_desc })) {
     return null;
   }
+
+  console.log(isHavingMembership);
 
   const userExtendedTrainers = extendedTrainers?.[user.id];
 
@@ -198,36 +267,48 @@ const TrainersInfoCard = memo(({ user, extendedTrainers }) => {
         <LoadingEffect />
       ) : userExtendedTrainers.length > 0 ? (
         userExtendedTrainers.map((trainer) => (
-          <h5 key={trainer.id} style={{ color: "pink" }}>
-            {trainer.trainer?.name} -{" "}
-            {trainer?.PT < 0 ? (
-              <>
-                <span style={{ color: "red" }}>Expired</span>
-                <br/>
-                <span className="text-secondary">
-                  date started: {FormatDate(trainer?.date_extend)}
-                </span>
-                <br />
-                <br/>
-              </>
-            ) : (
-              <span style={{ color: "orange" }}>
-                {formatTime(trainer?.PT, "days-hours-minutes")}
-              </span>
-            )}
-          </h5>
+          <ExtendedTrainerInfo trainer={trainer} />
+          // <h5 key={trainer.id} style={{ color: "pink" }}>
+          //   {trainer.trainer?.name} -{" "}
+          //   {trainer?.PT < 0 ? (
+          //     <>
+          //       <span style={{ color: "red" }}>Expired</span>
+          //       <br />
+          //       <span style={{ fontSize: "8px !important; color:gray !important" }}>
+          //         date started: {FormatDate(trainer?.date_extend)}
+          //       </span>
+          //       <br />
+          //       <br />
+          //     </>
+          //   ) : (
+          //     <>
+          //       <span style={{ color: "orange" }}>
+          //         {formatTime(trainer?.PT, "days-hours-minutes")}
+          //       </span>
+          //       <br />
+          //       <span style={{ fontSize: "8px !important;" }}>
+          //         date started: {FormatDate(trainer?.date_extend)}
+          //       </span>
+          //     </>
+          //   )}
+          // </h5>
         ))
       ) : (
-        <h5 style={{ color: "yellowgreen" }}>None</h5>
+        <h5 style={{ color: "z  " }}>None</h5>
       )}
 
       {/* TOTAL EXTENDED REMAINING DAYS */}
       <TotalTrainerRemainingDaysCard extendedTrainer={userExtendedTrainers} />
 
-      <ActiveExtendedTrainerSubscriptionsCard
-        extendedTrainer={userExtendedTrainers}
-        user={user}
-      />
+      {noOfSubscription > 1 && (
+        <ActiveExtendedTrainerSubscriptionsCard
+          extendedTrainer={userExtendedTrainers}
+          user={user}
+          user_subscription_id={user_subscription_id}
+          isHavingMembership={isHavingMembership}
+          noOfSubscription={noOfSubscription}
+        />
+      )}
     </div>
   );
 });
@@ -237,6 +318,7 @@ const UserHistoryLogCard = memo(({ userHistoryDatas, user2 }) => {
   if (userHistoryDatas.error || userHistoryDatas.pending) {
     return <LoadingEffect />;
   }
+
   return userHistoryDatas?.userHistoryData?.map(
     (user) =>
       user2.id === user.usersubscription?.id && (
@@ -256,9 +338,16 @@ const UserSubscriptionComponent = ({
   extendedTrainers,
   isNotIncludeMembership,
 }) => {
+
+  const isHavingMembership = datas?.userSubscriptionData?.some(
+    (plan) => plan?.subscription?.gym_rate_desc === 'MEMBERSHIP'
+  );
+
   return datas?.userSubscriptionData?.map((user2) => {
+    const membership = isMembership({ subscription_desc: user2?.subscription.gym_rate_desc });
+
     if (
-      isMembership({ subscription_desc: user2?.subscription.gym_rate_desc }) &&
+      membership &&
       isNotIncludeMembership
     ) {
       return null;
@@ -266,7 +355,7 @@ const UserSubscriptionComponent = ({
 
     if (
       isExpired({ user: user2 }) &&
-      isMembership({ subscription_desc: user2?.subscription.gym_rate_desc })
+      membership
     ) {
       return null;
     }
@@ -299,11 +388,19 @@ const UserSubscriptionComponent = ({
             <TrainersInfoCard
               user={user2}
               extendedTrainers={extendedTrainers}
+              user_subscription_id={user2?.id}
+              noOfSubscription={datas?.userSubscriptionData?.length}
+              isHavingMembership={isHavingMembership}
+
             />
           </div>
         )}
+        {/* HISTORY */}
         <div className="row subInfo">
-          <UserHistoryLogCard userHistoryDatas={historyDatas} user2={user2} />
+          <UserHistoryLogCard
+            userHistoryDatas={historyDatas}
+            user2={user2}
+          />
         </div>
         <hr />
       </div>
