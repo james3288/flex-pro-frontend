@@ -28,6 +28,7 @@ const RemoveExtendedSub = ({
   const [userName, setUserName] = useState("admin");
   const [password, setPassword] = useState("");
   const [isValid, setIsValid] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const [cIsClear] = useClearCredentialTextField((state) => [
     state.isClear,
@@ -70,11 +71,19 @@ const RemoveExtendedSub = ({
     if (result) {
       setIsValid(result?.valid);
 
-      //✅ delete function
-      handleDelete();
+      if (result?.valid) {
+        await handleDelete();
+      }
     } else {
       setIsValid(false);
     }
+  };
+
+  const handleOpenConfirm = () => setShowConfirm(true);
+  const handleCloseConfirm = () => setShowConfirm(false);
+  const handleConfirmDelete = async () => {
+    setShowConfirm(false);
+    await setCredentialValidOrInvalid({ username: userName, password });
   };
 
   return (
@@ -121,18 +130,27 @@ const RemoveExtendedSub = ({
         <Button variant="secondary" onClick={onHide}>
           Close
         </Button>
-        <Button
-          variant="danger"
-          onClick={() =>
-            setCredentialValidOrInvalid({
-              username: userName,
-              password: password,
-            })
-          }
-        >
+        <Button variant="danger" onClick={handleOpenConfirm}>
           Delete
         </Button>
       </Modal.Footer>
+
+      <Modal show={showConfirm} onHide={handleCloseConfirm} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Delete</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to remove this data?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseConfirm}>
+            No
+          </Button>
+          <Button variant="danger" onClick={handleConfirmDelete}>
+            Yes, Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Modal>
   );
 };
