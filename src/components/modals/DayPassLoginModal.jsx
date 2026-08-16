@@ -1,9 +1,8 @@
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { Modal, Button } from "react-bootstrap";
 import { useDayPassStore } from "../../store/useDayPassStore";
 
 import "./daypassLoginModal.scss";
-import getDaypassUser from "./../../../src/getData/getDayPassUser";
 import DpUserInfo from "./DpUserInfo";
 import postDayPassTimeRecords from "../../postData/postDayPassTimeRecords";
 import FormatDateOnly from "../../others/FormatDateOnly";
@@ -21,7 +20,6 @@ const DayPassLoginModal = ({
     dayPassUserId,
     modalTitle,
     dayPassUserOnline,
-    setDayPassUser,
     setDayPassUserOnline,
     setIsLogin,
     setDayPassName,
@@ -31,30 +29,12 @@ const DayPassLoginModal = ({
     dayPassUserId: state.dayPassUserId,
     modalTitle: state.modalTitle,
     dayPassUserOnline: state.dayPassUserOnline,
-    setDayPassUser: state.setDayPassUser,
     setDayPassUserOnline: state.setDayPassUserOnline,
     setIsLogin: state.setIsLogin,
     setDayPassName: state.setDayPassName,
     setIsAlreadyLogin: state.setIsAlreadyLogin,
     setSubscriptionName: state.setSubscriptionName,
   }));
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadUsers = async () => {
-      const users = await getDaypassUser();
-      if (isMounted) {
-        setDayPassUser(users);
-      }
-    };
-
-    loadUsers();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [dayPassUsers, setDayPassUser]);
 
   const selectedUser = useMemo(() => {
     return dayPassUsers?.find((u) => u.id === selectedUserId) || null;
