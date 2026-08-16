@@ -5,7 +5,7 @@ import StaffBypassModal from "../modals/StaffBypassModal";
 import useMyUserLoginSection from "./users/hooks/useMyUserLoginSection";
 import FaceScannerNew3 from "../face-scanner/FaceScannerNew3";
 import UserLoginIDVerificationModal from "../face-scanner/modals/UserLoginIDVerificationModal";
-import useGetActiveAndInactiveUsers from "../../hooks/useGetActiveAndInactiveUsers";
+import useLoginUsers from "../../hooks/useLoginUsers";
 import { useCurrentlyLoginStore } from "../face-scanner/store/currentlyLoginStore";
 import LoadingEffect from "./loadingEffect/LoadingEffect";
 import { useNumpadStore } from "../face-scanner/store/numpadStore";
@@ -208,7 +208,7 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
     fetchStatus,
     isLoading: isLoadingActiveAndInactiveUser,
     refetch,
-  } = useGetActiveAndInactiveUsers();
+  } = useLoginUsers();
 
   // derived: is user already logged in according to fetched loginUser
   const alreadyLoggedIn = useMemo(() => {
