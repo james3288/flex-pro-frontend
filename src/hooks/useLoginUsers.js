@@ -29,7 +29,8 @@ const useLoginUsers = () => {
     },
     retry: 2,
     refetchOnWindowFocus: false,
-    staleTime: 60_000,
+    staleTime: 10000,
+    refetchInterval: 30000,
   });
 
   return { isPending, data, fetchStatus, isLoading, refetch, isFetching };

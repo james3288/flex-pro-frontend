@@ -443,7 +443,8 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
       <SmallCentered>
         <Loader3 />
         <h5 style={{ color: "gray", marginTop: "20px" }}>
-          Initializing user images...
+          {/* Initializing user images... */}
+          Retrieving user subscription and authentication details
         </h5>
       </SmallCentered>
     );
