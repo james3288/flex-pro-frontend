@@ -177,7 +177,10 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
   ]);
 
   // numpad setter
-  const cSetNumpadResult = useNumpadStore((s) => s.setNumpadResult);
+  const [cNumpadResult, cSetNumpadResult] = useNumpadStore(state => [
+    state.numpadResult,
+    state.setNumpadResult,
+  ]);
 
   // login attempt hook
   const { isThisYourFace, setIsThisYourFace } = useLoginAttempt();
@@ -265,6 +268,31 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
 
   const handleLoginWithoutCamera = () => {
     cSetLoginAttempt(2);
+  };
+
+  const handleLoginOnclickAndVerify = async () => {
+    const idString = String(cNumpadResult).trim();
+    if (!idString) {
+      setLoginError("User ID is required");
+      return;
+    }
+    const user = users?.activeAndInactiveUsers?.find(
+      (u) => String(u?.usersubscription?.flexprouser?.id) === idString
+    ) || users?.find(
+      (u) => String(u?.usersubscription?.flexprouser?.id) === idString
+    );
+
+    if (!user) {
+      setLoginError("User not found");
+      return;
+    }
+
+    // Set the currentlyLogin store to the user
+    cSetCurrentlyLogin(user);
+    // Simulate face recognition success to trigger login mutation
+    setIsThisYourFace(true);
+    // Hide the ID login modal after successful login attempt
+    setShowUserIdModal(false);
   };
 
   // small presentational components as callbacks to keep stable identity
@@ -608,7 +636,9 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
                   <WaitForInitializingUsersComponent />
                 </div>
 
+                {/* TEMPORARILY DISABLE FACE RECOGNITION - ENABLE ID LOGIN ONLY
                 {play && <FaceScannerNew3 {...faceScannerProps} />}
+                END TEMPORARY DISABLE */}
               </div>
 
               <div className="camera-btn">
@@ -668,6 +698,7 @@ const MyUserLoginSection = memo(function MyUserLoginSection() {
         setUserFound={setUserFound}
         setSubscriptionRecord={setSubscriptionRecord}
         users={users}
+        onLogin={handleLoginOnclickAndVerify}
       />
       <StaffBypassModal
         show={showStaffModal}
