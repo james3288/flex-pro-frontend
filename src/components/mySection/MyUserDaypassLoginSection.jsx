@@ -81,7 +81,7 @@ const MyUserDaypassLoginSection = memo(function MyUserDaypassLoginSection() {
   // login attempt hook
   const loginMutation = useLoginMutation();
 
-  // // loginUser fetch — memoize user id param
+  // // loginUser `fet`ch — memoize user id param
   // const userSub = cCurrentlyLogin?.usersubscription;
   // const { loginUser } = useFetchLoginUser({
   //   user_id: userSub?.flexprouser?.id,
@@ -106,14 +106,40 @@ const MyUserDaypassLoginSection = memo(function MyUserDaypassLoginSection() {
 
   console.log(dayPassActiveUsers);
 
+  const isFetching = useIsFetching({ queryKey: ['forActiveDayPassUsers'] });
+
+  const handleUserRefresh = useCallback(
+    ({ resetDayPassLogin, resetRegularUserLogin }) => {
+      setLoginError(null);
+      setShowModal(false);
+      cSetNumpadResult("");
+      // Reset Zustand stores if used
+      // Reset daypass login state
+      resetDayPassLogin();
+      // Optionally reset regular login state if the callback is provided
+      if (resetRegularUserLogin) resetRegularUserLogin();
+      // Reset login attempt/authentication state if applicable
+      // (if you have loginMutation or similar state to reset)
+    },
+    [
+      setLoginError,
+      setShowModal,
+      cSetNumpadResult,
+      // dependencies for resetDayPassLogin/resetRegularUserLogin if they change
+    ],
+  );
+
   const RefreshButton = useCallback(() => (
     <button
       className="btn btn-success enabled"
-      onClick={() => refetch()} //{handlePlayClick}
-      disabled={isLoadingDayPass}
+      onClick={() => {
+        handleUserRefresh({ resetDayPassLogin, resetRegularUserLogin });
+        refetch();
+      }} //{handlePlayClick}
+       disabled={isFetching}
       style={{ zIndex: 9999 }}
     >
-      Refresh
+        {isFetching ? 'Fetching Users...' : 'Refresh'}
     </button>
   ));
 
@@ -126,7 +152,7 @@ const MyUserDaypassLoginSection = memo(function MyUserDaypassLoginSection() {
           setShowModal(true);
         }}
         style={{ zIndex: 9999 }}
-        disabled={isLoadingDayPass}
+        disabled={isLoadingDayPass || isFetching}
       >
         Login Daypass
       </button>
@@ -208,7 +234,7 @@ const MyUserDaypassLoginSection = memo(function MyUserDaypassLoginSection() {
                 <strong>SCAN TO</strong> LOGIN USER
               </span>
               <div className="camera-wrapper">
-                {isLoadingDayPass ? <Loading4 /> : ""}
+                {isLoadingDayPass || isFetching ? <Loading4 /> : ""}
               </div>
 
               <div className="camera-btn">
